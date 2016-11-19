@@ -16,8 +16,8 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TU_CLIENT_MENU_CONSOLE_H
-#define TU_CLIENT_MENU_CONSOLE_H
+#ifndef __GAME_CONSOLE__
+#define __GAME_CONSOLE__
 
 #include <client/gui/panellayout.h>
 #include <client/gui/listlayout.h>

@@ -16,8 +16,8 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TU_CLIENT_ASSETSEDITOR_VIEWGUI_H
-#define TU_CLIENT_ASSETSEDITOR_VIEWGUI_H
+#ifndef __EDITOR_VIEWGUI__
+#define __EDITOR_VIEWGUI__
 
 #include <editor/gui/view.h>
 

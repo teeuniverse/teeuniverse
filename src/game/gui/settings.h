@@ -16,8 +16,8 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TU_CLIENT_MENU_SETTINGS_H
-#define TU_CLIENT_MENU_SETTINGS_H
+#ifndef __GAME_SETTINGS__
+#define __GAME_SETTINGS__
 
 #include <client/gui/tabs.h>
 #include <client/gui/listlayout.h>

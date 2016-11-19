@@ -142,7 +142,7 @@ bool CLocalization::CLanguage::Load(CStorage* pStorage)
 	json_settings JsonSettings;
 	mem_zero(&JsonSettings, sizeof(JsonSettings));
 	char aError[256];
-	json_value *pJsonData = json_parse_ex(&JsonSettings, pFileData, aError);
+	json_value *pJsonData = json_parse_ex(&JsonSettings, pFileData, FileSize, aError);
 	if(pJsonData == 0)
 	{
 		dbg_msg("Localization", "Can't load the localization file %s : %s", aBuf, aError);
@@ -341,16 +341,17 @@ bool CLocalization::Init()
 	json_settings JsonSettings;
 	mem_zero(&JsonSettings, sizeof(JsonSettings));
 	char aError[256];
-	json_value *pJsonData = json_parse_ex(&JsonSettings, pFileData, aError);
-	if(pJsonData == 0)
+	json_value *pJsonData = json_parse_ex(&JsonSettings, pFileData, FileSize, aError);
+	if(pJsonData == NULL)
 	{
 		delete[] pFileData;
 		return true; //return true because it's not a critical error
 	}
 
 	// extract data
-	m_pMainLanguage = 0;
-	const json_value &rStart = (*pJsonData)["language indices"];
+	m_pMainLanguage = NULL;
+	const json_value& rStart = (*pJsonData)["language indices"];
+	
 	if(rStart.type == json_array)
 	{
 		for(unsigned i = 0; i < rStart.u.array.length; ++i)

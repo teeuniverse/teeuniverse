@@ -16,12 +16,22 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TU_CLIENT_ASSETSEDITOR_VIEWMAP_QUADTRANSFORM_H
-#define TU_CLIENT_ASSETSEDITOR_VIEWMAP_QUADTRANSFORM_H
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_QUAD__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_QUAD__
 
 #include <editor/gui/view_map.h>
 
-class CCursorTool_QuadTransform : public CViewMap::CCursorTool
+class CCursorTool_QuadPicker : public CViewMap::CCursorTool
+{
+protected:
+	CSubPath PickQuad(vec2 CursorPos);
+	void RenderPivots();
+	
+public:
+	CCursorTool_QuadPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath);
+};
+
+class CCursorTool_QuadTransform : public CCursorTool_QuadPicker
 {
 public:
 	enum
@@ -47,10 +57,6 @@ protected:
 	bool m_Transformed;
 	bool m_FrameTransform;
 	int m_Token;
-
-protected:
-	CSubPath PickQuad(vec2 CursorPos);
-	void RenderPivots();
 	
 public:
 	CCursorTool_QuadTransform(CViewMap* pViewMap);

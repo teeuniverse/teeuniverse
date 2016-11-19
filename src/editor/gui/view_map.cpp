@@ -19,7 +19,7 @@
 #include <editor/gui/view_map.h>
 
 #include <editor/gui/view_map_stamp.h>
-#include <editor/gui/view_map_quadtransform.h>
+#include <editor/gui/view_map_quad.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 

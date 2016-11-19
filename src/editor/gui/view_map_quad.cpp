@@ -16,24 +16,22 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <editor/gui/view_map_quadtransform.h>
+#include <editor/gui/view_map_quad.h>
 #include <editor/components/gui.h>
 #include <client/components/assetsrenderer.h>
 #include <client/maprenderer.h>
 #include <shared/geometry/geometry.h>
 #include <generated/assets/maplayerquads.h>
 
-/* CURSORTOOL QUAD TRANSFORM ***************************************************/
+/* CURSORTOOL QUAD PICKER *********************************************/
 
-CCursorTool_QuadTransform::CCursorTool_QuadTransform(CViewMap* pViewMap) :
-	CCursorTool(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
-	m_SelectedQuad(CSubPath::Null()),
-	m_Token(CAssetsHistory::NEW_TOKEN)
+CCursorTool_QuadPicker::CCursorTool_QuadPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath) :
+	CCursorTool(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove)
 {
 	
 }
 
-CSubPath CCursorTool_QuadTransform::PickQuad(vec2 CursorPos)
+CSubPath CCursorTool_QuadPicker::PickQuad(vec2 CursorPos)
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -108,7 +106,7 @@ CSubPath CCursorTool_QuadTransform::PickQuad(vec2 CursorPos)
 	return QuadFound;
 }
 
-void CCursorTool_QuadTransform::RenderPivots()
+void CCursorTool_QuadPicker::RenderPivots()
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -134,6 +132,16 @@ void CCursorTool_QuadTransform::RenderPivots()
 			);
 		}
 	}
+}
+
+/* CURSORTOOL QUAD TRANSFORM ***************************************************/
+
+CCursorTool_QuadTransform::CCursorTool_QuadTransform(CViewMap* pViewMap) :
+	CCursorTool_QuadPicker(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
+	m_SelectedQuad(CSubPath::Null()),
+	m_Token(CAssetsHistory::NEW_TOKEN)
+{
+	
 }
 
 void CCursorTool_QuadTransform::OnViewButtonClick(int Button)

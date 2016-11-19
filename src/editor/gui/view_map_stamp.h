@@ -16,8 +16,8 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TU_CLIENT_ASSETSEDITOR_VIEWMAP_STAMP_H
-#define TU_CLIENT_ASSETSEDITOR_VIEWMAP_STAMP_H
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_STAMP__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_STAMP__
 
 #include <editor/gui/view_map.h>
 #include <generated/assets/maplayertiles.h>
