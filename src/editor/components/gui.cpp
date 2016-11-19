@@ -923,7 +923,7 @@ CGuiEditor::CMainWidget::CMainWidget(CGuiEditor* pAssetsEditor) :
 	pPanel->Add(new CAssetsOrganizer(pAssetsEditor), 280);
 	
 	pVPanel->Add(new CViewManager(pAssetsEditor), -1);
-	pVPanel->Add(new CTimeLine(pAssetsEditor), 200);
+	//pVPanel->Add(new CTimeLine(pAssetsEditor), 200);
 	pPanel->Add(pVPanel, -1);
 	
 	pPanel->Add(new CAssetsInspector(pAssetsEditor), 280);
