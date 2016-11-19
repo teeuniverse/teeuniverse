@@ -1,0 +1,109 @@
+/*
+ * Copyright (C) 2016 necropotame (necropotame@gmail.com)
+ * 
+ * This file is part of TeeUniverses.
+ * 
+ * TeeUniverses is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * TeeUniverses is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef __CLIENT_GUI_INTEGEREDIT__
+#define __CLIENT_GUI_INTEGEREDIT__
+
+#include "listlayout.h"
+#include "text-edit.h"
+#include "button.h"
+	
+namespace gui
+{
+
+class CAbstractIntegerEdit : public CHListLayout
+{
+	class CEntry : public CAbstractTextEdit
+	{
+	protected:
+		CAbstractIntegerEdit* m_pIntegerEdit;
+		virtual void SaveFromTextBuffer();
+		virtual void CopyToTextBuffer();
+		
+	public:
+		CEntry(CAbstractIntegerEdit *pIntegerEdit);
+	};
+	
+	class CDecreaseButton : public CButton
+	{
+	protected:
+		CAbstractIntegerEdit* m_pIntegerEdit;
+		virtual void MouseClickAction();
+		
+	public:
+		CDecreaseButton(CAbstractIntegerEdit *pIntegerEdit);
+	};
+	
+	class CIncreaseButton : public CButton
+	{
+	protected:
+		CAbstractIntegerEdit* m_pIntegerEdit;
+		virtual void MouseClickAction();
+		
+	public:
+		CIncreaseButton(CAbstractIntegerEdit *pIntegerEdit);
+	};
+	
+protected:
+	CEntry* m_pEntry;
+	CWidget* m_pDecreaseButton;
+	CWidget* m_pIncreaseButton;
+	CAssetPath m_IntEditStylePath;
+
+protected:
+	virtual int GetValue() const = 0;
+	virtual void SetValue(int Value) = 0;
+	
+public:
+	CAbstractIntegerEdit(class CGui *pConfig);
+	
+	void Editable(bool Value);
+	
+	inline void SetIntEditStyle(CAssetPath Path) { m_IntEditStylePath = Path; }
+	inline CAssetPath GetIntEditStyle() const { return m_IntEditStylePath; }
+};
+
+class CIntegerEdit : public CAbstractIntegerEdit
+{
+protected:
+	int m_Value;
+
+protected:
+	virtual int GetValue() const;
+	virtual void SetValue(int Value);
+	
+public:
+	CIntegerEdit(class CGui *pConfig, int DefaultValue);
+};
+
+class CExternalIntegerEdit : public CAbstractIntegerEdit
+{
+protected:
+	int* m_Memory;
+
+protected:
+	virtual int GetValue() const;
+	virtual void SetValue(int Value);
+	
+public:
+	CExternalIntegerEdit(class CGui *pConfig, int* m_Memory);
+};
+
+}
+
+#endif

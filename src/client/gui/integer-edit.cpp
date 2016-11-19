@@ -1,0 +1,149 @@
+/*
+ * Copyright (C) 2016 necropotame (necropotame@gmail.com)
+ * 
+ * This file is part of TeeUniverses.
+ * 
+ * TeeUniverses is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ *
+ * TeeUniverses is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <client/components/assetsrenderer.h>
+#include <client/components/graphics.h>
+
+#include "integer-edit.h"
+	
+namespace gui
+{
+
+/* ABSTRACT INTEGER EDIT **********************************************/
+
+	//Entry
+CAbstractIntegerEdit::CEntry::CEntry(CAbstractIntegerEdit *pIntegerEdit) :
+	CAbstractTextEdit(pIntegerEdit->Context()),
+	m_pIntegerEdit(pIntegerEdit)
+{
+	
+}
+
+void CAbstractIntegerEdit::CEntry::SaveFromTextBuffer()
+{
+	m_pIntegerEdit->SetValue(atoi(GetText()));
+}
+
+void CAbstractIntegerEdit::CEntry::CopyToTextBuffer()
+{
+	str_format(m_aText, sizeof(m_aText), "%d", m_pIntegerEdit->GetValue());
+	OnTextUpdated();
+}
+
+	//Decrease Button
+CAbstractIntegerEdit::CDecreaseButton::CDecreaseButton(CAbstractIntegerEdit *pIntegerEdit) :
+	CButton(pIntegerEdit->Context(), ""),
+	m_pIntegerEdit(pIntegerEdit)
+{
+	
+}
+
+void CAbstractIntegerEdit::CDecreaseButton::MouseClickAction()
+{
+	m_pIntegerEdit->SetValue(m_pIntegerEdit->GetValue()-1);
+	m_pIntegerEdit->m_pEntry->RemoveChanges();
+}
+
+	//Increase Button
+CAbstractIntegerEdit::CIncreaseButton::CIncreaseButton(CAbstractIntegerEdit *pIntegerEdit) :
+	CButton(pIntegerEdit->Context(), ""),
+	m_pIntegerEdit(pIntegerEdit)
+{
+	
+}
+
+void CAbstractIntegerEdit::CIncreaseButton::MouseClickAction()
+{
+	m_pIntegerEdit->SetValue(m_pIntegerEdit->GetValue()+1);
+	m_pIntegerEdit->m_pEntry->RemoveChanges();
+}
+
+	//Integer Edit
+CAbstractIntegerEdit::CAbstractIntegerEdit(CGui *pContext) :
+	CHListLayout(pContext),
+	m_pEntry(0)
+{
+	SetIntEditStyle(Context()->GetIntEditStyle());
+	
+	m_pEntry = new CAbstractIntegerEdit::CEntry(this);
+	m_pEntry->SetLabelStyle(Context()->GetNumericEntryStyle());
+	
+	m_pDecreaseButton = new CAbstractIntegerEdit::CDecreaseButton(this);
+	m_pIncreaseButton = new CAbstractIntegerEdit::CIncreaseButton(this);
+	
+	Add(m_pEntry, true);
+	Add(m_pDecreaseButton, false);
+	Add(m_pIncreaseButton, false);
+}
+
+void CAbstractIntegerEdit::Editable(bool Value)
+{
+	m_pEntry->Editable(Value);
+	
+	if(Value)
+	{
+		m_pDecreaseButton->Enable();
+		m_pIncreaseButton->Enable();
+	}
+	else
+	{
+		m_pDecreaseButton->Disable();
+		m_pIncreaseButton->Disable();
+	}
+}
+
+
+/* INTEGER EDIT *******************************************************/
+
+CIntegerEdit::CIntegerEdit(CGui* pContext, int DefaultValue) :
+	CAbstractIntegerEdit(pContext),
+	m_Value(DefaultValue)
+{
+	
+}
+	
+void CIntegerEdit::SetValue(int Value)
+{
+	m_Value = Value;
+}
+	
+int CIntegerEdit::GetValue() const
+{
+	return m_Value;
+}
+
+/* EXTERNAL INTEGER EDIT **********************************************/
+
+CExternalIntegerEdit::CExternalIntegerEdit(CGui* pContext, int* Memory) :
+	CAbstractIntegerEdit(pContext),
+	m_Memory(Memory)
+{
+	
+}
+	
+void CExternalIntegerEdit::SetValue(int v)
+{
+	*m_Memory = v;
+}
+	
+int CExternalIntegerEdit::GetValue() const
+{
+	return *m_Memory;
+}
+
+}
