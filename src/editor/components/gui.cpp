@@ -1088,6 +1088,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
 		m_Path_Sprite_GizmoPivot = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoPivot");
+		m_Path_Sprite_GizmoVertexBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBg");
+		m_Path_Sprite_GizmoVertexFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexFg");
 	}
 	
 	//Init default path to the GUI

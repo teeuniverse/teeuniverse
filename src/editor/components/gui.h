@@ -135,6 +135,8 @@ public:
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
 	CAssetPath m_Path_Sprite_GizmoPivot;
+	CAssetPath m_Path_Sprite_GizmoVertexBg;
+	CAssetPath m_Path_Sprite_GizmoVertexFg;
 
 public:
 	CGuiEditor(CEditorKernel* pKernel);

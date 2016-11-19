@@ -50,6 +50,7 @@ protected:
 	
 	CView::CCursorTool* m_pCursorTool_TileStamp;
 	CView::CCursorTool* m_pCursorTool_QuadTransform;
+	CView::CCursorTool* m_pCursorTool_QuadEdit;
 
 public:
 	CViewMap(CGuiEditor* pAssetsEditor);

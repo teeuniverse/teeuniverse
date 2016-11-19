@@ -49,7 +49,6 @@ public:
 	};
 	
 protected:
-	CSubPath m_SelectedQuad;
 	int m_SelectedGizmo;
 	int m_GizmoType;
 	int m_DragType;
@@ -60,6 +59,33 @@ protected:
 	
 public:
 	CCursorTool_QuadTransform(CViewMap* pViewMap);
+	virtual void OnViewButtonClick(int Button);
+	virtual void OnViewButtonRelease(int Button);
+	virtual void OnViewMouseMove();
+	virtual void RenderView();
+	virtual void Update(bool ParentEnabled);
+};
+
+class CCursorTool_QuadEdit : public CCursorTool_QuadPicker
+{
+public:
+	enum
+	{
+		VERTEX0=0,
+		VERTEX1,
+		VERTEX2,
+		VERTEX3,
+		VERTEX_PIVOT,
+		VERTEX_NONE,
+	};
+	
+protected:
+	vec2 m_ClickDiff;
+	int m_Vertex;
+	int m_Token;
+	
+public:
+	CCursorTool_QuadEdit(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

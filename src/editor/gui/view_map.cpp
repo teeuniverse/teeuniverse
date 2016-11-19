@@ -40,6 +40,9 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_QuadTransform = new CCursorTool_QuadTransform(this);
 	m_pToolbar->Add(m_pCursorTool_QuadTransform);
 	
+	m_pCursorTool_QuadEdit = new CCursorTool_QuadEdit(this);
+	m_pToolbar->Add(m_pCursorTool_QuadEdit);
+	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
 }
 
