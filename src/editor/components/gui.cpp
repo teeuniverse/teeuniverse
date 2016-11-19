@@ -693,20 +693,7 @@ protected:
 				pMapLayerQuads->SetQuadColor0(SubPath, ColorTop);
 				pMapLayerQuads->SetQuadColor1(SubPath, ColorTop);
 				pMapLayerQuads->SetQuadColor2(SubPath, ColorBottom);
-				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);			
-				
-				//Playground
-				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "playground", Tokken);
-				SubPath = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
-				pMap->SetFgGroup(SubPath, SubAssetPath);
-				
-					//Ground
-				pMapLayerTiles = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "ground", Tokken);
-				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
-				pMapGroup->SetLayer(SubPath, SubAssetPath);
-				
+				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);
 				break;
 			}
 			case CAsset_MapGroup::TypeId:
