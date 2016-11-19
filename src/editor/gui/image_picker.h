@@ -16,25 +16,34 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDITOR_VIEWIMAGE__
-#define __EDITOR_VIEWIMAGE__
+#ifndef __EDITOR_IMAGEPICKER__
+#define __EDITOR_IMAGEPICKER__
 
-#include <client/gui/listlayout.h>
-#include <editor/gui/view.h>
-#include <editor/gui/image_picker.h>
+#include <client/gui/widget.h>
 
-class CViewImage : public CViewManager::CView
+class CImagePicker : public gui::CWidget
 {
 protected:
-	CImagePicker* m_pImageWidget;
-	
+	class CGuiEditor* m_pAssetsEditor;
+	CAssetPath m_ImagePath;
+	bool m_SelectionEnabled;
+	ivec2 m_Pivot;
+	bool m_DragSelection;
+
+protected:
+	virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY) {};
+
 public:
-	CViewImage(CGuiEditor* pAssetsEditor);
-	virtual void RenderView();
-	virtual void Destroy();
+	CImagePicker(CGuiEditor* pAssetsEditor, CAssetPath ImagePath);
+	
 	virtual void UpdateBoundingSize();
-	virtual void UpdatePosition(const gui::CRect& BoundingRect, const gui::CRect& VisibilityRect);
-	virtual void Update(bool ParentEnabled);
+	virtual void Render();
+	
+	virtual void OnButtonClick(int Button);
+	virtual void OnButtonRelease(int Button);
+	
+	inline void SetImage(const CAssetPath& ImagePath) { m_ImagePath = ImagePath; }
+	inline void EnableSelection() { m_SelectionEnabled = true; }
 };
 
 #endif

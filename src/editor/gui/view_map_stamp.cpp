@@ -17,6 +17,7 @@
  */
 
 #include <editor/gui/view_map_stamp.h>
+#include <editor/gui/image_picker.h>
 #include <editor/components/gui.h>
 #include <client/components/assetsrenderer.h>
 #include <client/gui/popup.h>
@@ -158,6 +159,52 @@ public:
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
+class CPopup_TilePalette : public gui::CPopup
+{
+protected:
+	class CPaletteImagePicker : public CImagePicker
+	{
+	protected:
+		CPopup_TilePalette* m_pPopup;
+		CCursorTool_TileStamp* m_pCursorTool;
+		
+	protected:
+		virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY)
+		{
+			m_pCursorTool->PaletteCallback_SelectImage(m_ImagePath, MinX, MinY, MaxX, MaxY);
+			m_pPopup->Close();
+		}
+	
+	public:
+		CPaletteImagePicker(CCursorTool_TileStamp* pCursorTool, CPopup_TilePalette* pPopup, CAssetPath ImagePath) :
+			CImagePicker(pCursorTool->AssetsEditor(), ImagePath),
+			m_pCursorTool(pCursorTool),
+			m_pPopup(pPopup)
+		{
+			
+		}
+	};
+	
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CAssetPath m_ImagePath;
+	
+public:
+	CPopup_TilePalette(CGuiEditor* pAssetsEditor, CCursorTool_TileStamp* pCursorTool, const gui::CRect& CreatorRect, CAssetPath ImagePath) :
+		gui::CPopup(pAssetsEditor, CreatorRect, CreatorRect.w-16, CreatorRect.h-16, gui::CPopup::ALIGNMENT_INNER),
+		m_pAssetsEditor(pAssetsEditor),
+		m_ImagePath(ImagePath)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+		
+		CImagePicker* pImagePicker = new CPaletteImagePicker(pCursorTool, this, m_ImagePath);
+		pImagePicker->EnableSelection();
+		Add(pImagePicker);
+	}
+	
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
 CCursorTool_TileStamp::CCursorTool_TileStamp(CViewMap* pViewMap) :
 	CCursorTool(pViewMap, "Stamp", pViewMap->AssetsEditor()->m_Path_Sprite_IconStamp)
 {
@@ -193,6 +240,14 @@ void CCursorTool_TileStamp::OnViewButtonClick(int Button)
 					return;
 			
 				Context()->DisplayPopup(new CPopup_ZonePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetZoneTypePath()));
+			}
+			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
+			{
+				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+				if(!pLayer)
+					return;
+				
+				Context()->DisplayPopup(new CPopup_TilePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
 			}
 		}
 	}
@@ -420,6 +475,35 @@ void CCursorTool_TileStamp::Update(bool ParentEnabled)
 	CCursorTool::Update(ParentEnabled);
 }
 	
+void CCursorTool_TileStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY)
+{
+	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(ImagePath);
+	if(pImage)
+	{
+		int Width = MaxX-MinX;
+		int Height = MaxY-MinY;
+		
+		m_Selection.resize(Width, Height);
+		
+		for(int j=0; j<Height; j++)
+		{
+			for(int i=0; i<Width; i++)
+			{
+				int Index = (MinY + j) * pImage->GetGridWidth() + MinX + i;
+				m_Selection.get_clamp(i, j).SetIndex(Index);
+				m_Selection.get_clamp(i, j).SetFlags(0x0);
+			}
+		}
+	}
+	else
+	{
+		m_Selection.resize(1, 1);
+		m_Selection.get_clamp(0, 0).SetIndex(0);	
+		m_Selection.get_clamp(0, 0).SetFlags(0x0);
+	}
+	m_SelectionEnabled = true;
+}
+	
 void CCursorTool_TileStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index)
 {
 	int Number = 0;
@@ -429,6 +513,7 @@ void CCursorTool_TileStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePa
 		Number = pZoneType->GetIndexNumber(Index);
 	
 	m_Selection.resize(1, 1);
-	m_Selection.get_clamp(0, 0).SetIndex(Number);		
+	m_Selection.get_clamp(0, 0).SetIndex(Number);
+	m_Selection.get_clamp(0, 0).SetFlags(0x0);		
 	m_SelectionEnabled = true;
 }

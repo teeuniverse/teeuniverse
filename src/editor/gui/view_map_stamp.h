@@ -38,6 +38,7 @@ public:
 	virtual void OnViewMouseMove();
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
+	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
 	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index);
 };
 
