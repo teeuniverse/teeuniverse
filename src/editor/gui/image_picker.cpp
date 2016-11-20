@@ -36,17 +36,13 @@ void CImagePicker::UpdateBoundingSize()
 {
 	m_BoundingSizeRect.BSNoConstraint();
 }
-	
-void CImagePicker::OnButtonClick(int Button)
+
+void CImagePicker::ComputeImageSizes(const CAsset_Image* pImage, float& x0, float& y0, float& xStep, float& yStep)
 {
-	if(!m_SelectionEnabled || Button != KEY_MOUSE_1)
-		return;
+	int Width = pImage->GetDataWidth() - 2*(pImage->GetGridWidth())*pImage->GetGridSpacing();
+	int Height = pImage->GetDataHeight() - 2*(pImage->GetGridHeight())*pImage->GetGridSpacing();
 	
-	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
-	if(!pImage)
-		return;
-	
-	float ImgRatio = static_cast<float>(pImage->GetDataWidth())/static_cast<float>(pImage->GetDataHeight());
+	float ImgRatio = static_cast<float>(Width)/static_cast<float>(Height);
 	float WindowRatio = static_cast<float>(m_DrawRect.w)/static_cast<float>(m_DrawRect.h);
 	float SizeX;
 	float SizeY;
@@ -62,11 +58,27 @@ void CImagePicker::OnButtonClick(int Button)
 		SizeY = m_DrawRect.h;
 	}
 	
-	float x0 = m_DrawRect.x + m_DrawRect.w/2 - SizeX/2;
-	float y0 = m_DrawRect.y + m_DrawRect.h/2 - SizeY/2;
-	float xStep = SizeX / static_cast<float>(max(1, pImage->GetGridWidth()));
-	float yStep = SizeY / static_cast<float>(max(1, pImage->GetGridHeight()));
-
+	x0 = m_DrawRect.x + m_DrawRect.w/2 - SizeX/2;
+	y0 = m_DrawRect.y + m_DrawRect.h/2 - SizeY/2;
+	xStep = SizeX / static_cast<float>(max(1, pImage->GetGridWidth()));
+	yStep = SizeY / static_cast<float>(max(1, pImage->GetGridHeight()));
+}
+	
+void CImagePicker::OnButtonClick(int Button)
+{
+	if(!m_SelectionEnabled || Button != KEY_MOUSE_1)
+		return;
+	
+	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
+	if(!pImage)
+		return;
+	
+	float x0;
+	float y0;
+	float xStep;
+	float yStep;
+	ComputeImageSizes(pImage, x0, y0, xStep, yStep);
+	
 	ivec2 MousePos = Context()->GetMousePos();
 	
 	m_Pivot.x = clamp((int)((MousePos.x - x0) / xStep), 0, pImage->GetGridWidth()-1);
@@ -87,26 +99,11 @@ void CImagePicker::OnButtonRelease(int Button)
 		if(!pImage)
 			return;
 		
-		float ImgRatio = static_cast<float>(pImage->GetDataWidth())/static_cast<float>(pImage->GetDataHeight());
-		float WindowRatio = static_cast<float>(m_DrawRect.w)/static_cast<float>(m_DrawRect.h);
-		float SizeX;
-		float SizeY;
-		
-		if(ImgRatio > WindowRatio)
-		{
-			SizeX = m_DrawRect.w;
-			SizeY = m_DrawRect.w/ImgRatio;
-		}
-		else
-		{
-			SizeX = m_DrawRect.h*ImgRatio;
-			SizeY = m_DrawRect.h;
-		}
-		
-		float x0 = m_DrawRect.x + m_DrawRect.w/2 - SizeX/2;
-		float y0 = m_DrawRect.y + m_DrawRect.h/2 - SizeY/2;
-		float xStep = SizeX / static_cast<float>(max(1, pImage->GetGridWidth()));
-		float yStep = SizeY / static_cast<float>(max(1, pImage->GetGridHeight()));
+		float x0;
+		float y0;
+		float xStep;
+		float yStep;
+		ComputeImageSizes(pImage, x0, y0, xStep, yStep);
 		
 		ivec2 MousePos = Context()->GetMousePos();
 		ivec2 MouseImagePos;
@@ -131,35 +128,29 @@ void CImagePicker::Render()
 	if(!pImage)
 		return;
 	
-	float ImgRatio = static_cast<float>(pImage->GetDataWidth())/static_cast<float>(pImage->GetDataHeight());
-	float WindowRatio = static_cast<float>(m_DrawRect.w)/static_cast<float>(m_DrawRect.h);
-	float SizeX;
-	float SizeY;
-	
-	if(ImgRatio > WindowRatio)
-	{
-		SizeX = m_DrawRect.w;
-		SizeY = m_DrawRect.w/ImgRatio;
-	}
-	else
-	{
-		SizeX = m_DrawRect.h*ImgRatio;
-		SizeY = m_DrawRect.h;
-	}
-	
-	float x0 = m_DrawRect.x + m_DrawRect.w/2 - SizeX/2;
-	float y0 = m_DrawRect.y + m_DrawRect.h/2 - SizeY/2;
-	float x1 = x0 + SizeX;
-	float y1 = y0 + SizeY;
-	float xStep = SizeX / static_cast<float>(max(1, pImage->GetGridWidth()));
-	float yStep = SizeY / static_cast<float>(max(1, pImage->GetGridHeight()));
+	float x0;
+	float y0;
+	float xStep;
+	float yStep;
+	ComputeImageSizes(pImage, x0, y0, xStep, yStep);
 	
 	//Draw image
+	float CellUStep = 1.0f / static_cast<float>(pImage->GetGridWidth());
+	float CellVStep = 1.0f / static_cast<float>(pImage->GetGridHeight());
+	float CellUSpacing = pImage->GetGridSpacing() / static_cast<float>(pImage->GetDataWidth());
+	float CellVSpacing = pImage->GetGridSpacing() / static_cast<float>(pImage->GetDataHeight());
 	AssetsRenderer()->TextureSet(m_ImagePath);
 	
 	Graphics()->QuadsBegin();
-	CGraphics::CQuadItem QuadItem(x0, y0, SizeX, SizeY);
-	Graphics()->QuadsDrawTL(&QuadItem, 1);
+	for(int j=0; j<pImage->GetGridHeight(); j++)
+	{
+		for(int i=0; i<pImage->GetGridWidth(); i++)
+		{
+			Graphics()->QuadsSetSubset(i*CellUStep + CellUSpacing, j*CellVStep + CellVSpacing, (i+1)*CellUStep - CellUSpacing, (j+1)*CellVStep - CellUSpacing);
+			CGraphics::CQuadItem QuadItem(x0 + xStep*i, y0 + yStep*j, xStep, yStep);
+			Graphics()->QuadsDrawTL(&QuadItem, 1);
+		}
+	}
 	Graphics()->QuadsEnd();
 	
 	//Draw grid
@@ -170,13 +161,13 @@ void CImagePicker::Render()
 	for(int i=0; i<=pImage->GetGridWidth(); i++)
 	{
 		float x = x0 + i * xStep;
-		CGraphics::CLineItem Line(x, y0, x, y1);
+		CGraphics::CLineItem Line(x, y0, x, y0 + yStep * pImage->GetGridHeight());
 		Graphics()->LinesDraw(&Line, 1);
 	}
 	for(int i=0; i<=pImage->GetGridHeight(); i++)
 	{
 		float y = y0 + i * yStep;
-		CGraphics::CLineItem Line(x0, y, x1, y);
+		CGraphics::CLineItem Line(x0, y, x0 + xStep * pImage->GetGridWidth(), y);
 		Graphics()->LinesDraw(&Line, 1);
 	}
 	

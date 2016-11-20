@@ -1022,6 +1022,7 @@ void CGuiEditor::LoadAssets()
 	m_LabelStyle = m_Path_Label_Text;
 	m_LabelHeaderStyle = m_Path_Label_Header;
 	m_ButtonStyle = m_Path_Button_Default;
+	m_ToggleStyle = m_Path_Toggle_Toolbar;
 	m_IntEditStyle = m_Path_IntEdit_Default;
 	m_ColorEditStyle = m_Path_ColorEdit_Default;
 	m_TextEntryStyle = m_Path_Button_TextEdit;

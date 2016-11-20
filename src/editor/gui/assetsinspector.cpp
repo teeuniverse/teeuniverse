@@ -23,6 +23,7 @@
 #include <client/gui/integer-edit.h>
 #include <client/gui/float-edit.h>
 #include <client/gui/color-edit.h>
+#include <client/gui/toggle.h>
 #include <client/gui/popup.h>
 #include <client/gui/expand.h>
 #include <shared/components/localization.h>
@@ -170,6 +171,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 	AddField_Integer(pTab, CAsset_Image::TEXELSIZE, "Texel size");
 	AddField_Integer(pTab, CAsset_Image::GRIDWIDTH, "Grid width");
 	AddField_Integer(pTab, CAsset_Image::GRIDHEIGHT, "Grid height");
+	AddField_Integer(pTab, CAsset_Image::GRIDSPACING, "Grid spacing");
+	AddField_Bool(pTab, CAsset_Image::TILINGENABLED, "Compatible with tiles");
 	
 	return pTab;
 }
@@ -699,6 +702,52 @@ void CAssetsInspector::AddField_Integer_NoEdit(gui::CVListLayout* pList, int Mem
 		Member
 	);
 	pWidget->Editable(false);
+	
+	AddField(pList, pWidget, pLabelText);
+}
+
+/* BOOL EDIT **********************************************************/
+	
+class CMemberBoolEdit : public gui::CAbstractToggle
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	
+	virtual bool GetValue()
+	{
+		return m_pAssetsEditor->AssetsManager()->GetAssetValue<bool>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			0
+		);
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		m_pAssetsEditor->AssetsManager()->SetAssetValue<bool>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			Value
+		);
+	}
+	
+public:
+	CMemberBoolEdit(CGuiEditor* pAssetsEditor, int Member) :
+		gui::CAbstractToggle(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member)
+	{ }
+};
+
+void CAssetsInspector::AddField_Bool(gui::CVListLayout* pList, int Member, const char* pLabelText)
+{
+	CMemberBoolEdit* pWidget = new CMemberBoolEdit(
+		m_pAssetsEditor,
+		Member
+	);
 	
 	AddField(pList, pWidget, pLabelText);
 }

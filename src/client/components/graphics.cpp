@@ -1034,7 +1034,7 @@ bool CGraphics::PreUpdate()
 			UnloadTexture(&Texture);
 		
 		int Flags = 0x0;
-		if(pImage->GetGridWidth() > 1 || pImage->GetGridHeight() > 1)
+		if(pImage->GetTilingEnabled() && pImage->GetGridWidth() == 16 || pImage->GetGridHeight() == 16)
 			Flags = CGraphics::TEXLOAD_MULTI_DIMENSION;
 		
 		const array2d<uint8>& Data = pImage->GetDataArray();

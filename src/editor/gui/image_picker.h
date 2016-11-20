@@ -20,6 +20,7 @@
 #define __EDITOR_IMAGEPICKER__
 
 #include <client/gui/widget.h>
+#include <generated/assets/image.h>
 
 class CImagePicker : public gui::CWidget
 {
@@ -31,6 +32,7 @@ protected:
 	bool m_DragSelection;
 
 protected:
+	void ComputeImageSizes(const CAsset_Image* pImage, float& x0, float& y0, float& xStep, float& yStep);
 	virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY) {};
 
 public:

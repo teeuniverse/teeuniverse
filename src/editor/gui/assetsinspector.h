@@ -56,6 +56,7 @@ private:
 private:
 	void AddField(gui::CVListLayout* pList, gui::CWidget* pWidget, const char* pLabelText);
 	void AddField_Text(gui::CVListLayout* pList, int Member, const char* pLabelText);
+	void AddField_Bool(gui::CVListLayout* pList, int Member, const char* pLabelText);
 	void AddField_Integer(gui::CVListLayout* pList, int Member, const char* pLabelText);
 	void AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const char* pLabelText);
 	void AddField_Color(gui::CVListLayout* pList, int Member, const char* pLabelText);

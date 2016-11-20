@@ -389,6 +389,16 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 	int MinY = MinTilePos.y-1;
 	int MaxY = MaxTilePos.y+1;
 	
+	float USpacing = 0.0f;
+	float VSpacing = 0.0f;
+	
+	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(ImagePath);
+	if(pImage)
+	{
+		USpacing = pImage->GetGridSpacing() * pImage->GetGridWidth() / static_cast<float>(pImage->GetDataWidth());
+		VSpacing = pImage->GetGridSpacing() * pImage->GetGridHeight() / static_cast<float>(pImage->GetDataHeight());
+	}
+	
 	for(int j=MinY; j<MaxY; j++)
 	{
 		for(int i=MinX; i<=MaxX; i++)
@@ -400,14 +410,14 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 			{
 				vec2 TilePos = MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
 				
-				float x0 = 0;
-				float y0 = 0;
-				float x1 = 1;
-				float y1 = 0;
-				float x2 = 1;
-				float y2 = 1;
-				float x3 = 0;
-				float y3 = 1;
+				float x0 = USpacing;
+				float y0 = VSpacing;
+				float x1 = 1.0f-USpacing;
+				float y1 = VSpacing;
+				float x2 = 1.0f-USpacing;
+				float y2 = 1.0f-VSpacing;
+				float x3 = USpacing;
+				float y3 = 1.0f-VSpacing;
 
 				if(Tile.GetFlags()&CAsset_MapLayerTiles::TILEFLAG_VFLIP)
 				{

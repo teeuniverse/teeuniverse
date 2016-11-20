@@ -120,7 +120,7 @@ void CreateNewImage_CopyData(png_t& Png, unsigned char*& pBuffer, CAsset_Image* 
 	delete[] pBuffer;
 }
 
-CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int GridWidth, int GridHeight)
+CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int GridWidth, int GridHeight, bool TilingEnabled, int GridSpacing)
 {
 	png_t Png;
 	unsigned char* pBuffer;
@@ -134,6 +134,8 @@ CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pNa
 	pImage->SetName(pName);
 	pImage->SetGridWidth(GridWidth < 1 ? Png.width/64 : GridWidth);
 	pImage->SetGridHeight(GridHeight < 1 ? Png.height/64 : GridHeight);
+	pImage->SetGridSpacing(GridSpacing);
+	pImage->SetTilingEnabled(GridWidth == 16 && GridHeight == 16 && TilingEnabled);
 	
 	CreateNewImage_CopyData(Png, pBuffer, pImage);
 	

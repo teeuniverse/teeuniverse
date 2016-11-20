@@ -601,10 +601,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					ArchiveFile.UnloadData(pItem->m_ImageName);
 				}
 				
-				unsigned char* pData = (unsigned char*) ArchiveFile.GetData(pItem->m_ImageData);
-				pImage->SetGridWidth(pItem->m_Width/64);
-				pImage->SetGridHeight(pItem->m_Height/64);
-				
+				unsigned char* pData = (unsigned char*) ArchiveFile.GetData(pItem->m_ImageData);				
 				array2d<uint8>& Data = pImage->GetDataArray();
 				
 				if(pItem->m_Version <= 1 || pItem->m_Format == CImageInfo::FORMAT_RGBA)
@@ -974,7 +971,14 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						//Image
 						if(pTilemapItem->m_Image >= 0)
+						{
 							pMapLayer->SetImagePath(pImagePath[pTilemapItem->m_Image]);
+							
+							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDWIDTH, 16, CAssetsHistory::NO_TOKEN);
+							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDHEIGHT, 16, CAssetsHistory::NO_TOKEN);
+							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDSPACING, 1, CAssetsHistory::NO_TOKEN);
+							SetAssetValue<bool>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::TILINGENABLED, true, CAssetsHistory::NO_TOKEN);
+						}
 						
 						//Color
 						vec4 Color;

@@ -57,7 +57,9 @@ public:
 		NAME = CAsset::NAME,
 		GRIDWIDTH,
 		GRIDHEIGHT,
+		GRIDSPACING,
 		TEXELSIZE,
+		TILINGENABLED,
 		DATA_WIDTH,
 		DATA_HEIGHT,
 		DATA_PTR,
@@ -70,7 +72,9 @@ public:
 	public:
 		tua_int32 m_GridWidth;
 		tua_int32 m_GridHeight;
+		tua_int32 m_GridSpacing;
 		tua_int32 m_TexelSize;
+		tua_uint8 m_TilingEnabled;
 		CTuaArray2d m_Data;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Image& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType& TuaType);
@@ -80,7 +84,9 @@ public:
 private:
 	int m_GridWidth;
 	int m_GridHeight;
+	int m_GridSpacing;
 	int m_TexelSize;
+	bool m_TilingEnabled;
 	array2d< uint8, allocator_default<uint8> > m_Data;
 
 public:
@@ -106,7 +112,9 @@ public:
 		CAsset::copy(Item);
 		m_GridWidth = Item.m_GridWidth;
 		m_GridHeight = Item.m_GridHeight;
+		m_GridSpacing = Item.m_GridSpacing;
 		m_TexelSize = Item.m_TexelSize;
+		m_TilingEnabled = Item.m_TilingEnabled;
 		m_Data.copy(Item.m_Data);
 	}
 	
@@ -115,7 +123,9 @@ public:
 		CAsset::transfert(Item);
 		m_GridWidth = Item.m_GridWidth;
 		m_GridHeight = Item.m_GridHeight;
+		m_GridSpacing = Item.m_GridSpacing;
 		m_TexelSize = Item.m_TexelSize;
+		m_TilingEnabled = Item.m_TilingEnabled;
 		m_Data.transfert(Item.m_Data);
 	}
 	
@@ -123,7 +133,11 @@ public:
 	
 	inline int GetGridHeight() const { return m_GridHeight; }
 	
+	inline int GetGridSpacing() const { return m_GridSpacing; }
+	
 	inline int GetTexelSize() const { return m_TexelSize; }
+	
+	inline bool GetTilingEnabled() const { return m_TilingEnabled; }
 	
 	inline int GetDataWidth() const { return m_Data.get_width(); }
 	
@@ -140,7 +154,11 @@ public:
 	
 	inline void SetGridHeight(int Value) { m_GridHeight = Value; }
 	
+	inline void SetGridSpacing(int Value) { m_GridSpacing = Value; }
+	
 	inline void SetTexelSize(int Value) { m_TexelSize = Value; }
+	
+	inline void SetTilingEnabled(bool Value) { m_TilingEnabled = Value; }
 	
 	inline void SetDataWidth(int Value) { m_Data.resize_width(max(Value, 1)); }
 	

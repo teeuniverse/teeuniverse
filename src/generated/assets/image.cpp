@@ -37,7 +37,9 @@ CAsset_Image::CAsset_Image()
 {
 	m_GridWidth = 1;
 	m_GridHeight = 1;
+	m_GridSpacing = 0;
 	m_TexelSize = 1024;
+	m_TilingEnabled = false;
 }
 
 void CAsset_Image::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Image& SysType)
@@ -46,7 +48,9 @@ void CAsset_Image::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const
 
 	SysType.m_GridWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridWidth);
 	SysType.m_GridHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridHeight);
+	SysType.m_GridSpacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridSpacing);
 	SysType.m_TexelSize = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TexelSize);
+	SysType.m_TilingEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TilingEnabled);
 	{
 		const tua_uint8* pData = (const tua_uint8*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Data.m_Data);
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Width);
@@ -65,7 +69,9 @@ void CAsset_Image::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, cons
 
 	TuaType.m_GridWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridWidth);
 	TuaType.m_GridHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridHeight);
+	TuaType.m_GridSpacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridSpacing);
 	TuaType.m_TexelSize = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TexelSize);
+	TuaType.m_TilingEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TilingEnabled);
 	{
 		TuaType.m_Data.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Data.get_width());
 		TuaType.m_Data.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Data.get_height());
@@ -83,6 +89,8 @@ int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultVa
 			return GetGridWidth();
 		case GRIDHEIGHT:
 			return GetGridHeight();
+		case GRIDSPACING:
+			return GetGridSpacing();
 		case TEXELSIZE:
 			return GetTexelSize();
 		case DATA_WIDTH:
@@ -103,6 +111,9 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 			return true;
 		case GRIDHEIGHT:
 			SetGridHeight(Value);
+			return true;
+		case GRIDSPACING:
+			SetGridSpacing(Value);
 			return true;
 		case TEXELSIZE:
 			SetTexelSize(Value);
@@ -138,6 +149,29 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value
 			return true;
 	}
 	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
+}
+
+template<>
+bool CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case TILINGENABLED:
+			return GetTilingEnabled();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case TILINGENABLED:
+			SetTilingEnabled(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
 }
 
 int CAsset_Image::AddSubItem(int Type, const CSubPath& SubPath)

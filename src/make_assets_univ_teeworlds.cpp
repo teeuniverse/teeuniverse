@@ -92,8 +92,8 @@ int main(int argc, const char **argv)
 	
 	/* ENV DESERT */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_desert");
-	CreateNewImage(pKernel, PackageId, "desertMain", "datasrc/images/env_desert/desert_main.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "desertDoodads", "datasrc/images/env_desert/desert_doodads.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "desertMain", "datasrc/images/env_desert/desert_main.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "desertDoodads", "datasrc/images/env_desert/desert_doodads.png", 16, 16, true, 1);
 	CreateNewImage(pKernel, PackageId, "desertMountains1", "datasrc/images/env_desert/desert_mountains.png", 1, 1);
 	CreateNewImage(pKernel, PackageId, "desertMountains2", "datasrc/images/env_desert/desert_mountains2.png", 1, 1);
 	CreateNewImage(pKernel, PackageId, "desertSun", "datasrc/images/env_desert/desert_sun.png", 1, 1);
@@ -101,24 +101,24 @@ int main(int argc, const char **argv)
 	
 	/* ENV GENERIC */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_generic");
-	CreateNewImage(pKernel, PackageId, "genericSpikes", "datasrc/images/env_generic/generic_deathtiles.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "genericUnhookable", "datasrc/images/env_generic/generic_unhookable.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "genericSpikes", "datasrc/images/env_generic/generic_deathtiles.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "genericUnhookable", "datasrc/images/env_generic/generic_unhookable.png", 16, 16, true, 1);
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV GRASS */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_grass");
-	CreateNewImage(pKernel, PackageId, "grassMain", "datasrc/images/env_grass/grass_main.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "grassDoodads", "datasrc/images/env_grass/grass_doodads.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "grassMain", "datasrc/images/env_grass/grass_main.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "grassDoodads", "datasrc/images/env_grass/grass_doodads.png", 16, 16, true, 1);
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV JUNGLE */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_jungle");
-	CreateNewImage(pKernel, PackageId, "jungleMain", "datasrc/images/env_jungle/jungle_main.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "jungleDoodads", "datasrc/images/env_jungle/jungle_doodads.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "jungleSpikes", "datasrc/images/env_jungle/jungle_deathtiles.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "jungleUnhookable", "datasrc/images/env_jungle/jungle_unhookables.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "jungleMain", "datasrc/images/env_jungle/jungle_main.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "jungleDoodads", "datasrc/images/env_jungle/jungle_doodads.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "jungleSpikes", "datasrc/images/env_jungle/jungle_deathtiles.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "jungleUnhookable", "datasrc/images/env_jungle/jungle_unhookables.png", 16, 16, true, 1);
 	CreateNewImage(pKernel, PackageId, "jungleBackground", "datasrc/images/env_jungle/jungle_background.png", 1, 1);
-	CreateNewImage(pKernel, PackageId, "jungleMidground", "datasrc/images/env_jungle/jungle_midground.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "jungleMidground", "datasrc/images/env_jungle/jungle_midground.png", 16, 16, true, 1);
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV MOON */
@@ -148,8 +148,8 @@ int main(int argc, const char **argv)
 	
 	/* ENV WINTER */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_winter");
-	CreateNewImage(pKernel, PackageId, "winterMain", "datasrc/images/env_winter/winter_main.png", 16, 16);
-	CreateNewImage(pKernel, PackageId, "winterDoodads", "datasrc/images/env_winter/winter_doodads.png", 16, 16);
+	CreateNewImage(pKernel, PackageId, "winterMain", "datasrc/images/env_winter/winter_main.png", 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "winterDoodads", "datasrc/images/env_winter/winter_doodads.png", 16, 16, true, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains1", "datasrc/images/env_winter/winter_mountains.png", 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains2", "datasrc/images/env_winter/winter_mountains2.png", 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains3", "datasrc/images/env_winter/winter_mountains3.png", 1, 1);
