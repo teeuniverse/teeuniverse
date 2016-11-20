@@ -79,7 +79,7 @@ public:
 class CColorSliderEdit : public gui::CWidget
 {
 protected:
-	CAbstractColorEdit* m_pColorEdit;	
+	CAbstractColorEdit* m_pColorEdit;
 	bool m_Clicked;
 	
 public:
@@ -120,9 +120,9 @@ public:
 	virtual void OnMouseMove()
 	{
 		ivec2 MousePos = Context()->GetMousePos();
-		if(m_DrawRect.IsInside(MousePos) && m_Clicked)
+		if(m_Clicked)
 		{
-			float Value = static_cast<float>(MousePos.x - m_DrawRect.x)/static_cast<float>(m_DrawRect.w);
+			float Value = clamp(static_cast<float>(MousePos.x - m_DrawRect.x)/static_cast<float>(m_DrawRect.w), 0.0f, 1.0f);
 			m_pColorEdit->SetValue(GetSliderValue(Value));
 		}
 	}
@@ -386,9 +386,9 @@ public:
 	virtual void OnMouseMove()
 	{
 		ivec2 MousePos = Context()->GetMousePos();
-		if(m_DrawRect.IsInside(MousePos) && m_Clicked)
+		if(m_Clicked)
 		{
-			float Value = static_cast<float>(MousePos.y - m_DrawRect.y)/static_cast<float>(m_DrawRect.h);
+			float Value = clamp(static_cast<float>(MousePos.y - m_DrawRect.y)/static_cast<float>(m_DrawRect.h), 0.0f, 1.0f);
 			m_pColorEdit->SetValue(GetSliderValue(Value));
 		}
 	}
@@ -494,11 +494,12 @@ public:
 	
 	virtual void OnMouseMove()
 	{
-		ivec2 MousePos = Context()->GetMousePos();
-		if(m_DrawRect.IsInside(MousePos) && m_Clicked)
+		if(m_Clicked)
 		{
-			float Value0 = static_cast<float>(MousePos.x - m_DrawRect.x)/static_cast<float>(m_DrawRect.w);
-			float Value1 = 1.0f - static_cast<float>(MousePos.y - m_DrawRect.y)/static_cast<float>(m_DrawRect.h);
+			ivec2 MousePos = Context()->GetMousePos();
+			
+			float Value0 = clamp(static_cast<float>(MousePos.x - m_DrawRect.x)/static_cast<float>(m_DrawRect.w), 0.0f, 1.0f);
+			float Value1 = 1.0f - clamp(static_cast<float>(MousePos.y - m_DrawRect.y)/static_cast<float>(m_DrawRect.h), 0.0f, 1.0f);
 			
 			vec4 Color = m_pColorEdit->GetValue();
 			vec3 HSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
@@ -534,7 +535,8 @@ class CWheelPicker : public gui::CWidget
 {	
 protected:
 	CAbstractColorEdit* m_pColorEdit;	
-	bool m_Clicked;
+	int m_Clicked;
+	float m_LastHue;
 	
 public:
 	CWheelPicker(CAbstractColorEdit* pColorEdit) :
@@ -564,7 +566,8 @@ public:
 		vec3 ColorRGB0 = HsvToRgb(vec3(ColorHSV.x, 0.0f, 1.0f));
 		vec3 ColorRGB1 = HsvToRgb(vec3(ColorHSV.x, 1.0f, 1.0f));
 
-		float CursorAngle = ColorHSV.r*2.0f*pi;
+		float CurrentHue = (m_Clicked == 2 ? m_LastHue : ColorHSV.r);
+		float CursorAngle = CurrentHue*2.0f*pi;
 		
 		const int nbSegments = 64;
 		const float deltaAngle = pi*2.0f/nbSegments;
@@ -595,9 +598,9 @@ public:
 		
 		{
 			CGraphics::CColorVertex ColorArray[4];
-			vec3 Hue = HsvToRgb(vec3(ColorHSV.r, 1.0f, 1.0f));
-			vec3 Saturation = HsvToRgb(vec3(ColorHSV.r, 1.0f, 0.0f));
-			vec3 Value = HsvToRgb(vec3(ColorHSV.r, 0.0f, 1.0f));
+			vec3 Hue = HsvToRgb(vec3(CurrentHue, 1.0f, 1.0f));
+			vec3 Saturation = HsvToRgb(vec3(CurrentHue, 1.0f, 0.0f));
+			vec3 Value = HsvToRgb(vec3(CurrentHue, 0.0f, 1.0f));
 			
 			ColorArray[0] = CGraphics::CColorVertex(0, Saturation.r, Saturation.g, Saturation.b, 1.0f);
 			ColorArray[1] = CGraphics::CColorVertex(1, Saturation.r, Saturation.g, Saturation.b, 1.0f);
@@ -670,7 +673,7 @@ public:
 		{
 			vec4 Color = m_pColorEdit->GetValue();
 			vec3 ColorHSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
-			float CursorAngle = ColorHSV.r*2.0f*pi;
+			float CursorAngle = m_LastHue*2.0f*pi;
 			
 			float Radius1 = min(m_DrawRect.w, m_DrawRect.h)/2.0f - 1.0f;
 			float Radius0 = Radius1*0.8f;
@@ -683,11 +686,30 @@ public:
 			float Size = length(SaturationPos - HuePos);
 			float Size2 = length(ValuePos - Origin);
 			
+			//Find the closest point to the triangle
+			{
+				vec2 Vertices[3];
+				Vertices[0] = HuePos - MousePos;
+				Vertices[1] = SaturationPos - MousePos;
+				Vertices[2] = ValuePos - MousePos;
+				
+				for(int e=0; e<3; e++)
+				{
+					vec2 Edge = Vertices[(e+1)%3] - Vertices[e];
+					if(Edge.x * Vertices[e].y - Edge.y * Vertices[e].x > 0.0f)
+					{
+						vec2 Dir = normalize(Edge);
+						MousePos += Vertices[e] + Dir * clamp(dot(Dir, -Vertices[e]), 0.0f, Size);
+						break;
+					}
+				}
+			}
+			
 			float Value = clamp(1.0f-dot(normalize(ValuePos - Origin), MousePos - Origin)/Size2, 0.0f, 1.0f);
 			vec2 ValueOrigin = Origin + (ValuePos - Origin)*(1.0f-Value) - (HuePos - SaturationPos)*Value/2.0f;
 			float Saturation = clamp(length(MousePos - ValueOrigin)/(Size*Value), 0.0f, 1.0f);
 			
-			vec3 RGB = HsvToRgb(vec3(ColorHSV.r, Saturation, Value));
+			vec3 RGB = HsvToRgb(vec3(m_LastHue, Saturation, Value));
 
 			m_pColorEdit->SetValue(vec4(RGB.r, RGB.g, RGB.b, Color.a));
 		}
@@ -739,6 +761,7 @@ public:
 			if(isInside)
 			{
 				m_Clicked = 2;
+				m_LastHue = ColorHSV.r;
 			}
 			else m_Clicked = 0;
 		}
