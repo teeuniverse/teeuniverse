@@ -739,7 +739,18 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							
 							CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
 							pMap->SetZoneLayer(ZoneLayer, PhysicsZonePath);
-						}					
+						}
+						
+						CAsset_MapEntities* pEntities = NULL;
+						if(Format != MAPFORMAT_INFCLASS)
+						{
+							CAssetPath EntitiesPath;
+							pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+							pEntities->SetName("Entities");	
+					
+							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+							pMap->SetEntityLayer(MapSubPath, EntitiesPath);	
+						}			
 						
 						for(int j=0; j<Height; j++)
 						{
@@ -753,11 +764,95 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										pPhysicsZone->SetTileIndex(TilePath, 1);
 										break;
 									case tw07::TILE_NOHOOK:
-										pPhysicsZone->SetTileIndex(TilePath, 3);
+										pPhysicsZone->SetTileIndex(TilePath, 2);
 										break;
 									default:
 										pPhysicsZone->SetTileIndex(TilePath, 0);
 										break;
+								}
+								
+								if(pEntities)
+								{
+									switch(pTiles[j*Width+i].m_Index)
+									{
+										case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+									}
 								}
 								
 								int Skip = pTiles[j*Width+i].m_Skip;
@@ -829,6 +924,77 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					}
 					else if(Format == MAPFORMAT_INFCLASS && pTilemapItem->m_Flags&(tw07::TILESLAYERFLAG_GAME << 1))
 					{
+						//Tiles
+						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+						int Width = pTilemapItem->m_Width;
+						int Height = pTilemapItem->m_Height;
+						
+						CAssetPath EntitiesPath;
+						CAsset_MapEntities* pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+						pEntities->SetName("Spawn");	
+					
+						CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
+						
+						for(int j=0; j<Height; j++)
+						{
+							for(int i=0; i<Width; i++)
+							{
+								switch(pTiles[j*Width+i].m_Index)
+								{
+									case 1:
+									{
+										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassInfectedSpawn);
+										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+										break;
+									}
+									case 2:
+									{
+										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassHumanSpawn);
+										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+										break;
+									}
+								}
+								
+								int Skip = pTiles[j*Width+i].m_Skip;
+								for(int s=0; s<Skip; s++)
+									i++;
+							}
+						}
+						
+						//Tiles
+						pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+						Width = pTilemapItem->m_Width;
+						Height = pTilemapItem->m_Height;
+						
+						pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+						pEntities->SetName("Flags");	
+					
+						MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
+						
+						for(int j=0; j<Height; j++)
+						{
+							for(int i=0; i<Width; i++)
+							{
+								switch(pTiles[j*Width+i].m_Index)
+								{
+									case 4:
+									{
+										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassHeroFlag);
+										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+										break;
+									}
+								}
+								
+								int Skip = pTiles[j*Width+i].m_Skip;
+								for(int s=0; s<Skip; s++)
+									i++;
+							}
+						}
 					}
 					else if(Format == MAPFORMAT_INFCLASS && pTilemapItem->m_Flags&(tw07::TILESLAYERFLAG_GAME << 2))
 					{
@@ -1213,6 +1379,18 @@ void CAssetsManager::Load_UnivTeeWorlds()
 		{
 			m_Path_ZoneType_TWPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "physics");
 			m_Path_ZoneType_TWDamage = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "damage");
+			
+			m_Path_EntityType_TWSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "spawn");
+			m_Path_EntityType_TWSpawnRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "redSpawn");
+			m_Path_EntityType_TWSpawnBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "blueSpawn");
+			m_Path_EntityType_TWGrenade = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "grenade");
+			m_Path_EntityType_TWLaserRifle = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "laserRifle");
+			m_Path_EntityType_TWShotgun = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "shotgun");
+			m_Path_EntityType_TWNinja = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "ninja");
+			m_Path_EntityType_TWHeart = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "heart");
+			m_Path_EntityType_TWArmor = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "armor");
+			m_Path_EntityType_TWFlagBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "blueFlag");
+			m_Path_EntityType_TWFlagRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "redFlag");
 		}
 	}
 }
@@ -1234,6 +1412,10 @@ void CAssetsManager::Load_UnivInfClass()
 		{
 			m_Path_ZoneType_InfClassPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "infcPhysics");
 			m_Path_ZoneType_InfClassZones = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "infcZones");
+			
+			m_Path_EntityType_InfClassHumanSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "humanSpawn");
+			m_Path_EntityType_InfClassInfectedSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "infectedSpawn");
+			m_Path_EntityType_InfClassHeroFlag = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "heroFlag");
 		}
 	}
 }

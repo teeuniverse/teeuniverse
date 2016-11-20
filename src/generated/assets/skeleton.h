@@ -39,7 +39,7 @@
 class CAsset_Skeleton : public CAsset
 {
 public:
-	static const int TypeId = 19;
+	static const int TypeId = 22;
 	
 	enum
 	{

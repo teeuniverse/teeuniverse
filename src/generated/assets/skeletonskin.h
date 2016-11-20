@@ -45,7 +45,7 @@ public:
 		ALIGNMENT_BONE,
 	};
 	
-	static const int TypeId = 21;
+	static const int TypeId = 24;
 	
 	enum
 	{

@@ -626,6 +626,7 @@ protected:
 				CAsset_MapLayerTiles* pMapLayerTiles;
 				CAsset_MapLayerQuads* pMapLayerQuads;
 				CAsset_MapZoneTiles* pMapZoneTiles;
+				CAsset_MapEntities* pMapEntities;
 				CSubPath SubPath;
 				
 				//Zone, Physics
@@ -654,11 +655,18 @@ protected:
 					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TWDamage);
 				}
 				
+				//Entites
+				pMapEntities = AssetsManager()->NewAsset<CAsset_MapEntities>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "entities", Tokken);
+				SubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+				pMap->SetEntityLayer(SubPath, SubAssetPath);
+				
 				//Background
 				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
 				AssetsManager()->TryChangeAssetName(SubAssetPath, "background", Tokken);
 				SubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
 				pMap->SetBgGroup(SubPath, SubAssetPath);
+				pMapGroup->SetHardParallax(vec2(0.0f, 0.0f));
 				
 					//Sky
 				pMapLayerQuads = AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
@@ -735,7 +743,7 @@ public:
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetToggleStyle(m_pAssetsEditor->m_Path_Toggle_Toolbar);
+		SetToggleStyle(m_pAssetsEditor->m_Path_Toggle_Default);
 	}
 };
 
@@ -963,6 +971,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Button_CursorToolHL = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "cursorToolHL");
 		m_Path_Button_PaletteIcon = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "paletteIcon");
 		
+		m_Path_Toggle_Default = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "default");
 		m_Path_Toggle_Toolbar = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "toolbar");
 		
 		m_Path_IntEdit_Default = AssetsManager()->FindAsset<CAsset_GuiIntEditStyle>(PackageId, "default");
@@ -993,6 +1002,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconTiles = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTiles");
 		m_Path_Sprite_IconZoneTiles = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneTiles");
 		m_Path_Sprite_IconZoneType = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneType");
+		m_Path_Sprite_IconEntityType = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityType");
 		m_Path_Sprite_IconGuiRect = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiRect");
 		m_Path_Sprite_IconGuiLine = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiLine");
 		m_Path_Sprite_IconGuiBox = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiBox");
@@ -1007,6 +1017,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconMove = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMove");
 		m_Path_Sprite_IconView = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconView");
 		m_Path_Sprite_IconHidden = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconHidden");
+		m_Path_Sprite_IconEntities = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntities");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
@@ -1024,7 +1035,7 @@ void CGuiEditor::LoadAssets()
 	m_LabelStyle = m_Path_Label_Text;
 	m_LabelHeaderStyle = m_Path_Label_Header;
 	m_ButtonStyle = m_Path_Button_Default;
-	m_ToggleStyle = m_Path_Toggle_Toolbar;
+	m_ToggleStyle = m_Path_Toggle_Default;
 	m_IntEditStyle = m_Path_IntEdit_Default;
 	m_ColorEditStyle = m_Path_ColorEdit_Default;
 	m_TextEntryStyle = m_Path_Button_TextEdit;
@@ -1075,9 +1086,6 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 			case CAsset_Weapon::TypeId:
 				IconPath = m_Path_Sprite_IconWeapon;
 				break;
-			case CAsset_MapZoneTiles::TypeId:
-				IconPath = m_Path_Sprite_IconZoneTiles;
-				break;
 			case CAsset_Map::TypeId:
 				IconPath = m_Path_Sprite_IconMap;
 				break;
@@ -1090,8 +1098,17 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 			case CAsset_MapLayerQuads::TypeId:
 				IconPath = m_Path_Sprite_IconQuad;
 				break;
+			case CAsset_MapZoneTiles::TypeId:
+				IconPath = m_Path_Sprite_IconZoneTiles;
+				break;
+			case CAsset_MapEntities::TypeId:
+				IconPath = m_Path_Sprite_IconEntities;
+				break;
 			case CAsset_ZoneType::TypeId:
 				IconPath = m_Path_Sprite_IconZoneType;
+				break;
+			case CAsset_EntityType::TypeId:
+				IconPath = m_Path_Sprite_IconEntityType;
 				break;
 			case CAsset_GuiRectStyle::TypeId:
 				IconPath = m_Path_Sprite_IconGuiRect;

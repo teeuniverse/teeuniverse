@@ -24,6 +24,8 @@
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
 #include <client/gui/slider.h>
+#include <client/gui/toggle.h>
+#include <client/gui/expand.h>
 
 /* VIEW MAP ***********************************************************/
 
@@ -52,6 +54,32 @@ public:
 	}
 };
 
+//~ class CEntitiesToggle : public gui::CToggle
+//~ {
+//~ protected:
+	//~ CViewMap* m_pViewMap;	
+	
+//~ protected:
+	//~ virtual bool GetValue()
+	//~ {
+		//~ return m_pViewMap->GetShowEntities();
+	//~ }
+	
+	//~ virtual void SetValue(bool Value)
+	//~ {
+		//~ m_pViewMap->SetShowEntities(Value);
+	//~ }
+	
+//~ public:
+	//~ CEntitiesToggle(CViewMap* pViewMap) :
+		//~ gui::CToggle(pViewMap->Context(), pViewMap->AssetsEditor()->m_Path_Sprite_IconEntities),
+		//~ m_pViewMap(pViewMap)
+	//~ {
+		//~ SetToggleStyle(pViewMap->AssetsEditor()->m_Path_Toggle_Toolbar);
+		//~ NoTextClipping();
+	//~ }
+//~ };
+
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
 	m_CameraPos(0.0f, 0.0f),
@@ -60,9 +88,9 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pMapRenderer(NULL),
 	m_pCursorTool_TileStamp(NULL),
 	m_pCursorTool_QuadTransform(NULL),
-	m_ZoneOpacity(0.5f)
+	m_ZoneOpacity(0.5f),
+	m_ShowEntities(true)
 {
-	m_pToolbar->Add(new CZoneOpacitySlider(this), false , 250);
 	
 	m_pCursorTool_TileStamp = new CCursorTool_TileStamp(this);
 	m_pToolbar->Add(m_pCursorTool_TileStamp);
@@ -72,6 +100,9 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	
 	m_pCursorTool_QuadEdit = new CCursorTool_QuadEdit(this);
 	m_pToolbar->Add(m_pCursorTool_QuadEdit);
+	
+	m_pToolbar->Add(new gui::CExpand(Context()), true);
+	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
 	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
 }
@@ -154,6 +185,25 @@ CAssetPath CViewMap::GetMapPath()
 						for(IterZoneLayer = pMap->BeginZoneLayer(); IterZoneLayer != pMap->EndZoneLayer(); ++IterZoneLayer)
 						{
 							if(pMap->GetZoneLayer(*IterZoneLayer) == AssetsEditor()->GetEditedAssetPath())
+								return MapPath;
+						}
+					}
+				}
+			}
+			break;
+		case CAsset_MapEntities::TypeId:
+			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
+			{
+				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
+				{
+					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
+					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
+					if(pMap)
+					{
+						CAsset_Map::CIteratorEntityLayer IterEntityLayer;
+						for(IterEntityLayer = pMap->BeginEntityLayer(); IterEntityLayer != pMap->EndEntityLayer(); ++IterEntityLayer)
+						{
+							if(pMap->GetEntityLayer(*IterEntityLayer) == AssetsEditor()->GetEditedAssetPath())
 								return MapPath;
 						}
 					}
@@ -245,6 +295,7 @@ void CViewMap::Update(bool ParentEnabled)
 				SetCursorTool(m_pCursorTool_TileStamp);
 				break;
 			case CAsset_MapLayerQuads::TypeId:
+			case CAsset_MapEntities::TypeId:
 				SetCursorTool(m_pCursorTool_QuadTransform);
 				break;
 		}
@@ -275,6 +326,43 @@ void CViewMap::RenderView()
 		Color.a = 2.0f*m_ZoneOpacity;
 	
 	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture, Color);
+	
+	if(m_ShowEntities || AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+	{
+		const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(GetMapPath());
+		if(pMap)
+		{
+			CAsset_Map::CIteratorEntityLayer IterEntityLayer;
+			for(IterEntityLayer = pMap->BeginEntityLayer(); IterEntityLayer != pMap->EndEntityLayer(); ++IterEntityLayer)
+			{
+				CAssetPath EntitiesPath = pMap->GetEntityLayer(*IterEntityLayer);
+				
+				if(!m_ShowEntities && AssetsEditor()->GetEditedAssetPath() != EntitiesPath)
+					continue;
+				
+				const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(EntitiesPath);
+				if(!pEntities)
+					continue;
+				
+				const CAssetState* pState = AssetsManager()->GetAssetState(EntitiesPath);
+				if(pState && !pState->m_Visible)
+					continue;
+				
+				CAsset_MapEntities::CIteratorEntity IterEntity;
+				for(IterEntity = pEntities->BeginEntity(); IterEntity != pEntities->EndEntity(); ++IterEntity)
+				{
+					vec2 Pos = MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*IterEntity));
+					CAssetPath TypePath = pEntities->GetEntityTypePath(*IterEntity);
+					
+					const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
+					if(pEntityType)
+						AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, 1.0f);
+					else
+						AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, 1.0f);
+				}
+			}
+		}
+	}
 	
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{

@@ -29,43 +29,37 @@
  * It's too much to avoid mistakes.
  */
 
-#ifndef __CLIENT_ASSETS_WEAPON__
-#define __CLIENT_ASSETS_WEAPON__
+#ifndef __CLIENT_ASSETS_ENTITYTYPE__
+#define __CLIENT_ASSETS_ENTITYTYPE__
 
 #include <shared/assets/asset.h>
 #include <shared/assets/assetpath.h>
 
-class CAsset_Weapon : public CAsset
+class CAsset_EntityType : public CAsset
 {
 public:
-	static const int TypeId = 26;
+	static const int TypeId = 21;
 	
 	enum
 	{
 		NAME = CAsset::NAME,
-		CHARACTERPATH,
-		CURSORPATH,
-		SKINPATH,
-		ATTACKANIMATIONPATH,
+		GIZMOPATH,
+		COLLISIONRADIUS,
 	};
 	
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
-		CAssetPath::CTuaType m_CharacterPath;
-		CAssetPath::CTuaType m_CursorPath;
-		CAssetPath::CTuaType m_SkinPath;
-		CAssetPath::CTuaType m_AttackAnimationPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Weapon& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType& TuaType);
+		CAssetPath::CTuaType m_GizmoPath;
+		tua_float m_CollisionRadius;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_EntityType& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
-	CAssetPath m_CharacterPath;
-	CAssetPath m_CursorPath;
-	CAssetPath m_SkinPath;
-	CAssetPath m_AttackAnimationPath;
+	CAssetPath m_GizmoPath;
+	float m_CollisionRadius;
 
 public:
 	template<typename T>
@@ -82,46 +76,31 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	void copy(const CAsset_Weapon& Item)
+	void copy(const CAsset_EntityType& Item)
 	{
 		CAsset::copy(Item);
-		m_CharacterPath = Item.m_CharacterPath;
-		m_CursorPath = Item.m_CursorPath;
-		m_SkinPath = Item.m_SkinPath;
-		m_AttackAnimationPath = Item.m_AttackAnimationPath;
+		m_GizmoPath = Item.m_GizmoPath;
+		m_CollisionRadius = Item.m_CollisionRadius;
 	}
 	
-	void transfert(CAsset_Weapon& Item)
+	void transfert(CAsset_EntityType& Item)
 	{
 		CAsset::transfert(Item);
-		m_CharacterPath = Item.m_CharacterPath;
-		m_CursorPath = Item.m_CursorPath;
-		m_SkinPath = Item.m_SkinPath;
-		m_AttackAnimationPath = Item.m_AttackAnimationPath;
+		m_GizmoPath = Item.m_GizmoPath;
+		m_CollisionRadius = Item.m_CollisionRadius;
 	}
 	
-	inline CAssetPath GetCharacterPath() const { return m_CharacterPath; }
+	inline CAssetPath GetGizmoPath() const { return m_GizmoPath; }
 	
-	inline CAssetPath GetCursorPath() const { return m_CursorPath; }
+	inline float GetCollisionRadius() const { return m_CollisionRadius; }
 	
-	inline CAssetPath GetSkinPath() const { return m_SkinPath; }
+	inline void SetGizmoPath(const CAssetPath& Value) { m_GizmoPath = Value; }
 	
-	inline CAssetPath GetAttackAnimationPath() const { return m_AttackAnimationPath; }
-	
-	inline void SetCharacterPath(const CAssetPath& Value) { m_CharacterPath = Value; }
-	
-	inline void SetCursorPath(const CAssetPath& Value) { m_CursorPath = Value; }
-	
-	inline void SetSkinPath(const CAssetPath& Value) { m_SkinPath = Value; }
-	
-	inline void SetAttackAnimationPath(const CAssetPath& Value) { m_AttackAnimationPath = Value; }
+	inline void SetCollisionRadius(float Value) { m_CollisionRadius = Value; }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
-		Operation.Apply(m_CharacterPath);
-		Operation.Apply(m_CursorPath);
-		Operation.Apply(m_SkinPath);
-		Operation.Apply(m_AttackAnimationPath);
+		Operation.Apply(m_GizmoPath);
 	}
 	
 };

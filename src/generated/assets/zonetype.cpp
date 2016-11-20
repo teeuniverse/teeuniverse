@@ -35,15 +35,13 @@
 
 CAsset_ZoneType::CIndex::CIndex()
 {
-	m_Number = 0;
 	m_Color = 1.0f;
 }
 
 
 void CAsset_ZoneType::CIndex::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
-	SysType.m_Number = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Number);
+	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
@@ -65,8 +63,7 @@ void CAsset_ZoneType::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 
 void CAsset_ZoneType::CIndex::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType& TuaType)
 {
-	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
-	TuaType.m_Number = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Number);
+	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
 
@@ -93,8 +90,6 @@ int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int Defaul
 	{
 		case INDEX_ARRAYSIZE:
 			return GetIndexArraySize();
-		case INDEX_NUMBER:
-			return GetIndexNumber(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -107,9 +102,6 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value
 		case INDEX_ARRAYSIZE:
 			SetIndexArraySize(Value);
 			return true;
-		case INDEX_NUMBER:
-			SetIndexNumber(SubPath, Value);
-			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
@@ -119,8 +111,8 @@ const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, co
 {
 	switch(ValueType)
 	{
-		case INDEX_NAME:
-			return GetIndexName(SubPath);
+		case INDEX_DESCRIPTION:
+			return GetIndexDescription(SubPath);
 	}
 	return CAsset::GetValue<const char*>(ValueType, SubPath, DefaultValue);
 }
@@ -130,8 +122,8 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const cha
 {
 	switch(ValueType)
 	{
-		case INDEX_NAME:
-			SetIndexName(SubPath, Value);
+		case INDEX_DESCRIPTION:
+			SetIndexDescription(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<const char*>(ValueType, SubPath, Value);

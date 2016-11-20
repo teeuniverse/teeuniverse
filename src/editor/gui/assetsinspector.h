@@ -45,6 +45,9 @@ class CAssetsInspector : public gui::CTabs
 		TAB_MAPLAYERTILES_ASSET,
 		TAB_MAPLAYERQUADS_ASSET,
 		TAB_MAPZONETILES_ASSET,
+		TAB_MAPENTITIES_ASSET,
+		TAB_ZONETYPE_ASSET,
+		TAB_ENTITYTYPE_ASSET,
 		TAB_SPRITE_ASSET,
 		NUM_TABS
 	};
@@ -85,6 +88,9 @@ private:
 	gui::CVScrollLayout* CreateTab_MapLayerTiles_Asset();
 	gui::CVScrollLayout* CreateTab_MapLayerQuads_Asset();
 	gui::CVScrollLayout* CreateTab_MapZoneTiles_Asset();
+	gui::CVScrollLayout* CreateTab_MapEntities_Asset();
+	gui::CVScrollLayout* CreateTab_ZoneType_Asset();
+	gui::CVScrollLayout* CreateTab_EntityType_Asset();
 	gui::CVScrollLayout* CreateTab_Sprite_Asset();
 
 public:

@@ -111,6 +111,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconAsset", ImageEditorPath, 8, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconNewAsset", ImageEditorPath, 9, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconHidden", ImageEditorPath, 10, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconEntities", ImageEditorPath, 11, 1, 1, 1);
 	//Empty area
 	CREATE_SPRITE(PackageId, "iconLayer", ImageEditorPath, 13, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconBone", ImageEditorPath, 14, 1, 1, 1);
@@ -488,13 +489,14 @@ int main(int argc, const char **argv)
 		}
 	}
 	
-	//Cursor Tools
+	//Cursor Tools and toggle
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
 		CAssetPath LabelHlPath;
 		CAssetPath ButtonPath;
 		CAssetPath ButtonHlPath;
+		CAssetPath TogglePath;
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
 			pAsset->SetName("cursorToolIdle");
@@ -540,6 +542,15 @@ int main(int argc, const char **argv)
 			pAsset->SetName("cursorToolHL");
 			pAsset->SetIdleStylePath(LabelHlPath);
 			pAsset->SetMouseOverStylePath(LabelHlPath);
+		}
+		
+		{
+			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiToggleStyle>(&TogglePath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("toolbar");
+			pAsset->SetIdleTrueStylePath(LabelHlPath);
+			pAsset->SetIdleFalseStylePath(LabelIdlePath);
+			pAsset->SetMouseOverTrueStylePath(LabelMoPath);
+			pAsset->SetMouseOverFalseStylePath(LabelMoPath);
 		}
 	}
 	
@@ -828,7 +839,7 @@ int main(int argc, const char **argv)
 		pAsset->SetTextColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
 	}
 	
-	//Toolbar button
+	//Toolbar button and default toggle
 	{
 		CAssetPath IconFalsePath;
 		CAssetPath IconTruePath;
@@ -866,7 +877,7 @@ int main(int argc, const char **argv)
 		
 		{
 			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiToggleStyle>(&TogglePath, PackageId, CAssetsHistory::NO_TOKEN);
-			pAsset->SetName("toolbar");
+			pAsset->SetName("default");
 			pAsset->SetIdleTrueStylePath(LabelIdlePath);
 			pAsset->SetIdleFalseStylePath(LabelIdlePath);
 			pAsset->SetMouseOverTrueStylePath(LabelMoPath);
@@ -875,10 +886,6 @@ int main(int argc, const char **argv)
 			pAsset->SetIconTruePath(IconTruePath);
 			pAsset->SetIconFalsePath(IconFalsePath);
 		}
-	}
-	
-	//Toolbar checkbox
-	{
 	}
 	
 	//Scrollbar

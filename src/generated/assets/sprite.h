@@ -47,7 +47,7 @@ public:
 		FLAG_SIZE_HEIGHT = (0x1 << 4),
 	};
 	
-	static const int TypeId = 22;
+	static const int TypeId = 25;
 	
 	enum
 	{

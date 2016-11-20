@@ -45,11 +45,13 @@ public:
 		TYPE_BGGROUP,
 		TYPE_FGGROUP,
 		TYPE_ZONELAYER,
+		TYPE_ENTITYLAYER,
 	};
 	
 	static inline CSubPath SubPath_BgGroup(int Id0) { return CSubPath(TYPE_BGGROUP, Id0, 0, 0); }
 	static inline CSubPath SubPath_FgGroup(int Id0) { return CSubPath(TYPE_FGGROUP, Id0, 0, 0); }
 	static inline CSubPath SubPath_ZoneLayer(int Id0) { return CSubPath(TYPE_ZONELAYER, Id0, 0, 0); }
+	static inline CSubPath SubPath_EntityLayer(int Id0) { return CSubPath(TYPE_ENTITYLAYER, Id0, 0, 0); }
 	
 	enum
 	{
@@ -66,6 +68,10 @@ public:
 		ZONELAYER_PTR,
 		ZONELAYER_ARRAY,
 		ZONELAYER,
+		ENTITYLAYER_ARRAYSIZE,
+		ENTITYLAYER_PTR,
+		ENTITYLAYER_ARRAY,
+		ENTITYLAYER,
 	};
 	
 	class CIteratorBgGroup
@@ -125,12 +131,32 @@ public:
 	CIteratorZoneLayer ReverseBeginZoneLayer() const { return CIteratorZoneLayer(m_ZoneLayer.size()-1, true); }
 	CIteratorZoneLayer ReverseEndZoneLayer() const { return CIteratorZoneLayer(-1, true); }
 	
+	class CIteratorEntityLayer
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorEntityLayer() : m_Index(0), m_Reverse(false) {}
+		CIteratorEntityLayer(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorEntityLayer& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_EntityLayer(m_Index); }
+		bool operator==(const CIteratorEntityLayer& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorEntityLayer& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorEntityLayer BeginEntityLayer() const { return CIteratorEntityLayer(0, false); }
+	CIteratorEntityLayer EndEntityLayer() const { return CIteratorEntityLayer(m_EntityLayer.size(), false); }
+	CIteratorEntityLayer ReverseBeginEntityLayer() const { return CIteratorEntityLayer(m_EntityLayer.size()-1, true); }
+	CIteratorEntityLayer ReverseEndEntityLayer() const { return CIteratorEntityLayer(-1, true); }
+	
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
 		CTuaArray m_BgGroup;
 		CTuaArray m_FgGroup;
 		CTuaArray m_ZoneLayer;
+		CTuaArray m_EntityLayer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Map& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType& TuaType);
 	};
@@ -140,6 +166,7 @@ private:
 	array< CAssetPath, allocator_default<CAssetPath> > m_BgGroup;
 	array< CAssetPath, allocator_default<CAssetPath> > m_FgGroup;
 	array< CAssetPath, allocator_default<CAssetPath> > m_ZoneLayer;
+	array< CAssetPath, allocator_default<CAssetPath> > m_EntityLayer;
 
 public:
 	template<typename T>
@@ -162,6 +189,7 @@ public:
 		m_BgGroup.copy(Item.m_BgGroup);
 		m_FgGroup.copy(Item.m_FgGroup);
 		m_ZoneLayer.copy(Item.m_ZoneLayer);
+		m_EntityLayer.copy(Item.m_EntityLayer);
 	}
 	
 	void transfert(CAsset_Map& Item)
@@ -170,6 +198,7 @@ public:
 		m_BgGroup.transfert(Item.m_BgGroup);
 		m_FgGroup.transfert(Item.m_FgGroup);
 		m_ZoneLayer.transfert(Item.m_ZoneLayer);
+		m_EntityLayer.transfert(Item.m_EntityLayer);
 	}
 	
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
@@ -199,6 +228,15 @@ public:
 	
 	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const { return m_ZoneLayer[SubPath.GetId()]; }
 	
+	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
+	
+	inline const CAssetPath* GetEntityLayerPtr() const { return m_EntityLayer.base_ptr(); }
+	
+	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() const { return m_EntityLayer; }
+	inline array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() { return m_EntityLayer; }
+	
+	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const { return m_EntityLayer[SubPath.GetId()]; }
+	
 	inline void SetBgGroupArraySize(int Value) { m_BgGroup.resize(Value); }
 	
 	inline void SetBgGroup(const CSubPath& SubPath, const CAssetPath& Value) { m_BgGroup[SubPath.GetId()] = Value; }
@@ -210,6 +248,10 @@ public:
 	inline void SetZoneLayerArraySize(int Value) { m_ZoneLayer.resize(Value); }
 	
 	inline void SetZoneLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_ZoneLayer[SubPath.GetId()] = Value; }
+	
+	inline void SetEntityLayerArraySize(int Value) { m_EntityLayer.resize(Value); }
+	
+	inline void SetEntityLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_EntityLayer[SubPath.GetId()] = Value; }
 	
 	inline int AddBgGroup()
 	{
@@ -232,11 +274,20 @@ public:
 		return Id;
 	}
 	
+	inline int AddEntityLayer()
+	{
+		int Id = m_EntityLayer.size();
+		m_EntityLayer.increment();
+		return Id;
+	}
+	
 	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size()); }
 	
 	inline bool IsValidFgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size()); }
 	
 	inline bool IsValidZoneLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size()); }
+	
+	inline bool IsValidEntityLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
@@ -284,6 +335,21 @@ public:
 		for(int i=0; i<m_ZoneLayer.size(); i++)
 		{
 			Operation.Apply(m_ZoneLayer[i]);
+		}
+		{
+			int Shift = 0;
+			for(int i=0; i<m_EntityLayer.size(); i++)
+			{
+				if(Operation.MustBeDeleted(m_EntityLayer[i]))
+					Shift++;
+				else if(Shift > 0)
+					m_EntityLayer[i-Shift] = m_EntityLayer[i];
+			}
+			m_EntityLayer.resize(m_EntityLayer.size()-Shift);
+		}
+		for(int i=0; i<m_EntityLayer.size(); i++)
+		{
+			Operation.Apply(m_EntityLayer[i]);
 		}
 	}
 	

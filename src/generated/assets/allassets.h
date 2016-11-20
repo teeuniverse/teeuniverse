@@ -51,11 +51,13 @@
 #include <generated/assets/maplayerquads.h>
 #include <generated/assets/maplayertiles.h>
 #include <generated/assets/mapzonetiles.h>
+#include <generated/assets/mapentities.h>
+#include <generated/assets/zonetype.h>
+#include <generated/assets/entitytype.h>
 #include <generated/assets/skeleton.h>
 #include <generated/assets/skeletonanimation.h>
 #include <generated/assets/skeletonskin.h>
 #include <generated/assets/sprite.h>
 #include <generated/assets/weapon.h>
-#include <generated/assets/zonetype.h>
 
 #endif

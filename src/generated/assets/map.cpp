@@ -68,6 +68,16 @@ void CAsset_Map::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const C
 		}
 	}
 	
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_EntityLayer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_EntityLayer.m_Size);
+		SysType.m_EntityLayer.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_EntityLayer[i]);
+		}
+	}
+	
 }
 
 void CAsset_Map::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType& TuaType)
@@ -104,6 +114,16 @@ void CAsset_Map::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const 
 		TuaType.m_ZoneLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_ZoneLayer.size());
 		delete[] pData;
 	}
+	{
+		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
+		for(int i=0; i<SysType.m_EntityLayer.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
+		}
+		TuaType.m_EntityLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_EntityLayer.size());
+		delete[] pData;
+	}
 }
 
 template<>
@@ -117,6 +137,8 @@ int CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValu
 			return GetFgGroupArraySize();
 		case ZONELAYER_ARRAYSIZE:
 			return GetZoneLayerArraySize();
+		case ENTITYLAYER_ARRAYSIZE:
+			return GetEntityLayerArraySize();
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -135,6 +157,9 @@ bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 		case ZONELAYER_ARRAYSIZE:
 			SetZoneLayerArraySize(Value);
 			return true;
+		case ENTITYLAYER_ARRAYSIZE:
+			SetEntityLayerArraySize(Value);
+			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
@@ -150,6 +175,8 @@ CAssetPath CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, CAssetPa
 			return GetFgGroup(SubPath);
 		case ZONELAYER:
 			return GetZoneLayer(SubPath);
+		case ENTITYLAYER:
+			return GetEntityLayer(SubPath);
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -168,6 +195,9 @@ bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Val
 		case ZONELAYER:
 			SetZoneLayer(SubPath, Value);
 			return true;
+		case ENTITYLAYER:
+			SetEntityLayer(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
@@ -182,6 +212,8 @@ int CAsset_Map::AddSubItem(int Type, const CSubPath& SubPath)
 			return AddFgGroup();
 		case TYPE_ZONELAYER:
 			return AddZoneLayer();
+		case TYPE_ENTITYLAYER:
+			return AddEntityLayer();
 	}
 	return -1;
 }

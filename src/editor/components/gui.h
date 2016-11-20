@@ -85,6 +85,7 @@ public:
 	CAssetPath m_Path_Button_CursorToolHL;
 	CAssetPath m_Path_Button_PaletteIcon;
 	
+	CAssetPath m_Path_Toggle_Default;
 	CAssetPath m_Path_Toggle_Toolbar;
 	
 	CAssetPath m_Path_IntEdit_Default;
@@ -119,6 +120,7 @@ public:
 	CAssetPath m_Path_Sprite_IconTiles;
 	CAssetPath m_Path_Sprite_IconZoneTiles;
 	CAssetPath m_Path_Sprite_IconZoneType;
+	CAssetPath m_Path_Sprite_IconEntityType;
 	CAssetPath m_Path_Sprite_IconGuiRect;
 	CAssetPath m_Path_Sprite_IconGuiLine;
 	CAssetPath m_Path_Sprite_IconGuiBox;
@@ -133,6 +135,7 @@ public:
 	CAssetPath m_Path_Sprite_IconMove;
 	CAssetPath m_Path_Sprite_IconView;
 	CAssetPath m_Path_Sprite_IconHidden;
+	CAssetPath m_Path_Sprite_IconEntities;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

@@ -68,7 +68,7 @@ public:
 		NUM_BONEALIGNS,
 	};
 	
-	static const int TypeId = 20;
+	static const int TypeId = 23;
 	
 	enum
 	{

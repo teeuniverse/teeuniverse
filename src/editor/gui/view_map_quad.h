@@ -25,6 +25,7 @@ class CCursorTool_QuadPicker : public CViewMap::CCursorTool
 {
 protected:
 	CSubPath PickQuad(vec2 CursorPos);
+	CSubPath PickEntity(vec2 CursorPos);
 	void RenderPivots();
 	
 public:

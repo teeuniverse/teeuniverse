@@ -233,16 +233,11 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			vec4 Color = 1.0f;
 			if(pZoneType)
 			{
-				CSubPath IndexPath;
-				CAsset_ZoneType::CIteratorIndex Iter;
-				for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
+				CSubPath IndexPath = CAsset_ZoneType::SubPath_Index(Tile.GetIndex());
+				if(pZoneType->IsValidIndex(IndexPath))
 				{
-					if(pZoneType->GetIndexNumber(*Iter) == Tile.GetIndex())
-					{
-						Color = pZoneType->GetIndexColor(*Iter);
-						IndexFound = true;
-						break;
-					}
+					Color = pZoneType->GetIndexColor(IndexPath);
+					IndexFound = true;
 				}
 			}
 			
@@ -307,16 +302,11 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			vec4 Color = 1.0f;
 			if(pZoneType)
 			{
-				CSubPath IndexPath;
-				CAsset_ZoneType::CIteratorIndex Iter;
-				for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
+				CSubPath IndexPath = CAsset_ZoneType::SubPath_Index(Tile.GetIndex());
+				if(pZoneType->IsValidIndex(IndexPath))
 				{
-					if(pZoneType->GetIndexNumber(*Iter) == Tile.GetIndex())
-					{
-						Color = pZoneType->GetIndexColor(*Iter);
-						IndexFound = true;
-						break;
-					}
+					Color = pZoneType->GetIndexColor(IndexPath);
+					IndexFound = true;
 				}
 			}
 			

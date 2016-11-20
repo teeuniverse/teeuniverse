@@ -25,6 +25,16 @@
 
 #include <cstdlib>
 
+#define CREATE_SPRITE_PATH(path, packageid, name, image, x, y, w, h) {\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&path, packageid, CAssetsHistory::NO_TOKEN);\
+	pSprite->SetName(name);\
+	pSprite->SetImagePath(image);\
+	pSprite->SetX(x);\
+	pSprite->SetY(y);\
+	pSprite->SetWidth(w);\
+	pSprite->SetHeight(h);\
+}
+
 int main(int argc, const char **argv)
 {
 	CSharedKernel* pKernel = new CSharedKernel();
@@ -36,6 +46,9 @@ int main(int argc, const char **argv)
 	
 	int PackageId = pKernel->AssetsManager()->NewPackage("univ_infclass");
 	
+	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", 4, 4);
+	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768, CAssetsHistory::NO_TOKEN);
+	
 	//InfClass Physics
 	{
 		CAssetPath AssetPath;
@@ -45,23 +58,19 @@ int main(int argc, const char **argv)
 		pAsset->SetName("infcPhysics");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "Air");
-		pAsset->SetIndexNumber(SubPath, 0);
+		pAsset->SetIndexDescription(SubPath, "Air");
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 0.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "Hookable Ground");
-		pAsset->SetIndexNumber(SubPath, 1);
+		pAsset->SetIndexDescription(SubPath, "Hookable Ground");
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "Unhookable Ground");
-		pAsset->SetIndexNumber(SubPath, 3);
+		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
 		pAsset->SetIndexColor(SubPath, vec4(228.0f/255.0f, 255.0f/255.0f, 0.0f/255.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "Water");
-		pAsset->SetIndexNumber(SubPath, 2);
+		pAsset->SetIndexDescription(SubPath, "Water");
 		pAsset->SetIndexColor(SubPath, vec4(0.3f, 0.3f, 1.0f, 1.0f));
 	}
 	
@@ -74,14 +83,48 @@ int main(int argc, const char **argv)
 		pAsset->SetName("infcZones");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "Infected area");
-		pAsset->SetIndexNumber(SubPath, 2);
+		pAsset->SetIndexDescription(SubPath, "Infected area");
 		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.7f, 0.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexName(SubPath, "No spawn");
-		pAsset->SetIndexNumber(SubPath, 3);
+		pAsset->SetIndexDescription(SubPath, "No spawn");
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.3f, 1.0f, 1.0f));
+	}
+	//EntityType, Spawn
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHumanSpawn", ImageEntitiesPath, 0, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		pAsset->SetName("humanSpawn");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Blue Spawn
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoInfectedSpawn", ImageEntitiesPath, 1, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		pAsset->SetName("infectedSpawn");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Hero Flag
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeroFlag", ImageEntitiesPath, 3, 2, 1, 2);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		pAsset->SetName("heroFlag");
+		pAsset->SetCollisionRadius(42.0f);
+		pAsset->SetGizmoPath(GizmoPath);
 	}
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);

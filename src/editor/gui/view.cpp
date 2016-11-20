@@ -29,7 +29,7 @@
 /* CURSORTOOL *********************************************************/
 
 CViewManager::CView::CCursorTool::CCursorTool(CView* pView, const char* pName, CAssetPath IconPath) :
-	gui::CButton(pView->Context(), pName, IconPath),
+	gui::CButton(pView->Context(), IconPath),
 	m_pView(pView),
 	m_OnUse(false)
 {
@@ -195,6 +195,7 @@ void CViewManager::Update(bool ParentEnabled)
 		case CAsset_MapLayerQuads::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
+		case CAsset_MapEntities::TypeId:
 			m_pCurrentView = m_pViewMap;
 			break;
 		case CAsset_GuiRectStyle::TypeId:

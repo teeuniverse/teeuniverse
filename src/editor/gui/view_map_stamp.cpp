@@ -45,23 +45,23 @@ protected:
 			gui::CWidget(pAssetsEditor),
 			m_pAssetsEditor(pAssetsEditor),
 			m_ZoneTypePath(ZoneTypePath),
-			m_IndexSubPath(IndexSubPath),
-			m_Number(0)
+			m_IndexSubPath(IndexSubPath)
 		{
+			int Index = 0;
 			if(m_IndexSubPath.IsNotNull())
 			{
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_ZoneTypePath);
-				if(pZoneType)
-					m_Number = pZoneType->GetIndexNumber(m_IndexSubPath);
+				if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath))
+					Index = m_IndexSubPath.GetId();
 			}
 			
 			m_Tiles.resize(3, 2);
-			m_Tiles.get_clamp(0, 0).SetIndex(m_Number);
-			m_Tiles.get_clamp(1, 0).SetIndex(m_Number);
+			m_Tiles.get_clamp(0, 0).SetIndex(Index);
+			m_Tiles.get_clamp(1, 0).SetIndex(Index);
 			m_Tiles.get_clamp(2, 0).SetIndex(0);
-			m_Tiles.get_clamp(0, 1).SetIndex(m_Number);
-			m_Tiles.get_clamp(1, 1).SetIndex(m_Number);
-			m_Tiles.get_clamp(2, 1).SetIndex(m_Number);
+			m_Tiles.get_clamp(0, 1).SetIndex(Index);
+			m_Tiles.get_clamp(1, 1).SetIndex(Index);
+			m_Tiles.get_clamp(2, 1).SetIndex(Index);
 		}
 		
 		virtual void UpdateBoundingSize()
@@ -106,7 +106,7 @@ protected:
 			{
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 				if(pZoneType)
-					SetText(pZoneType->GetIndexName(m_IndexSubPath));
+					SetText(pZoneType->GetIndexDescription(m_IndexSubPath));
 			}
 			else
 				SetText("Empty");
@@ -139,21 +139,12 @@ public:
 		if(!pZoneType)
 			return;
 		
-		bool Index0Found = false;
-		CAsset_ZoneType::CIteratorIndex Iter;
-		for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
-		{
-			if(pZoneType->GetIndexNumber(*Iter) == 0)
-				Index0Found = true;
-		}
-		
-		if(!Index0Found)
+		if(!pZoneType->IsValidIndex(CAsset_ZoneType::SubPath_Index(0)))
 			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, CSubPath::Null()));
 		
+		CAsset_ZoneType::CIteratorIndex Iter;
 		for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
-		{
 			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *Iter));
-		}
 	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
@@ -525,8 +516,8 @@ void CCursorTool_TileStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePa
 	int Number = 0;
 	
 	const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
-	if(pZoneType)
-		Number = pZoneType->GetIndexNumber(Index);
+	if(pZoneType && pZoneType->IsValidIndex(Index))
+		Number = Index.GetId();
 	
 	m_Selection.resize(1, 1);
 	m_Selection.get_clamp(0, 0).SetIndex(Number);

@@ -31,6 +31,26 @@ CCursorTool_QuadPicker::CCursorTool_QuadPicker(CViewMap* pViewMap, const char* p
 	
 }
 
+CSubPath CCursorTool_QuadPicker::PickEntity(vec2 CursorPos)
+{
+	const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+	if(pEntities)
+	{
+		float GizmoSize = 24.0f;
+		{
+			CAsset_MapEntities::CIteratorEntity Iter;
+			for(Iter = pEntities->ReverseBeginEntity(); Iter != pEntities->ReverseEndEntity(); ++Iter)
+			{
+				vec2 PivotPos = ViewMap()->MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*Iter));
+				if(length(CursorPos - PivotPos) < GizmoSize)
+					return *Iter;
+			}
+		}
+	}
+	
+	return CSubPath::Null();
+}
+
 CSubPath CCursorTool_QuadPicker::PickQuad(vec2 CursorPos)
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
@@ -152,84 +172,107 @@ void CCursorTool_QuadTransform::OnViewButtonClick(int Button)
 		return;
 	
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
-	if(!pMapLayer)
-		return;
-	
-	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pMapLayer->GetImagePath());
-	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
-	//Find gizmo
-	float GizmoSize = 16.0f;
-	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
-	if(SelectedQuad.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pMapLayer->IsValidQuad(SelectedQuad))
+	if(pMapLayer)
 	{
-		vec2 Position;
-		matrix2x2 Transform;
-		pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pMapLayer->GetImagePath());
 		
-		vec2 Vertex = pMapLayer->GetQuadVertex0(SelectedQuad);
+		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 		
-		vec2 BBMin = Vertex;
-		vec2 BBMax = BBMin;
+		//Find gizmo
+		float GizmoSize = 16.0f;
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 		
-		Vertex = pMapLayer->GetQuadVertex1(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
-		Vertex = pMapLayer->GetQuadVertex2(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
-		Vertex = pMapLayer->GetQuadVertex3(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
-		
-		vec2 GizmosPos[4];
-		GizmosPos[0] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMin.x, BBMin.y) + Position);
-		GizmosPos[1] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMax.x, BBMin.y) + Position);
-		GizmosPos[2] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMin.x, BBMax.y) + Position);
-		GizmosPos[3] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMax.x, BBMax.y) + Position);
-		
-		for(int i=0; i<4; i++)
+		CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+		if(SelectedQuad.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pMapLayer->IsValidQuad(SelectedQuad))
 		{
-			if(length(CursorPos - GizmosPos[i]) < GizmoSize*(12.0f/16.0f))
+			vec2 Position;
+			matrix2x2 Transform;
+			pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+			
+			vec2 Vertex = pMapLayer->GetQuadVertex0(SelectedQuad);
+			
+			vec2 BBMin = Vertex;
+			vec2 BBMax = BBMin;
+			
+			Vertex = pMapLayer->GetQuadVertex1(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			Vertex = pMapLayer->GetQuadVertex2(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			Vertex = pMapLayer->GetQuadVertex3(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			
+			vec2 GizmosPos[4];
+			GizmosPos[0] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMin.x, BBMin.y) + Position);
+			GizmosPos[1] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMax.x, BBMin.y) + Position);
+			GizmosPos[2] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMin.x, BBMax.y) + Position);
+			GizmosPos[3] = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*vec2(BBMax.x, BBMax.y) + Position);
+			
+			for(int i=0; i<4; i++)
 			{
-				m_Token = AssetsManager()->GenerateToken();
-				m_ClickDiff = CursorPos - GizmosPos[i];
-				m_SelectedGizmo = i;
-				m_DragType = DRAGTYPE_GIZMO;
-		
-				ViewMap()->MapRenderer()->UnsetGroup();
-				return;
+				if(length(CursorPos - GizmosPos[i]) < GizmoSize*(12.0f/16.0f))
+				{
+					m_Token = AssetsManager()->GenerateToken();
+					m_ClickDiff = CursorPos - GizmosPos[i];
+					m_SelectedGizmo = i;
+					m_DragType = DRAGTYPE_GIZMO;
+			
+					ViewMap()->MapRenderer()->UnsetGroup();
+					return;
+				}
 			}
 		}
-	}
-	
-	CSubPath QuadFound = PickQuad(CursorPos);
-	
-	if(!QuadFound.IsNull())
-	{
-		if(SelectedQuad != QuadFound)
+		
+		CSubPath QuadFound = PickQuad(CursorPos);
+		
+		if(!QuadFound.IsNull())
 		{
-			SelectedQuad = QuadFound;
-			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), SelectedQuad);
+			if(SelectedQuad != QuadFound)
+			{
+				SelectedQuad = QuadFound;
+				AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), SelectedQuad);
+				
+				m_GizmoType = GIZMOTYPE_ROTATION;
+				m_Transformed = true;
+			}
+			else
+				m_Transformed = false;
 			
-			m_GizmoType = GIZMOTYPE_ROTATION;
-			m_Transformed = true;
+			m_Token = AssetsManager()->GenerateToken();
+			m_DragType = DRAGTYPE_TRANSLATION;
+			
+			AssetsEditor()->SetEditedAsset(
+				AssetsEditor()->GetEditedAssetPath(),
+				SelectedQuad
+			);
 		}
 		else
-			m_Transformed = false;
-		
-		m_Token = AssetsManager()->GenerateToken();
-		m_DragType = DRAGTYPE_TRANSLATION;
-		
-		AssetsEditor()->SetEditedAsset(
-			AssetsEditor()->GetEditedAssetPath(),
-			SelectedQuad
-		);
+			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
+			
+		ViewMap()->MapRenderer()->UnsetGroup();
+		return;
 	}
-	else
-		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
+	
+	const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+	if(pEntities)
+	{
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		CSubPath EntityFound = PickEntity(CursorPos);
 		
-	ViewMap()->MapRenderer()->UnsetGroup();
+		if(!EntityFound.IsNull())
+		{
+			m_Token = AssetsManager()->GenerateToken();
+			m_DragType = DRAGTYPE_TRANSLATION;
+			
+			AssetsEditor()->SetEditedAsset(
+				AssetsEditor()->GetEditedAssetPath(),
+				EntityFound
+			);
+		}
+		else
+			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
+		
+		return;
+	}
 }
 	
 void CCursorTool_QuadTransform::OnViewButtonRelease(int Button)
@@ -256,91 +299,114 @@ void CCursorTool_QuadTransform::OnViewMouseMove()
 		return;
 	
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
-	if(!pMapLayer)
-		return;
-		
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
-	if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))
-		return;
-	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
-	vec2 Position;
-	matrix2x2 Transform;
-	pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
-	
-	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	int RelX = Context()->GetMouseRelPos().x;
-	int RelY = Context()->GetMouseRelPos().y;
-	
-	if(m_DragType == DRAGTYPE_TRANSLATION)
+	if(pMapLayer)
 	{
-		vec2 PivotScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
-		vec2 Diff = ViewMap()->MapRenderer()->ScreenPosToMapPos(PivotScreenPos + vec2(RelX, RelY)) - Position;
-		vec2 NewPivotPos = pMapLayer->GetQuadPivot(SelectedQuad) + Diff;
-		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
-		m_Transformed = true;
-	}
-	else if(m_DragType == DRAGTYPE_GIZMO)
-	{
-		if(m_SelectedGizmo < 0)
-		{
-			ViewMap()->MapRenderer()->UnsetGroup();
+		CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+		if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))
 			return;
-		}
 		
-		vec2 Vertex = pMapLayer->GetQuadVertex0(SelectedQuad);
+		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 		
-		vec2 BBMin = Vertex;
-		vec2 BBMax = BBMin;
+		vec2 Position;
+		matrix2x2 Transform;
+		pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
-		Vertex = pMapLayer->GetQuadVertex1(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
-		Vertex = pMapLayer->GetQuadVertex2(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
-		Vertex = pMapLayer->GetQuadVertex3(SelectedQuad);
-		UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		int RelX = Context()->GetMouseRelPos().x;
+		int RelY = Context()->GetMouseRelPos().y;
 		
-		vec2 GizmosPos;
-		switch(m_SelectedGizmo)
+		if(m_DragType == DRAGTYPE_TRANSLATION)
 		{
-			case 0:
-				GizmosPos = Transform * vec2(BBMin.x, BBMin.y) + Position;
-				break;
-			case 1:
-				GizmosPos = Transform * vec2(BBMax.x, BBMin.y) + Position;
-				break;
-			case 2:
-				GizmosPos = Transform * vec2(BBMin.x, BBMax.y) + Position;
-				break;
-			case 3:
-				GizmosPos = Transform * vec2(BBMax.x, BBMax.y) + Position;
-				break;
+			vec2 PivotScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
+			vec2 Diff = ViewMap()->MapRenderer()->ScreenPosToMapPos(PivotScreenPos + vec2(RelX, RelY)) - Position;
+			vec2 NewPivotPos = pMapLayer->GetQuadPivot(SelectedQuad) + Diff;
+			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
+			m_Transformed = true;
 		}
-		
-		vec2 MousePos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos - m_ClickDiff);
-		vec2 PivotPos = Position;
-		
-		if(m_GizmoType == GIZMOTYPE_ROTATION)
+		else if(m_DragType == DRAGTYPE_GIZMO)
 		{
-			float Angle = pMapLayer->GetQuadAngle(SelectedQuad);
-			Angle -= angle(normalize(MousePos - PivotPos), normalize(GizmosPos - PivotPos));
-			AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_ANGLE, Angle, m_Token);
-		}
-		else
-		{
-			vec2 Size = pMapLayer->GetQuadSize(SelectedQuad);
+			if(m_SelectedGizmo < 0)
+			{
+				ViewMap()->MapRenderer()->UnsetGroup();
+				return;
+			}
 			
-			float Ratio = length(MousePos - PivotPos)/length(GizmosPos - PivotPos);
-			Size *= Ratio;
+			vec2 Vertex = pMapLayer->GetQuadVertex0(SelectedQuad);
 			
-			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_SIZE, Size, m_Token);
+			vec2 BBMin = Vertex;
+			vec2 BBMax = BBMin;
+			
+			Vertex = pMapLayer->GetQuadVertex1(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			Vertex = pMapLayer->GetQuadVertex2(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			Vertex = pMapLayer->GetQuadVertex3(SelectedQuad);
+			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
+			
+			vec2 GizmosPos;
+			switch(m_SelectedGizmo)
+			{
+				case 0:
+					GizmosPos = Transform * vec2(BBMin.x, BBMin.y) + Position;
+					break;
+				case 1:
+					GizmosPos = Transform * vec2(BBMax.x, BBMin.y) + Position;
+					break;
+				case 2:
+					GizmosPos = Transform * vec2(BBMin.x, BBMax.y) + Position;
+					break;
+				case 3:
+					GizmosPos = Transform * vec2(BBMax.x, BBMax.y) + Position;
+					break;
+			}
+			
+			vec2 MousePos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos - m_ClickDiff);
+			vec2 PivotPos = Position;
+			
+			if(m_GizmoType == GIZMOTYPE_ROTATION)
+			{
+				float Angle = pMapLayer->GetQuadAngle(SelectedQuad);
+				Angle -= angle(normalize(MousePos - PivotPos), normalize(GizmosPos - PivotPos));
+				AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_ANGLE, Angle, m_Token);
+			}
+			else
+			{
+				vec2 Size = pMapLayer->GetQuadSize(SelectedQuad);
+				
+				float Ratio = length(MousePos - PivotPos)/length(GizmosPos - PivotPos);
+				Size *= Ratio;
+				
+				AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_SIZE, Size, m_Token);
+			}
+			
+			m_Transformed = true;
 		}
 		
-		m_Transformed = true;
+		ViewMap()->MapRenderer()->UnsetGroup();
+		
+		return;
 	}
 	
-	ViewMap()->MapRenderer()->UnsetGroup();
+	const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+	if(pEntities)
+	{
+		CSubPath SelectedEntity = AssetsEditor()->GetEditedSubPath();
+		if(SelectedEntity.GetType() != CAsset_MapEntities::TYPE_ENTITY || !pEntities->IsValidEntity(SelectedEntity))
+			return;
+		
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		int RelX = Context()->GetMouseRelPos().x;
+		int RelY = Context()->GetMouseRelPos().y;
+		
+		if(m_DragType == DRAGTYPE_TRANSLATION)
+		{
+			vec2 Position = pEntities->GetEntityPosition(SelectedEntity);
+			vec2 ScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
+			vec2 NewPosition = ViewMap()->MapRenderer()->ScreenPosToMapPos(ScreenPos + vec2(RelX, RelY));
+			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedEntity, CAsset_MapEntities::ENTITY_POSITION, NewPosition, m_Token);
+			m_Transformed = true;
+		}
+	}
 }
 	
 void CCursorTool_QuadTransform::RenderView()
@@ -403,6 +469,7 @@ void CCursorTool_QuadTransform::Update(bool ParentEnabled)
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
 		case CAsset_MapLayerQuads::TypeId:
+		case CAsset_MapEntities::TypeId:
 			Enable();
 			break;
 		default:

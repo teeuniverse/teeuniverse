@@ -255,6 +255,41 @@ protected:
 		{ }
 	};
 	
+	class CAddEntityLayerButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath EntityLayerPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(m_AssetPath);
+			if(pMap)
+			{
+				CAsset_MapEntities* pLayer = AssetsManager()->NewAsset<CAsset_MapEntities>(&EntityLayerPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(EntityLayerPath, "entities", Token);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ENTITYLAYER);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_Map::SubPath_EntityLayer(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_Map::ENTITYLAYER, EntityLayerPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddEntityLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Entities")
+		{ }
+	};
+	
 	class CAddBgGroupButton : public CMenuButton
 	{
 	protected:
@@ -441,10 +476,7 @@ protected:
 		CSubPath m_SubPath;
 	
 	protected:
-		virtual void MouseClickAction()
-		{
-			m_pAssetsEditor->SetEditedAsset(m_AssetPath, m_SubPath);
-		}
+		virtual void MouseClickAction() { Action(); }
 
 	public:
 		CTitleButton(CGuiEditor* pAssetsEditor, const CAssetPath& AssetPath, CSubPath SubPath) :
@@ -468,31 +500,34 @@ protected:
 			
 			gui::CButton::Update(ParentEnabled);
 		}
+	
+		virtual void Action()
+		{
+			m_pAssetsEditor->SetEditedAsset(m_AssetPath, m_SubPath);
+		}
 	};
 	
 protected:
 	CGuiEditor* m_pAssetsEditor;
 	CAssetPath m_AssetPath;
 	CSubPath m_SubPath;
-	
-protected:
-	virtual void MouseClickAction()
-	{
-		m_pAssetsEditor->SetEditedAsset(m_AssetPath, m_SubPath);
-	}
+	CTitleButton* m_pTitle;
 
 public:
 	CItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, CSubPath SubPath) :
 		gui::CHListLayout(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
 		m_AssetPath(AssetPath),
-		m_SubPath(SubPath)
+		m_SubPath(SubPath),
+		m_pTitle(NULL)
 	{
 		CAssetState* pState = AssetsManager()->GetAssetState(m_AssetPath);
 		if(pState)
 			pState->m_ListedInEditor = true;
 		
-		Add(new CTitleButton(m_pAssetsEditor, AssetPath, SubPath), true);
+		m_pTitle = new CTitleButton(m_pAssetsEditor, AssetPath, SubPath);
+		
+		Add(m_pTitle, true);
 		Add(new CViewButton(m_pAssetsEditor, AssetPath), false);
 	}
 	
@@ -512,6 +547,7 @@ public:
 				else if(m_AssetPath.GetType() == CAsset_Map::TypeId)
 				{
 					pMenu->List()->Add(new CAddZoneLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddEntityLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->Add(new CAddBgGroupButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->Add(new CAddFgGroupButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->AddSeparator();
@@ -526,6 +562,7 @@ public:
 				pMenu->List()->Add(new CDeleteButton(m_pAssetsEditor, pMenu, m_AssetPath));
 				
 				m_pAssetsEditor->DisplayPopup(pMenu);
+				m_pTitle->Action();
 				return;
 			}
 		}
@@ -800,14 +837,17 @@ public:
 		m_PackageIdFound(false)
 	{
 		gui::CExpand* pZoneExpand = new gui::CExpand(Context());
+		gui::CExpand* pEntityExpand = new gui::CExpand(Context());
 		gui::CExpand* pBgExpand = new gui::CExpand(Context());
 		gui::CExpand* pFgExpand = new gui::CExpand(Context());
 		
 		pZoneExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Zones", m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pEntityExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Entities", m_pAssetsEditor->m_Path_Sprite_IconNone));
 		pBgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Background Layers", m_pAssetsEditor->m_Path_Sprite_IconNone));
 		pFgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Foreground Layers", m_pAssetsEditor->m_Path_Sprite_IconNone));
 		
 		Add(pZoneExpand);
+		Add(pEntityExpand);
 		Add(pBgExpand);
 		Add(pFgExpand);
 		
@@ -826,6 +866,17 @@ public:
 				if(Child.GetPackageId() == m_PackageId)
 				{
 					pZoneExpand->Add(new CItem(m_pAssetsEditor, Child, CSubPath::Null()));
+					m_PackageIdFound = true;
+				}
+			}
+			
+			CAsset_Map::CIteratorEntityLayer IterEntityLayer;
+			for(IterEntityLayer = pMap->BeginEntityLayer(); IterEntityLayer != pMap->EndEntityLayer(); ++IterEntityLayer)
+			{
+				CAssetPath Child = pMap->GetEntityLayer(*IterEntityLayer);
+				if(Child.GetPackageId() == m_PackageId)
+				{
+					pEntityExpand->Add(new CItem(m_pAssetsEditor, Child, CSubPath::Null()));
 					m_PackageIdFound = true;
 				}
 			}
@@ -940,6 +991,8 @@ void CAssetsTree::Update(bool ParentEnabled)
 
 void CAssetsTree::Refresh()
 {
+	//Search Tag: TAG_NEW_ASSET
+	
 	Clear();
 	
 	{
@@ -995,7 +1048,9 @@ void CAssetsTree::Refresh()
 	REFRESH_ASSET_LIST(CAsset_MapLayerTiles)
 	REFRESH_ASSET_LIST(CAsset_MapLayerQuads)
 	REFRESH_ASSET_LIST(CAsset_MapZoneTiles)
+	REFRESH_ASSET_LIST(CAsset_MapEntities)
 	REFRESH_ASSET_LIST(CAsset_ZoneType)
+	REFRESH_ASSET_LIST(CAsset_EntityType)
 	
 	//Skeletons
 	//	SkeletonAnimations

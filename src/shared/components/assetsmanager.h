@@ -51,12 +51,26 @@ public:
 	int m_PackageId_UnivTeeWorlds;
 	CAssetPath m_Path_ZoneType_TWPhysics;
 	CAssetPath m_Path_ZoneType_TWDamage;
+	CAssetPath m_Path_EntityType_TWSpawn;
+	CAssetPath m_Path_EntityType_TWSpawnRed;
+	CAssetPath m_Path_EntityType_TWSpawnBlue;
+	CAssetPath m_Path_EntityType_TWShotgun;
+	CAssetPath m_Path_EntityType_TWGrenade;
+	CAssetPath m_Path_EntityType_TWLaserRifle;
+	CAssetPath m_Path_EntityType_TWNinja;
+	CAssetPath m_Path_EntityType_TWHeart;
+	CAssetPath m_Path_EntityType_TWArmor;
+	CAssetPath m_Path_EntityType_TWFlagBlue;
+	CAssetPath m_Path_EntityType_TWFlagRed;
 	
 	int m_PackageId_UnivDDNet;
 	
 	int m_PackageId_UnivInfClass;
 	CAssetPath m_Path_ZoneType_InfClassPhysics;
 	CAssetPath m_Path_ZoneType_InfClassZones;
+	CAssetPath m_Path_EntityType_InfClassHumanSpawn;
+	CAssetPath m_Path_EntityType_InfClassInfectedSpawn;
+	CAssetPath m_Path_EntityType_InfClassHeroFlag;
 	
 	int m_PackageId_UnivOpenFNG;
 	

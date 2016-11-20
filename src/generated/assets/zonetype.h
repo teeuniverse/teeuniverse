@@ -38,7 +38,7 @@
 class CAsset_ZoneType : public CAsset
 {
 public:
-	static const int TypeId = 24;
+	static const int TypeId = 20;
 	
 	enum
 	{
@@ -53,8 +53,7 @@ public:
 		INDEX_ARRAYSIZE,
 		INDEX_PTR,
 		INDEX_ARRAY,
-		INDEX_NAME,
-		INDEX_NUMBER,
+		INDEX_DESCRIPTION,
 		INDEX_COLOR,
 		INDEX,
 	};
@@ -84,8 +83,7 @@ public:
 		class CTuaType
 		{
 		public:
-			tua_stringid m_Name;
-			tua_int32 m_Number;
+			tua_stringid m_Description;
 			tua_uint32 m_Color;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType::CIndex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType& TuaType);
@@ -93,35 +91,28 @@ public:
 		
 	
 	private:
-		string< _fixed_string_core<128> > m_Name;
-		int m_Number;
+		string< _fixed_string_core<128> > m_Description;
 		vec4 m_Color;
 	
 	public:
 		CIndex();
 		void copy(const CAsset_ZoneType::CIndex& Item)
 		{
-			m_Name.copy(Item.m_Name);
-			m_Number = Item.m_Number;
+			m_Description.copy(Item.m_Description);
 			m_Color = Item.m_Color;
 		}
 		
 		void transfert(CAsset_ZoneType::CIndex& Item)
 		{
-			m_Name.transfert(Item.m_Name);
-			m_Number = Item.m_Number;
+			m_Description.transfert(Item.m_Description);
 			m_Color = Item.m_Color;
 		}
 		
-		inline const char* GetName() const { return m_Name.buffer(); }
-		
-		inline int GetNumber() const { return m_Number; }
+		inline const char* GetDescription() const { return m_Description.buffer(); }
 		
 		inline vec4 GetColor() const { return m_Color; }
 		
-		inline void SetName(const char* Value) { m_Name.copy(Value); }
-		
-		inline void SetNumber(int Value) { m_Number = Value; }
+		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
 		
@@ -178,9 +169,7 @@ public:
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()]; }
 	
-	inline const char* GetIndexName(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetName(); }
-	
-	inline int GetIndexNumber(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetNumber(); }
+	inline const char* GetIndexDescription(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetDescription(); }
 	
 	inline vec4 GetIndexColor(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetColor(); }
 	
@@ -188,9 +177,7 @@ public:
 	
 	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value) { m_Index[SubPath.GetId()].copy(Value); }
 	
-	inline void SetIndexName(const CSubPath& SubPath, const char* Value) { m_Index[SubPath.GetId()].SetName(Value); }
-	
-	inline void SetIndexNumber(const CSubPath& SubPath, int Value) { m_Index[SubPath.GetId()].SetNumber(Value); }
+	inline void SetIndexDescription(const CSubPath& SubPath, const char* Value) { m_Index[SubPath.GetId()].SetDescription(Value); }
 	
 	inline void SetIndexColor(const CSubPath& SubPath, vec4 Value) { m_Index[SubPath.GetId()].SetColor(Value); }
 	

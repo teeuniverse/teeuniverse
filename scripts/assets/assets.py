@@ -1595,6 +1595,7 @@ _map.setInheritance(mainAsset)
 _map.addMember("BgGroup", TypeArray(TypeAssetPath()))
 _map.addMember("FgGroup", TypeArray(TypeAssetPath()))
 _map.addMember("ZoneLayer", TypeArray(TypeAssetPath()))
+_map.addMember("EntityLayer", TypeArray(TypeAssetPath()))
 
 assetsList.append(_map)
 
@@ -1677,6 +1678,38 @@ mapZoneTiles.addMember("ZoneTypePath", TypeAssetPath())
 mapZoneTiles.addMember("Tile", TypeArray2d(mapZoneTiles_tile))
 
 assetsList.append(mapZoneTiles)
+
+# MAP ENTITIES #########################################################
+mapEntities_entity = Class("Entity")
+mapEntities_entity.addMember("TypePath", TypeAssetPath())
+mapEntities_entity.addMember("Position", TypeVec2(), "0.0f")
+
+mapEntities = ClassAsset("MapEntities", len(assetsList))
+mapEntities.setInheritance(mainAsset)
+mapEntities.addClass(mapEntities_entity)
+mapEntities.addMember("Entity", TypeArray(mapEntities_entity))
+
+assetsList.append(mapEntities)
+
+# ZONE TYPE ############################################################
+zoneType_index = Class("Index")
+zoneType_index.addMember("Description", TypeString(128))
+zoneType_index.addMember("Color", TypeColor(), "1.0f")
+
+zoneType = ClassAsset("ZoneType", len(assetsList))
+zoneType.setInheritance(mainAsset)
+zoneType.addClass(zoneType_index)
+zoneType.addMember("Index", TypeArray(zoneType_index))
+
+assetsList.append(zoneType)
+
+# ENTITY TYPE ##########################################################
+entityType = ClassAsset("EntityType", len(assetsList))
+entityType.setInheritance(mainAsset)
+entityType.addMember("GizmoPath", TypeAssetPath())
+entityType.addMember("CollisionRadius", TypeFloat())
+
+assetsList.append(entityType)
 
 # SKELETON #############################################################
 skeleton_bone = Class("Bone")
@@ -1860,19 +1893,6 @@ weapon.addMember("SkinPath", TypeAssetPath())
 weapon.addMember("AttackAnimationPath", TypeAssetPath())
 
 assetsList.append(weapon)
-
-# ZONETYPE #############################################################
-zoneType_index = Class("Index")
-zoneType_index.addMember("Name", TypeString(128))
-zoneType_index.addMember("Number", TypeInt32(), "0")
-zoneType_index.addMember("Color", TypeColor(), "1.0f")
-
-zoneType = ClassAsset("ZoneType", len(assetsList))
-zoneType.setInheritance(mainAsset)
-zoneType.addClass(zoneType_index)
-zoneType.addMember("Index", TypeArray(zoneType_index))
-
-assetsList.append(zoneType)
 
 #########################################
 

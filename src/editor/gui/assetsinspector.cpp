@@ -56,6 +56,9 @@ CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
 	m_pTabs[TAB_MAPLAYERTILES_ASSET] = CreateTab_MapLayerTiles_Asset();
 	m_pTabs[TAB_MAPLAYERQUADS_ASSET] = CreateTab_MapLayerQuads_Asset();
 	m_pTabs[TAB_MAPZONETILES_ASSET] = CreateTab_MapZoneTiles_Asset();
+	m_pTabs[TAB_MAPENTITIES_ASSET] = CreateTab_MapEntities_Asset();
+	m_pTabs[TAB_ZONETYPE_ASSET] = CreateTab_ZoneType_Asset();
+	m_pTabs[TAB_ENTITYTYPE_ASSET] = CreateTab_EntityType_Asset();
 	m_pTabs[TAB_IMAGE_ASSET] = CreateTab_Image_Asset();
 	m_pTabs[TAB_SPRITE_ASSET] = CreateTab_Sprite_Asset();
 }
@@ -119,6 +122,15 @@ void CAssetsInspector::Update(bool ParentEnabled)
 				break;
 			case CAsset_MapZoneTiles::TypeId:
 				m_pTabs[TAB_MAPZONETILES_ASSET]->Enable();
+				break;
+			case CAsset_MapEntities::TypeId:
+				m_pTabs[TAB_MAPENTITIES_ASSET]->Enable();
+				break;
+			case CAsset_ZoneType::TypeId:
+				m_pTabs[TAB_ZONETYPE_ASSET]->Enable();
+				break;
+			case CAsset_EntityType::TypeId:
+				m_pTabs[TAB_ENTITYTYPE_ASSET]->Enable();
 				break;
 			case CAsset_Sprite::TypeId:
 				m_pTabs[TAB_SPRITE_ASSET]->Enable();
@@ -383,6 +395,100 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_WIDTH, "Width");	
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_HEIGHT, "Height");
 	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, "Zone type");
+	
+	return pTab;
+}
+
+class CSubItemList_MapEntities : public gui::CVScrollLayout
+{
+protected:
+	CAssetPath m_AssetPath;
+	CGuiEditor* m_pAssetsEditor;
+	bool m_UpdateNeeded;
+	
+public:
+	CSubItemList_MapEntities(CGuiEditor* pAssetsEditor) :
+		gui::CVScrollLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_UpdateNeeded(true)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId && m_AssetPath != m_pAssetsEditor->GetEditedAssetPath())
+			{
+				m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+				m_UpdateNeeded = true;
+			}
+			
+			if(m_UpdateNeeded)
+			{
+				Clear();
+				char aBuf[128];
+					
+				const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(m_pAssetsEditor->GetEditedAssetPath());
+				if(pEntities)
+				{
+					CAsset_MapEntities::CIteratorEntity Iter;
+					int Counter = 1;
+					for(Iter = pEntities->BeginEntity(); Iter != pEntities->EndEntity(); ++Iter)
+					{
+						CAssetPath TypePath = pEntities->GetEntityTypePath(*Iter);
+						const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
+						if(pEntityType)
+							Add(new CSubItem(m_pAssetsEditor, *Iter, pEntityType->GetName(), m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
+						else
+							Add(new CSubItem(m_pAssetsEditor, *Iter, "Unknown entity", m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
+						Counter++;
+					}
+					
+					m_UpdateNeeded = false;
+				}
+			}
+		}
+		
+		gui::CVScrollLayout::Update(ParentEnabled);
+	}
+};
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_MapEntities_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, "Map Entities", AssetsEditor()->m_Path_Sprite_IconEntities);
+	
+	AddField_AssetProperties(pTab);
+	
+	pTab->Add(new CSubItemList_MapEntities(AssetsEditor()), true);
+	
+	return pTab;
+}
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, "Zone Type", AssetsEditor()->m_Path_Sprite_IconZoneType);
+	
+	AddField_AssetProperties(pTab);
+	
+	return pTab;
+}
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_EntityType_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, "Entity Type", AssetsEditor()->m_Path_Sprite_IconEntityType);
+	
+	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_EntityType::GIZMOPATH, CAsset_Sprite::TypeId, "Gizmo");	
+	AddField_Float(pTab, CAsset_EntityType::COLLISIONRADIUS, "Collision Radius");	
 	
 	return pTab;
 }
