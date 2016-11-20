@@ -22,6 +22,7 @@
 #include <editor/gui/view_map_quad.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
+#include <client/components/assetsrenderer.h>
 
 /* VIEW MAP ***********************************************************/
 
@@ -232,6 +233,47 @@ void CViewMap::RenderView()
 	
 	MapRenderer()->RenderMap(MapPath);
 	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture);
+	
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
+	{
+		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+		if(pLayer)
+		{
+			MapRenderer()->SetGroup(AssetsEditor()->GetEditedAssetPath());
+			
+			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(0.0f, 0.0f));
+			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight()));
+			
+			gui::CRect Rect;
+			Rect.x = MinCorner.x;
+			Rect.y = MinCorner.y;
+			Rect.w = MaxCorner.x - MinCorner.x;
+			Rect.h = MaxCorner.y - MinCorner.y;
+			AssetsRenderer()->DrawGuiRect(&Rect, AssetsEditor()->m_Path_Rect_Border);
+			
+			MapRenderer()->UnsetGroup();
+		}
+	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
+	{
+		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+		if(pLayer)
+		{
+			MapRenderer()->SetGroup(AssetsEditor()->GetEditedAssetPath());
+			
+			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(0.0f, 0.0f));
+			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight()));
+			
+			gui::CRect Rect;
+			Rect.x = MinCorner.x;
+			Rect.y = MinCorner.y;
+			Rect.w = MaxCorner.x - MinCorner.x;
+			Rect.h = MaxCorner.y - MinCorner.y;
+			AssetsRenderer()->DrawGuiRect(&Rect, AssetsEditor()->m_Path_Rect_Border);
+			
+			MapRenderer()->UnsetGroup();
+		}
+	}
 }
 
 void CViewMap::OnButtonClick(int Button)

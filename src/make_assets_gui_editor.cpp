@@ -199,38 +199,38 @@ int main(int argc, const char **argv)
 		pAsset->SetImageBRPath(SpriteBR);
 		pAsset->SetImagePadding(8.0f);
 	}
-	//~ {
-		//~ CAssetPath SpriteTL;
-		//~ CAssetPath SpriteT;
-		//~ CAssetPath SpriteTR;
-		//~ CAssetPath SpriteL;
-		//~ CAssetPath SpriteR;
-		//~ CAssetPath SpriteBL;
-		//~ CAssetPath SpriteB;
-		//~ CAssetPath SpriteBR;
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
 		
-		//~ CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxStampTL", ImageBoxesPath, 9, 0, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteT , PackageId, "boxStampT" , ImageBoxesPath, 10, 0, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxStampTR", ImageBoxesPath, 11, 0, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxStampL" , ImageBoxesPath, 9, 1, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxStampR" , ImageBoxesPath, 11, 1, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxStampBL", ImageBoxesPath, 9, 2, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxStampB" , ImageBoxesPath, 10, 2, 1, 1);
-		//~ CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxStampBR", ImageBoxesPath, 11, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxBorderTL", ImageBoxesPath, 9, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxBorderT" , ImageBoxesPath, 10, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxBorderTR", ImageBoxesPath, 11, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxBorderL" , ImageBoxesPath, 9, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxBorderR" , ImageBoxesPath, 11, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxBorderBL", ImageBoxesPath, 9, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxBorderB" , ImageBoxesPath, 10, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxBorderBR", ImageBoxesPath, 11, 2, 1, 1);
 	
-		//~ CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectStampPath, PackageId, CAssetsHistory::NO_TOKEN);
-		//~ pAsset->SetName("stamp");
-		//~ pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
-		//~ pAsset->SetImageTLPath(SpriteTL);
-		//~ pAsset->SetImageTPath(SpriteT);
-		//~ pAsset->SetImageTRPath(SpriteTR);
-		//~ pAsset->SetImageLPath(SpriteL);
-		//~ pAsset->SetImageRPath(SpriteR);
-		//~ pAsset->SetImageBLPath(SpriteBL);
-		//~ pAsset->SetImageBPath(SpriteB);
-		//~ pAsset->SetImageBRPath(SpriteBR);
-		//~ pAsset->SetImagePadding(8.0f);
-	//~ }
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectStampPath, PackageId, CAssetsHistory::NO_TOKEN);
+		pAsset->SetName("border");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+		pAsset->SetImagePadding(1.0f);
+	}
 	{
 		CAssetPath SpriteTL;
 		CAssetPath SpriteT;
