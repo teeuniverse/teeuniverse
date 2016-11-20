@@ -283,19 +283,14 @@ void CCursorTool_TileStamp::OnViewButtonRelease(int Button)
 			{
 				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer)
-				{				
-					X0 = clamp(X0, 0, pLayer->GetTileWidth());
-					Y0 = clamp(Y0, 0, pLayer->GetTileHeight());
-					X1 = clamp(X1, 1, pLayer->GetTileWidth()+1);
-					Y1 = clamp(Y1, 1, pLayer->GetTileHeight()+1);
-					
+				{
 					m_Selection.resize(X1-X0, Y1-Y0);
 				
 					for(int j=0; j<m_Selection.get_height(); j++)
 					{
 						for(int i=0; i<m_Selection.get_width(); i++)
 						{
-							CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(X0+i, Y0+j);
+							CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
 							m_Selection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
 							m_Selection.get_clamp(i, j).SetFlags(pLayer->GetTileFlags(TilePath));
 						}
@@ -309,18 +304,13 @@ void CCursorTool_TileStamp::OnViewButtonRelease(int Button)
 				const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer)
 				{
-					X0 = clamp(X0, 0, pLayer->GetTileWidth());
-					Y0 = clamp(Y0, 0, pLayer->GetTileHeight());
-					X1 = clamp(X1, 1, pLayer->GetTileWidth()+1);
-					Y1 = clamp(Y1, 1, pLayer->GetTileHeight()+1);
-					
 					m_Selection.resize(X1-X0, Y1-Y0);
 				
 					for(int j=0; j<m_Selection.get_height(); j++)
 					{
 						for(int i=0; i<m_Selection.get_width(); i++)
 						{
-							CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(X0+i, Y0+j);
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
 							m_Selection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
 						}
 					}
@@ -357,14 +347,18 @@ void CCursorTool_TileStamp::OnViewMouseMove()
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
-			bool Res = true;
-			for(int j=0; j<m_Selection.get_height(); j++)
+			int MinX = clamp(TileX, 0, pLayer->GetTileWidth()-1);
+			int MinY = clamp(TileY, 0, pLayer->GetTileHeight()-1);
+			int MaxX = clamp(TileX + m_Selection.get_width(), 1, pLayer->GetTileWidth());
+			int MaxY = clamp(TileY + m_Selection.get_height(), 1, pLayer->GetTileHeight());
+			
+			for(int j=MinY; j<MaxY; j++)
 			{
-				for(int i=0; i<m_Selection.get_width(); i++)
+				for(int i=MinX; i<MaxX; i++)
 				{
-					CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(TileX+i, TileY+j);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_INDEX, m_Selection.get_clamp(i, j).GetIndex(), m_Token);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_FLAGS, m_Selection.get_clamp(i, j).GetFlags(), m_Token);
+					CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
+					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_INDEX, m_Selection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
+					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_FLAGS, m_Selection.get_clamp(i-TileX, j-TileY).GetFlags(), m_Token);
 				}
 			}
 		}
@@ -374,12 +368,17 @@ void CCursorTool_TileStamp::OnViewMouseMove()
 		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
-			for(int j=0; j<m_Selection.get_height(); j++)
+			int MinX = clamp(TileX, 0, pLayer->GetTileWidth()-1);
+			int MinY = clamp(TileY, 0, pLayer->GetTileHeight()-1);
+			int MaxX = clamp(TileX + m_Selection.get_width(), 1, pLayer->GetTileWidth());
+			int MaxY = clamp(TileY + m_Selection.get_height(), 1, pLayer->GetTileHeight());
+			
+			for(int j=MinY; j<MaxY; j++)
 			{
-				for(int i=0; i<m_Selection.get_width(); i++)
+				for(int i=MinX; i<MaxX; i++)
 				{
-					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(TileX+i, TileY+j);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_Selection.get_clamp(i, j).GetIndex(), m_Token);
+					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_Selection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
 				}
 			}
 		}
