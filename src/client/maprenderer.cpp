@@ -160,8 +160,8 @@ void CMapRenderer::RenderGrid_LayerTiles(CAssetPath LayerPath)
 }
 
 template<class TILE>
-void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, CAssetPath ZoneTexture)
-{
+void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, CAssetPath ZoneTexture, bool Repeat)
+{	
 	const CAsset_ZoneType* pZoneType = pMapRenderer->AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 	
 	pMapRenderer->AssetsRenderer()->TextureSet(ZoneTexture);
@@ -170,14 +170,24 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 	float TileSize = 32.0f*pMapRenderer->m_CameraZoom;
 
 	//Draw tile layer
-	vec2 MinTilePos = pMapRenderer->ScreenPosToTilePos(vec2(pMapRenderer->GetCanvas().x, pMapRenderer->GetCanvas().y));
-	vec2 MaxTilePos = pMapRenderer->ScreenPosToTilePos(vec2(pMapRenderer->GetCanvas().x + pMapRenderer->GetCanvas().w, pMapRenderer->GetCanvas().y + pMapRenderer->GetCanvas().h));
-	int MinX = MinTilePos.x-1;
-	int MaxX = MaxTilePos.x+1;
-	int MinY = MinTilePos.y-1;
-	int MaxY = MaxTilePos.y+1;
+	vec2 MinMapPos = pMapRenderer->ScreenPosToMapPos(vec2(pMapRenderer->GetCanvas().x, pMapRenderer->GetCanvas().y));
+	vec2 MaxMapPos = pMapRenderer->ScreenPosToMapPos(vec2(pMapRenderer->GetCanvas().x + pMapRenderer->GetCanvas().w, pMapRenderer->GetCanvas().y + pMapRenderer->GetCanvas().h));
+	vec2 MinTilePos = pMapRenderer->MapPosToTilePos(MinMapPos - Pos);
+	vec2 MaxTilePos = pMapRenderer->MapPosToTilePos(MaxMapPos - Pos);
+	int MinX = (int)MinTilePos.x-1;
+	int MaxX = (int)MaxTilePos.x+1;
+	int MinY = (int)MinTilePos.y-1;
+	int MaxY = (int)MaxTilePos.y+1;
 	
-	for(int j=MinY; j<MaxY; j++)
+	if(!Repeat)
+	{
+		MinX = clamp(MinX, 0, Tiles.get_width()-1);
+		MaxX = clamp(MaxX, 0, Tiles.get_width()-1);
+		MinY = clamp(MinY, 0, Tiles.get_height()-1);
+		MaxY = clamp(MaxY, 0, Tiles.get_height()-1);
+	}
+	
+	for(int j=MinY; j<=MaxY; j++)
 	{
 		for(int i=MinX; i<=MaxX; i++)
 		{
@@ -364,17 +374,17 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 	pMapRenderer->Graphics()->QuadsEnd();
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ZoneTexture)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ZoneTexture, bool Repeat)
 {
-	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, ZoneTexture);
+	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, ZoneTexture, Repeat);
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ZoneTexture)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ZoneTexture, bool Repeat)
 {
-	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, ZoneTexture);
+	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, ZoneTexture, Repeat);
 }
 
-void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color)
+void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat)
 {
 	AssetsRenderer()->TextureSet(ImagePath);
 	
@@ -382,12 +392,22 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 	Graphics()->SetColor(Color, true);
 
 	//Draw tile layer
-	vec2 MinTilePos = ScreenPosToTilePos(vec2(GetCanvas().x, GetCanvas().y));
-	vec2 MaxTilePos = ScreenPosToTilePos(vec2(GetCanvas().x + GetCanvas().w, GetCanvas().y + GetCanvas().h));
-	int MinX = MinTilePos.x-1;
-	int MaxX = MaxTilePos.x+1;
-	int MinY = MinTilePos.y-1;
-	int MaxY = MaxTilePos.y+1;
+	vec2 MinMapPos = ScreenPosToMapPos(vec2(GetCanvas().x, GetCanvas().y));
+	vec2 MaxMapPos = ScreenPosToMapPos(vec2(GetCanvas().x + GetCanvas().w, GetCanvas().y + GetCanvas().h));
+	vec2 MinTilePos = MapPosToTilePos(MinMapPos - Pos);
+	vec2 MaxTilePos = MapPosToTilePos(MaxMapPos - Pos);
+	int MinX = (int)MinTilePos.x-1;
+	int MaxX = (int)MaxTilePos.x+1;
+	int MinY = (int)MinTilePos.y-1;
+	int MaxY = (int)MaxTilePos.y+1;
+	
+	if(!Repeat)
+	{
+		MinX = clamp(MinX, 0, Tiles.get_width()-1);
+		MaxX = clamp(MaxX, 0, Tiles.get_width()-1);
+		MinY = clamp(MinY, 0, Tiles.get_height()-1);
+		MaxY = clamp(MaxY, 0, Tiles.get_height()-1);
+	}
 	
 	float USpacing = 0.0f;
 	float VSpacing = 0.0f;
@@ -399,7 +419,7 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 		VSpacing = pImage->GetGridSpacing() * pImage->GetGridHeight() / static_cast<float>(pImage->GetDataHeight());
 	}
 	
-	for(int j=MinY; j<MaxY; j++)
+	for(int j=MinY; j<=MaxY; j++)
 	{
 		for(int i=MinX; i<=MaxX; i++)
 		{
@@ -641,7 +661,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath)
 			if(!pLayer)
 				continue;
 			
-			RenderTiles_Image(pLayer->GetTileArray(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), pLayer->GetColor());
+			RenderTiles_Image(pLayer->GetTileArray(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), pLayer->GetColor(), true);
 		}
 		else if(LayerPath.GetType() == CAsset_MapLayerQuads::TypeId)
 		{
@@ -704,6 +724,6 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture)
 		if(pState && !pState->m_Visible)
 			continue;
 		
-		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, ZoneTexture);
+		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, ZoneTexture, true);
 	}
 }
