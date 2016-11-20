@@ -427,4 +427,14 @@ bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, CAss
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_MapLayerQuads::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_QUAD:
+			return AddQuad();
+	}
+	return -1;
+}
+
 

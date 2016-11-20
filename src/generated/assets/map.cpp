@@ -172,4 +172,18 @@ bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Val
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_Map::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_BGGROUP:
+			return AddBgGroup();
+		case TYPE_FGGROUP:
+			return AddFgGroup();
+		case TYPE_ZONELAYER:
+			return AddZoneLayer();
+	}
+	return -1;
+}
+
 

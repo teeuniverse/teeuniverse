@@ -94,6 +94,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	CAsset_Sprite();
 	void copy(const CAsset_Sprite& Item)

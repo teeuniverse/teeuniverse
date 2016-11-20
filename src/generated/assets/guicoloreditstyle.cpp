@@ -106,4 +106,9 @@ bool CAsset_GuiColorEditStyle::SetValue(int ValueType, const CSubPath& SubPath, 
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiColorEditStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

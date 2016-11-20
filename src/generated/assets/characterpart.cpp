@@ -103,4 +103,9 @@ bool CAsset_CharacterPart::SetValue(int ValueType, const CSubPath& SubPath, CSub
 	return CAsset::SetValue<CSubPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_CharacterPart::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

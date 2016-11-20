@@ -613,13 +613,6 @@ protected:
 		CAssetPath AssetPath;
 		switch(m_AssetType)
 		{
-			case CAsset_Sprite::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_Sprite>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "sprite", Tokken);
-				break;
-			}
 			case CAsset_Map::TypeId:
 			{
 				AssetsManager()->Load_UnivTeeWorlds();
@@ -696,55 +689,6 @@ protected:
 				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);
 				break;
 			}
-			case CAsset_MapGroup::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_MapGroup>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "group", Tokken);
-				break;
-			}
-			case CAsset_MapLayerTiles::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "tiles", Tokken);
-				break;
-			}
-			case CAsset_MapLayerQuads::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "quads", Tokken);
-				break;
-			}
-			case CAsset_MapZoneTiles::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "zone", Tokken);
-				break;
-			}
-			case CAsset_Skeleton::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_Skeleton>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "skeleton", Tokken);
-				break;
-			}
-			case CAsset_SkeletonAnimation::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_SkeletonAnimation>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "animation", Tokken);
-				break;
-			}
-			case CAsset_SkeletonSkin::TypeId:
-			{
-				int Tokken = AssetsManager()->GenerateToken();
-				AssetsManager()->NewAsset<CAsset_SkeletonSkin>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(AssetPath, "skin", Tokken);
-				break;
-			}
 		}
 		
 		m_pAssetsEditor->SetEditedAsset(AssetPath, CSubPath::Null());
@@ -809,7 +753,6 @@ protected:
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CSavePackageAsButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
-		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_DDNET));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
@@ -840,17 +783,8 @@ protected:
 	{
 		CPopup_ToolbarMenu* pMenu = new CPopup_ToolbarMenu(m_pAssetsEditor, m_DrawRect);
 		
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Sprite::TypeId, "New Sprite"));
-		pMenu->List()->AddSeparator();
+		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, "New Map"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_MapGroup::TypeId, "New Layer Group"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_MapLayerTiles::TypeId, "New Tile Layer"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_MapLayerQuads::TypeId, "New Quad Layer"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_MapZoneTiles::TypeId, "New Zone"));
-		pMenu->List()->AddSeparator();
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Skeleton::TypeId, "New Skeleton"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_SkeletonAnimation::TypeId, "New Skeleton Animation"));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_SkeletonSkin::TypeId, "New Skeleton Skin"));
 		
 		m_pAssetsEditor->DisplayPopup(pMenu);
 	}

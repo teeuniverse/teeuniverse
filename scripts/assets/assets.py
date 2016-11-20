@@ -19,9 +19,9 @@
 import sys, os
 
 class SubPathType:
-	def __init__(self, name, numidx):
+	def __init__(self, name, enumname, numidx):
 		self.name = name
-		self.enumname = name.upper()
+		self.enumname = enumname
 		self.numidx = numidx
 
 class GetSetInterface:
@@ -128,6 +128,8 @@ class Type:
 	def numSubPathId(self):
 		return 0
 	def generateIterators(self, name, var):
+		return []
+	def subPathTypes(self):
 		return []
 	#def generateStorage(self, var):
 	#def generateWrite(self, varSys, varTua):
@@ -323,6 +325,7 @@ class AddInterface_Array(GetSetInterface):
 	def __init__(self):
 		self.name = ""
 		self.subpath = 0
+		self.enum = ""
 	def generateAdd(self, var):
 		return [ 
 			"int Id = "+var+".size();",
@@ -339,6 +342,7 @@ class AddInterface_ArrayChild(GetSetInterface):
 		self.interface = interface
 		self.name = interface.name
 		self.subpath = 1
+		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + "[SubPath.GetId()].Add" + self.interface.name + "();" ]
 	def generateValid(self, var):
@@ -370,6 +374,13 @@ class TypeArray(Type):
 		return res
 	def subPathInterfaces(self):
 		return [SubPathInterface()]
+		
+	def subPathTypes(self):
+		res = []
+		for spt in self.t.subPathTypes():
+			res.append(SubPathType(spt.name, spt.enumname, spt.numidx))
+		return res
+	
 	def tuaType(self):
 		return "CTuaArray"
 	def generateWrite(self, varSys, varTua):
@@ -483,6 +494,7 @@ class AddInterface_Array2dChild(GetSetInterface):
 		self.interface = interface
 		self.name = interface.name
 		self.subpath = 1
+		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Add" + self.interface.name + "();" ]
 	def generateValid(self, var):
@@ -587,9 +599,17 @@ class GetSetInterface_Member(GetSetInterface):
 			self.name = self.name + interface.name
 			
 class AddInterface_Member(GetSetInterface):
-	def __init__(self, m):
-		self.name = m.name
-		self.subpath = 0
+	def __init__(self, m, interface):
+		self.subpath = interface.subpath
+		self.interface = interface
+		if interface.enum:
+			self.enum = m.name.upper() + "_" + interface.enum
+		else: 
+			self.enum = m.name.upper()
+		if interface.name:
+			self.name = m.name + interface.name
+		else: 
+			self.name = m.name
 	def generateAdd(self, var):
 		return [ "return " + var + ".Add" + self.interface.name + "();" ]
 	def generateValid(self, var):
@@ -727,14 +747,17 @@ class Member:
 	def addInterfaces(self):
 		res = []
 		for inter in self.t.addInterfaces():
-			res.append(AddInterface_Member(self))
+			res.append(AddInterface_Member(self, inter))
 		return res
 		
 	def subPathTypes(self):
 		res = []
+		for spt in self.t.subPathTypes():
+			res.append(SubPathType(self.name + spt.name, self.name.upper() + "_" + spt.enumname, spt.numidx + self.t.numSubPathId()))
 		if self.t.numSubPathId():
-			res.append(SubPathType(self.name, self.t.numSubPathId()))
+			res.append(SubPathType(self.name, self.name.upper(), self.t.numSubPathId()))
 		return res
+		
 	def generateIterators(self):
 		if len(self.t.generateIterators(self.name, self.memberName())) > 0:
 			return self.t.generateIterators(self.name, self.memberName())
@@ -794,6 +817,14 @@ class Class(Type):
 		for m in self.members:
 			res.extend(m.addInterfaces())
 		return res
+		
+	def subPathTypes(self):
+		res = []
+		for m in self.members:
+			for spt in m.subPathTypes():
+				res.append(SubPathType(spt.name, spt.enumname, spt.numidx))
+		return res
+	
 	def tuaType(self):
 		return self.fullType()+"::CTuaType"
 	def generateWrite(self, varSys, varTua):
@@ -1115,6 +1146,32 @@ class ClassAsset(Class):
 		else:
 			return []
 	
+	def generateAddImpl(self):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.addInterfaces():
+				counter = counter+1
+		
+		res = []
+		res.append("int "+self.fullType()+"::AddSubItem(int Type, const CSubPath& SubPath)")
+		res.append("{")
+		if counter > 0:
+			res.append("	switch(Type)")
+			res.append("	{")
+			
+			for Mem in self.members: 
+				for inter in Mem.addInterfaces():
+					res.append("		case TYPE_"+inter.enum+":")
+					if inter.subpath:
+						res.append("			return Add"+inter.name+"(SubPath);")
+					else:
+						res.append("			return Add"+inter.name+"();")
+			res.append("	}")		
+		res.append("	return -1;")
+		res.append("}")
+		res.append("")
+		return res
+	
 	def generateClassDefinition(self):
 		self.addPublicLines([
 			"static const int TypeId = "+str(self.typeid)+";",
@@ -1124,6 +1181,7 @@ class ClassAsset(Class):
 		self.addPublicLines(self.generateGetSetEnum())
 		for Mem in self.members:
 			self.addPublicLines(Mem.generateIterators())
+			
 		self.addPublicFunc([
 			"template<typename T>",
 			"T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const",
@@ -1138,7 +1196,13 @@ class ClassAsset(Class):
 			"}",
 			""
 		])
-		self.addPublicFunc([""])
+		
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.addInterfaces():
+				counter = counter+1
+		
+		self.addPublicFunc(["int AddSubItem(int Type, const CSubPath& SubPath);", ""])
 		
 		return Class.generateClassDefinition(self)
 
@@ -1269,6 +1333,8 @@ def generateImpl(asset):
 	for l in asset.generateGetImpl("CSubPath"):
 		print >>f, l
 	for l in asset.generateSetImpl("CSubPath"):
+		print >>f, l
+	for l in asset.generateAddImpl():
 		print >>f, l
 	print >>f, ""
 	

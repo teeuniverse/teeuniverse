@@ -86,6 +86,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	CAsset_GuiBoxStyle();
 	void copy(const CAsset_GuiBoxStyle& Item)

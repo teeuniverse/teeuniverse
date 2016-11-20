@@ -291,4 +291,14 @@ bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, CSubP
 	return CAsset::SetValue<CSubPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_SkeletonSkin::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_SPRITE:
+			return AddSprite();
+	}
+	return -1;
+}
+
 

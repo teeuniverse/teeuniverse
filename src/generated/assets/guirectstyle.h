@@ -150,6 +150,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	CAsset_GuiRectStyle();
 	void copy(const CAsset_GuiRectStyle& Item)

@@ -400,4 +400,24 @@ bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, 
 	return CAsset::SetValue<CSubPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_SkeletonAnimation::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_LOCALBONEANIM:
+			return AddLocalBoneAnim();
+		case TYPE_LOCALBONEANIM_KEYFRAME:
+			return AddLocalBoneAnimKeyFrame(SubPath);
+		case TYPE_PARENTBONEANIM:
+			return AddParentBoneAnim();
+		case TYPE_PARENTBONEANIM_KEYFRAME:
+			return AddParentBoneAnimKeyFrame(SubPath);
+		case TYPE_LAYERANIMATION:
+			return AddLayerAnimation();
+		case TYPE_LAYERANIMATION_KEYFRAME:
+			return AddLayerAnimationKeyFrame(SubPath);
+	}
+	return -1;
+}
+
 

@@ -160,4 +160,14 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, vec4 Valu
 	return CAsset::SetValue<vec4>(ValueType, SubPath, Value);
 }
 
+int CAsset_ZoneType::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_INDEX:
+			return AddIndex();
+	}
+	return -1;
+}
+
 

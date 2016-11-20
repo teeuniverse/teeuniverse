@@ -124,4 +124,9 @@ bool CAsset_Sprite::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath 
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_Sprite::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

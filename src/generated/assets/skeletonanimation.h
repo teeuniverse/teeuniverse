@@ -72,13 +72,19 @@ public:
 	
 	enum
 	{
+		TYPE_LOCALBONEANIM_KEYFRAME,
 		TYPE_LOCALBONEANIM,
+		TYPE_PARENTBONEANIM_KEYFRAME,
 		TYPE_PARENTBONEANIM,
+		TYPE_LAYERANIMATION_KEYFRAME,
 		TYPE_LAYERANIMATION,
 	};
 	
+	static inline CSubPath SubPath_LocalBoneAnimKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_LOCALBONEANIM_KEYFRAME, Id0, Id1, 0); }
 	static inline CSubPath SubPath_LocalBoneAnim(int Id0) { return CSubPath(TYPE_LOCALBONEANIM, Id0, 0, 0); }
+	static inline CSubPath SubPath_ParentBoneAnimKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_PARENTBONEANIM_KEYFRAME, Id0, Id1, 0); }
 	static inline CSubPath SubPath_ParentBoneAnim(int Id0) { return CSubPath(TYPE_PARENTBONEANIM, Id0, 0, 0); }
+	static inline CSubPath SubPath_LayerAnimationKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_LAYERANIMATION_KEYFRAME, Id0, Id1, 0); }
 	static inline CSubPath SubPath_LayerAnimation(int Id0) { return CSubPath(TYPE_LAYERANIMATION, Id0, 0, 0); }
 	
 	enum
@@ -571,6 +577,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	void copy(const CAsset_SkeletonAnimation& Item)
 	{

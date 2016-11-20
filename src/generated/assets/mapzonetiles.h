@@ -123,6 +123,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	void copy(const CAsset_MapZoneTiles& Item)
 	{

@@ -105,6 +105,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	CAsset_GuiLabelStyle();
 	void copy(const CAsset_GuiLabelStyle& Item)

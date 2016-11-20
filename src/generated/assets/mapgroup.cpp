@@ -191,4 +191,14 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, CAssetPat
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_MapGroup::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_LAYER:
+			return AddLayer();
+	}
+	return -1;
+}
+
 

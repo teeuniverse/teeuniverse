@@ -140,4 +140,9 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value
 	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
 }
 
+int CAsset_Image::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

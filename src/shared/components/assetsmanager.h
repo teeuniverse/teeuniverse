@@ -277,6 +277,8 @@ public:
 		
 		return false;
 	}
+
+	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
 	
 	template<typename ASSET>
 	CAssetPath FindAsset(int PackageId, const char* pAssetName) const

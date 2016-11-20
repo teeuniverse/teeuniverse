@@ -129,4 +129,9 @@ bool CAsset_GuiScrollbarStyle::SetValue(int ValueType, const CSubPath& SubPath, 
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiScrollbarStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

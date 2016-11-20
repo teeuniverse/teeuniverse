@@ -324,4 +324,16 @@ bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, CAssetPat
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_Skeleton::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_BONE:
+			return AddBone();
+		case TYPE_LAYER:
+			return AddLayer();
+	}
+	return -1;
+}
+
 

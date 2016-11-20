@@ -92,4 +92,9 @@ bool CAsset_Weapon::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath 
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_Weapon::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

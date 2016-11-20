@@ -78,4 +78,9 @@ bool CAsset_GuiIntEditStyle::SetValue(int ValueType, const CSubPath& SubPath, CA
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiIntEditStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

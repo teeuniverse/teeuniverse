@@ -201,4 +201,9 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, CAss
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_MapLayerTiles::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

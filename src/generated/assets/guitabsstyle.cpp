@@ -136,4 +136,9 @@ bool CAsset_GuiTabsStyle::SetValue(int ValueType, const CSubPath& SubPath, CAsse
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiTabsStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

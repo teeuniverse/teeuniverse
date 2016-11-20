@@ -132,4 +132,9 @@ bool CAsset_GuiBoxStyle::SetValue(int ValueType, const CSubPath& SubPath, CAsset
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiBoxStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

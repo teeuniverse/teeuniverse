@@ -164,4 +164,9 @@ bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, CAsse
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_MapZoneTiles::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

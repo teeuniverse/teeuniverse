@@ -85,4 +85,9 @@ bool CAsset_GuiButtonStyle::SetValue(int ValueType, const CSubPath& SubPath, CAs
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_GuiButtonStyle::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	return -1;
+}
+
 

@@ -175,4 +175,14 @@ bool CAsset_Character::SetValue(int ValueType, const CSubPath& SubPath, CAssetPa
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
+int CAsset_Character::AddSubItem(int Type, const CSubPath& SubPath)
+{
+	switch(Type)
+	{
+		case TYPE_PART:
+			return AddPart();
+	}
+	return -1;
+}
+
 

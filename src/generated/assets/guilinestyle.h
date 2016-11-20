@@ -90,6 +90,7 @@ public:
 		return CAsset::SetValue<T>(ValueType, SubPath, Value);
 	}
 	
+	int AddSubItem(int Type, const CSubPath& SubPath);
 	
 	CAsset_GuiLineStyle();
 	void copy(const CAsset_GuiLineStyle& Item)

@@ -149,13 +149,26 @@ public:
 class CItem : public gui::CHListLayout
 {
 protected:
-	class CDeleteButton : public gui::CButton
+	class CMenuButton : public gui::CButton
 	{
 	protected:
 		CGuiEditor* m_pAssetsEditor;
 		CContextMenu* m_pContextMenu;
 		CAssetPath m_AssetPath;
-		
+
+	public:
+		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const char* pName) :
+			gui::CButton(pAssetsEditor, pName),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu),
+			m_AssetPath(AssetPath)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		}
+	};
+	
+	class CDeleteButton : public CMenuButton
+	{
 	protected:
 		virtual void MouseClickAction()
 		{
@@ -167,13 +180,222 @@ protected:
 
 	public:
 		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			gui::CButton(pAssetsEditor, "Delete"),
-			m_pAssetsEditor(pAssetsEditor),
-			m_pContextMenu(pContextMenu),
-			m_AssetPath(AssetPath)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Delete")
+		{ }
+	};
+	
+	class CAddSpriteButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
 		{
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+			CAssetPath SpritePath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_AssetPath);
+			if(pImage)
+			{
+				CAsset_Sprite* pSprite = AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, m_AssetPath.GetPackageId(), Token);
+				if(pSprite)
+				{
+					AssetsManager()->TryChangeAssetName(SpritePath, "sprite", Token);
+					pSprite->SetImagePath(m_AssetPath);
+					pSprite->SetX(0);
+					pSprite->SetY(0);
+					pSprite->SetWidth(1);
+					pSprite->SetHeight(1);
+					
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
 		}
+
+	public:
+		CAddSpriteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer")
+		{ }
+	};
+	
+	class CAddZoneLayerButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath ZoneLayerPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(m_AssetPath);
+			if(pMap)
+			{
+				CAsset_MapZoneTiles* pLayer = AssetsManager()->NewAsset<CAsset_MapZoneTiles>(&ZoneLayerPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(ZoneLayerPath, "zone", Token);
+					pLayer->SetTileWidth(64);
+					pLayer->SetTileHeight(64);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_Map::SubPath_ZoneLayer(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_Map::ZONELAYER, ZoneLayerPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddZoneLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer")
+		{ }
+	};
+	
+	class CAddBgGroupButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath GroupPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(m_AssetPath);
+			if(pMap)
+			{
+				CAsset_MapGroup* pLayer = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_Map::SubPath_BgGroup(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_Map::BGGROUP, GroupPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddBgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Background Group")
+		{ }
+	};
+	
+	
+	class CAddFgGroupButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath GroupPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(m_AssetPath);
+			if(pMap)
+			{
+				CAsset_MapGroup* pLayer = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_Map::SubPath_FgGroup(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_Map::FGGROUP, GroupPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddFgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Foreground Group")
+		{ }
+	};
+	
+	class CAddTileLayerButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath LayerPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+			if(pMapGroup)
+			{
+				CAsset_MapLayerTiles* pLayer = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&LayerPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(LayerPath, "tiles", Token);
+					pLayer->SetTileWidth(64);
+					pLayer->SetTileHeight(64);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_MapGroup::LAYER, LayerPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Tile Layer")
+		{ }
+	};
+	
+	class CAddQuadLayerButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath LayerPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+			if(pMapGroup)
+			{
+				CAsset_MapLayerQuads* pLayer = AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&LayerPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(LayerPath, "quads", Token);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_MapGroup::LAYER, LayerPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddQuadLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Quad Layer")
+		{ }
 	};
 	
 	class CViewButton : public gui::CButton
@@ -281,7 +503,26 @@ public:
 			if(m_DrawRect.IsInside(Context()->GetMousePos()))
 			{
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
-			
+				
+				if(m_AssetPath.GetType() == CAsset_Image::TypeId)
+				{
+					pMenu->List()->Add(new CAddSpriteButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_Map::TypeId)
+				{
+					pMenu->List()->Add(new CAddZoneLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddBgGroupButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddFgGroupButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapGroup::TypeId)
+				{
+					pMenu->List()->Add(new CAddTileLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddQuadLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
+				}
+				
 				pMenu->List()->Add(new CDeleteButton(m_pAssetsEditor, pMenu, m_AssetPath));
 				
 				m_pAssetsEditor->DisplayPopup(pMenu);

@@ -1241,6 +1241,30 @@ void CAssetsManager::Load_UnivOpenFNG()
 		m_PackageId_UnivOpenFNG = Load_AssetsFile("univ_openfng", CStorage::TYPE_ALL);
 	}
 }
+
+int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token)
+{
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
+	
+	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
+	{\
+		CAsset_##Name* pAsset = GetEditableAsset<CAsset_##Name>(AssetPath);\
+		if(pAsset)\
+			return pAsset->AddSubItem(Type, SubPath);\
+		else\
+			return -1;\
+	}
+	
+	switch(AssetPath.GetType())
+	{
+		#include <generated/assets/assetsmacro.h>
+	}
+	
+	#undef MACRO_ASSETTYPE
+	
+	return -1;
+}
 	
 CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId)
 {
