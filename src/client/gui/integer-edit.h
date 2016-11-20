@@ -61,8 +61,8 @@ class CAbstractIntegerEdit : public CHListLayout
 	
 protected:
 	CEntry* m_pEntry;
-	CWidget* m_pDecreaseButton;
-	CWidget* m_pIncreaseButton;
+	CButton* m_pDecreaseButton;
+	CButton* m_pIncreaseButton;
 	CAssetPath m_IntEditStylePath;
 
 protected:
@@ -74,7 +74,7 @@ public:
 	
 	void Editable(bool Value);
 	
-	inline void SetIntEditStyle(CAssetPath Path) { m_IntEditStylePath = Path; }
+	void SetIntEditStyle(CAssetPath Path);
 	inline CAssetPath GetIntEditStyle() const { return m_IntEditStylePath; }
 };
 

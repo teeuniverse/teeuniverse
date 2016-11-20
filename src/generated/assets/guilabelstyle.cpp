@@ -58,6 +58,7 @@ void CAsset_GuiLabelStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 	SysType.m_TextColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextColor);
 	SysType.m_TextAlignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TextAlignment);
 	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconPath, SysType.m_IconPath);
 }
 
 void CAsset_GuiLabelStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType& TuaType)
@@ -73,6 +74,7 @@ void CAsset_GuiLabelStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 	TuaType.m_TextColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextColor);
 	TuaType.m_TextAlignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TextAlignment);
 	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconPath, TuaType.m_IconPath);
 }
 
 template<>
@@ -158,6 +160,8 @@ CAssetPath CAsset_GuiLabelStyle::GetValue(int ValueType, const CSubPath& SubPath
 	{
 		case RECTPATH:
 			return GetRectPath();
+		case ICONPATH:
+			return GetIconPath();
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -169,6 +173,9 @@ bool CAsset_GuiLabelStyle::SetValue(int ValueType, const CSubPath& SubPath, CAss
 	{
 		case RECTPATH:
 			SetRectPath(Value);
+			return true;
+		case ICONPATH:
+			SetIconPath(Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);

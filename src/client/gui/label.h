@@ -59,7 +59,7 @@ public:
 	inline void SetIconWidget(CWidget* pIconWidget) { m_pIconWidget = pIconWidget; }
 	inline CWidget* GetIconWidget() const { return m_pIconWidget; }
 	
-	inline void SetLabelStyle(CAssetPath Path) { m_LabelStylePath = Path; }
+	void SetLabelStyle(CAssetPath Path);
 	inline CAssetPath GetLabelStyle() const { return m_LabelStylePath; }
 	
 	inline ivec2 GetTextPosition() const { return ivec2(m_TextRect.x, m_TextRect.y); }

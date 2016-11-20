@@ -69,11 +69,14 @@ int main(int argc, const char **argv)
 	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "datasrc/images/gui_editor_box.png", 16, 16);
 	CAssetPath ImageZoneTexturePath = CreateNewImage(pKernel, PackageId, "zoneTexture", "datasrc/images/gui_editor_zonetexture.png", 1, 1);
 	
-	//Sprites	
+	//Sprites
+	CAssetPath IconDecreasePath;
+	CAssetPath IconIncreasePath;
+	
 	CREATE_SPRITE(PackageId, "iconVoid", ImageEditorPath, 0, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDefault", ImageEditorPath, 1, 0, 1, 1);
-	CREATE_SPRITE(PackageId, "iconDecrease", ImageEditorPath, 2, 0, 1, 1);
-	CREATE_SPRITE(PackageId, "iconIncrease", ImageEditorPath, 3, 0, 1, 1);
+	CREATE_SPRITE_PATH(IconDecreasePath, PackageId, "iconDecrease", ImageEditorPath, 2, 0, 1, 1);
+	CREATE_SPRITE_PATH(IconIncreasePath, PackageId, "iconIncrease", ImageEditorPath, 3, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDelete", ImageEditorPath, 4, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEdit", ImageEditorPath, 9, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconView", ImageEditorPath, 10, 0, 1, 1);
@@ -693,9 +696,82 @@ int main(int argc, const char **argv)
 	
 	//Integer Edit
 	{
+		CAssetPath LabelIncrIdlePath;
+		CAssetPath LabelIncrMoPath;
+		CAssetPath ButtonIncrPath;
+		CAssetPath LabelDecrIdlePath;
+		CAssetPath LabelDecrMoPath;
+		CAssetPath ButtonDecrPath;
+		
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIncrIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditIncr");
+			pAsset->SetRectPath(RectButtonPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconIncreasePath);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIncrMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditIncrMo");
+			pAsset->SetRectPath(RectButtonMoPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconIncreasePath);
+		}
+		
+		{
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonIncrPath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditIncr");
+			pAsset->SetIdleStylePath(LabelIncrIdlePath);
+			pAsset->SetMouseOverStylePath(LabelIncrMoPath);
+		}
+		
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelDecrIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditDecr");
+			pAsset->SetRectPath(RectButtonPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconDecreasePath);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelDecrMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditDecrMo");
+			pAsset->SetRectPath(RectButtonMoPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconDecreasePath);
+		}
+		
+		{
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonDecrPath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("intEditDecr");
+			pAsset->SetIdleStylePath(LabelDecrIdlePath);
+			pAsset->SetMouseOverStylePath(LabelDecrMoPath);
+		}
+		
 		CAssetPath AssetPath;
 		CAsset_GuiIntEditStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiIntEditStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
 		pAsset->SetName("default");
+		pAsset->SetIncreaseButtonStylePath(ButtonIncrPath);
+		pAsset->SetDecreaseButtonStylePath(ButtonDecrPath);
 	}
 	
 	//Active List Item

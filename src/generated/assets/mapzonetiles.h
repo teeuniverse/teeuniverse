@@ -156,9 +156,9 @@ public:
 	
 	inline void SetZoneTypePath(const CAssetPath& Value) { m_ZoneTypePath = Value; }
 	
-	inline void SetTileWidth(int Value) { m_Tile.resize_width(Value); }
+	inline void SetTileWidth(int Value) { m_Tile.resize_width(max(Value, 1)); }
 	
-	inline void SetTileHeight(int Value) { m_Tile.resize_height(Value); }
+	inline void SetTileHeight(int Value) { m_Tile.resize_height(max(Value, 1)); }
 	
 	inline void SetTile(const CSubPath& SubPath, const CAsset_MapZoneTiles::CTile& Value) { m_Tile.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	

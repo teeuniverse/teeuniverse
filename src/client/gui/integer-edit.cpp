@@ -76,15 +76,15 @@ void CAbstractIntegerEdit::CIncreaseButton::MouseClickAction()
 	//Integer Edit
 CAbstractIntegerEdit::CAbstractIntegerEdit(CGui *pContext) :
 	CHListLayout(pContext),
-	m_pEntry(0)
+	m_pEntry(NULL)
 {
-	SetIntEditStyle(Context()->GetIntEditStyle());
-	
 	m_pEntry = new CAbstractIntegerEdit::CEntry(this);
 	m_pEntry->SetLabelStyle(Context()->GetNumericEntryStyle());
 	
 	m_pDecreaseButton = new CAbstractIntegerEdit::CDecreaseButton(this);
 	m_pIncreaseButton = new CAbstractIntegerEdit::CIncreaseButton(this);
+	
+	SetIntEditStyle(Context()->GetIntEditStyle());
 	
 	Add(m_pEntry, true);
 	Add(m_pDecreaseButton, false);
@@ -107,6 +107,17 @@ void CAbstractIntegerEdit::Editable(bool Value)
 	}
 }
 
+void CAbstractIntegerEdit::SetIntEditStyle(CAssetPath Path)
+{
+	m_IntEditStylePath = Path;
+	
+	const CAsset_GuiIntEditStyle* pStyle = AssetsManager()->GetAsset<CAsset_GuiIntEditStyle>(m_IntEditStylePath);
+	if(pStyle)
+	{
+		m_pDecreaseButton->SetButtonStyle(pStyle->GetDecreaseButtonStylePath());
+		m_pIncreaseButton->SetButtonStyle(pStyle->GetIncreaseButtonStylePath());
+	}
+}
 
 /* INTEGER EDIT *******************************************************/
 

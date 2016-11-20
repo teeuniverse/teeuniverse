@@ -500,6 +500,12 @@ class AddInterface_Array2dChild(GetSetInterface):
 	def generateValid(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId());" ]
 		
+class GetSetInterface_Array2dDim(GetSetInterface_Func):
+	def __init__(self, suffix, returnType, paramType, getFunc, setFunc):
+		GetSetInterface_Func.__init__(self, suffix, returnType, paramType, getFunc, setFunc)
+	def generateSet(self, var, value):
+		return [ var + "." + self.setFunc + "(max(" + value + ", 1));" ]
+		
 class TypeArray2d(Type):
 	def __init__(self, t):
 		Type.__init__(self, "array2d< "+t.tname+", allocator_"+t.allocator()+"<"+t.tname+"> >")
@@ -512,8 +518,8 @@ class TypeArray2d(Type):
 		return "copy"
 	def getSetInterfaces(self):
 		res = [
-			GetSetInterface_Func("Width", "int", "int", "get_width", "resize_width"),
-			GetSetInterface_Func("Height", "int", "int", "get_height", "resize_height"),
+			GetSetInterface_Array2dDim("Width", "int", "int", "get_width", "resize_width"),
+			GetSetInterface_Array2dDim("Height", "int", "int", "get_height", "resize_height"),
 			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr"),
 			GetSetInterface_SimpleRef("Array", self.tname, self.tname)
 		]
@@ -1413,6 +1419,7 @@ guiLabelStyle.addMember("FontSize", TypeInt32(), "12")
 guiLabelStyle.addMember("TextColor", TypeColor(), "1.0f")
 guiLabelStyle.addMember("TextAlignment", TypeInt32(), "TEXTALIGNMENT_LEFT")
 guiLabelStyle.addMember("RectPath", TypeAssetPath())
+guiLabelStyle.addMember("IconPath", TypeAssetPath())
 guiLabelStyle.addPublicLines([
 	"enum",
 	"{",

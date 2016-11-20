@@ -62,6 +62,7 @@ public:
 		TEXTCOLOR,
 		TEXTALIGNMENT,
 		RECTPATH,
+		ICONPATH,
 	};
 	
 	class CTuaType : public CAsset::CTuaType
@@ -76,6 +77,7 @@ public:
 		tua_uint32 m_TextColor;
 		tua_int32 m_TextAlignment;
 		CAssetPath::CTuaType m_RectPath;
+		CAssetPath::CTuaType m_IconPath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiLabelStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType& TuaType);
 	};
@@ -91,6 +93,7 @@ private:
 	vec4 m_TextColor;
 	int m_TextAlignment;
 	CAssetPath m_RectPath;
+	CAssetPath m_IconPath;
 
 public:
 	template<typename T>
@@ -120,6 +123,7 @@ public:
 		m_TextColor = Item.m_TextColor;
 		m_TextAlignment = Item.m_TextAlignment;
 		m_RectPath = Item.m_RectPath;
+		m_IconPath = Item.m_IconPath;
 	}
 	
 	void transfert(CAsset_GuiLabelStyle& Item)
@@ -134,6 +138,7 @@ public:
 		m_TextColor = Item.m_TextColor;
 		m_TextAlignment = Item.m_TextAlignment;
 		m_RectPath = Item.m_RectPath;
+		m_IconPath = Item.m_IconPath;
 	}
 	
 	inline int GetMinWidth() const { return m_MinWidth; }
@@ -154,6 +159,8 @@ public:
 	
 	inline CAssetPath GetRectPath() const { return m_RectPath; }
 	
+	inline CAssetPath GetIconPath() const { return m_IconPath; }
+	
 	inline void SetMinWidth(int Value) { m_MinWidth = Value; }
 	
 	inline void SetMinHeight(int Value) { m_MinHeight = Value; }
@@ -172,9 +179,12 @@ public:
 	
 	inline void SetRectPath(const CAssetPath& Value) { m_RectPath = Value; }
 	
+	inline void SetIconPath(const CAssetPath& Value) { m_IconPath = Value; }
+	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_RectPath);
+		Operation.Apply(m_IconPath);
 	}
 	
 };

@@ -142,9 +142,9 @@ public:
 	
 	inline void SetTexelSize(int Value) { m_TexelSize = Value; }
 	
-	inline void SetDataWidth(int Value) { m_Data.resize_width(Value); }
+	inline void SetDataWidth(int Value) { m_Data.resize_width(max(Value, 1)); }
 	
-	inline void SetDataHeight(int Value) { m_Data.resize_height(Value); }
+	inline void SetDataHeight(int Value) { m_Data.resize_height(max(Value, 1)); }
 	
 	inline void SetData(const CSubPath& SubPath, uint8 Value) { m_Data.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	

@@ -362,6 +362,23 @@ void CAbstractLabel::SetText(const char* pText, bool Localize)
 	OnTextUpdated();
 }
 
+void CAbstractLabel::SetLabelStyle(CAssetPath Path)
+{
+	m_LabelStylePath = Path;
+	
+	if(m_IconPath.IsNull())
+	{
+		const CAsset_GuiLabelStyle* pLabelStyle = AssetsManager()->GetAsset<CAsset_GuiLabelStyle>(m_LabelStylePath);
+		if(pLabelStyle)
+		{
+			if(pLabelStyle->GetIconPath().IsNotNull())
+				SetIcon(pLabelStyle->GetIconPath());
+			else
+				SetIcon(CAssetPath::Null());
+		}
+	}
+}
+
 /* LABEL **************************************************************/
 
 CLabel::CLabel(CGui* pContext, const char* pText, CAssetPath IconPath) :
