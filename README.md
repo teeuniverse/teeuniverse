@@ -3,6 +3,15 @@ TeeUniverses
 
 TeeUniverses is a fork of TeeWorlds that provides interesting possibilities to make good quality mods.
 
+
+Required Libraries and Programs
+-------
+
+TeeUniverses, like TeeWorlds, needs SDL2, OpenGL, libpng and freetype.
+The libraries ICU and Harfbuzz must be also installed.
+Please make sure that CMake is install too, because the compilation process relies on it.
+
+
 Compilation (Linux)
 -------
 
@@ -23,6 +32,7 @@ Compile the project
 cmake ..
 make
 ```
+
 
 Execution
 -------
