@@ -33,17 +33,17 @@ public:
 	vec2 m_CameraPos;
 	vec2 m_GroupCameraPos;
 	float m_CameraZoom;
-	float m_Time;
-	float m_LocalTime;
+	double m_Time;
+	double m_LocalTime;
 	
 public:	
 	CMapRenderer(CClientKernel* pKernel);
 	
-	inline void SetTime(float Time) { m_Time = Time; }
-	inline void SetLocalTime(float Time) { m_LocalTime = Time; }
+	inline void SetTime(double Time) { m_Time = Time; }
+	inline void SetLocalTime(double Time) { m_LocalTime = Time; }
 	
-	inline float GetTime() const { return m_Time; }
-	inline float GetLocalTime() const { return m_LocalTime; }
+	inline double GetTime() const { return m_Time; }
+	inline double GetLocalTime() const { return m_LocalTime; }
 	
 	void SetCanvas(const gui::CRect& Canvas, vec2 ScreenPos);
 	void SetCamera(vec2 CameraPos, float CameraZoom);

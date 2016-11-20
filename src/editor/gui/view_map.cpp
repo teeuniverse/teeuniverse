@@ -227,7 +227,7 @@ void CViewMap::RenderView()
 	CAssetPath MapPath = GetMapPath();
 	
 	MapRenderer()->SetTime(0.0f);
-	MapRenderer()->SetLocalTime(time_get()/(float)time_freq());
+	MapRenderer()->SetLocalTime((double)time_get()/(double)time_freq());
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 	MapRenderer()->SetCamera(m_CameraPos, m_CameraZoom);
 	
