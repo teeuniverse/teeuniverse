@@ -23,8 +23,34 @@
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
+#include <client/gui/slider.h>
 
 /* VIEW MAP ***********************************************************/
+
+class CZoneOpacitySlider : public gui::CHSlider
+{
+protected:
+	CViewMap* m_pViewMap;	
+	
+protected:
+	virtual int GetValue() const
+	{
+		return m_pViewMap->GetZoneOpacity()*100.0f;
+	}
+	
+	virtual void SetValue(int Value)
+	{
+		m_pViewMap->SetZoneOpacity(Value/100.0f);
+	}
+	
+public:
+	CZoneOpacitySlider(CViewMap* pViewMap) :
+		gui::CHSlider(pViewMap->Context(), 0, 100),
+		m_pViewMap(pViewMap)
+	{
+		
+	}
+};
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
@@ -33,8 +59,11 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_CameraDraged(false),
 	m_pMapRenderer(NULL),
 	m_pCursorTool_TileStamp(NULL),
-	m_pCursorTool_QuadTransform(NULL)
+	m_pCursorTool_QuadTransform(NULL),
+	m_ZoneOpacity(0.5f)
 {
+	m_pToolbar->Add(new CZoneOpacitySlider(this), false , 250);
+	
 	m_pCursorTool_TileStamp = new CCursorTool_TileStamp(this);
 	m_pToolbar->Add(m_pCursorTool_TileStamp);
 	
@@ -231,8 +260,21 @@ void CViewMap::RenderView()
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 	MapRenderer()->SetCamera(m_CameraPos, m_CameraZoom);
 	
-	MapRenderer()->RenderMap(MapPath);
-	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture);
+	vec4 Color = 1.0f;
+	if(m_ZoneOpacity > 0.5f)
+	{
+		Color.r = 1.0f - 2.0f*(m_ZoneOpacity-0.5f);
+		Color.g = 1.0f - 2.0f*(m_ZoneOpacity-0.5f);
+		Color.b = 1.0f - 2.0f*(m_ZoneOpacity-0.5f);
+	}
+	
+	MapRenderer()->RenderMap(MapPath, Color);
+	
+	Color = 1.0f;
+	if(m_ZoneOpacity < 0.5f)
+		Color.a = 2.0f*m_ZoneOpacity;
+	
+	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture, Color);
 	
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{

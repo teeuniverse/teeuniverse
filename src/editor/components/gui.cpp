@@ -969,6 +969,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_ColorEdit_Default = AssetsManager()->FindAsset<CAsset_GuiColorEditStyle>(PackageId, "default");
 		
 		m_Path_Scrollbar_Default = AssetsManager()->FindAsset<CAsset_GuiScrollbarStyle>(PackageId, "default");
+		m_Path_Slider_Default = AssetsManager()->FindAsset<CAsset_GuiSliderStyle>(PackageId, "default");
 		
 		m_Path_Tabs_Default = AssetsManager()->FindAsset<CAsset_GuiTabsStyle>(PackageId, "default");
 
@@ -1029,6 +1030,7 @@ void CGuiEditor::LoadAssets()
 	m_TextEntryStyle = m_Path_Button_TextEdit;
 	m_NumericEntryStyle = m_Path_Button_NumericEdit;
 	m_ScrollbarStyle = m_Path_Scrollbar_Default;
+	m_SliderStyle = m_Path_Slider_Default;
 	m_TabsStyle = m_Path_Tabs_Default;
 	m_PopupStyle = m_Path_Box_Popup;
 	m_ComposeStyle = m_Path_Label_Compose;

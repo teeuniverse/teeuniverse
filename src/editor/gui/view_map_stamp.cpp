@@ -80,7 +80,7 @@ protected:
 			MapRenderer.SetCanvas(m_DrawRect, vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2));
 			MapRenderer.SetCamera(0.0f, 1.0f);
 			
-			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*1.5, -32.0f*1.0f), m_pAssetsEditor->m_Path_Image_ZoneTexture, false);
+			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*1.5, -32.0f*1.0f), 1.0f, m_pAssetsEditor->m_Path_Image_ZoneTexture, false);
 			
 			Graphics()->ClipPop();
 		}
@@ -430,6 +430,7 @@ void CCursorTool_TileStamp::RenderView()
 				pZone->GetZoneTypePath(),
 				m_Selection,
 				LayerPos,
+				1.0f, 
 				AssetsEditor()->m_Path_Image_ZoneTexture,
 				false
 			);

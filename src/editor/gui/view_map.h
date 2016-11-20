@@ -45,6 +45,7 @@ protected:
 	float m_CameraZoom;
 	vec2 m_CameraPos;
 	bool m_CameraDraged;
+	float m_ZoneOpacity;
 	
 	class CMapRenderer* m_pMapRenderer;
 	
@@ -65,6 +66,9 @@ public:
 	
 	CAssetPath GetMapPath();
 	CAssetPath GetMapGroupPath();
+	
+	inline float GetZoneOpacity() const { return m_ZoneOpacity; }
+	inline void SetZoneOpacity(float Value) { m_ZoneOpacity = Value; }
 };
 
 #endif

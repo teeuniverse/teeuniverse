@@ -91,6 +91,7 @@ public:
 	CAssetPath m_Path_ColorEdit_Default;
 	
 	CAssetPath m_Path_Scrollbar_Default;
+	CAssetPath m_Path_Slider_Default;
 	
 	CAssetPath m_Path_Tabs_Default;
 	

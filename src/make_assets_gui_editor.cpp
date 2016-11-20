@@ -882,6 +882,7 @@ int main(int argc, const char **argv)
 	}
 	
 	//Scrollbar
+	CAssetPath RailPath;
 	{
 		CAssetPath SpriteRailL;
 		CAssetPath SpriteRailM;
@@ -889,7 +890,6 @@ int main(int argc, const char **argv)
 		CAssetPath SpriteSliderL;
 		CAssetPath SpriteSliderM;
 		CAssetPath SpriteSliderR;
-		CAssetPath RailPath;
 		CAssetPath SliderPath;
 		CAssetPath ScrollbarPath;
 		
@@ -927,6 +927,22 @@ int main(int argc, const char **argv)
 			pAsset->SetMouseOverSliderPath(SliderPath);
 			pAsset->SetRectPath(CAssetPath::Null());
 			pAsset->SetMargin(0);
+			pAsset->SetPadding(12);
+		}
+	}
+		
+	//GuiSliderStyles
+	{
+		CAssetPath CursorPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(CursorPath, PackageId, "sliderCursor", ImageBoxesPath, 6, 15, 1, 1);
+		
+		{
+			CAsset_GuiSliderStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiSliderStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+			pAsset->SetName("default");
+			pAsset->SetDefaultRailPath(RailPath);
+			pAsset->SetCursorPath(CursorPath);
 			pAsset->SetPadding(12);
 		}
 	}
