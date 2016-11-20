@@ -179,12 +179,28 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 	int MinY = (int)MinTilePos.y-1;
 	int MaxY = (int)MaxTilePos.y+1;
 	
+	bool FadingEnabled = false;
+	float GeneralFading = 1.0f;
 	if(!Repeat)
 	{
 		MinX = clamp(MinX, 0, Tiles.get_width()-1);
 		MaxX = clamp(MaxX, 0, Tiles.get_width()-1);
 		MinY = clamp(MinY, 0, Tiles.get_height()-1);
 		MaxY = clamp(MaxY, 0, Tiles.get_height()-1);
+	}
+	else if((MaxX - MinX) > 128)
+	{
+		FadingEnabled = true;
+		GeneralFading = 0.0f;
+		MinX = clamp(MinX, -16, Tiles.get_width()-1+16);
+		MaxX = clamp(MaxX, -16, Tiles.get_width()-1+16);
+		MinY = clamp(MinY, -16, Tiles.get_height()-1+16);
+		MaxY = clamp(MaxY, -16, Tiles.get_height()-1+16);
+	}
+	else if((MaxX - MinX) > 64)
+	{
+		FadingEnabled = true;
+		GeneralFading = 1.0f - clamp((MaxX - MinX - 64)/64.0f, 0.0f, 1.0f);
 	}
 	
 	for(int j=MinY; j<=MaxY; j++)
@@ -195,6 +211,23 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			
 			if(Tile.GetIndex() < 1)
 				continue;
+			
+			float Fading = 1.0f;
+			if(FadingEnabled)
+			{
+				int DistToBorder = 0;
+				if(i<0)
+					DistToBorder = max(-i, DistToBorder);
+				if(i>=Tiles.get_width())
+					DistToBorder = max(i-Tiles.get_width()+1, DistToBorder);
+				if(j<0)
+					DistToBorder = max(-j, DistToBorder);
+				if(j>=Tiles.get_height())
+					DistToBorder = max(j-Tiles.get_height()+1, DistToBorder);
+				if(DistToBorder > 0)
+					Fading *= 1.0f - clamp(DistToBorder / 16.0f, 0.0f, 1.0f);
+				Fading = GeneralFading + (1.0f - GeneralFading)*Fading;
+			}
 			
 			bool IndexFound = false;
 			vec4 Color = 1.0f;
@@ -216,7 +249,7 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			if(!IndexFound)
 				continue;
 			
-			Color.a *= 0.5f;
+			Color.a *= 0.5f * Fading;
 			pMapRenderer->Graphics()->SetColor(Color, true);
 			
 			vec2 TilePos = pMapRenderer->MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
@@ -252,7 +285,24 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			
 			if(Tile.GetIndex() < 1)
 				continue;
-				
+			
+			float Fading = 1.0f;
+			if(FadingEnabled)
+			{
+				int DistToBorder = 0;
+				if(i<0)
+					DistToBorder = max(-i, DistToBorder);
+				if(i>=Tiles.get_width())
+					DistToBorder = max(i-Tiles.get_width()+1, DistToBorder);
+				if(j<0)
+					DistToBorder = max(-j, DistToBorder);
+				if(j>=Tiles.get_height())
+					DistToBorder = max(j-Tiles.get_height()+1, DistToBorder);
+				if(DistToBorder > 0)
+					Fading *= 1.0f - clamp(DistToBorder / 16.0f, 0.0f, 1.0f);
+				Fading = GeneralFading + (1.0f - GeneralFading)*Fading;
+			}
+			
 			bool IndexFound = false;
 			vec4 Color = 1.0f;
 			if(pZoneType)
@@ -269,6 +319,8 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 					}
 				}
 			}
+			
+			Color.a *= Fading;
 			
 			if(!IndexFound)
 				continue;
@@ -389,7 +441,6 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 	AssetsRenderer()->TextureSet(ImagePath);
 	
 	Graphics()->QuadsBegin();
-	Graphics()->SetColor(Color, true);
 
 	//Draw tile layer
 	vec2 MinMapPos = ScreenPosToMapPos(vec2(GetCanvas().x, GetCanvas().y));
@@ -401,12 +452,28 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 	int MinY = (int)MinTilePos.y-1;
 	int MaxY = (int)MaxTilePos.y+1;
 	
+	bool FadingEnabled = false;
+	float GeneralFading = 1.0f;
 	if(!Repeat)
 	{
 		MinX = clamp(MinX, 0, Tiles.get_width()-1);
 		MaxX = clamp(MaxX, 0, Tiles.get_width()-1);
 		MinY = clamp(MinY, 0, Tiles.get_height()-1);
 		MaxY = clamp(MaxY, 0, Tiles.get_height()-1);
+	}
+	else if((MaxX - MinX) > 128)
+	{
+		FadingEnabled = true;
+		GeneralFading = 0.0f;
+		MinX = clamp(MinX, -16, Tiles.get_width()-1+16);
+		MaxX = clamp(MaxX, -16, Tiles.get_width()-1+16);
+		MinY = clamp(MinY, -16, Tiles.get_height()-1+16);
+		MaxY = clamp(MaxY, -16, Tiles.get_height()-1+16);
+	}
+	else if((MaxX - MinX) > 64)
+	{
+		FadingEnabled = true;
+		GeneralFading = 1.0f - clamp((MaxX - MinX - 64)/64.0f, 0.0f, 1.0f);
 	}
 	
 	float USpacing = 0.0f;
@@ -429,6 +496,26 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 			if(Index)
 			{
 				vec2 TilePos = MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
+				
+				float Fading = 1.0f;
+				if(FadingEnabled)
+				{
+					int DistToBorder = 0;
+					if(i<0)
+						DistToBorder = max(-i, DistToBorder);
+					if(i>=Tiles.get_width())
+						DistToBorder = max(i-Tiles.get_width()+1, DistToBorder);
+					if(j<0)
+						DistToBorder = max(-j, DistToBorder);
+					if(j>=Tiles.get_height())
+						DistToBorder = max(j-Tiles.get_height()+1, DistToBorder);
+					if(DistToBorder > 0)
+						Fading *= 1.0f - clamp(DistToBorder / 16.0f, 0.0f, 1.0f);
+					Fading = GeneralFading + (1.0f - GeneralFading)*Fading;
+				}
+				vec4 TileColor = Color;
+				TileColor.a *= Fading;
+				Graphics()->SetColor(TileColor, true);
 				
 				float x0 = USpacing;
 				float y0 = VSpacing;
