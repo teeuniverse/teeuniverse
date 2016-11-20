@@ -40,7 +40,7 @@ void CAsset_GuiButtonStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingConte
 
 	pLoadingContext->ReadAssetPath(TuaType.m_IdleStylePath, SysType.m_IdleStylePath);
 	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverStylePath, SysType.m_MouseOverStylePath);
-	pLoadingContext->ReadAssetPath(TuaType.m_FocusStylePath, SysType.m_FocusStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ReadOnlyStylePath, SysType.m_ReadOnlyStylePath);
 }
 
 void CAsset_GuiButtonStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType& TuaType)
@@ -49,7 +49,7 @@ void CAsset_GuiButtonStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingCont
 
 	pLoadingContext->WriteAssetPath(SysType.m_IdleStylePath, TuaType.m_IdleStylePath);
 	pLoadingContext->WriteAssetPath(SysType.m_MouseOverStylePath, TuaType.m_MouseOverStylePath);
-	pLoadingContext->WriteAssetPath(SysType.m_FocusStylePath, TuaType.m_FocusStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_ReadOnlyStylePath, TuaType.m_ReadOnlyStylePath);
 }
 
 template<>
@@ -61,8 +61,8 @@ CAssetPath CAsset_GuiButtonStyle::GetValue(int ValueType, const CSubPath& SubPat
 			return GetIdleStylePath();
 		case MOUSEOVERSTYLEPATH:
 			return GetMouseOverStylePath();
-		case FOCUSSTYLEPATH:
-			return GetFocusStylePath();
+		case READONLYSTYLEPATH:
+			return GetReadOnlyStylePath();
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -78,8 +78,8 @@ bool CAsset_GuiButtonStyle::SetValue(int ValueType, const CSubPath& SubPath, CAs
 		case MOUSEOVERSTYLEPATH:
 			SetMouseOverStylePath(Value);
 			return true;
-		case FOCUSSTYLEPATH:
-			SetFocusStylePath(Value);
+		case READONLYSTYLEPATH:
+			SetReadOnlyStylePath(Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);

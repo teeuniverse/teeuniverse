@@ -130,7 +130,7 @@ CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pNa
 		return CAssetPath::Null();
 	
 	CAssetPath ImagePath;
-	CAsset_Image* pImage = pKernel->AssetsManager()->NewAsset<CAsset_Image>(&ImagePath, PackageId, CAssetsHistory::NO_TOKEN);
+	CAsset_Image* pImage = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Image>(&ImagePath, PackageId);
 	pImage->SetName(pName);
 	pImage->SetGridWidth(GridWidth < 1 ? Png.width/64 : GridWidth);
 	pImage->SetGridHeight(GridHeight < 1 ? Png.height/64 : GridHeight);

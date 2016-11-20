@@ -345,6 +345,7 @@ public:
 	void Save()
 	{
 		AssetsManager()->Save_AssetsFile(m_SelectedPackage.buffer(), m_pAssetsEditor->GetEditedPackageId());
+		m_pAssetsEditor->RefreshPackageTree();
 		Close();
 	}
 	
@@ -405,6 +406,7 @@ public:
 			}
 		}
 			
+		m_pAssetsEditor->RefreshPackageTree();
 		Close();
 	}
 	
@@ -450,6 +452,7 @@ protected:
 	{
 		int PackageId = AssetsManager()->NewPackage("mypackage");
 		AssetsManager()->SetPackageReadOnly(PackageId, false);
+		m_pAssetsEditor->RefreshPackageTree();
 		m_pAssetsEditor->SetEditedPackage(PackageId);
 		
 		m_pPopupMenu->Close();
@@ -917,7 +920,8 @@ CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	CGui(pEditorKernel),
 	m_pEditorKernel(pEditorKernel),
 	m_EditedSubPath(CSubPath::Null()),
-	m_pAssetsTree(NULL)
+	m_pAssetsTree(NULL),
+	m_pPackagesTree(NULL)
 {
 	SetName("GuiEditor");
 }
@@ -1018,6 +1022,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconView = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconView");
 		m_Path_Sprite_IconHidden = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconHidden");
 		m_Path_Sprite_IconEntities = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntities");
+		m_Path_Sprite_IconDelete = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDelete");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
@@ -1167,6 +1172,12 @@ void CGuiEditor::SetEditedAsset(const CAssetPath& Path, const CSubPath& SubPath)
 {
 	m_EditedAssetPath = Path;
 	m_EditedSubPath = SubPath;
+}
+
+void CGuiEditor::RefreshPackageTree()
+{
+	if(m_pPackagesTree)
+		m_pPackagesTree->Refresh();
 }
 
 void CGuiEditor::RefreshAssetsTree()

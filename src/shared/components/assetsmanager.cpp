@@ -111,7 +111,7 @@ int CAssetsManager::NewPackage(const char* pName)
 	}
 	
 	if(pName)
-		SetPackageName(PackageId, pName);
+		SetPackageName_Hard(PackageId, pName);
 		
 	return PackageId;
 }
@@ -125,6 +125,14 @@ const char* CAssetsManager::GetPackageName(int PackageId) const
 }
 
 void CAssetsManager::SetPackageName(int PackageId, const char* pName)
+{
+	if(!IsValidPackage(PackageId) || IsReadOnlyPackage(PackageId))
+		return;
+	
+	SetPackageName_Hard(PackageId, pName);
+}
+
+void CAssetsManager::SetPackageName_Hard(int PackageId, const char* pName)
 {
 	if(!IsValidPackage(PackageId) || !pName)
 		return;
@@ -165,6 +173,9 @@ void CAssetsManager::SetPackageName(int PackageId, const char* pName)
 
 void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName, int Token)
 {
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return;
+	
 	char aNumBuffer[32];
 	dynamic_string Buffer;
 	Buffer.copy(pName);
@@ -427,7 +438,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	char aBuf[128];
 
 	CAssetPath MapPath;
-	CAsset_Map* pMap = NewAsset<CAsset_Map>(&MapPath, PackageId, CAssetsHistory::NO_TOKEN);
+	CAsset_Map* pMap = NewAsset_Hard<CAsset_Map>(&MapPath, PackageId);
 	pMap->SetName("map");
 	
 	CAssetPath* pImagePath;
@@ -592,7 +603,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			}
 			else
 			{
-				CAsset_Image* pImage = NewAsset<CAsset_Image>(pImagePath+i, PackageId, CAssetsHistory::NO_TOKEN);
+				CAsset_Image* pImage = NewAsset_Hard<CAsset_Image>(pImagePath+i, PackageId);
 				
 				//Image name
 				{
@@ -668,7 +679,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				continue;
 
 			CAssetPath MapGroupPath;
-			CAsset_MapGroup* pMapGroup = NewAsset<CAsset_MapGroup>(&MapGroupPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_MapGroup* pMapGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
 
 			if(Background)
 			{
@@ -725,7 +736,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						int Height = pTilemapItem->m_Height;
 						
 						CAssetPath PhysicsZonePath;
-						CAsset_MapZoneTiles* pPhysicsZone = NewAsset<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId, CAssetsHistory::NO_TOKEN);
+						CAsset_MapZoneTiles* pPhysicsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
 						pPhysicsZone->SetName("Physics");
 						
 						if(Format == MAPFORMAT_INFCLASS)
@@ -745,7 +756,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						if(Format != MAPFORMAT_INFCLASS)
 						{
 							CAssetPath EntitiesPath;
-							pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+							pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
 							pEntities->SetName("Entities");	
 					
 							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -869,7 +880,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						if(Format != MAPFORMAT_INFCLASS)
 						{
 							CAssetPath DamageZonePath;
-							CAsset_MapZoneTiles* pDamageZone = NewAsset<CAsset_MapZoneTiles>(&DamageZonePath, PackageId, CAssetsHistory::NO_TOKEN);
+							CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
 							pDamageZone->SetName("Damage");
 							pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
 							
@@ -911,7 +922,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						//Create a new group to separate background/foreground
 						{
-							CAsset_MapGroup* pNewGroup = NewAsset<CAsset_MapGroup>(&MapGroupPath, PackageId, CAssetsHistory::NO_TOKEN);
+							CAsset_MapGroup* pNewGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
 							
 							CSubPath FgGroup = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
 							pMap->SetFgGroup(FgGroup, MapGroupPath);
@@ -930,7 +941,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						int Height = pTilemapItem->m_Height;
 						
 						CAssetPath EntitiesPath;
-						CAsset_MapEntities* pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+						CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
 						pEntities->SetName("Spawn");	
 					
 						CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -969,7 +980,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						Width = pTilemapItem->m_Width;
 						Height = pTilemapItem->m_Height;
 						
-						pEntities = NewAsset<CAsset_MapEntities>(&EntitiesPath, PackageId, CAssetsHistory::NO_TOKEN);
+						pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
 						pEntities->SetName("Flags");	
 					
 						MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -1004,7 +1015,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						int Height = pTilemapItem->m_Height;
 						
 						CAssetPath PhysicsZonePath;
-						CAsset_MapZoneTiles* pInfClassZone = NewAsset<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId, CAssetsHistory::NO_TOKEN);
+						CAsset_MapZoneTiles* pInfClassZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
 						pInfClassZone->SetName("Zones");
 						pInfClassZone->SetZoneTypePath(m_Path_ZoneType_InfClassZones);
 						
@@ -1047,7 +1058,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						}
 						
 						CAssetPath DamageZonePath;
-						CAsset_MapZoneTiles* pDamageZone = NewAsset<CAsset_MapZoneTiles>(&DamageZonePath, PackageId, CAssetsHistory::NO_TOKEN);
+						CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
 						pDamageZone->SetName("Damage");
 						pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
 						
@@ -1089,7 +1100,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					else
 					{
 						CAssetPath MapLayerPath;
-						CAsset_MapLayerTiles* pMapLayer = NewAsset<CAsset_MapLayerTiles>(&MapLayerPath, PackageId, CAssetsHistory::NO_TOKEN);
+						CAsset_MapLayerTiles* pMapLayer = NewAsset_Hard<CAsset_MapLayerTiles>(&MapLayerPath, PackageId);
 						
 						CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 						pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
@@ -1140,10 +1151,10 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						{
 							pMapLayer->SetImagePath(pImagePath[pTilemapItem->m_Image]);
 							
-							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDWIDTH, 16, CAssetsHistory::NO_TOKEN);
-							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDHEIGHT, 16, CAssetsHistory::NO_TOKEN);
-							SetAssetValue<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDSPACING, 1, CAssetsHistory::NO_TOKEN);
-							SetAssetValue<bool>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::TILINGENABLED, true, CAssetsHistory::NO_TOKEN);
+							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDWIDTH, 16);
+							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDHEIGHT, 16);
+							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDSPACING, 1);
+							SetAssetValue_Hard<bool>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::TILINGENABLED, true);
 						}
 						
 						//Color
@@ -1160,7 +1171,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
 
 					CAssetPath MapLayerPath;
-					CAsset_MapLayerQuads* pMapLayer = NewAsset<CAsset_MapLayerQuads>(&MapLayerPath, PackageId, CAssetsHistory::NO_TOKEN);
+					CAsset_MapLayerQuads* pMapLayer = NewAsset_Hard<CAsset_MapLayerQuads>(&MapLayerPath, PackageId);
 					
 					CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 					pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
@@ -1430,12 +1441,15 @@ void CAssetsManager::Load_UnivOpenFNG()
 
 int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token)
 {
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return false;
+		
 	if(m_pHistory)
 		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
 	
 	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 	{\
-		CAsset_##Name* pAsset = GetEditableAsset<CAsset_##Name>(AssetPath);\
+		CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
 		if(pAsset)\
 			return pAsset->AddSubItem(Type, SubPath);\
 		else\
@@ -1452,8 +1466,11 @@ int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type,
 	return -1;
 }
 	
-CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId)
+CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId, int Token)
 {
+	if(!IsValidPackage(PackageId) || IsReadOnlyPackage(PackageId))
+		return CAssetPath::Null();
+	
 	CAssetPath NewAssetPath;
 	char aBuf[128];
 	
@@ -1461,7 +1478,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId)
 	{\
 		if(!GetAsset<CAsset_##Name>(Path))\
 			return CAssetPath::Null();\
-		CAsset_##Name* pNewAsset = NewAsset<CAsset_##Name>(&NewAssetPath, PackageId, -1);\
+		CAsset_##Name* pNewAsset = NewAsset<CAsset_##Name>(&NewAssetPath, PackageId, Token);\
 		if(!pNewAsset)\
 			return CAssetPath::Null();\
 		const CAsset_##Name* pOldAsset = GetAsset<CAsset_##Name>(Path);\
@@ -1502,7 +1519,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId)
 	return NewAssetPath;
 }
 
-void CAssetsManager::DeleteAsset(const CAssetPath& Path)
+void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
 {
 	if(IsValidPackage(Path.GetPackageId()))
 	{

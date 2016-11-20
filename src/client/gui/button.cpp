@@ -29,7 +29,8 @@ namespace gui
 CAbstractButton::CAbstractButton(CGui *pContext) :
 	CAbstractLabel(pContext),
 	m_Clicked(false),
-	m_MouseOver(false)
+	m_MouseOver(false),
+	m_Editable(true)
 {
 	m_ButtonStylePath = Context()->GetButtonStyle();
 }
@@ -39,7 +40,9 @@ void CAbstractButton::RefreshLabelStyle()
 	const CAsset_GuiButtonStyle* pButtonStyle = AssetsManager()->GetAsset<CAsset_GuiButtonStyle>(m_ButtonStylePath);
 	if(pButtonStyle)
 	{
-		if(m_MouseOver)
+		if(!m_Editable)
+			SetLabelStyle(pButtonStyle->GetReadOnlyStylePath());
+		else if(m_MouseOver)
 			SetLabelStyle(pButtonStyle->GetMouseOverStylePath());
 		else
 			SetLabelStyle(pButtonStyle->GetIdleStylePath());
@@ -62,7 +65,7 @@ void CAbstractButton::Update(bool ParentEnabled)
 
 void CAbstractButton::OnButtonClick(int Button)
 {
-	if(Button != KEY_MOUSE_1)
+	if(!m_Editable || Button != KEY_MOUSE_1)
 		return;
 	
 	if(m_DrawRect.IsInside(Context()->GetMousePos()))
@@ -73,7 +76,7 @@ void CAbstractButton::OnButtonClick(int Button)
 
 void CAbstractButton::OnButtonRelease(int Button)
 {
-	if(Button != KEY_MOUSE_1)
+	if(!m_Editable || Button != KEY_MOUSE_1)
 		return;
 	
 	if(!m_Clicked)

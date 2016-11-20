@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 #define CREATE_SPRITE_PATH(path, packageid, name, image, x, y, w, h) {\
-	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&path, packageid, CAssetsHistory::NO_TOKEN);\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&path, packageid);\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(image);\
 	pSprite->SetX(x);\
@@ -50,14 +50,14 @@ int main(int argc, const char **argv)
 	PackageId = pKernel->AssetsManager()->NewPackage("univ_teeworlds");
 	
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_teeworlds/entities.png", 4, 4);
-	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768, CAssetsHistory::NO_TOKEN);
+	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
 	//Physics
 	{
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_ZoneType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
 		pAsset->SetName("physics");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -78,7 +78,7 @@ int main(int argc, const char **argv)
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_ZoneType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
 		pAsset->SetName("damage");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -97,7 +97,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoSpawn", ImageEntitiesPath, 0, 3, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("spawn");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -109,7 +109,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoBlueSpawn", ImageEntitiesPath, 1, 3, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("blueSpawn");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -121,7 +121,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRedSpawn", ImageEntitiesPath, 2, 3, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("redSpawn");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -133,7 +133,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoShotgun", ImageEntitiesPath, 0, 2, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("shotgun");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -145,7 +145,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoGrenade", ImageEntitiesPath, 1, 2, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("grenade");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -157,7 +157,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRifle", ImageEntitiesPath, 2, 2, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("laserRifle");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -169,7 +169,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoGun", ImageEntitiesPath, 0, 1, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("gun");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -181,7 +181,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHammer", ImageEntitiesPath, 1, 1, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("hammer");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -193,7 +193,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoNinja", ImageEntitiesPath, 2, 1, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("ninja");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -205,7 +205,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRedFlag", ImageEntitiesPath, 3, 0, 1, 2);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("redFlag");
 		pAsset->SetCollisionRadius(42.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -217,7 +217,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoBlueFlag", ImageEntitiesPath, 3, 2, 1, 2);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("blueFlag");
 		pAsset->SetCollisionRadius(42.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -229,7 +229,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeart", ImageEntitiesPath, 0, 0, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("heart");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -241,7 +241,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoArmor", ImageEntitiesPath, 1, 0, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("armor");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);

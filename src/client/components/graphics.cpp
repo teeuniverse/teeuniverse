@@ -1024,7 +1024,7 @@ bool CGraphics::PreUpdate()
 		if(ImagesToUpdate[i].m_Updated)
 			continue;
 		
-		CAsset_Image* pImage = AssetsManager()->GetEditableAsset<CAsset_Image>(ImagesToUpdate[i].m_Path);
+		CAsset_Image* pImage = AssetsManager()->GetAsset_Hard<CAsset_Image>(ImagesToUpdate[i].m_Path);
 		if(!pImage)
 			continue;
 		

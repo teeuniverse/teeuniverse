@@ -45,7 +45,7 @@ public:
 		NAME = CAsset::NAME,
 		IDLESTYLEPATH,
 		MOUSEOVERSTYLEPATH,
-		FOCUSSTYLEPATH,
+		READONLYSTYLEPATH,
 	};
 	
 	class CTuaType : public CAsset::CTuaType
@@ -53,7 +53,7 @@ public:
 	public:
 		CAssetPath::CTuaType m_IdleStylePath;
 		CAssetPath::CTuaType m_MouseOverStylePath;
-		CAssetPath::CTuaType m_FocusStylePath;
+		CAssetPath::CTuaType m_ReadOnlyStylePath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiButtonStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType& TuaType);
 	};
@@ -62,7 +62,7 @@ public:
 private:
 	CAssetPath m_IdleStylePath;
 	CAssetPath m_MouseOverStylePath;
-	CAssetPath m_FocusStylePath;
+	CAssetPath m_ReadOnlyStylePath;
 
 public:
 	template<typename T>
@@ -84,7 +84,7 @@ public:
 		CAsset::copy(Item);
 		m_IdleStylePath = Item.m_IdleStylePath;
 		m_MouseOverStylePath = Item.m_MouseOverStylePath;
-		m_FocusStylePath = Item.m_FocusStylePath;
+		m_ReadOnlyStylePath = Item.m_ReadOnlyStylePath;
 	}
 	
 	void transfert(CAsset_GuiButtonStyle& Item)
@@ -92,26 +92,26 @@ public:
 		CAsset::transfert(Item);
 		m_IdleStylePath = Item.m_IdleStylePath;
 		m_MouseOverStylePath = Item.m_MouseOverStylePath;
-		m_FocusStylePath = Item.m_FocusStylePath;
+		m_ReadOnlyStylePath = Item.m_ReadOnlyStylePath;
 	}
 	
 	inline CAssetPath GetIdleStylePath() const { return m_IdleStylePath; }
 	
 	inline CAssetPath GetMouseOverStylePath() const { return m_MouseOverStylePath; }
 	
-	inline CAssetPath GetFocusStylePath() const { return m_FocusStylePath; }
+	inline CAssetPath GetReadOnlyStylePath() const { return m_ReadOnlyStylePath; }
 	
 	inline void SetIdleStylePath(const CAssetPath& Value) { m_IdleStylePath = Value; }
 	
 	inline void SetMouseOverStylePath(const CAssetPath& Value) { m_MouseOverStylePath = Value; }
 	
-	inline void SetFocusStylePath(const CAssetPath& Value) { m_FocusStylePath = Value; }
+	inline void SetReadOnlyStylePath(const CAssetPath& Value) { m_ReadOnlyStylePath = Value; }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_IdleStylePath);
 		Operation.Apply(m_MouseOverStylePath);
-		Operation.Apply(m_FocusStylePath);
+		Operation.Apply(m_ReadOnlyStylePath);
 	}
 	
 };

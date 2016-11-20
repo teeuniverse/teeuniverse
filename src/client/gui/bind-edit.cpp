@@ -40,9 +40,7 @@ void CAbstractBindEdit::RefreshLabelStyle()
 	const CAsset_GuiButtonStyle* pButtonStyle = AssetsManager()->GetAsset<CAsset_GuiButtonStyle>(m_ButtonStylePath);
 	if(pButtonStyle)
 	{
-		if(Context()->HasFocus(this))
-			SetLabelStyle(pButtonStyle->GetFocusStylePath());
-		else if(m_MouseOver)
+		if(m_MouseOver)
 			SetLabelStyle(pButtonStyle->GetMouseOverStylePath());
 		else
 			SetLabelStyle(pButtonStyle->GetIdleStylePath());

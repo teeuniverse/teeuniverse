@@ -21,6 +21,7 @@
 #include <shared/components/assetsmanager.h>
 #include <client/gui/expand.h>
 #include <client/gui/popup.h>
+#include <client/gui/toggle.h>
 #include <client/gui/text-edit.h>
 #include <shared/components/localization.h>
 #include <shared/components/storage.h>
@@ -42,16 +43,47 @@ protected:
 		{
 			AssetsManager()->ClosePackage(m_PackageId);
 			m_pContextMenu->Close();
+			m_pAssetsEditor->RefreshPackageTree();
 		}
 
 	public:
 		CCloseButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CButton(pAssetsEditor, "Close"),
+			gui::CButton(pAssetsEditor, "Close", pAssetsEditor->m_Path_Sprite_IconDelete),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
 		{
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		}
+	};
+	
+	class CRealOnlyToggle : public gui::CToggle
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CContextMenu* m_pContextMenu;
+		int m_PackageId;
+		
+	protected:
+		virtual bool GetValue()
+		{
+			return AssetsManager()->IsReadOnlyPackage(m_PackageId);
+		}
+		
+		virtual void SetValue(bool Value)
+		{
+			AssetsManager()->SetPackageReadOnly(m_PackageId, Value);
+			m_pAssetsEditor->RefreshPackageTree();
+		}
+
+	public:
+		CRealOnlyToggle(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
+			gui::CToggle(pAssetsEditor, "Read-Only"),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu),
+			m_PackageId(PackageId)
+		{
+			
 		}
 	};
 
@@ -95,6 +127,8 @@ public:
 			{
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 			
+				pMenu->List()->Add(new CRealOnlyToggle(m_pAssetsEditor, pMenu, m_PackageId));
+				pMenu->List()->AddSeparator();
 				pMenu->List()->Add(new CCloseButton(m_pAssetsEditor, pMenu, m_PackageId));
 				
 				m_pAssetsEditor->DisplayPopup(pMenu);
@@ -533,7 +567,7 @@ public:
 	
 	virtual void OnButtonClick(int Button)
 	{
-		if(Button == KEY_MOUSE_2)
+		if(Button == KEY_MOUSE_2 && AssetsManager()->IsValidPackage(m_AssetPath.GetPackageId()) && !AssetsManager()->IsReadOnlyPackage(m_AssetPath.GetPackageId()))
 		{
 			if(m_DrawRect.IsInside(Context()->GetMousePos()))
 			{
@@ -1108,6 +1142,7 @@ CAssetsOrganizer::CAssetsOrganizer(CGuiEditor* pAssetsEditor) :
 	m_pAssetsEditor(pAssetsEditor)
 {
 	m_pPackagesTree = new CPackagesTree(this);
+	m_pAssetsEditor->m_pPackagesTree = m_pPackagesTree;
 	Add(m_pPackagesTree, 200);
 	
 	m_pAssetsTree = new CAssetsTree(this);

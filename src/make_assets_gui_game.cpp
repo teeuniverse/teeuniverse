@@ -43,7 +43,7 @@ void Make_Images(CSharedKernel* pKernel)
 }	
 
 #define CREATE_SPRITE(id, name, image, x, y, w, h) {\
-	CAsset_Sprite* pSprite = pAssetsManager->NewAsset<CAsset_Sprite>(CAssetPath::SpriteGui(id));\
+	CAsset_Sprite* pSprite = pAssetsManager->NewAsset_Hard<CAsset_Sprite>(CAssetPath::SpriteGui(id));\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(CAssetPath::ImageGui(image));\
 	pSprite->SetX(x);\
@@ -80,7 +80,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 	
 	//GuiRectStyles
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_COMPOSING));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_COMPOSING));
 		pAsset->SetName("composing");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -88,7 +88,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE));
 		pAsset->SetName("console");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 		pAsset->SetBackgroundColor(vec4(57.0f/255.0f, 57.0f/255.0f, 57.0f/255.0f, 0.7f));
@@ -96,7 +96,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_IDLE));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_IDLE));
 		pAsset->SetName("consolePromptIdle");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 		pAsset->SetBackgroundColor(vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 0.7f));
@@ -104,7 +104,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_MO));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_MO));
 		pAsset->SetName("consolePromptMO");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 		pAsset->SetBackgroundColor(vec4(128.0f/255.0f, 128.0f/255.0f, 128.0f/255.0f, 0.7f));
@@ -112,7 +112,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_HINT));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_HINT));
 		pAsset->SetName("consoleHint");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 		pAsset->SetBackgroundColor(vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 0.7f));
@@ -120,7 +120,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetName("menuRect");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.2f));
@@ -128,7 +128,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_FOCUS));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_FOCUS));
 		pAsset->SetName("menuRectFocus");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.2f));
@@ -138,7 +138,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_MOUSEOVER));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_MOUSEOVER));
 		pAsset->SetName("menuRectMO");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.4f));
@@ -146,7 +146,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_HIGHLIGHT));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_HIGHLIGHT));
 		pAsset->SetName("menuRectHL");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.7f));
@@ -154,7 +154,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON));
 		pAsset->SetName("menuStartButton");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
@@ -162,7 +162,7 @@ void Make_GuiRectStyle(CSharedKernel* pKernel)
 		pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
 	}
 	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON_MO));
+		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON_MO));
 		pAsset->SetName("menuStartButtonMO");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 		pAsset->SetBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.4f));
@@ -177,7 +177,7 @@ void Make_GuiLineStyle(CSharedKernel* pKernel)
 	
 	//GuiLineStyles
 	{
-		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_RAIL));
+		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_RAIL));
 		pAsset->SetName("menuScrollbarRail");
 		pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_IMAGE);
 		pAsset->SetImagePath(CAssetPath::Gui(CAsset_Image::TypeId, IMAGE_MENU));
@@ -185,7 +185,7 @@ void Make_GuiLineStyle(CSharedKernel* pKernel)
 		pAsset->SetImageUV_Max(vec2(1.0f, (256-32)/256.0f));
 	}
 	{
-		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_SLIDER));
+		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_SLIDER));
 		pAsset->SetName("menuScrollbarSlider");
 		pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_IMAGE);
 		pAsset->SetImagePath(CAssetPath::Gui(CAsset_Image::TypeId, IMAGE_MENU));
@@ -193,7 +193,7 @@ void Make_GuiLineStyle(CSharedKernel* pKernel)
 		pAsset->SetImageUV_Max(vec2((512-32*3)/512.0f, (256-32)/256.0f));
 	}
 	{
-		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SLIDER_RAIL));
+		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SLIDER_RAIL));
 		pAsset->SetName("menuSliderRail");
 		pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_IMAGE);
 		pAsset->SetImagePath(CAssetPath::Gui(CAsset_Image::TypeId, IMAGE_MENU));
@@ -208,50 +208,50 @@ void Make_GuiBoxStyle(CSharedKernel* pKernel)
 		
 	//GuiBoxStyles
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_CONSOLE));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_CONSOLE));
 		pGuiBoxStyle->SetName("console");
 		pGuiBoxStyle->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE));
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_START));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_START));
 		pGuiBoxStyle->SetName("menuStart");
 		pGuiBoxStyle->SetSpacing(20);
 		pGuiBoxStyle->SetMargin(40);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_COLUMNS));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_COLUMNS));
 		pGuiBoxStyle->SetName("menuColumns");
 		pGuiBoxStyle->SetSpacing(20);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_SECTIONLIST));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_SECTIONLIST));
 		pGuiBoxStyle->SetName("menuSectionList");
 		pGuiBoxStyle->SetSpacing(20);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_SECTION));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_SECTION));
 		pGuiBoxStyle->SetName("menuSection");
 		pGuiBoxStyle->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pGuiBoxStyle->SetSpacing(4);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_LIST));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_LIST));
 		pGuiBoxStyle->SetName("menuList");
 		pGuiBoxStyle->SetSpacing(4);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_LAYOUT));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_LAYOUT));
 		pGuiBoxStyle->SetName("menuMainTabsLayout");
 		pGuiBoxStyle->SetMargin(50);
 		pGuiBoxStyle->SetSpacing(50);
 	}
 	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_BUTTONLIST));
+		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_BUTTONLIST));
 		pGuiBoxStyle->SetName("menuMainTabsButtonList");
 		pGuiBoxStyle->SetSpacing(10);
 	}
 	{
-		CAsset_GuiBoxStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_ITEM));
+		CAsset_GuiBoxStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_ITEM));
 		pAsset->SetName("menuItem");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetSpacing(4);
@@ -265,7 +265,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 	
 	//GuiLabelStyles
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_COMPOSING));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_COMPOSING));
 		pAsset->SetName("composing");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_COMPOSING));
 		pAsset->SetPadding(4);
@@ -273,35 +273,35 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_LEFT);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_LOGO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_LOGO));
 		pAsset->SetName("menuLogo");
 		pAsset->SetTextColor(1.0f);
 		pAsset->SetFontSize(18);
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE));
 		pAsset->SetName("consoleLine");
 		pAsset->SetTextColor(1.0f);
 		pAsset->SetFontSize(14);
 		pAsset->SetMinHeight(22);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE_HELP));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE_HELP));
 		pAsset->SetName("consoleLineHelp");
 		pAsset->SetTextColor(vec4(155.0f/255.0f, 236.0f/255.0f, 24.0f/255.0f, 1.0f));
 		pAsset->SetFontSize(14);
 		pAsset->SetMinHeight(22);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE_ERROR));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_LINE_ERROR));
 		pAsset->SetName("consoleLineError");
 		pAsset->SetTextColor(vec4(207.0f/255.0f, 20.0f/255.0f, 16.0f/255.0f, 1.0f));
 		pAsset->SetFontSize(14);
 		pAsset->SetMinHeight(22);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_HINT));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_HINT));
 		pAsset->SetName("consoleHint");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_HINT));
 		pAsset->SetPadding(4);
@@ -310,7 +310,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetMinHeight(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_IDLE));
 		pAsset->SetName("consolePromptIdle");
 		pAsset->SetPadding(2);
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_IDLE));
@@ -319,7 +319,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetMinHeight(22);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_MO));
 		pAsset->SetName("consolePromptMO");
 		pAsset->SetPadding(2);
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_CONSOLE_PROMPT_MO));
@@ -328,7 +328,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetMinHeight(22);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_TEXT));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_TEXT));
 		pAsset->SetName("menuText");
 		pAsset->SetPadding(2);
 		pAsset->SetSpacing(4);
@@ -336,7 +336,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_HEADER));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_HEADER));
 		pAsset->SetName("menuHeader");
 		pAsset->SetPadding(4);
 		pAsset->SetSpacing(4);
@@ -345,7 +345,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
 		pAsset->SetName("menuButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetPadding(2);
@@ -355,7 +355,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_FOCUS));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_FOCUS));
 		pAsset->SetName("menuButtonFocus");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_FOCUS));
 		pAsset->SetPadding(2);
@@ -365,7 +365,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_MO));
 		pAsset->SetName("menuButtonMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_MOUSEOVER));
 		pAsset->SetPadding(2);
@@ -375,7 +375,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_IDLE));
 		pAsset->SetName("menuIcon");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetPadding(4);
@@ -386,7 +386,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(14);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_MO));
 		pAsset->SetName("menuIconMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_MOUSEOVER));
 		pAsset->SetPadding(4);
@@ -397,7 +397,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(14);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_IDLE));
 		pAsset->SetName("menuStartButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON));
 		pAsset->SetMinWidth(256);
@@ -407,7 +407,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_MO));
 		pAsset->SetName("menuStartButtonMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON_MO));
 		pAsset->SetMinWidth(256);
@@ -417,7 +417,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_IDLE));
 		pAsset->SetName("menuQuitButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON));
 		pAsset->SetMinWidth(64);
@@ -427,7 +427,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_MO));
 		pAsset->SetName("menuQuitButtonMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON_MO));
 		pAsset->SetMinWidth(64);
@@ -437,7 +437,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_IDLE));
 		pAsset->SetName("menuUniverseButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON));
 		pAsset->SetMinWidth(196);
@@ -449,7 +449,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_MO));
 		pAsset->SetName("menuUniverseButtonMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_STARTBUTTON_MO));
 		pAsset->SetMinWidth(196);
@@ -461,7 +461,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
 		pAsset->SetName("menuMainTabsActiveButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetPadding(2);
@@ -471,7 +471,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetFontSize(18);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
 		pAsset->SetName("menuMainTabsInactiveButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_BACKGROUND));
 		pAsset->SetPadding(8);
@@ -480,7 +480,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON_MO));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON_MO));
 		pAsset->SetName("menuMainTabsInactiveButtonMO");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_MOUSEOVER));
 		pAsset->SetPadding(8);
@@ -489,7 +489,7 @@ void Make_GuiLabelStyle(CSharedKernel* pKernel)
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
+		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
 		pAsset->SetName("menuMainTabsActiveButton");
 		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_MENU_HIGHLIGHT));
 		pAsset->SetPadding(8);
@@ -505,56 +505,56 @@ void Make_GuiButtonStyle(CSharedKernel* pKernel)
 		
 	//GuiButtonStyles
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_CONSOLE_PROMPT));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_CONSOLE_PROMPT));
 		pAsset->SetName("consolePrompt");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_IDLE));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_CONSOLE_PROMPT_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_DEFAULT));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_DEFAULT));
 		pAsset->SetName("menuButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_FOCUS));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_ICON));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_ICON));
 		pAsset->SetName("menuIcon");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_IDLE));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_ICON_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_START));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_START));
 		pAsset->SetName("menuStartButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_IDLE));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_START_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_QUIT));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_QUIT));
 		pAsset->SetName("menuQuitButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_IDLE));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_QUIT_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_UNIVERSE));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_UNIVERSE));
 		pAsset->SetName("menuUniverseButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_IDLE));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_IDLE));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_UNIVERSE_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
 		pAsset->SetName("menuMainTabsInactiveButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON));
 		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_INACTIVEBUTTON_MO));
 	}
 	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
+		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
 		pAsset->SetName("menuMainTabsActiveButton");
 		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
 		pAsset->SetFocusStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_MAINTABS_ACTIVEBUTTON));
@@ -568,7 +568,7 @@ void Make_GuiToggleStyle(CSharedKernel* pKernel)
 	
 	//GuiToggleStyles
 	{
-		CAsset_GuiToggleStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiToggleStyle>(CAssetPath::GuiToggleStyleGui(GUITOGGLESTYLE_MENU_CHECKBOX));
+		CAsset_GuiToggleStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiToggleStyle>(CAssetPath::GuiToggleStyleGui(GUITOGGLESTYLE_MENU_CHECKBOX));
 		pAsset->SetName("menuCheckbox");
 		pAsset->SetIdleTrueStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
 		pAsset->SetIdleFalseStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_MENU_BUTTON_IDLE));
@@ -586,7 +586,7 @@ void Make_GuiSliderStyle(CSharedKernel* pKernel)
 		
 	//GuiSliderStyles
 	{
-		CAsset_GuiSliderStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiSliderStyle>(CAssetPath::GuiSliderStyleGui(GUISLIDERSTYLE_MENU_DEFAULT));
+		CAsset_GuiSliderStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiSliderStyle>(CAssetPath::GuiSliderStyleGui(GUISLIDERSTYLE_MENU_DEFAULT));
 		pAsset->SetName("menuSlider");
 		pAsset->SetDefaultRailPath(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SLIDER_RAIL));
 		pAsset->SetCursorPath(CAssetPath::SpriteGui(SPRITE_MENU_SLIDER_CURSOR));
@@ -597,7 +597,7 @@ void Make_GuiSliderStyle(CSharedKernel* pKernel)
 	
 	//GuiScrollbarStyles
 	{
-		CAsset_GuiScrollbarStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiScrollbarStyle>(CAssetPath::GuiScrollbarStyleGui(GUISCROLLBARSTYLE_MENU));
+		CAsset_GuiScrollbarStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiScrollbarStyle>(CAssetPath::GuiScrollbarStyleGui(GUISCROLLBARSTYLE_MENU));
 		pAsset->SetName("menuScrollbar");
 		pAsset->SetDefaultRailPath(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_RAIL));
 		pAsset->SetDefaultSliderPath(CAssetPath::GuiLineStyleGui(GUILINESTYLE_MENU_SCROLLBAR_SLIDER));
@@ -614,7 +614,7 @@ void Make_GuiTabsStyle(CSharedKernel* pKernel)
 	
 	//GuiTabsStyle
 	{
-		CAsset_GuiTabsStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiTabsStyle>(CAssetPath::GuiTabsStyleGui(GUITABSSTYLE_MENU_MAIN));
+		CAsset_GuiTabsStyle* pAsset = pAssetsManager->NewAsset_Hard<CAsset_GuiTabsStyle>(CAssetPath::GuiTabsStyleGui(GUITABSSTYLE_MENU_MAIN));
 		pAsset->SetName("menuMainTabs");
 		pAsset->SetLayoutPath(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_LAYOUT));
 		pAsset->SetButtonListPath(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_MENU_MAINTABS_BUTTONLIST));

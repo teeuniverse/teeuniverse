@@ -27,7 +27,7 @@
 
 #define CREATE_SPRITE(packageid, name, image, x, y, w, h) {\
 	CAssetPath SpritePath;\
-	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, packageid, CAssetsHistory::NO_TOKEN);\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&SpritePath, packageid);\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(image);\
 	pSprite->SetX(x);\
@@ -37,7 +37,7 @@
 }
 
 #define CREATE_SPRITE_PATH(path, packageid, name, image, x, y, w, h) {\
-	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&path, packageid, CAssetsHistory::NO_TOKEN);\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&path, packageid);\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(image);\
 	pSprite->SetX(x);\
@@ -109,7 +109,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconZoneType", ImageEditorPath, 6, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEntityType", ImageEditorPath, 7, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconAsset", ImageEditorPath, 8, 1, 1, 1);
-	CREATE_SPRITE(PackageId, "iconNewAsset", ImageEditorPath, 9, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconNewAsset_Hard", ImageEditorPath, 9, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconHidden", ImageEditorPath, 10, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEntities", ImageEditorPath, 11, 1, 1, 1);
 	//Empty area
@@ -167,7 +167,6 @@ int main(int argc, const char **argv)
 	CAssetPath RectButtonPath;
 	CAssetPath RectButtonMoPath;
 	CAssetPath RectEditPath;
-	CAssetPath RectEditFocusPath;
 	{
 		CAssetPath SpriteTL;
 		CAssetPath SpriteT;
@@ -187,7 +186,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxSelectionB" , ImageBoxesPath, 7, 2, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxSelectionBR", ImageBoxesPath, 8, 2, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectSelectionPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectSelectionPath, PackageId);
 		pAsset->SetName("selection");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetImageTLPath(SpriteTL);
@@ -219,7 +218,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxBorderB" , ImageBoxesPath, 10, 2, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxBorderBR", ImageBoxesPath, 11, 2, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectStampPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectStampPath, PackageId);
 		pAsset->SetName("border");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetImageTLPath(SpriteTL);
@@ -251,7 +250,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxDialogB" , ImageBoxesPath, 1, 8, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxDialogBR", ImageBoxesPath, 2, 8, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectDialogPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectDialogPath, PackageId);
 		pAsset->SetName("dialog");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetBackgroundColor(ColorLightBG);
@@ -284,7 +283,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxButtonB" , ImageBoxesPath, 1, 5, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxButtonBR", ImageBoxesPath, 2, 5, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectButtonPath, PackageId);
 		pAsset->SetName("button");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetBackgroundColor(ColorLightBG);
@@ -317,7 +316,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxButtonMoB" , ImageBoxesPath, 4, 5, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxButtonMoBR", ImageBoxesPath, 5, 5, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectButtonMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectButtonMoPath, PackageId);
 		pAsset->SetName("buttonMo");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetBackgroundColor(ColorLightHL);
@@ -350,7 +349,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxEditB" , ImageBoxesPath, 1, 2, 1, 1);
 		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxEditBR", ImageBoxesPath, 2, 2, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectEditPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectEditPath, PackageId);
 		pAsset->SetName("entry");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetBackgroundColor(ColorDarkBG);
@@ -364,44 +363,11 @@ int main(int argc, const char **argv)
 		pAsset->SetImageBRPath(SpriteBR);
 		pAsset->SetImagePadding(6.0f);
 	}
-	{
-		CAssetPath SpriteTL;
-		CAssetPath SpriteT;
-		CAssetPath SpriteTR;
-		CAssetPath SpriteL;
-		CAssetPath SpriteR;
-		CAssetPath SpriteBL;
-		CAssetPath SpriteB;
-		CAssetPath SpriteBR;
-		
-		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxEditFocusTL", ImageBoxesPath, 3, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxEditFocusT" , ImageBoxesPath, 4, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxEditFocusTR", ImageBoxesPath, 5, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxEditFocusL" , ImageBoxesPath, 3, 1, 1, 1);
-		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxEditFocusR" , ImageBoxesPath, 5, 1, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxEditFocusBL", ImageBoxesPath, 3, 2, 1, 1);
-		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxEditFocusB" , ImageBoxesPath, 4, 2, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxEditFocusBR", ImageBoxesPath, 5, 2, 1, 1);
 	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectEditFocusPath, PackageId, CAssetsHistory::NO_TOKEN);
-		pAsset->SetName("entryFocus");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
-		pAsset->SetBackgroundColor(ColorDarkBG);
-		pAsset->SetImageTLPath(SpriteTL);
-		pAsset->SetImageTPath(SpriteT);
-		pAsset->SetImageTRPath(SpriteTR);
-		pAsset->SetImageLPath(SpriteL);
-		pAsset->SetImageRPath(SpriteR);
-		pAsset->SetImageBLPath(SpriteBL);
-		pAsset->SetImageBPath(SpriteB);
-		pAsset->SetImageBRPath(SpriteBR);
-		pAsset->SetImagePadding(6.0f);
-	}
-	
-	CAssetPath RectListItemFocusPath;
+	CAssetPath RectListItemHlPath;
 	{
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectListItemFocusPath, PackageId, CAssetsHistory::NO_TOKEN);
-		pAsset->SetName("listItemFocus");
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectListItemHlPath, PackageId);
+		pAsset->SetName("listItemHl");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 		pAsset->SetBackgroundColor(ColorLightHL);
 	}
@@ -409,7 +375,7 @@ int main(int argc, const char **argv)
 	//Text
 	{
 		CAssetPath AssetPath;
-		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&AssetPath, PackageId);
 		pAsset->SetName("text");
 		pAsset->SetPadding(2);
 		pAsset->SetSpacing(4);
@@ -418,7 +384,7 @@ int main(int argc, const char **argv)
 	}
 	{
 		CAssetPath AssetPath;
-		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&AssetPath, PackageId);
 		pAsset->SetName("header");
 		pAsset->SetPadding(2);
 		pAsset->SetSpacing(4);
@@ -432,7 +398,7 @@ int main(int argc, const char **argv)
 		//Rect
 		CAssetPath RectPath;
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
 			pAsset->SetName("compose");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
 			pAsset->SetBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -443,7 +409,7 @@ int main(int argc, const char **argv)
 		//Label
 		CAssetPath LabelPath;
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelPath, PackageId);
 			pAsset->SetName("compose");
 			pAsset->SetRectPath(RectPath);
 			pAsset->SetPadding(4);
@@ -456,10 +422,11 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("editorButtonIdle");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -470,7 +437,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("editorButtonMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -480,12 +447,23 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(1.0f);
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("editorButtonRO");
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
 	
@@ -494,11 +472,12 @@ int main(int argc, const char **argv)
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
 		CAssetPath LabelHlPath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath ButtonHlPath;
 		CAssetPath TogglePath;
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("cursorToolIdle");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -509,7 +488,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("cursorToolMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -520,7 +499,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelHlPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelHlPath, PackageId);
 			pAsset->SetName("cursorToolHL");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -530,22 +509,34 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(1.0f);
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("cursorToolRO");
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("cursorTool");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonHlPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonHlPath, PackageId);
 			pAsset->SetName("cursorToolHL");
 			pAsset->SetIdleStylePath(LabelHlPath);
 			pAsset->SetMouseOverStylePath(LabelHlPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		
 		{
-			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiToggleStyle>(&TogglePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiToggleStyle>(&TogglePath, PackageId);
 			pAsset->SetName("toolbar");
 			pAsset->SetIdleTrueStylePath(LabelHlPath);
 			pAsset->SetIdleFalseStylePath(LabelIdlePath);
@@ -558,9 +549,10 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("dialogButtonIdle");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -573,7 +565,7 @@ int main(int argc, const char **argv)
 			pAsset->SetMinHeight(20);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("dialogButtonMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -585,23 +577,36 @@ int main(int argc, const char **argv)
 			pAsset->SetMinWidth(150);
 			pAsset->SetMinHeight(20);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("dialogButtonRO");
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetMinWidth(150);
+			pAsset->SetMinHeight(20);
+		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("dialog");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
 	
 	//Text Edit
 	{
 		CAssetPath LabelIdlePath;
-		CAssetPath LabelFocusPath;
+		CAssetPath LabelRoPath;
 		CAssetPath EditPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("textEditIdle");
 			pAsset->SetRectPath(RectEditPath);
 			pAsset->SetMargin(2);
@@ -612,23 +617,22 @@ int main(int argc, const char **argv)
 			pAsset->SetMinHeight(16);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId, CAssetsHistory::NO_TOKEN);
-			pAsset->SetName("textEditFocus");
-			pAsset->SetRectPath(RectEditFocusPath);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("textEditRO");
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
 			pAsset->SetSpacing(4);
 			pAsset->SetFontSize(12);
-			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 			pAsset->SetMinHeight(16);
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&EditPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
 			pAsset->SetName("textEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
-			pAsset->SetFocusStylePath(LabelFocusPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		
 	}
@@ -636,11 +640,11 @@ int main(int argc, const char **argv)
 	//Numeric Edit
 	{
 		CAssetPath LabelIdlePath;
-		CAssetPath LabelFocusPath;
+		CAssetPath LabelRoPath;
 		CAssetPath EditPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("numericEditIdle");
 			pAsset->SetRectPath(RectEditPath);
 			pAsset->SetMargin(2);
@@ -651,22 +655,22 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId, CAssetsHistory::NO_TOKEN);
-			pAsset->SetName("numericEditFocus");
-			pAsset->SetRectPath(RectEditFocusPath);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("numericEditRO");
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
 			pAsset->SetSpacing(4);
 			pAsset->SetFontSize(12);
-			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&EditPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
 			pAsset->SetName("numericEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
-			pAsset->SetFocusStylePath(LabelFocusPath);
+			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
 	
@@ -674,10 +678,11 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelRoPath;
 		CAssetPath EditPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("assetEditIdle");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -687,8 +692,8 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(1.0f);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
-			pAsset->SetName("assetEditMo");
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
+			pAsset->SetName("assetEditMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
@@ -696,12 +701,22 @@ int main(int argc, const char **argv)
 			pAsset->SetFontSize(12);
 			pAsset->SetTextColor(1.0f);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("assetEditRO");
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&EditPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
 			pAsset->SetName("assetEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
 	
@@ -715,7 +730,7 @@ int main(int argc, const char **argv)
 		CAssetPath ButtonDecrPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIncrIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIncrIdlePath, PackageId);
 			pAsset->SetName("intEditIncr");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -727,7 +742,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIconPath(IconIncreasePath);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIncrMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIncrMoPath, PackageId);
 			pAsset->SetName("intEditIncrMo");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -740,14 +755,14 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonIncrPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonIncrPath, PackageId);
 			pAsset->SetName("intEditIncr");
 			pAsset->SetIdleStylePath(LabelIncrIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIncrMoPath);
 		}
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelDecrIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelDecrIdlePath, PackageId);
 			pAsset->SetName("intEditDecr");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -759,7 +774,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIconPath(IconDecreasePath);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelDecrMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelDecrMoPath, PackageId);
 			pAsset->SetName("intEditDecrMo");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -772,14 +787,14 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonDecrPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonDecrPath, PackageId);
 			pAsset->SetName("intEditDecr");
 			pAsset->SetIdleStylePath(LabelDecrIdlePath);
 			pAsset->SetMouseOverStylePath(LabelDecrMoPath);
 		}
 		
 		CAssetPath AssetPath;
-		CAsset_GuiIntEditStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiIntEditStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiIntEditStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiIntEditStyle>(&AssetPath, PackageId);
 		pAsset->SetName("default");
 		pAsset->SetIncreaseButtonStylePath(ButtonIncrPath);
 		pAsset->SetDecreaseButtonStylePath(ButtonDecrPath);
@@ -788,11 +803,10 @@ int main(int argc, const char **argv)
 	//Active List Item
 	{
 		CAssetPath LabelIdlePath;
-		CAssetPath LabelFocusPath;
 		CAssetPath ButtonPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("listItemIdle");
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
@@ -800,10 +814,11 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("listItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetReadOnlyStylePath(LabelIdlePath);
 		}
 	}
 	
@@ -813,26 +828,27 @@ int main(int argc, const char **argv)
 		CAssetPath ButtonPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("listItemHL");
-			pAsset->SetRectPath(RectListItemFocusPath);
+			pAsset->SetRectPath(RectListItemHlPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("listItemHL");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetReadOnlyStylePath(LabelIdlePath);
 		}
 	}
 	
 	//Inactive List Item
 	{
 		CAssetPath AssetPath;
-		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&AssetPath, PackageId);
 		pAsset->SetName("inactiveListItem");
 		pAsset->SetPadding(4);
 		pAsset->SetSpacing(4);
@@ -845,30 +861,39 @@ int main(int argc, const char **argv)
 		CAssetPath IconTruePath;
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath TogglePath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("toolbar");
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("toolbarMo");
-			pAsset->SetRectPath(RectListItemFocusPath);
+			pAsset->SetRectPath(RectListItemHlPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("toolbarRo");
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("toolbar");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		CAssetPath AssetPath;
 		
@@ -876,7 +901,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(IconTruePath, PackageId, "iconCheckboxTrue", ImageEditorPath, 31, 0, 1, 1)
 		
 		{
-			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiToggleStyle>(&TogglePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiToggleStyle>(&TogglePath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetIdleTrueStylePath(LabelIdlePath);
 			pAsset->SetIdleFalseStylePath(LabelIdlePath);
@@ -908,7 +933,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteSliderR, PackageId, "scrollbarSliderR", ImageBoxesPath, 5, 15, 1, 1);
 		
 		{
-			CAsset_GuiLineStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLineStyle>(&RailPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLineStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLineStyle>(&RailPath, PackageId);
 			pAsset->SetName("scrollbarRail");
 			pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_BORDER | CAsset_GuiLineStyle::FLAG_IMAGE);
 			pAsset->SetBorderColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -918,7 +943,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiLineStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLineStyle>(&SliderPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLineStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLineStyle>(&SliderPath, PackageId);
 			pAsset->SetName("scrollbarSlider");
 			pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_IMAGE);
 			pAsset->SetImageLPath(SpriteSliderL);
@@ -927,7 +952,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiScrollbarStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiScrollbarStyle>(&ScrollbarPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiScrollbarStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiScrollbarStyle>(&ScrollbarPath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetDefaultRailPath(RailPath);
 			pAsset->SetDefaultSliderPath(SliderPath);
@@ -946,7 +971,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(CursorPath, PackageId, "sliderCursor", ImageBoxesPath, 6, 15, 1, 1);
 		
 		{
-			CAsset_GuiSliderStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiSliderStyle>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiSliderStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiSliderStyle>(&AssetPath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetDefaultRailPath(RailPath);
 			pAsset->SetCursorPath(CursorPath);
@@ -960,7 +985,7 @@ int main(int argc, const char **argv)
 		CAssetPath BoxPath;
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
 			pAsset->SetName("view");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 			pAsset->SetBackgroundColor(ColorDarkBG);
@@ -969,7 +994,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&BoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
 			pAsset->SetName("view");
 			pAsset->SetRectPath(RectPath);
 			pAsset->SetPadding(1);
@@ -982,7 +1007,7 @@ int main(int argc, const char **argv)
 		CAssetPath BoxPath;
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
 			pAsset->SetName("subList");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 			pAsset->SetBackgroundColor(ColorLightBG);
@@ -991,7 +1016,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&BoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
 			pAsset->SetName("subList");
 			pAsset->SetRectPath(RectPath);
 			pAsset->SetPadding(0);
@@ -1006,7 +1031,7 @@ int main(int argc, const char **argv)
 		CAssetPath ButtonPath;
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("paletteIcon");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetPadding(4);
@@ -1016,7 +1041,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("paletteIconMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetPadding(4);
@@ -1026,7 +1051,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER);
 		}
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("paletteIcon");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
@@ -1039,7 +1064,7 @@ int main(int argc, const char **argv)
 		CAssetPath BoxPath;
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&RectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
 			pAsset->SetName("panel");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
 			pAsset->SetBackgroundColor(ColorLightBG);
@@ -1048,7 +1073,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&BoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
 			pAsset->SetName("panel");
 			pAsset->SetRectPath(RectPath);
 			pAsset->SetPadding(1);
@@ -1060,7 +1085,7 @@ int main(int argc, const char **argv)
 	{
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&DialogBoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&DialogBoxPath, PackageId);
 			pAsset->SetName("dialog");
 			pAsset->SetRectPath(RectDialogPath);
 			pAsset->SetPadding(6);
@@ -1075,6 +1100,7 @@ int main(int argc, const char **argv)
 		CAssetPath SpriteWheelIconPath;
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath ColorEditPath;
 		
@@ -1084,7 +1110,7 @@ int main(int argc, const char **argv)
 		CREATE_SPRITE_PATH(SpriteWheelIconPath, PackageId, "iconColorWheel", ImageEditorPath, 8, 0, 1, 1);
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("colorEditButtonIdle");
 			pAsset->SetRectPath(RectButtonPath);
 			pAsset->SetMargin(2);
@@ -1096,7 +1122,7 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER_EXTENDED);
 		}
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
 			pAsset->SetName("colorEditButtonMO");
 			pAsset->SetRectPath(RectButtonMoPath);
 			pAsset->SetMargin(2);
@@ -1107,16 +1133,28 @@ int main(int argc, const char **argv)
 			pAsset->SetMinHeight(16);
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER_EXTENDED);
 		}
-		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
-			pAsset->SetName("colorEditButton");
-			pAsset->SetIdleStylePath(LabelIdlePath);
-			pAsset->SetMouseOverStylePath(LabelMoPath);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("colorEditButtonRO");
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetMinHeight(16);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER_EXTENDED);
 		}
 		
 		{
-			CAsset_GuiColorEditStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiColorEditStyle>(&ColorEditPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
+			pAsset->SetName("colorEditButton");
+			pAsset->SetIdleStylePath(LabelIdlePath);
+			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
+		}
+		
+		{
+			CAsset_GuiColorEditStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiColorEditStyle>(&ColorEditPath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetButtonStylePath(ButtonPath);
 			pAsset->SetPopupStylePath(DialogBoxPath);
@@ -1143,14 +1181,14 @@ int main(int argc, const char **argv)
 		CAssetPath ListBoxPath;
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&InactiveRectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&InactiveRectPath, PackageId);
 			pAsset->SetName("tabsInactiveRect");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 			pAsset->SetBackgroundColor(ColorDarkBG);
 		}
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&InactiveLabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&InactiveLabelIdlePath, PackageId);
 			pAsset->SetName("tabsInactiveLabel");
 			pAsset->SetRectPath(InactiveRectPath);
 			pAsset->SetPadding(4);
@@ -1159,21 +1197,22 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&InactiveButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&InactiveButtonPath, PackageId);
 			pAsset->SetName("tabsInactiveButton");
 			pAsset->SetIdleStylePath(InactiveLabelIdlePath);
 			pAsset->SetMouseOverStylePath(InactiveLabelIdlePath);
+			pAsset->SetReadOnlyStylePath(InactiveLabelIdlePath);
 		}
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&ActiveRectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&ActiveRectPath, PackageId);
 			pAsset->SetName("tabsActiveRect");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 			pAsset->SetBackgroundColor(ColorLightBG);
 		}
 		
 		{
-			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiLabelStyle>(&ActiveLabelIdlePath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&ActiveLabelIdlePath, PackageId);
 			pAsset->SetName("tabsActiveLabel");
 			pAsset->SetRectPath(ActiveRectPath);
 			pAsset->SetMargin(1);
@@ -1183,14 +1222,15 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiButtonStyle>(&ActiveButtonPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ActiveButtonPath, PackageId);
 			pAsset->SetName("tabsActiveButton");
 			pAsset->SetIdleStylePath(ActiveLabelIdlePath);
 			pAsset->SetMouseOverStylePath(ActiveLabelIdlePath);
+			pAsset->SetReadOnlyStylePath(ActiveLabelIdlePath);
 		}
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&LayoutRectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&LayoutRectPath, PackageId);
 			pAsset->SetName("tabsLayoutRect");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BORDER);
 			pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
@@ -1198,33 +1238,33 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&LayoutBoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&LayoutBoxPath, PackageId);
 			pAsset->SetName("tabsLayout");
 			pAsset->SetRectPath(LayoutRectPath);
 		}
 		
 		{
-			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiRectStyle>(&ContentRectPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&ContentRectPath, PackageId);
 			pAsset->SetName("tabsContentRect");
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 			pAsset->SetBackgroundColor(ColorLightBG);
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&ContentBoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&ContentBoxPath, PackageId);
 			pAsset->SetName("tabsContent");
 			pAsset->SetRectPath(ContentRectPath);
 			pAsset->SetPadding(5);
 		}
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&ListBoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&ListBoxPath, PackageId);
 			pAsset->SetName("tabsList");
 			pAsset->SetMargin(-1);
 		}
 		
 		{
-			CAsset_GuiTabsStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiTabsStyle>(&TabsPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiTabsStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiTabsStyle>(&TabsPath, PackageId);
 			pAsset->SetName("default");
 			pAsset->SetInactiveButtonPath(InactiveButtonPath);
 			pAsset->SetActiveButtonPath(ActiveButtonPath);
@@ -1241,7 +1281,7 @@ int main(int argc, const char **argv)
 		CAssetPath BoxPath;
 		
 		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_GuiBoxStyle>(&BoxPath, PackageId, CAssetsHistory::NO_TOKEN);
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
 			pAsset->SetName("toolbarMenu");
 			pAsset->SetRectPath(RectDialogPath);
 			pAsset->SetPadding(0);
@@ -1249,7 +1289,6 @@ int main(int argc, const char **argv)
 			pAsset->SetSpacing(0);
 		}
 	}
-	
 	
 	//~ CREATE_SPRITE(PackageId, "gizmoFrame", ImageEditorPath, 0, 8, 2, 3);
 	//~ CREATE_SPRITE(PackageId, "gizmoFrameSelect", ImageEditorPath, 2, 8, 2, 3);
@@ -1264,24 +1303,6 @@ int main(int argc, const char **argv)
 	//~ CREATE_SPRITE(PackageId, "gizmoDirMove", ImageEditorPath, 4, 12, 4, 4);
 	//~ CREATE_SPRITE(PackageId, "gizmoDirHook", ImageEditorPath, 8, 12, 4, 4);
 	
-	//~ CREATE_SPRITE(PackageId, "boxEditTL", ImageBoxesPath, 0, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditT" , ImageBoxesPath, 1, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditTR", ImageBoxesPath, 2, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditL" , ImageBoxesPath, 0, 1, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditR" , ImageBoxesPath, 2, 1, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditBL", ImageBoxesPath, 0, 2, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditB" , ImageBoxesPath, 1, 2, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditBR", ImageBoxesPath, 2, 2, 1, 1);
-	
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusTL", ImageBoxesPath, 3, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusT" , ImageBoxesPath, 4, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusTR", ImageBoxesPath, 5, 0, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusL" , ImageBoxesPath, 3, 1, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusR" , ImageBoxesPath, 5, 1, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusBL", ImageBoxesPath, 3, 2, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusB" , ImageBoxesPath, 4, 2, 1, 1);
-	//~ CREATE_SPRITE(PackageId, "boxEditFocusBR", ImageBoxesPath, 5, 2, 1, 1);
-	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	pKernel->Shutdown();
@@ -1289,130 +1310,3 @@ int main(int argc, const char **argv)
 
 	exit(EXIT_SUCCESS);
 }
-
-/*
-
-void Make_GuiRectStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-	
-	//GuiRectStyles
-	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_LAYOUT));
-		pAsset->SetName("editorTabsLayout");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
-		pAsset->SetBackgroundColor(vec4(57.0f/255.0f, 57.0f/255.0f, 57.0f/255.0f, 1.0f));
-		pAsset->SetBorderColor(vec4(40.0f/255.0f, 40.0f/255.0f, 40.0f/255.0f, 1.0f));
-		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
-	}
-	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_CONTENT));
-		pAsset->SetName("editorTabsContent");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
-		pAsset->SetBackgroundColor(vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 1.0f));
-	}
-	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_INACTIVEBUTTON));
-		pAsset->SetName("editorTabsInactiveButton");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
-		pAsset->SetBackgroundColor(vec4(57.0f/255.0f, 57.0f/255.0f, 57.0f/255.0f, 1.0f));
-	}
-	{
-		CAsset_GuiRectStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiRectStyle>(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_ACTIVEBUTTON));
-		pAsset->SetName("editorTabsActiveButton");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
-		pAsset->SetBackgroundColor(vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 1.0f));
-	}
-}
-	
-void Make_GuiLineStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-	
-	//GuiLineStyles
-	{
-		CAsset_GuiLineStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLineStyle>(CAssetPath::GuiLineStyleGui(GUILINESTYLE_SEPARATOR));
-		pAsset->SetName("separator");
-		pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_BORDER);
-		pAsset->SetBorderColor(vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 1.0f));
-	}
-}
-
-void Make_GuiBoxStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-		
-	//GuiBoxStyles
-	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_EDITOR_TABS_LAYOUT));
-		pGuiBoxStyle->SetName("editorTabsLayout");
-		pGuiBoxStyle->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_LAYOUT));
-		pGuiBoxStyle->SetPadding(1);
-	}
-	{
-		CAsset_GuiBoxStyle* pGuiBoxStyle = pAssetsManager->NewAsset<CAsset_GuiBoxStyle>(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_EDITOR_TABS_CONTENT));
-		pGuiBoxStyle->SetName("editorTabsContent");
-		pGuiBoxStyle->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_CONTENT));
-		pGuiBoxStyle->SetPadding(4);
-	}
-}	
-
-void Make_GuiLabelStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-	
-	//GuiLabelStyles
-	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_ACTIVETAB));
-		pAsset->SetName("editorActiveTab");
-		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_ACTIVEBUTTON));
-		pAsset->SetPadding(4);
-		pAsset->SetSpacing(4);
-		pAsset->SetTextColor(1.0f);
-	}
-	{
-		CAsset_GuiLabelStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiLabelStyle>(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_INACTIVETAB));
-		pAsset->SetName("editorInactiveTab");
-		pAsset->SetRectPath(CAssetPath::GuiRectStyleGui(GUIRECTSTYLE_EDITOR_TABS_INACTIVEBUTTON));
-		pAsset->SetPadding(4);
-		pAsset->SetSpacing(4);
-		pAsset->SetTextColor(1.0f);
-	}
-}
-
-void Make_GuiButtonStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-		
-	//GuiButtonStyles
-	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_EDITOR_ACTIVETAB));
-		pAsset->SetName("editorActiveTab");
-		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_ACTIVETAB));
-		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_ACTIVETAB));
-	}
-	{
-		CAsset_GuiButtonStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiButtonStyle>(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_EDITOR_INACTIVETAB));
-		pAsset->SetName("editorInactiveTab");
-		pAsset->SetIdleStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_INACTIVETAB));
-		pAsset->SetMouseOverStylePath(CAssetPath::GuiLabelStyleGui(GUILABELSTYLE_EDITOR_INACTIVETAB));
-	}
-}
-
-void Make_GuiTabsStyle(CSharedKernel* pKernel)
-{
-	CAssetsManager* pAssetsManager = pKernel->AssetsManager();
-	
-	//GuiTabsStyles
-	{
-		CAsset_GuiTabsStyle* pAsset = pAssetsManager->NewAsset<CAsset_GuiTabsStyle>(CAssetPath::GuiTabsStyleGui(GUITABSSTYLE_EDITOR));
-		pAsset->SetName("editorTabs");
-		pAsset->SetLayoutPath(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_EDITOR_TABS_LAYOUT));
-		pAsset->SetContentPath(CAssetPath::GuiBoxStyleGui(GUIBOXSTYLE_EDITOR_TABS_CONTENT));
-		pAsset->SetInactiveButtonPath(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_EDITOR_INACTIVETAB));
-		pAsset->SetActiveButtonPath(CAssetPath::GuiButtonStyleGui(GUIBUTTONSTYLE_EDITOR_ACTIVETAB));
-		pAsset->SetButtonListFill(false);
-		pAsset->SetButtonListText(false);
-	}
-}
-*/

@@ -136,7 +136,7 @@ bool CCountryFlags::Init()
 						CAssetPath ImagePath = CreateNewImage(SharedKernel(), PackageId, pCountryName, aBuf, 1, 1);
 						if(!ImagePath.IsNull())
 						{
-							CAsset_Sprite* pSprite = AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, PackageId, CAssetsHistory::NO_TOKEN);
+							CAsset_Sprite* pSprite = AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&SpritePath, PackageId);
 							if(pSprite)
 							{
 								pSprite->SetName(aBuf);

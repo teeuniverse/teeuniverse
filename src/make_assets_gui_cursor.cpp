@@ -27,7 +27,7 @@
 
 #define CREATE_SPRITE(packageid, name, image, x, y, w, h) {\
 	CAssetPath SpritePath;\
-	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, packageid, CAssetsHistory::NO_TOKEN);\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&SpritePath, packageid);\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(image);\
 	pSprite->SetX(x);\

@@ -126,8 +126,8 @@ void CAbstractTextEdit::RefreshLabelStyle()
 	const CAsset_GuiButtonStyle* pButtonStyle = AssetsManager()->GetAsset<CAsset_GuiButtonStyle>(m_ButtonStylePath);
 	if(pButtonStyle)
 	{
-		if(Context()->HasFocus(this))
-			SetLabelStyle(pButtonStyle->GetFocusStylePath());
+		if(!m_Editable)
+			SetLabelStyle(pButtonStyle->GetReadOnlyStylePath());
 		else if(m_MouseOver)
 			SetLabelStyle(pButtonStyle->GetMouseOverStylePath());
 		else
@@ -159,7 +159,7 @@ void CAbstractTextEdit::Update(bool ParentEnabled)
 			}
 		}
 		
-		if(m_MouseOver)
+		if(m_MouseOver && m_Editable)
 			Context()->SetCursorSprite(this, Context()->GetCursorText());
 		
 		RefreshLabelStyle();

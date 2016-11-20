@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 #define CREATE_SPRITE_PATH(path, packageid, name, image, x, y, w, h) {\
-	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset<CAsset_Sprite>(&path, packageid, CAssetsHistory::NO_TOKEN);\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&path, packageid);\
 	pSprite->SetName(name);\
 	pSprite->SetImagePath(image);\
 	pSprite->SetX(x);\
@@ -47,14 +47,14 @@ int main(int argc, const char **argv)
 	int PackageId = pKernel->AssetsManager()->NewPackage("univ_infclass");
 	
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", 4, 4);
-	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768, CAssetsHistory::NO_TOKEN);
+	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
 	//InfClass Physics
 	{
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_ZoneType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
 		pAsset->SetName("infcPhysics");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -79,7 +79,7 @@ int main(int argc, const char **argv)
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_ZoneType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
 		pAsset->SetName("infcZones");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -97,7 +97,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHumanSpawn", ImageEntitiesPath, 0, 3, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("humanSpawn");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -109,7 +109,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoInfectedSpawn", ImageEntitiesPath, 1, 3, 1, 1);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("infectedSpawn");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
@@ -121,7 +121,7 @@ int main(int argc, const char **argv)
 		
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeroFlag", ImageEntitiesPath, 3, 2, 1, 2);
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset<CAsset_EntityType>(&AssetPath, PackageId, CAssetsHistory::NO_TOKEN);
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
 		pAsset->SetName("heroFlag");
 		pAsset->SetCollisionRadius(42.0f);
 		pAsset->SetGizmoPath(GizmoPath);

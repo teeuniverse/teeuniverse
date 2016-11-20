@@ -1391,7 +1391,7 @@ guiButtonStyle = ClassAsset("GuiButtonStyle", len(assetsList))
 guiButtonStyle.setInheritance(mainAsset)
 guiButtonStyle.addMember("IdleStylePath", TypeAssetPath())
 guiButtonStyle.addMember("MouseOverStylePath", TypeAssetPath())
-guiButtonStyle.addMember("FocusStylePath", TypeAssetPath())
+guiButtonStyle.addMember("ReadOnlyStylePath", TypeAssetPath())
 
 assetsList.append(guiButtonStyle)
 

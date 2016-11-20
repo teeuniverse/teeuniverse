@@ -30,6 +30,7 @@ protected:
 	bool m_Clicked;
 	bool m_MouseOver;
 	CAssetPath m_ButtonStylePath;
+	bool m_Editable;
 	
 protected:
 	CAbstractButton(class CGui *pConfig);
@@ -45,6 +46,9 @@ public:
 	void RefreshLabelStyle();
 	inline CAssetPath GetButtonStyle() const { return m_ButtonStylePath; }
 	void SetButtonStyle(CAssetPath Path);
+	
+	inline bool IsEditable() const { return m_Editable; }
+	inline void Editable(bool Value) { m_Editable = Value; }
 };
 
 class CButton : public CAbstractButton

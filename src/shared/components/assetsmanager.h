@@ -139,6 +139,7 @@ public:
 	int NewPackage(const char* pName);
 	const char* GetPackageName(int PackageId) const;
 	void SetPackageName(int PackageId, const char* pName);
+	void SetPackageName_Hard(int PackageId, const char* pName);
 	int GetNumPackages() const;
 	void ClosePackage(int PackageId);
 	bool IsValidPackage(int PackageId) const;
@@ -174,9 +175,9 @@ public:
 	void Load_EnvSun();
 	void Load_EnvWinter();
 	
-	CAssetPath DuplicateAsset(const CAssetPath& Path, int PackageId);
+	CAssetPath DuplicateAsset(const CAssetPath& Path, int PackageId, int Token = -1);
 	
-	void TryChangeAssetName(CAssetPath AssetPath, const char* pName, int Token);
+	void TryChangeAssetName(CAssetPath AssetPath, const char* pName, int Token = -1);
 
 	template<class ASSET>
 	const ASSET* GetAsset(CAssetPath AssetPath) const
@@ -186,9 +187,18 @@ public:
 		else
 			return NULL;
 	}
+	
+	template<class ASSET>
+	ASSET* GetAsset_Hard(CAssetPath AssetPath)
+	{
+		if(IsValidPackage(AssetPath.GetPackageId()))
+			return m_pPackages[AssetPath.GetPackageId()]->GetAsset<ASSET>(AssetPath);
+		else
+			return NULL;
+	}
 
 	template<class ASSET>
-	void SetAsset(CAssetPath AssetPath, const ASSET* pAsset)
+	void SetAsset_Hard(CAssetPath AssetPath, const ASSET* pAsset)
 	{
 		if(IsValidPackage(AssetPath.GetPackageId()))
 		{
@@ -199,27 +209,9 @@ public:
 	}
 	
 	template<class ASSET>
-	ASSET* GetEditableAsset(CAssetPath AssetPath)
-	{
-		if(IsValidPackage(AssetPath.GetPackageId()))
-			return m_pPackages[AssetPath.GetPackageId()]->GetAsset<ASSET>(AssetPath);
-		else
-			return NULL;
-	}
-	
-	template<class ASSET>
-	ASSET* NewAsset(const CAssetPath& AssetPath)
-	{
-		if(IsValidPackage(AssetPath.GetPackageId()))
-			return m_pPackages[AssetPath.GetPackageId()]->NewAsset<ASSET>(this, AssetPath);
-		else
-			return NULL;
-	}
-	
-	template<class ASSET>
 	ASSET* NewAsset(CAssetPath* pAssetPath, int PackageId, int Token)
 	{
-		if(IsValidPackage(PackageId))
+		if(IsValidPackage(PackageId) && !IsReadOnlyPackage(PackageId))
 		{
 			ASSET* pNewAsset = m_pPackages[PackageId]->NewAsset<ASSET>(this, pAssetPath);
 			if(pNewAsset)
@@ -235,6 +227,20 @@ public:
 	}
 	
 	template<class ASSET>
+	ASSET* NewAsset_Hard(CAssetPath* pAssetPath, int PackageId)
+	{
+		if(IsValidPackage(PackageId))
+		{
+			ASSET* pNewAsset = m_pPackages[PackageId]->NewAsset<ASSET>(this, pAssetPath);
+			if(pNewAsset)
+				pAssetPath->SetPackageId(PackageId);
+			return pNewAsset;
+		}
+		else
+			return NULL;
+	}
+	
+	template<class ASSET>
 	int GetNumAssets(int PackageId) const
 	{
 		if(IsValidPackage(PackageId))
@@ -243,7 +249,7 @@ public:
 			return 0;
 	}
 
-	void DeleteAsset(const CAssetPath& Path);
+	void DeleteAsset(const CAssetPath& Path, int Token = -1);
 
 	template<typename T>
 	T GetAssetValue(CAssetPath AssetPath, CSubPath SubPath, int FieldType, T DefaultValue)
@@ -268,14 +274,42 @@ public:
 	}
 
 	template<typename T>
+	bool SetAssetValue_Hard(CAssetPath AssetPath, CSubPath SubPath, int FieldType, const T& Value)
+	{
+		if(!IsValidPackage(AssetPath.GetPackageId()))
+			return false;
+		
+		#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
+		{\
+			CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
+			if(pAsset)\
+				return pAsset->SetValue<T>(FieldType, SubPath, Value);\
+			else\
+				return false;\
+		}
+		
+		switch(AssetPath.GetType())
+		{
+			#include <generated/assets/assetsmacro.h>
+		}
+		
+		#undef MACRO_ASSETTYPE
+		
+		return false;
+	}
+
+	template<typename T>
 	bool SetAssetValue(CAssetPath AssetPath, CSubPath SubPath, int FieldType, const T& Value, int Token = -1)
 	{
+		if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+			return false;
+		
 		if(m_pHistory)
 			m_pHistory->AddOperation_EditAsset(AssetPath, Token);
 		
 		#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 		{\
-			CAsset_##Name* pAsset = GetEditableAsset<CAsset_##Name>(AssetPath);\
+			CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
 			if(pAsset)\
 				return pAsset->SetValue<T>(FieldType, SubPath, Value);\
 			else\
@@ -293,6 +327,7 @@ public:
 	}
 
 	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
+	int AddSubItem_Hard(CAssetPath AssetPath, CSubPath SubPath, int Type);
 	
 	template<typename ASSET>
 	CAssetPath FindAsset(int PackageId, const char* pAssetName) const

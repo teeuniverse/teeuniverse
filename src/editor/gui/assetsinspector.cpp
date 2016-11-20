@@ -564,7 +564,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiButtonStyle_Asset()
 	
 	AddField_Asset(pTab, CAsset_GuiButtonStyle::IDLESTYLEPATH, CAsset_GuiLabelStyle::TypeId, "Idle Style");
 	AddField_Asset(pTab, CAsset_GuiButtonStyle::MOUSEOVERSTYLEPATH, CAsset_GuiLabelStyle::TypeId, "Mouseover Style");
-	AddField_Asset(pTab, CAsset_GuiButtonStyle::FOCUSSTYLEPATH, CAsset_GuiLabelStyle::TypeId, "Focus Style");
+	AddField_Asset(pTab, CAsset_GuiButtonStyle::READONLYSTYLEPATH, CAsset_GuiLabelStyle::TypeId, "Read Only Style");
 	
 	return pTab;
 }
@@ -687,6 +687,19 @@ public:
 		gui::CAbstractTextEdit(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor)
 	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CAbstractTextEdit::Update(ParentEnabled);
+	}
 };
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Package()
@@ -743,6 +756,19 @@ public:
 		m_pAssetsEditor(pAssetsEditor),
 		m_Member(Member)
 	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CAbstractTextEdit::Update(ParentEnabled);
+	}
 };
 
 void CAssetsInspector::AddField_Text(gui::CVListLayout* pList, int Member, const char* pLabelText)
@@ -762,6 +788,7 @@ class CMemberIntegerEdit : public gui::CAbstractIntegerEdit
 protected:
 	CGuiEditor* m_pAssetsEditor;
 	int m_Member;
+	bool m_NoEdit;
 	
 	virtual int GetValue() const
 	{
@@ -784,11 +811,28 @@ protected:
 	}
 	
 public:
-	CMemberIntegerEdit(CGuiEditor* pAssetsEditor, int Member) :
+	CMemberIntegerEdit(CGuiEditor* pAssetsEditor, int Member, bool NoEdit = false) :
 		gui::CAbstractIntegerEdit(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_Member(Member)
-	{ }
+		m_Member(Member),
+		m_NoEdit(NoEdit)
+	{
+		if(m_NoEdit)
+			Editable(false);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(!m_NoEdit && IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CAbstractIntegerEdit::Update(ParentEnabled);
+	}
 };
 
 void CAssetsInspector::AddField_Integer(gui::CVListLayout* pList, int Member, const char* pLabelText)
@@ -805,9 +849,9 @@ void CAssetsInspector::AddField_Integer_NoEdit(gui::CVListLayout* pList, int Mem
 {
 	CMemberIntegerEdit* pWidget = new CMemberIntegerEdit(
 		m_pAssetsEditor,
-		Member
+		Member,
+		true
 	);
-	pWidget->Editable(false);
 	
 	AddField(pList, pWidget, pLabelText);
 }
@@ -892,6 +936,19 @@ public:
 		m_pAssetsEditor(pAssetsEditor),
 		m_Member(Member)
 	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CAbstractFloatEdit::Update(ParentEnabled);
+	}
 };
 
 void CAssetsInspector::AddField_Float(gui::CVListLayout* pList, int Member, const char* pLabelText)
@@ -1160,6 +1217,11 @@ public:
 	{
 		if(IsEnabled() && ParentEnabled)
 		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+				
 			CAssetPath Value = m_pAssetsEditor->AssetsManager()->GetAssetValue<CAssetPath>(
 				m_pAssetsEditor->GetEditedAssetPath(),
 				m_pAssetsEditor->GetEditedSubPath(),

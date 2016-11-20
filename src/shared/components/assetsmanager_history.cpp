@@ -192,7 +192,7 @@ void CAssetsHistory::Undo()
 			{\
 				CAsset_##Name* pOldAsset = (CAsset_##Name*) m_Entries[m_LastEntry].m_Operations[i].m_pAsset;\
 				dbg_msg("DEBUG", "History::Undo (EditOperation). HistorySize:%d, Pointer:%p", m_Size-1, pOldAsset);\
-				AssetsManager()->SetAsset<CAsset_##Name>(m_Entries[m_LastEntry].m_Operations[i].m_AssetPath, pOldAsset);\
+				AssetsManager()->SetAsset_Hard<CAsset_##Name>(m_Entries[m_LastEntry].m_Operations[i].m_AssetPath, pOldAsset);\
 			}\
 			else if(m_Entries[m_LastEntry].m_Operations[i].m_Operation == OPERATION_ADDASSET)\
 			{\

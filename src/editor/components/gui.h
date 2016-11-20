@@ -55,6 +55,7 @@ private:
 	
 public:
 	class CAssetsTree* m_pAssetsTree;
+	class CPackagesTree* m_pPackagesTree;
 	
 public:
 	CAssetPath m_Path_Image_ZoneTexture;
@@ -136,6 +137,7 @@ public:
 	CAssetPath m_Path_Sprite_IconView;
 	CAssetPath m_Path_Sprite_IconHidden;
 	CAssetPath m_Path_Sprite_IconEntities;
+	CAssetPath m_Path_Sprite_IconDelete;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
@@ -160,6 +162,7 @@ public:
 	inline CAssetPath GetEditedAssetPath() const { return m_EditedAssetPath; }
 	inline CSubPath GetEditedSubPath() const { return m_EditedSubPath; }
 	
+	void RefreshPackageTree();
 	void RefreshAssetsTree();
 	
 	inline CEditorKernel* EditorKernel() { return m_pEditorKernel; }
