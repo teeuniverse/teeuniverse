@@ -21,15 +21,9 @@ git clone https://github.com/teeuniverses/teeuniverses.git
 cd teeuniverses
 ```
 
-Create a build folder to keep the sources clean
-```
-mkdir build
-cd build
-```
-
 Compile the project
 ```
-cmake ..
+cmake .
 make
 ```
 
