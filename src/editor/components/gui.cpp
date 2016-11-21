@@ -41,7 +41,7 @@ CContextMenu::CContextMenu(CGuiEditor* pAssetsEditor) :
 	m_pAssetsEditor(pAssetsEditor)
 {		
 	m_pList = new gui::CVListLayout(Context());
-	m_pList->SetBoxStyle(m_pAssetsEditor->m_Path_Box_ToobarMenu);
+	m_pList->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Menu);
 	Add(m_pList);
 }
 
@@ -413,9 +413,22 @@ public:
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
-/* TOOLBAR MENU *******************************************************/
+/* MENU ***************************************************************/
 
-class CPopup_ToolbarMenu : public gui::CPopup
+class CMenuBar : public gui::CHListLayout
+{
+class CPopup_Menu* m_pPopup;
+
+public:
+	CMenuBar(CGuiEditor* pAssetsEditor) :
+		gui::CHListLayout(pAssetsEditor),
+		m_pPopup(NULL)
+	{
+		
+	}
+};
+
+class CPopup_Menu : public gui::CPopup
 {	
 protected:
 	CGuiEditor* m_pAssetsEditor;
@@ -425,12 +438,12 @@ protected:
 	gui::CVListLayout* m_pList;
 	
 public:
-	CPopup_ToolbarMenu(CGuiEditor* pAssetsEditor, const gui::CRect& CreatorRect) :
+	CPopup_Menu(CGuiEditor* pAssetsEditor, const gui::CRect& CreatorRect) :
 		gui::CPopup(pAssetsEditor, CreatorRect, 250, -1, gui::CPopup::ALIGNMENT_BOTTOM),
 		m_pAssetsEditor(pAssetsEditor)
 	{		
 		m_pList = new gui::CVListLayout(Context());
-		m_pList->SetBoxStyle(m_pAssetsEditor->m_Path_Box_ToobarMenu);
+		m_pList->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Menu);
 		Add(m_pList);
 	}
 	
@@ -445,7 +458,7 @@ class CNewPackageButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual void MouseClickAction()
@@ -459,12 +472,13 @@ protected:
 	}
 
 public:
-	CNewPackageButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	CNewPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, "New Package"),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconNewFolder);
 	}
 };
 
@@ -472,7 +486,7 @@ class COpenPackageButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual void MouseClickAction()
@@ -482,12 +496,13 @@ protected:
 	}
 
 public:
-	COpenPackageButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	COpenPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, "Open Package"),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
 	}
 };
 
@@ -495,7 +510,7 @@ class CImportButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	int m_Format;
 	
 protected:
@@ -506,7 +521,7 @@ protected:
 	}
 
 public:
-	CImportButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu, int Format) :
+	CImportButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int Format) :
 		gui::CButton(pAssetsEditor, ""),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu),
@@ -530,7 +545,8 @@ public:
 				SetText("Import OpenFNG");
 				break;
 		}
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
 	}
 };
 
@@ -538,7 +554,7 @@ class CSavePackageButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual void MouseClickAction()
@@ -548,12 +564,13 @@ protected:
 	}
 
 public:
-	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, "Save Package"),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSave);
 	}
 };
 
@@ -561,7 +578,7 @@ class CSavePackageAsButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual void MouseClickAction()
@@ -571,12 +588,13 @@ protected:
 	}
 
 public:
-	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, "Save Package As..."),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSave);
 	}
 };
 
@@ -584,7 +602,7 @@ class CQuitButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual void MouseClickAction()
@@ -594,12 +612,13 @@ protected:
 	}
 
 public:
-	CQuitButton(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	CQuitButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, "Quit"),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconDelete);
 	}
 };
 
@@ -607,7 +626,7 @@ class CNewAsset : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	int m_AssetType;
 	
 protected:
@@ -709,13 +728,20 @@ protected:
 	}
 
 public:
-	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu, int AssetType, const char* pName) :
+	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int AssetType, const char* pName) :
 		gui::CButton(pAssetsEditor, pName),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu),
 		m_AssetType(AssetType)
 	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		
+		switch(m_AssetType)
+		{
+			case CAsset_Map::TypeId:
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconMap);
+				break;
+		}
 	}
 };
 
@@ -723,7 +749,7 @@ class CToggleFullscreen : public gui::CToggle
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	CPopup_ToolbarMenu* m_pPopupMenu;
+	CPopup_Menu* m_pPopupMenu;
 	
 protected:
 	virtual bool GetValue()
@@ -741,7 +767,7 @@ protected:
 	}
 	
 public:
-	CToggleFullscreen(CGuiEditor* pAssetsEditor, CPopup_ToolbarMenu* pPopupMenu) :
+	CToggleFullscreen(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CToggle(pAssetsEditor, "Fullscreen"),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
@@ -758,7 +784,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		CPopup_ToolbarMenu* pMenu = new CPopup_ToolbarMenu(m_pAssetsEditor, m_DrawRect);
+		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
 		pMenu->List()->Add(new CNewPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new COpenPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
@@ -780,7 +806,7 @@ public:
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 	}
 };
 
@@ -792,7 +818,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		CPopup_ToolbarMenu* pMenu = new CPopup_ToolbarMenu(m_pAssetsEditor, m_DrawRect);
+		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
 		
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, "New Map"));
@@ -806,7 +832,7 @@ public:
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 	}
 };
 
@@ -818,7 +844,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		CPopup_ToolbarMenu* pMenu = new CPopup_ToolbarMenu(m_pAssetsEditor, m_DrawRect);
+		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
 		
 		pMenu->List()->Add(new CToggleFullscreen(m_pAssetsEditor, pMenu));
 		
@@ -831,7 +857,7 @@ public:
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 	}
 };
 
@@ -904,13 +930,13 @@ void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 
 gui::CWidget* CGuiEditor::CMainWidget::CreateToolbar()
 {
-	gui::CHListLayout* pToolbar = new gui::CHListLayout(m_pAssetsEditor);
+	CMenuBar* pMenuBar = new CMenuBar(m_pAssetsEditor);
 	
-	pToolbar->Add(new CFileButton(m_pAssetsEditor), false);
-	pToolbar->Add(new CAssetButton(m_pAssetsEditor), false);
-	pToolbar->Add(new CViewButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new CFileButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new CAssetButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new CViewButton(m_pAssetsEditor), false);
 	
-	return pToolbar;
+	return pMenuBar;
 }
 
 
@@ -955,7 +981,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Box_Popup = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "popup");
 		m_Path_Box_View = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "view");
 		m_Path_Box_Panel = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panel");
-		m_Path_Box_ToobarMenu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "toolbarMenu");
+		m_Path_Box_Menu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "menu");
 		m_Path_Box_Dialog = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "dialog");
 		m_Path_Box_SubList = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "subList");
 		
@@ -970,7 +996,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Button_NumericEdit = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "numericEdit");
 		m_Path_Button_ListItem = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "listItem");
 		m_Path_Button_ListItemHL = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "listItemHL");
-		m_Path_Button_Toolbar = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "toolbar");
+		m_Path_Button_Menu = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "menuItem");
 		m_Path_Button_CursorTool = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "cursorTool");
 		m_Path_Button_CursorToolHL = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "cursorToolHL");
 		m_Path_Button_PaletteIcon = AssetsManager()->FindAsset<CAsset_GuiButtonStyle>(PackageId, "paletteIcon");
@@ -1022,6 +1048,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconView = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconView");
 		m_Path_Sprite_IconHidden = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconHidden");
 		m_Path_Sprite_IconEntities = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntities");
+		m_Path_Sprite_IconNewFolder = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewFolder");
 		m_Path_Sprite_IconDelete = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDelete");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");

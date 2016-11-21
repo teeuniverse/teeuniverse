@@ -109,10 +109,10 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconZoneType", ImageEditorPath, 6, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEntityType", ImageEditorPath, 7, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconAsset", ImageEditorPath, 8, 1, 1, 1);
-	CREATE_SPRITE(PackageId, "iconNewAsset_Hard", ImageEditorPath, 9, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconNewAsset", ImageEditorPath, 9, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconHidden", ImageEditorPath, 10, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEntities", ImageEditorPath, 11, 1, 1, 1);
-	//Empty area
+	CREATE_SPRITE(PackageId, "iconNewFolder", ImageEditorPath, 12, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconLayer", ImageEditorPath, 13, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconBone", ImageEditorPath, 14, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconSprite", ImageEditorPath, 15, 1, 1, 1);
@@ -855,7 +855,7 @@ int main(int argc, const char **argv)
 		pAsset->SetTextColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
 	}
 	
-	//Toolbar button and default toggle
+	//Menu Item button and default toggle
 	{
 		CAssetPath IconFalsePath;
 		CAssetPath IconTruePath;
@@ -867,14 +867,14 @@ int main(int argc, const char **argv)
 		
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
-			pAsset->SetName("toolbar");
+			pAsset->SetName("menuItem");
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
 		}
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
-			pAsset->SetName("toolbarMo");
+			pAsset->SetName("menuItemMo");
 			pAsset->SetRectPath(RectListItemHlPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
@@ -882,7 +882,7 @@ int main(int argc, const char **argv)
 		}
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
-			pAsset->SetName("toolbarRo");
+			pAsset->SetName("menuItemRo");
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -890,7 +890,7 @@ int main(int argc, const char **argv)
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
-			pAsset->SetName("toolbar");
+			pAsset->SetName("menuItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
@@ -1276,13 +1276,13 @@ int main(int argc, const char **argv)
 		}
 	}
 	
-	//Toolbar Menu
+	//Menu
 	{
 		CAssetPath BoxPath;
 		
 		{
 			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
-			pAsset->SetName("toolbarMenu");
+			pAsset->SetName("menu");
 			pAsset->SetRectPath(RectDialogPath);
 			pAsset->SetPadding(0);
 			pAsset->SetMargin(0);

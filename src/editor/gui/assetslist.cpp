@@ -53,7 +53,7 @@ protected:
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
 		{
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 		}
 	};
 	
@@ -94,6 +94,11 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
+		Action();
+	}
+	
+	void Action()
+	{
 		m_pAssetsEditor->SetEditedPackage(m_PackageId);
 	}
 
@@ -131,6 +136,7 @@ public:
 				pMenu->List()->AddSeparator();
 				pMenu->List()->Add(new CCloseButton(m_pAssetsEditor, pMenu, m_PackageId));
 				
+				Action();
 				m_pAssetsEditor->DisplayPopup(pMenu);
 				return;
 			}
@@ -191,13 +197,13 @@ protected:
 		CAssetPath m_AssetPath;
 
 	public:
-		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const char* pName) :
-			gui::CButton(pAssetsEditor, pName),
+		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const char* pName, const CAssetPath& IconPath) :
+			gui::CButton(pAssetsEditor, pName, IconPath),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_AssetPath(AssetPath)
 		{
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Toolbar);
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 		}
 	};
 	
@@ -214,7 +220,7 @@ protected:
 
 	public:
 		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Delete")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Delete", pAssetsEditor->m_Path_Sprite_IconDelete)
 		{ }
 	};
 	
@@ -248,7 +254,7 @@ protected:
 
 	public:
 		CAddSpriteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Sprite", pAssetsEditor->m_Path_Sprite_IconSprite)
 		{ }
 	};
 	
@@ -285,7 +291,7 @@ protected:
 
 	public:
 		CAddZoneLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer", pAssetsEditor->m_Path_Sprite_IconZoneTiles)
 		{ }
 	};
 	
@@ -320,7 +326,7 @@ protected:
 
 	public:
 		CAddEntityLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Entities")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Entities", pAssetsEditor->m_Path_Sprite_IconEntities)
 		{ }
 	};
 	
@@ -355,7 +361,7 @@ protected:
 
 	public:
 		CAddBgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Background Group")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Background Group", pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -391,7 +397,7 @@ protected:
 
 	public:
 		CAddFgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Foreground Group")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Foreground Group", pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -428,7 +434,7 @@ protected:
 
 	public:
 		CAddTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Tile Layer")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Tile Layer", pAssetsEditor->m_Path_Sprite_IconTiles)
 		{ }
 	};
 	
@@ -463,7 +469,7 @@ protected:
 
 	public:
 		CAddQuadLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Quad Layer")
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Quad Layer", pAssetsEditor->m_Path_Sprite_IconQuad)
 		{ }
 	};
 	

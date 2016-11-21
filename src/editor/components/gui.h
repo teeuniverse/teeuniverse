@@ -66,7 +66,7 @@ public:
 	CAssetPath m_Path_Box_Popup;
 	CAssetPath m_Path_Box_View;
 	CAssetPath m_Path_Box_Panel;
-	CAssetPath m_Path_Box_ToobarMenu;
+	CAssetPath m_Path_Box_Menu;
 	CAssetPath m_Path_Box_Dialog;
 	CAssetPath m_Path_Box_SubList;
 	
@@ -81,7 +81,7 @@ public:
 	CAssetPath m_Path_Button_NumericEdit;
 	CAssetPath m_Path_Button_ListItem;
 	CAssetPath m_Path_Button_ListItemHL;
-	CAssetPath m_Path_Button_Toolbar;
+	CAssetPath m_Path_Button_Menu;
 	CAssetPath m_Path_Button_CursorTool;
 	CAssetPath m_Path_Button_CursorToolHL;
 	CAssetPath m_Path_Button_PaletteIcon;
@@ -137,6 +137,7 @@ public:
 	CAssetPath m_Path_Sprite_IconView;
 	CAssetPath m_Path_Sprite_IconHidden;
 	CAssetPath m_Path_Sprite_IconEntities;
+	CAssetPath m_Path_Sprite_IconNewFolder;
 	CAssetPath m_Path_Sprite_IconDelete;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
