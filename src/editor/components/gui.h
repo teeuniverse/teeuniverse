@@ -97,10 +97,6 @@ public:
 	
 	CAssetPath m_Path_Tabs_Default;
 	
-	CAssetPath m_Path_Sprite_CursorPointer;
-	CAssetPath m_Path_Sprite_CursorTranslateX;
-	CAssetPath m_Path_Sprite_CursorTranslateY;
-	CAssetPath m_Path_Sprite_CursorText;
 	CAssetPath m_Path_Sprite_IconNone;
 	CAssetPath m_Path_Sprite_IconDefault;
 	CAssetPath m_Path_Sprite_IconAsset;

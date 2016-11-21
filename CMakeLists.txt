@@ -200,7 +200,6 @@ function(make_assets progname)
 	)
 endfunction()
 
-make_assets(gui_cursor)
 make_assets(gui_editor)
 make_assets(univ_teeworlds)
 make_assets(univ_ddnet)

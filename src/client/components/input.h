@@ -76,6 +76,16 @@ public:
 		FLAG_TEXT=8,
 	};
 	
+	enum
+	{
+		CURSOR_DEFAULT=0,
+		CURSOR_TRANSLATEX,
+		CURSOR_TRANSLATEY,
+		CURSOR_TEXT,
+		CURSOR_LOADING,
+		NUM_CURSORS,
+	};
+	
 	struct CInputRect
 	{
 		int x;
@@ -88,12 +98,13 @@ public:
 	int m_Cfg_Mousesens;
 
 private:
-	int m_InputGrabbed;
+	bool m_RelativeMode;
 	bool m_TextEdited;
 	bool m_Composing;
 	dynamic_string m_EditedText;
 	array<SDL_Rect> m_TextEditingQueue;
-
+	SDL_Cursor* m_Cursors[NUM_CURSORS];
+	
 	int64 m_LastRelease;
 	int64 m_ReleaseDelta;
 
@@ -124,25 +135,29 @@ public:
 public:
 	CInput(CClientKernel* pKernel);
 
-	virtual bool InitConfig(int argc, const char** argv);
-	virtual void SaveConfig(class CCLI_Output* pOutput);
-	virtual bool Init();
-	virtual bool PreUpdate();
+	bool InitConfig(int argc, const char** argv);
+	void SaveConfig(class CCLI_Output* pOutput);
+	bool Init();
+	void Shutdown();
+	bool PreUpdate();
 
 	bool KeyIsPressed(int Key) const { return KeyState(Key); }
 	bool KeyPress(int Key, bool CheckCounter) const { return CheckCounter ? (m_aInputCount[Key] == m_InputCounter) : m_aInputCount[Key]; }
 
-	virtual void MouseRelative(float *x, float *y);
-	virtual void MouseModeAbsolute();
-	virtual void MouseModeRelative();
-	virtual int MouseDoubleClick();
+	//Return true if the position is absolute
+	bool GetMousePosition(float *x, float *y);
+	void SetCursorType(int CursorType);
+	
+	void MouseModeAbsolute();
+	void MouseModeRelative();
+	int MouseDoubleClick();
 
-	virtual const char* GetEditedText() const;
-	virtual void StartTextEditing(int x, int y, int w, int h);
-	virtual void StopTextEditing();
+	const char* GetEditedText() const;
+	void StartTextEditing(int x, int y, int w, int h);
+	void StopTextEditing();
 	
 	const char *KeyName(int Key) const { return (Key >= 0 && Key < g_MaxKeys) ? g_aaKeyStrings[Key] : g_aaKeyStrings[0]; } //From old interface
-	virtual int KeyID(const char* pKeyName) const;
+	int KeyID(const char* pKeyName) const;
 };
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/

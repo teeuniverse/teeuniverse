@@ -160,7 +160,7 @@ void CAbstractTextEdit::Update(bool ParentEnabled)
 		}
 		
 		if(m_MouseOver && m_Editable)
-			Context()->SetCursorSprite(this, Context()->GetCursorText());
+			Context()->SetCursor(this, CInput::CURSOR_TEXT);
 		
 		RefreshLabelStyle();
 		

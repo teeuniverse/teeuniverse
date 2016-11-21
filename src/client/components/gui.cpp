@@ -68,7 +68,6 @@ bool CGui::Init()
 	m_DrawRect.w = Graphics()->ScreenWidth();
 	m_DrawRect.h = Graphics()->ScreenHeight();
 	
-	m_ShowCursor = true;
 	m_Quit = false;
 	
 	LoadAssets();
@@ -110,15 +109,25 @@ bool CGui::PreUpdate()
 	//Mouse motion
 	float MousePosX;
 	float MousePosY;
-	Input()->MouseRelative(&MousePosX, &MousePosY);
-	m_MouseDelta.x = MousePosX;
-	m_MouseDelta.y = MousePosY;
-	m_MousePos.x += m_MouseDelta.x;
-	m_MousePos.y += m_MouseDelta.y;
+	
+	if(Input()->GetMousePosition(&MousePosX, &MousePosY))
+	{
+		m_MouseDelta.x = MousePosX - m_MousePos.x;
+		m_MouseDelta.y = MousePosY - m_MousePos.y;
+		m_MousePos.x = MousePosX;
+		m_MousePos.y = MousePosY;
+	}
+	else
+	{
+		m_MouseDelta.x = MousePosX;
+		m_MouseDelta.y = MousePosY;
+		m_MousePos.x += m_MouseDelta.x;
+		m_MousePos.y += m_MouseDelta.y;
+	}
 	m_MousePos.x = clamp(m_MousePos.x, 0, Graphics()->ScreenWidth()-1);
 	m_MousePos.y = clamp(m_MousePos.y, 0, Graphics()->ScreenHeight()-1);
 	
-	m_CursorPath = GetCursorPointer();
+	Input()->SetCursorType(CInput::CURSOR_DEFAULT);
 	
 	int BlockedInput = 0x0;
 	if(m_pFocusedWidget)
@@ -336,26 +345,18 @@ void CGui::Render()
 		}
 	}
 	
-	//Cursor
-	if(m_ShowCursor)
-	{	
-		AssetsRenderer()->DrawSprite(
-			m_CursorPath,
-			vec2(m_MousePos.x,m_MousePos.y),
-			1.0f, 0.0f, 0x0, 1.0f
-		);
-	}
-	
 	m_DrawRect.x = 0;
 	m_DrawRect.y = 0;
 	m_DrawRect.w = Graphics()->ScreenWidth();
 	m_DrawRect.h = Graphics()->ScreenHeight();
 }
 	
-void CGui::SetCursorSprite(gui::CWidget* pWidget, CAssetPath CursorPath)
+void CGui::SetCursor(gui::CWidget* pWidget, int CursorType)
 {
 	if((pWidget == m_pFocusedWidget) || !(m_BlockedInput & BLOCKEDINPUT_MOUSEMOVE))
-		m_CursorPath = CursorPath;
+	{
+		Input()->SetCursorType(CursorType);
+	}
 }
 
 void CGui::DisplayPopup(gui::CPopup* pPopup)

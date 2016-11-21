@@ -120,14 +120,6 @@ protected:
 	CAssetPath m_PopupStyle;
 	CAssetPath m_ComposeStyle;
 	
-	CAssetPath m_CursorPointerPath;
-	CAssetPath m_CursorTranslateXPath;
-	CAssetPath m_CursorTranslateYPath;
-	CAssetPath m_CursorTextPath;
-	
-	CAssetPath m_CursorPath;
-	bool m_ShowCursor;
-	
 public:
 	CGui(CClientKernel* pKernel);
 	virtual ~CGui();
@@ -177,11 +169,7 @@ public:
 	inline CAssetPath GetPopupStyle() const { return m_PopupStyle; }
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
 	
-	inline CAssetPath GetCursorPointer() const { return m_CursorPointerPath; };
-	inline CAssetPath GetCursorTranslateX() const { return m_CursorTranslateXPath; };
-	inline CAssetPath GetCursorTranslateY() const { return m_CursorTranslateYPath; };
-	inline CAssetPath GetCursorText() const { return m_CursorTextPath; };
-	void SetCursorSprite(gui::CWidget* pWidget, CAssetPath CursorPath);
+	void SetCursor(gui::CWidget* pWidget, int CursorType);
 	
 	//Context
 	inline float GetGuiScale() const { return static_cast<float>(m_Cfg_Scale)/GUI_DEFAULT_SCALE; }

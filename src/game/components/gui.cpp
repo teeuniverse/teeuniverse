@@ -266,15 +266,6 @@ void CGuiGame::SaveConfig(class CCLI_Output* pOutput)
 void CGuiGame::LoadAssets()
 {
 	{
-		int PackageId = AssetsManager()->Load_AssetsFile("gui_cursor", CStorage::TYPE_ALL);
-		
-		m_Path_Sprite_CursorPointer = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorPointer");
-		m_Path_Sprite_CursorTranslateX = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorTranslateX");
-		m_Path_Sprite_CursorTranslateY = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorTranslateY");
-		m_Path_Sprite_CursorText = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorText");
-	}
-	
-	{
 		int PackageId = AssetsManager()->Load_AssetsFile("gui_game", CStorage::TYPE_ALL);
 		
 		m_Path_Box_StartMenu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "startMenu");
@@ -322,11 +313,6 @@ void CGuiGame::LoadAssets()
 	}
 	
 	//Init default path to the GUI
-	m_CursorPointerPath = m_Path_Sprite_CursorPointer;
-	m_CursorTranslateXPath = m_Path_Sprite_CursorTranslateX;
-	m_CursorTranslateYPath = m_Path_Sprite_CursorTranslateY;
-	m_CursorTextPath = m_Path_Sprite_CursorText;
-	
 	m_LabelStyle = m_Path_Label_Text;
 	m_LabelHeaderStyle = m_Path_Label_Header;
 	m_ButtonStyle = m_Path_Button_Default;

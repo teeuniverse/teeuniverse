@@ -141,7 +141,7 @@ CHPanelLayout::CHPanelLayout(CGui *pContext) :
 void CHPanelLayout::Update(bool ParentEnabled)
 {
 	if(m_MouseOver)
-		Context()->SetCursorSprite(this, Context()->GetCursorTranslateX());
+		Context()->SetCursor(this, CInput::CURSOR_TRANSLATEX);
 	
 	CAbstractPanelLayout::Update(ParentEnabled);
 }
@@ -328,7 +328,7 @@ CVPanelLayout::CVPanelLayout(CGui *pContext) :
 void CVPanelLayout::Update(bool ParentEnabled)
 {
 	if(m_MouseOver)
-		Context()->SetCursorSprite(this, Context()->GetCursorTranslateY());
+		Context()->SetCursor(this, CInput::CURSOR_TRANSLATEY);
 	
 	CAbstractPanelLayout::Update(ParentEnabled);
 }

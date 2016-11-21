@@ -961,15 +961,6 @@ void CGuiEditor::LoadAssets()
 {
 	int PackageId;
 	
-	PackageId = AssetsManager()->Load_AssetsFile("gui_cursor", CStorage::TYPE_ALL);
-	if(PackageId >= 0)
-	{
-		m_Path_Sprite_CursorPointer = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorPointer");
-		m_Path_Sprite_CursorTranslateX = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorTranslateX");
-		m_Path_Sprite_CursorTranslateY = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorTranslateY");
-		m_Path_Sprite_CursorText = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "cursorText");
-	}
-	
 	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
 	if(PackageId >= 0)
 	{
@@ -1059,11 +1050,6 @@ void CGuiEditor::LoadAssets()
 	}
 	
 	//Init default path to the GUI
-	m_CursorPointerPath = m_Path_Sprite_CursorPointer;
-	m_CursorTranslateXPath = m_Path_Sprite_CursorTranslateX;
-	m_CursorTranslateYPath = m_Path_Sprite_CursorTranslateY;
-	m_CursorTextPath = m_Path_Sprite_CursorText;
-	
 	m_LabelStyle = m_Path_Label_Text;
 	m_LabelHeaderStyle = m_Path_Label_Header;
 	m_ButtonStyle = m_Path_Button_Default;

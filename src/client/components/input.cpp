@@ -69,7 +69,7 @@ CInput::CInput(CClientKernel* pKernel) :
 	mem_zero(m_aInputState, sizeof(m_aInputState));
 
 	m_InputCounter = 1;
-	m_InputGrabbed = 0;
+	m_RelativeMode = false;
 
 	m_LastRelease = 0;
 	m_ReleaseDelta = -1;
@@ -96,7 +96,13 @@ void CInput::SaveConfig(CCLI_Output* pOutput)
 
 bool CInput::Init()
 {
-	MouseModeRelative();
+	m_Cursors[CURSOR_DEFAULT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+	m_Cursors[CURSOR_TRANSLATEX] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
+	m_Cursors[CURSOR_TRANSLATEY] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
+	m_Cursors[CURSOR_TEXT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+	m_Cursors[CURSOR_LOADING] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
+	
+	MouseModeAbsolute();
 	
 	m_Composing = false;
 	m_TextEdited = false;
@@ -104,39 +110,53 @@ bool CInput::Init()
 	return true;
 }
 
-void CInput::MouseRelative(float *x, float *y)
+void CInput::Shutdown()
 {
-	if(!m_InputGrabbed)
-		return;
+	for(int i=0; i<NUM_CURSORS; i++)
+	{
+		SDL_FreeCursor(m_Cursors[i]);
+	}
+}
 
+void CInput::SetCursorType(int CursorType)
+{
+	SDL_SetCursor(m_Cursors[CursorType]);
+}
+
+bool CInput::GetMousePosition(float *x, float *y)
+{
 	int nx = 0, ny = 0;
-	float Sens = m_Cfg_Mousesens/100.0f;
 	
-	SDL_GetRelativeMouseState(&nx,&ny);
-
-	*x = nx*Sens;
-	*y = ny*Sens;
+	if(m_RelativeMode)
+	{
+		float Sens = m_Cfg_Mousesens/100.0f;
+		SDL_GetRelativeMouseState(&nx,&ny);
+		*x = nx*Sens;
+		*y = ny*Sens;
+		return false;
+	}
+	else
+	{
+		SDL_GetMouseState(&nx, &ny);
+		*x = nx;
+		*y = ny;
+		return true;
+	}
 }
 
 void CInput::MouseModeAbsolute()
 {
-	if(m_InputGrabbed)
-	{
-		m_InputGrabbed = 0;
-		SDL_ShowCursor(SDL_ENABLE);
-		SDL_SetRelativeMouseMode(SDL_FALSE);
-	}
+	m_RelativeMode = false;
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
 void CInput::MouseModeRelative()
 {
-	if(!m_InputGrabbed)
-	{
-		m_InputGrabbed = 1;
-		SDL_ShowCursor(SDL_DISABLE);
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-		SDL_GetRelativeMouseState(NULL, NULL);
-	}
+	m_RelativeMode = true;
+	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_GetRelativeMouseState(NULL, NULL);
 }
 
 int CInput::MouseDoubleClick()
