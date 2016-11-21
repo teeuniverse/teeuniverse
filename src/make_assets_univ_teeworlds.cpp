@@ -50,7 +50,7 @@ int main(int argc, const char **argv)
 	PackageId = pKernel->AssetsManager()->NewPackage("univ_teeworlds");
 	
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_teeworlds/entities.png", 4, 4);
-	pKernel->AssetsManager()->SetAssetValue<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
 	//Physics
 	{

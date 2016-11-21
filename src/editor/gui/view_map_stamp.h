@@ -21,18 +21,20 @@
 
 #include <editor/gui/view_map.h>
 #include <generated/assets/maplayertiles.h>
+#include <generated/assets/maplayerquads.h>
 
-class CCursorTool_TileStamp : public CViewMap::CCursorTool
+class CCursorTool_MapStamp : public CViewMap::CCursorTool
 {
 protected:
 	bool m_DragEnabled;
 	bool m_SelectionEnabled;
-	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > m_Selection;
+	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > m_TileSelection;
+	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_QuadSelection;
 	vec2 m_Pivot;
 	int m_Token;
 	
 public:
-	CCursorTool_TileStamp(CViewMap* pViewMap);
+	CCursorTool_MapStamp(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

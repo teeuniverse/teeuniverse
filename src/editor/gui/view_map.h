@@ -50,9 +50,9 @@ protected:
 	
 	class CMapRenderer* m_pMapRenderer;
 	
-	CView::CCursorTool* m_pCursorTool_TileStamp;
-	CView::CCursorTool* m_pCursorTool_QuadTransform;
-	CView::CCursorTool* m_pCursorTool_QuadEdit;
+	CView::CCursorTool* m_pCursorTool_MapStamp;
+	CView::CCursorTool* m_pCursorTool_MapTransform;
+	CView::CCursorTool* m_pCursorTool_MapEdit;
 
 public:
 	CViewMap(CGuiEditor* pAssetsEditor);

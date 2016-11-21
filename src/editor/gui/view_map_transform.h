@@ -16,12 +16,12 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_QUAD__
-#define __CLIENT_ASSETSEDITOR_VIEWMAP_QUAD__
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
 
 #include <editor/gui/view_map.h>
 
-class CCursorTool_QuadPicker : public CViewMap::CCursorTool
+class CCursorTool_MapPicker : public CViewMap::CCursorTool
 {
 protected:
 	CSubPath PickQuad(vec2 CursorPos);
@@ -29,10 +29,10 @@ protected:
 	void RenderPivots();
 	
 public:
-	CCursorTool_QuadPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath);
+	CCursorTool_MapPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath);
 };
 
-class CCursorTool_QuadTransform : public CCursorTool_QuadPicker
+class CCursorTool_MapTransform : public CCursorTool_MapPicker
 {
 public:
 	enum
@@ -59,7 +59,7 @@ protected:
 	int m_Token;
 	
 public:
-	CCursorTool_QuadTransform(CViewMap* pViewMap);
+	CCursorTool_MapTransform(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();
@@ -67,7 +67,7 @@ public:
 	virtual void Update(bool ParentEnabled);
 };
 
-class CCursorTool_QuadEdit : public CCursorTool_QuadPicker
+class CCursorTool_MapEdit : public CCursorTool_MapPicker
 {
 public:
 	enum
@@ -86,7 +86,7 @@ protected:
 	int m_Token;
 	
 public:
-	CCursorTool_QuadEdit(CViewMap* pViewMap);
+	CCursorTool_MapEdit(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

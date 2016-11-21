@@ -16,7 +16,7 @@
  * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <editor/gui/view_map_quad.h>
+#include <editor/gui/view_map_transform.h>
 #include <editor/components/gui.h>
 #include <client/components/assetsrenderer.h>
 #include <client/maprenderer.h>
@@ -25,33 +25,32 @@
 
 /* CURSORTOOL QUAD PICKER *********************************************/
 
-CCursorTool_QuadPicker::CCursorTool_QuadPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath) :
+CCursorTool_MapPicker::CCursorTool_MapPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath) :
 	CCursorTool(pViewMap, pName, IconPath)
 {
 	
 }
 
-CSubPath CCursorTool_QuadPicker::PickEntity(vec2 CursorPos)
+CSubPath CCursorTool_MapPicker::PickEntity(vec2 CursorPos)
 {
 	const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
 	if(pEntities)
 	{
 		float GizmoSize = 24.0f;
+		
+		CAsset_MapEntities::CIteratorEntity Iter;
+		for(Iter = pEntities->ReverseBeginEntity(); Iter != pEntities->ReverseEndEntity(); ++Iter)
 		{
-			CAsset_MapEntities::CIteratorEntity Iter;
-			for(Iter = pEntities->ReverseBeginEntity(); Iter != pEntities->ReverseEndEntity(); ++Iter)
-			{
-				vec2 PivotPos = ViewMap()->MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*Iter));
-				if(length(CursorPos - PivotPos) < GizmoSize)
-					return *Iter;
-			}
+			vec2 PivotPos = ViewMap()->MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*Iter));
+			if(length(CursorPos - PivotPos) < GizmoSize)
+				return *Iter;
 		}
 	}
 	
 	return CSubPath::Null();
 }
 
-CSubPath CCursorTool_QuadPicker::PickQuad(vec2 CursorPos)
+CSubPath CCursorTool_MapPicker::PickQuad(vec2 CursorPos)
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -126,7 +125,7 @@ CSubPath CCursorTool_QuadPicker::PickQuad(vec2 CursorPos)
 	return QuadFound;
 }
 
-void CCursorTool_QuadPicker::RenderPivots()
+void CCursorTool_MapPicker::RenderPivots()
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -156,14 +155,14 @@ void CCursorTool_QuadPicker::RenderPivots()
 
 /* CURSORTOOL QUAD TRANSFORM ******************************************/
 
-CCursorTool_QuadTransform::CCursorTool_QuadTransform(CViewMap* pViewMap) :
-	CCursorTool_QuadPicker(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
+CCursorTool_MapTransform::CCursorTool_MapTransform(CViewMap* pViewMap) :
+	CCursorTool_MapPicker(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
 	m_Token(CAssetsHistory::NEW_TOKEN)
 {
 	
 }
 
-void CCursorTool_QuadTransform::OnViewButtonClick(int Button)
+void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -275,7 +274,7 @@ void CCursorTool_QuadTransform::OnViewButtonClick(int Button)
 	}
 }
 	
-void CCursorTool_QuadTransform::OnViewButtonRelease(int Button)
+void CCursorTool_MapTransform::OnViewButtonRelease(int Button)
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -293,7 +292,7 @@ void CCursorTool_QuadTransform::OnViewButtonRelease(int Button)
 	}
 }
 	
-void CCursorTool_QuadTransform::OnViewMouseMove()
+void CCursorTool_MapTransform::OnViewMouseMove()
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -409,7 +408,7 @@ void CCursorTool_QuadTransform::OnViewMouseMove()
 	}
 }
 	
-void CCursorTool_QuadTransform::RenderView()
+void CCursorTool_MapTransform::RenderView()
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -464,7 +463,7 @@ void CCursorTool_QuadTransform::RenderView()
 	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
-void CCursorTool_QuadTransform::Update(bool ParentEnabled)
+void CCursorTool_MapTransform::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
@@ -481,15 +480,15 @@ void CCursorTool_QuadTransform::Update(bool ParentEnabled)
 
 /* CURSORTOOL QUAD EDIT ***********************************************/
 
-CCursorTool_QuadEdit::CCursorTool_QuadEdit(CViewMap* pViewMap) :
-	CCursorTool_QuadPicker(pViewMap, "Edit", pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
+CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
+	CCursorTool_MapPicker(pViewMap, "Edit", pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
 	m_Token(CAssetsHistory::NEW_TOKEN),
 	m_Vertex(VERTEX_NONE)
 {
 	
 }
 
-void CCursorTool_QuadEdit::OnViewButtonClick(int Button)
+void CCursorTool_MapEdit::OnViewButtonClick(int Button)
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -582,7 +581,7 @@ void CCursorTool_QuadEdit::OnViewButtonClick(int Button)
 	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
-void CCursorTool_QuadEdit::OnViewButtonRelease(int Button)
+void CCursorTool_MapEdit::OnViewButtonRelease(int Button)
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -591,7 +590,7 @@ void CCursorTool_QuadEdit::OnViewButtonRelease(int Button)
 	m_Token = CAssetsHistory::NEW_TOKEN;
 }
 	
-void CCursorTool_QuadEdit::OnViewMouseMove()
+void CCursorTool_MapEdit::OnViewMouseMove()
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
@@ -648,7 +647,7 @@ void CCursorTool_QuadEdit::OnViewMouseMove()
 	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
-void CCursorTool_QuadEdit::RenderView()
+void CCursorTool_MapEdit::RenderView()
 {
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
@@ -713,7 +712,7 @@ void CCursorTool_QuadEdit::RenderView()
 	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
-void CCursorTool_QuadEdit::Update(bool ParentEnabled)
+void CCursorTool_MapEdit::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{

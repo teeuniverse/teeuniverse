@@ -562,7 +562,18 @@ public:
 		m_pTitle = new CTitleButton(m_pAssetsEditor, AssetPath, SubPath);
 		
 		Add(m_pTitle, true);
-		Add(new CViewButton(m_pAssetsEditor, AssetPath), false);
+		
+		switch(m_AssetPath.GetType())
+		{
+			case CAsset_Map::TypeId:
+			case CAsset_MapGroup::TypeId:
+			case CAsset_MapLayerTiles::TypeId:
+			case CAsset_MapLayerQuads::TypeId:
+			case CAsset_MapZoneTiles::TypeId:
+			case CAsset_MapEntities::TypeId:
+				Add(new CViewButton(m_pAssetsEditor, AssetPath), false);
+				break;
+		}
 	}
 	
 	virtual void OnButtonClick(int Button)

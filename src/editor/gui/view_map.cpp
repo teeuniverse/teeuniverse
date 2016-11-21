@@ -19,7 +19,7 @@
 #include <editor/gui/view_map.h>
 
 #include <editor/gui/view_map_stamp.h>
-#include <editor/gui/view_map_quad.h>
+#include <editor/gui/view_map_transform.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
@@ -86,20 +86,21 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_CameraZoom(1.0f),
 	m_CameraDraged(false),
 	m_pMapRenderer(NULL),
-	m_pCursorTool_TileStamp(NULL),
-	m_pCursorTool_QuadTransform(NULL),
+	m_pCursorTool_MapStamp(NULL),
+	m_pCursorTool_MapTransform(NULL),
+	m_pCursorTool_MapEdit(NULL),
 	m_ZoneOpacity(0.5f),
 	m_ShowEntities(true)
 {
 	
-	m_pCursorTool_TileStamp = new CCursorTool_TileStamp(this);
-	m_pToolbar->Add(m_pCursorTool_TileStamp);
+	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
+	m_pToolbar->Add(m_pCursorTool_MapStamp);
 	
-	m_pCursorTool_QuadTransform = new CCursorTool_QuadTransform(this);
-	m_pToolbar->Add(m_pCursorTool_QuadTransform);
+	m_pCursorTool_MapTransform = new CCursorTool_MapTransform(this);
+	m_pToolbar->Add(m_pCursorTool_MapTransform);
 	
-	m_pCursorTool_QuadEdit = new CCursorTool_QuadEdit(this);
-	m_pToolbar->Add(m_pCursorTool_QuadEdit);
+	m_pCursorTool_MapEdit = new CCursorTool_MapEdit(this);
+	m_pToolbar->Add(m_pCursorTool_MapEdit);
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
@@ -292,11 +293,11 @@ void CViewMap::Update(bool ParentEnabled)
 		{
 			case CAsset_MapLayerTiles::TypeId:
 			case CAsset_MapZoneTiles::TypeId:
-				SetCursorTool(m_pCursorTool_TileStamp);
-				break;
 			case CAsset_MapLayerQuads::TypeId:
+				SetCursorTool(m_pCursorTool_MapStamp);
+				break;
 			case CAsset_MapEntities::TypeId:
-				SetCursorTool(m_pCursorTool_QuadTransform);
+				SetCursorTool(m_pCursorTool_MapTransform);
 				break;
 		}
 	}
