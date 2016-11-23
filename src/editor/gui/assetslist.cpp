@@ -100,6 +100,8 @@ protected:
 	void Action()
 	{
 		m_pAssetsEditor->SetEditedPackage(m_PackageId);
+		m_pAssetsEditor->RefreshPackageTree();
+		m_pAssetsEditor->RefreshAssetsTree();
 	}
 
 public:
@@ -967,29 +969,10 @@ public:
 CPackagesTree::CPackagesTree(CAssetsOrganizer* pAssetsOrganizer) :
 	gui::CVScrollLayout(pAssetsOrganizer->AssetsEditor()),
 	m_pAssetsOrganizer(pAssetsOrganizer),
-	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor()),
-	m_NumPackages(0)
+	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor())
 {
 	SetBoxStyle(AssetsEditor()->m_Path_Box_Panel);
 	Refresh();
-}
-
-void CPackagesTree::Update(bool ParentEnabled)
-{
-	int NumValidPackages = 0;
-	for(int i=0; i<AssetsManager()->GetNumPackages(); i++)
-	{
-		if(AssetsManager()->IsValidPackage(i))
-			NumValidPackages++;
-	}
-	
-	if(m_NumPackages != NumValidPackages)
-	{
-		m_NumPackages = NumValidPackages;
-		Refresh();
-	}
-	
-	gui::CVScrollLayout::Update(ParentEnabled);
 }
 
 void CPackagesTree::Refresh()
@@ -1024,7 +1007,7 @@ CAssetsTree::CAssetsTree(CAssetsOrganizer* pAssetsOrganizer) :
 	gui::CVScrollLayout(pAssetsOrganizer->AssetsEditor()),
 	m_pAssetsOrganizer(pAssetsOrganizer),
 	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor()),
-	m_PackageId(0)
+	m_PackageId(-1)
 {
 	SetBoxStyle(AssetsEditor()->m_Path_Box_Panel);
 }

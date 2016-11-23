@@ -465,8 +465,9 @@ protected:
 	{
 		int PackageId = AssetsManager()->NewPackage("mypackage");
 		AssetsManager()->SetPackageReadOnly(PackageId, false);
-		m_pAssetsEditor->RefreshPackageTree();
 		m_pAssetsEditor->SetEditedPackage(PackageId);
+		m_pAssetsEditor->RefreshPackageTree();
+		m_pAssetsEditor->RefreshAssetsTree();
 		
 		m_pPopupMenu->Close();
 	}
@@ -547,6 +548,19 @@ public:
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(m_Format == COpenSavePackageDialog::FORMAT_IMAGE)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CButton::Update(ParentEnabled);
 	}
 };
 
@@ -641,6 +655,8 @@ protected:
 				
 				int Tokken = AssetsManager()->GenerateToken();
 				CAsset_Map* pMap = AssetsManager()->NewAsset<CAsset_Map>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				if(!pMap)
+					break;
 				AssetsManager()->TryChangeAssetName(AssetPath, "map", Tokken);
 				
 				CAssetPath SubAssetPath;
@@ -742,6 +758,16 @@ public:
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconMap);
 				break;
 		}
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+			Editable(false);
+		else
+			Editable(true);
+		
+		gui::CButton::Update(ParentEnabled);
 	}
 };
 
@@ -1063,6 +1089,10 @@ void CGuiEditor::LoadAssets()
 	m_TabsStyle = m_Path_Tabs_Default;
 	m_PopupStyle = m_Path_Box_Popup;
 	m_ComposeStyle = m_Path_Label_Compose;
+	
+	PackageId = AssetsManager()->NewPackage("mypackage");
+	AssetsManager()->SetPackageReadOnly(PackageId, false);
+	SetEditedPackage(PackageId);
 }
 
 gui::CWidget* CGuiEditor::CreateMainWidget()

@@ -42,11 +42,9 @@ class CPackagesTree : public gui::CVScrollLayout
 private:
 	class CGuiEditor* m_pAssetsEditor;
 	class CAssetsOrganizer* m_pAssetsOrganizer;
-	int m_NumPackages;
 	
 public:
 	CPackagesTree(CAssetsOrganizer* pAssetsOrganizer);
-	virtual void Update(bool ParentEnabled);
 	
 	void Refresh();
 	class CGuiEditor* AssetsEditor() { return m_pAssetsEditor; }
