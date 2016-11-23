@@ -187,14 +187,14 @@ void CStorage::AddPath(const char *pPath)
 void CStorage::FindDatadir(const char *pArgv0)
 {
 	// 1) use data-dir in PWD if present
-	if(fs_is_dir("data/assets"))
+	if(fs_is_dir("data/languages"))
 	{
 		m_Datadir.copy("data");
 		return;
 	}
 
 	// 2) use compiled-in data-dir if present
-	if(fs_is_dir(DATA_DIR"/assets"))
+	if(fs_is_dir(DATA_DIR"/languages"))
 	{
 		m_Datadir.copy(DATA_DIR);
 		return;
@@ -215,7 +215,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			dynamic_string TestPath;
 			TestPath.append(Path);
-			TestPath.append("/assets");
+			TestPath.append("/languages");
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
@@ -244,7 +244,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 		{
 			dynamic_string TestPath;
 			TestPath.append(aDirs[i]);
-			TestPath.append("/assets");
+			TestPath.append("/languages");
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
