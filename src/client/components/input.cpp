@@ -99,7 +99,7 @@ bool CInput::Init()
 	m_Cursors[CURSOR_DEFAULT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	m_Cursors[CURSOR_TRANSLATEX] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
 	m_Cursors[CURSOR_TRANSLATEY] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-	m_Cursors[CURSOR_TEXT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+	m_Cursors[CURSOR_TEXT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_IBEAM);
 	m_Cursors[CURSOR_LOADING] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_WAIT);
 	
 	MouseModeAbsolute();
