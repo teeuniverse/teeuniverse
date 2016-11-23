@@ -1,10 +1,8 @@
 dependencies:
   pre:
-    - |
-        sudo apt-get update -y
-        sudo apt-get install -y libsdl2-dev libharfbuzz-dev
+    - sudo apt-get update -y
+    - sudo apt-get install -y libsdl2-dev libharfbuzz-dev
 
 test:
   override:
-    - |
-        cmake -DCMAKE_BUILD_TYPE=Release . && make && make test
+    - cmake -DCMAKE_BUILD_TYPE=Release . && make && make test

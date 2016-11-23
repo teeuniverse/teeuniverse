@@ -68,35 +68,32 @@ bool CStorage::Init()
 	}
 
 	// add save directories
-	if(SharedKernel()->Type() != KERNEL_SHARED)
+	if(m_StoragePaths.size() < TYPE_SAVE || m_StoragePaths[TYPE_SAVE].empty())
 	{
-		if(m_StoragePaths.size() < TYPE_SAVE || m_StoragePaths[TYPE_SAVE].empty())
+		dbg_msg("Storage", "no save directory specified");
+		return false;
+	}
+	
+	if(fs_makedir(m_StoragePaths[TYPE_SAVE].buffer()))
+	{
+		dynamic_string Buf;
+		
+		if(SharedKernel()->Type() == KERNEL_CLIENT)
 		{
-			dbg_msg("Storage", "no save directory specified");
-			return false;
+			fs_makedir(GetPath(TYPE_SAVE, "screenshots", Buf).buffer());
+			fs_makedir(GetPath(TYPE_SAVE, "screenshots/auto", Buf).buffer());
 		}
 		
-		if(fs_makedir(m_StoragePaths[TYPE_SAVE].buffer()))
-		{
-			dynamic_string Buf;
-			
-			if(SharedKernel()->Type() == KERNEL_CLIENT)
-			{
-				fs_makedir(GetPath(TYPE_SAVE, "screenshots", Buf).buffer());
-				fs_makedir(GetPath(TYPE_SAVE, "screenshots/auto", Buf).buffer());
-			}
-			
-			fs_makedir(GetPath(TYPE_SAVE, "assets", Buf).buffer());
-			
-			fs_makedir(GetPath(TYPE_SAVE, "demos", Buf).buffer());
-			fs_makedir(GetPath(TYPE_SAVE, "demos/auto", Buf).buffer());
-			fs_makedir(GetPath(TYPE_SAVE, "config", Buf).buffer());
-		}
-		else
-		{
-			dbg_msg("Storage", "unable to create save directory");
-			return false;
-		}
+		fs_makedir(GetPath(TYPE_SAVE, "assets", Buf).buffer());
+		
+		fs_makedir(GetPath(TYPE_SAVE, "demos", Buf).buffer());
+		fs_makedir(GetPath(TYPE_SAVE, "demos/auto", Buf).buffer());
+		fs_makedir(GetPath(TYPE_SAVE, "config", Buf).buffer());
+	}
+	else
+	{
+		dbg_msg("Storage", "unable to create save directory");
+		return false;
 	}
 
 	return m_StoragePaths.size() ? true : false;
