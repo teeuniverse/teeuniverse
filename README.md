@@ -25,20 +25,14 @@ Compile the project
 ```
 cmake -DCMAKE_BUILD_TYPE=Release .
 make
+sudo make install
 ```
 
 
 Execution
 -------
 
-Before starting TeeUniverses, the assets packages must be generated.
+Currently, only TeeUniverses editor is working. You can try it using this command:
 ```
-for MAKEASSETS in ./bin/release/make_assets/*; do $MAKEASSETS; done
-```
-This operation is needed because the assets package format changes regularly.
-In the future, those packages will be included directly in the repository.
-
-Finally, start TeeUniverses Editor
-```
-./bin/release/teeuniverses_editor
+teeuniverses_editor
 ```

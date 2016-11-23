@@ -30,7 +30,7 @@ int main(int argc, const char **argv)
 	CSharedKernel* pKernel = new CSharedKernel();
 	if(!pKernel->Init(argc, argv))
 	{
-		dbg_msg("Kernel", "unable to initialize server kernel");
+		dbg_msg("Kernel", "unable to initialize shared kernel");
 		exit(EXIT_FAILURE);
 	}
 	

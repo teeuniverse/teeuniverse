@@ -86,25 +86,25 @@ inline vec4 IntsToColor(int r, int g, int b, int a)
 	);
 }
 
+/* FOREIGN CODE END: TeeWorlds ****************************************/
+
 class CStorage : public CSharedKernel::CComponent
 {
+/* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 public:
 	enum
 	{
 		TYPE_SAVE = 0,
 		TYPE_ALL = -1,
 		TYPE_ABSOLUTE = -2,
-
-		STORAGETYPE_BASIC = 0,
-		STORAGETYPE_SERVER,
-		STORAGETYPE_CLIENT,
 	};
 
-public:
+protected:
 	array<dynamic_string, allocator_copy<dynamic_string> > m_StoragePaths;
-	dynamic_string m_Datadir;
-	dynamic_string m_Userdir;
-	dynamic_string m_Currentdir;
+	dynamic_string m_DataDir;
+	dynamic_string m_SaveDir;
+	dynamic_string m_CurrentDir;
+	bool m_InitializeSaveDir;
 
 protected:
 	void FindDatadir(const char *pArgv0);
@@ -124,6 +124,8 @@ public:
 	void GetCompletePath(int Type, const char *pDir, dynamic_string& Buffer);
 	
 	int GetNumPaths() { return m_StoragePaths.size(); }
+
+/* FOREIGN CODE END: TeeWorlds ****************************************/
 	
 public:
 	class CListDirIterator
@@ -211,7 +213,5 @@ public:
 		return new CListDirIterator(this, pDir, Type);
 	}
 };
-
-/* FOREIGN CODE END: TeeWorlds ****************************************/
 
 #endif

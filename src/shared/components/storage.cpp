@@ -43,15 +43,50 @@
 #define DATA_DIR "data"
 
 CStorage::CStorage(CSharedKernel* pKernel) :
-	CSharedKernel::CComponent(pKernel)
+	CSharedKernel::CComponent(pKernel),
+	m_InitializeSaveDir(true)
 {
 	SetName("Storage");
 }
 
 bool CStorage::InitConfig(int argc, const char** argv)
 {
+	// search for custom save directory
+	{
+		for(int i=1; i<argc; i++)
+		{
+			if(str_comp(argv[i], "--save-dir") == 0)
+			{
+				if(i+1<argc)
+				{
+					if(fs_is_dir(argv[i+1]))
+					{
+						m_SaveDir.copy(argv[i+1]);
+						dbg_msg("Storage", "Save directory: %s", argv[i+1]);
+						i++;
+					}
+					else
+					{
+						dbg_msg("Storage", "Value specified with the --save-dir parameter is not a valid directory: %s", argv[i+1]);
+						return false;
+					}
+				}
+				else
+				{
+					dbg_msg("Storage", "Missing value for --save-dir parameter");
+					return false;
+				}
+			}
+			else if(str_comp(argv[i], "--save-dir-noinit") == 0)
+			{
+				m_InitializeSaveDir = false;
+			}
+		}
+	}
+	
 	// get userdir
-	fs_storage_path("TeeUniverses", m_Userdir);
+	if(m_SaveDir.empty())
+		fs_storage_path("TeeUniverses", m_SaveDir);
 	
 	// get datadir
 	FindDatadir(argv[0]);
@@ -76,23 +111,17 @@ bool CStorage::Init()
 	
 	if(fs_makedir(m_StoragePaths[TYPE_SAVE].buffer()))
 	{
-		dynamic_string Buf;
-		
-		if(SharedKernel()->Type() == KERNEL_CLIENT)
+		if(m_InitializeSaveDir)
 		{
-			fs_makedir(GetPath(TYPE_SAVE, "screenshots", Buf).buffer());
-			fs_makedir(GetPath(TYPE_SAVE, "screenshots/auto", Buf).buffer());
+			dynamic_string Buf;
+			
+			fs_makedir(GetPath(TYPE_SAVE, "assets", Buf).buffer());
+			fs_makedir(GetPath(TYPE_SAVE, "config", Buf).buffer());
 		}
-		
-		fs_makedir(GetPath(TYPE_SAVE, "assets", Buf).buffer());
-		
-		fs_makedir(GetPath(TYPE_SAVE, "demos", Buf).buffer());
-		fs_makedir(GetPath(TYPE_SAVE, "demos/auto", Buf).buffer());
-		fs_makedir(GetPath(TYPE_SAVE, "config", Buf).buffer());
 	}
 	else
 	{
-		dbg_msg("Storage", "unable to create save directory");
+		dbg_msg("Storage", "unable to create save directory (%s)", m_StoragePaths[TYPE_SAVE].buffer());
 		return false;
 	}
 
@@ -151,24 +180,24 @@ void CStorage::AddPath(const char *pPath)
 	
 	if(str_comp(pPath, "$USERDIR") == 0)
 	{
-		if(!m_Userdir.empty())
+		if(!m_SaveDir.empty())
 		{
 			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(m_Userdir);
+			NewString.copy(m_SaveDir);
 		}
 	}
 	else if(str_comp(pPath, "$DATADIR") == 0)
 	{
-		if(!m_Datadir.empty())
+		if(!m_DataDir.empty())
 		{
 			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(m_Datadir);
+			NewString.copy(m_DataDir);
 		}
 	}
 	else if(str_comp(pPath, "$CURRENTDIR") == 0)
 	{
 		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString.copy(m_Currentdir);
+		NewString.copy(m_CurrentDir);
 	}
 	else
 	{
@@ -186,14 +215,14 @@ void CStorage::FindDatadir(const char *pArgv0)
 	// 1) use data-dir in PWD if present
 	if(fs_is_dir("data/languages"))
 	{
-		m_Datadir.copy("data");
+		m_DataDir.copy("data");
 		return;
 	}
 
 	// 2) use compiled-in data-dir if present
 	if(fs_is_dir(DATA_DIR"/languages"))
 	{
-		m_Datadir.copy(DATA_DIR);
+		m_DataDir.copy(DATA_DIR);
 		return;
 	}
 
@@ -216,7 +245,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				m_Datadir.copy(Path);
+				m_DataDir.copy(Path);
 				return;
 			}
 		}
@@ -226,13 +255,13 @@ void CStorage::FindDatadir(const char *pArgv0)
 	// 4) check for all default locations
 	{
 		const char *aDirs[] = {
-			"/usr/share/teeuniverses/data",
-			"/usr/share/games/teeuniverses/data",
-			"/usr/local/share/teeuniverses/data",
-			"/usr/local/share/games/teeuniverses/data",
-			"/usr/pkg/share/teeuniverses/data",
-			"/usr/pkg/share/games/teeuniverses/data",
-			"/opt/teeuniverses/data"
+			"/usr/share/teeuniverses",
+			"/usr/share/games/teeuniverses",
+			"/usr/local/share/teeuniverses",
+			"/usr/local/share/games/teeuniverses",
+			"/usr/pkg/share/teeuniverses",
+			"/usr/pkg/share/games/teeuniverses",
+			"/opt/teeuniverses"
 		};
 		const int DirsCount = sizeof(aDirs) / sizeof(aDirs[0]);
 
@@ -245,7 +274,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				m_Datadir.copy(aDirs[i]);
+				m_DataDir.copy(aDirs[i]);
 				return;
 			}
 		}

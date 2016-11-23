@@ -62,6 +62,7 @@ include_directories(
 
 message(STATUS "******** TeeUniverses ********")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 message(STATUS ${name} "Dependencies:")
 function(show_dependency_status name varFound error)
@@ -72,39 +73,18 @@ function(show_dependency_status name varFound error)
 	endif()
 endfunction()
 
-show_dependency_status("ICU" "${ICU_FOUND}" "needed by all")
+show_dependency_status("ICU" "${ICU_FOUND}" "needed by server, client, editor, tools")
 show_dependency_status("SDL" "${SDL2_FOUND}" "needed by: client, editor")
 show_dependency_status("OpenGL" "${OPENGL_FOUND}" "needed by: client, editor")
 show_dependency_status("PNG" "${PNG_FOUND}" "needed by: client, editor, tools")
 show_dependency_status("FreeType" "${FREETYPE_FOUND}" "needed by: client, editor")
 show_dependency_status("Harfbuzz" "${HARFBUZZ_FOUND}" "needed by: client, editor")
 
-message(STATUS ${name} "Target status:")
-if(ICU_FOUND)
-	message(STATUS " * server is ready for compilation")
-	
-	if(SDL2_FOUND AND OPENGL_FOUND AND PNG_FOUND AND FREETYPE_FOUND AND HARFBUZZ_FOUND)
-		message(STATUS " * client is ready for compilation")
-		message(STATUS " * editor is ready for compilation")
-	else()
-		message(STATUS " * client can't be compiled")
-		message(STATUS " * editor can't be compiled")
-	endif()
-	
-	if(PNG_FOUND)
-		message(STATUS " * tools are ready for compilation")
-	else()
-		message(STATUS " * tools can't be compiled")
-	endif()
-else()
-	message(STATUS " * server can't be compiled")
-	message(STATUS " * client can't be compiled")
-	message(STATUS " * editor can't be compiled")
-	message(STATUS " * tools can't be compiled")
-	message(FATAL_ERROR "you must install ICU to compile TeeUniverses")
+if(NOT(ICU_FOUND))
+	message(FATAL_ERROR "You must install ICU to compile TeeUniverses")
 endif()
 
-message(STATUS "******************************")
+message(STATUS ${name} "Target status:")
 
 ########################################################################
 # DEFINES
@@ -141,72 +121,87 @@ add_library(teeuniverses_shared ${teeuniverses_shared_src})
 target_link_libraries (teeuniverses_shared
 	${ICU_LIBRARIES}
 )
+install(DIRECTORY "data/languages" DESTINATION "share/teeuniverses")
+install(DIRECTORY "data/assets" DESTINATION "share/teeuniverses")
 
 ########################################################################
 # CLIENT
 ########################################################################
 
-# Sources
-file(GLOB teeuniverses_client_src
-    "${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
-    "${PROJECT_SOURCE_DIR}/src/client/gui/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/client/components/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/client/*.cpp"
-)
+if(SDL2_FOUND AND OPENGL_FOUND AND PNG_FOUND AND FREETYPE_FOUND AND HARFBUZZ_FOUND)
 
-# Libraries
-set(teeuniverses_client_libraries
-	teeuniverses_shared
-	${SDL2_LIBRARY}
-	${PNG_LIBRARY}
-	${OPENGL_LIBRARIES}
-	${FREETYPE_LIBRARIES}
-	${HARFBUZZ_LIBRARIES}
-)
+	# Sources
+	file(GLOB teeuniverses_client_src
+		"${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
+		"${PROJECT_SOURCE_DIR}/src/client/gui/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/client/components/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/client/*.cpp"
+	)
 
-# Build
-add_library(teeuniverses_client ${teeuniverses_client_src})
-target_link_libraries (teeuniverses_client ${teeuniverses_client_libraries})
+	# Libraries
+	set(teeuniverses_client_libraries
+		teeuniverses_shared
+		${SDL2_LIBRARY}
+		${PNG_LIBRARY}
+		${OPENGL_LIBRARIES}
+		${FREETYPE_LIBRARIES}
+		${HARFBUZZ_LIBRARIES}
+	)
 
-########################################################################
-# GAME
-########################################################################
+	# Build
+	add_library(teeuniverses_client ${teeuniverses_client_src})
+	target_link_libraries (teeuniverses_client ${teeuniverses_client_libraries})
+	install(DIRECTORY "data/countryflags" DESTINATION "share/teeuniverses")
+	install(DIRECTORY "data/fonts" DESTINATION "share/teeuniverses")
 
-# Sources
-file(GLOB teeuniverses_game_src
-    "${PROJECT_SOURCE_DIR}/src/game/gui/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/game/components/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/game/*.cpp"
-)
+	########################################################################
+	# GAME
+	########################################################################
 
-# Libraries
-set(teeuniverses_game_libraries
-	teeuniverses_client
-)
+	# Sources
+	file(GLOB teeuniverses_game_src
+		"${PROJECT_SOURCE_DIR}/src/game/gui/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/game/components/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/game/*.cpp"
+	)
 
-# Build Editor
-add_executable(${TU_EXECNAME_GAME} "${PROJECT_SOURCE_DIR}/src/game.cpp" ${teeuniverses_game_src})
-target_link_libraries (${TU_EXECNAME_GAME} ${teeuniverses_game_libraries})
+	# Libraries
+	set(teeuniverses_game_libraries
+		teeuniverses_client
+	)
 
-########################################################################
-# EDITOR
-########################################################################
+	# Build Editor
+	add_executable(${TU_EXECNAME_GAME} "${PROJECT_SOURCE_DIR}/src/game.cpp" ${teeuniverses_game_src})
+	target_link_libraries (${TU_EXECNAME_GAME} ${teeuniverses_game_libraries})
+	install(TARGETS ${TU_EXECNAME_GAME} DESTINATION bin)
+	message(STATUS " * client ready for compilation")
 
-# Sources
-file(GLOB teeuniverses_editor_src
-    "${PROJECT_SOURCE_DIR}/src/editor/gui/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/editor/components/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/editor/*.cpp"
-)
+	########################################################################
+	# EDITOR
+	########################################################################
 
-# Libraries
-set(teeuniverses_editor_libraries
-	teeuniverses_client
-)
+	# Sources
+	file(GLOB teeuniverses_editor_src
+		"${PROJECT_SOURCE_DIR}/src/editor/gui/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/editor/components/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/editor/*.cpp"
+	)
 
-# Build Editor
-add_executable(${TU_EXECNAME_EDITOR} "${PROJECT_SOURCE_DIR}/src/editor.cpp" ${teeuniverses_editor_src})
-target_link_libraries (${TU_EXECNAME_EDITOR} ${teeuniverses_editor_libraries})
+	# Libraries
+	set(teeuniverses_editor_libraries
+		teeuniverses_client
+	)
+
+	# Build Editor
+	add_executable(${TU_EXECNAME_EDITOR} "${PROJECT_SOURCE_DIR}/src/editor.cpp" ${teeuniverses_editor_src})
+	target_link_libraries (${TU_EXECNAME_EDITOR} ${teeuniverses_editor_libraries})
+	install(TARGETS ${TU_EXECNAME_EDITOR} DESTINATION bin)
+	message(STATUS " * editor ready for compilation")
+	
+else()
+	message(STATUS " * client can't be compiled")
+	message(STATUS " * editor can't be compiled")
+endif()
 
 ########################################################################
 # SERVER
@@ -226,51 +221,61 @@ set(teeuniverses_server_libraries
 add_executable(${TU_EXECNAME_SERVER} "${PROJECT_SOURCE_DIR}/src/server.cpp" ${teeuniverses_server_src})
 set_target_properties(${TU_EXECNAME_SERVER} PROPERTIES COMPILE_FLAGS "-DKERNEL_TYPE=KERNEL_SERVER")
 target_link_libraries (${TU_EXECNAME_SERVER} ${teeuniverses_server_libraries})
+install(TARGETS ${TU_EXECNAME_SERVER} DESTINATION bin)
+message(STATUS " * server ready for compilation")
 
 ########################################################################
 # TOOLS
 ########################################################################
 
-# Sources
-file(GLOB teeuniverses_tools_src
-    "${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
-    "${PROJECT_SOURCE_DIR}/src/client/loading_tools.cpp"
-)
-
-# Libraries
-set(teeuniverses_tools_libraries
-	teeuniverses_shared
-	${PNG_LIBRARY}
-)
-
-# Build
-add_library(teeuniverses_tools ${teeuniverses_tools_src})
-target_link_libraries (teeuniverses_tools ${teeuniverses_tools_libraries})
-
-# Make Assets
-function(make_assets progname)
-	add_executable(make_assets_${progname} ${PROJECT_SOURCE_DIR}/src/make_assets_${progname}.cpp)
-	set_target_properties(
-		make_assets_${progname}
-		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/make_assets"
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/make_assets"
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+if(PNG_FOUND)
+	# Sources
+	file(GLOB teeuniverses_tools_src
+		"${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
+		"${PROJECT_SOURCE_DIR}/src/client/loading_tools.cpp"
 	)
-	target_link_libraries(
-		make_assets_${progname}
-		teeuniverses_tools
-	)
-endfunction()
 
-make_assets(gui_editor)
-make_assets(univ_teeworlds)
-make_assets(univ_ddnet)
-make_assets(univ_infclass)
-make_assets(univ_openfng)
+	# Libraries
+	set(teeuniverses_tools_libraries
+		teeuniverses_shared
+		${PNG_LIBRARY}
+	)
+
+	# Build
+	add_library(teeuniverses_tools ${teeuniverses_tools_src})
+	target_link_libraries (teeuniverses_tools ${teeuniverses_tools_libraries})
+
+	# Make Assets
+	function(make_assets progname)
+		add_executable(make_assets_${progname} ${PROJECT_SOURCE_DIR}/src/make_assets_${progname}.cpp)
+		set_target_properties(
+			make_assets_${progname}
+			PROPERTIES
+			ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+			RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+			ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+			RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+		)
+		target_link_libraries(
+			make_assets_${progname}
+			teeuniverses_tools
+		)
+		add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "data/assets")
+		add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --save-dir "data" --save-dir-noinit)
+	endfunction()
+
+	make_assets(gui_editor)
+	make_assets(univ_teeworlds)
+	make_assets(univ_ddnet)
+	make_assets(univ_infclass)
+	make_assets(univ_openfng)
+	
+	message(STATUS " * tools ready for compilation")
+else()
+	message(STATUS " * tools can't be compiled")
+endif()
 
 ########################################################################
 # UNIT TEST
@@ -303,3 +308,5 @@ make_test(shared_kernel)
 make_test(localization)
 make_test(archivefile)
 make_test(assetsmanager)
+
+message(STATUS "******************************")

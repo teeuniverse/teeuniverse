@@ -72,7 +72,7 @@ public:
 		virtual void Shutdown() {}
 		
 		void SetName(const char* pName) { m_Name.copy(pName); }
-		const char* GetName() { m_Name.buffer(); }
+		const char* GetName() { return m_Name.buffer(); }
 	};
 	
 	class CComponent : public CGuest, public IComponent

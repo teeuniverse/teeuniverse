@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+	<id type="desktop">teeuniverses.desktop</id>
+	<license>AGPL-3.0 and CC-BY-SA-3.0</license>
+	<metadata_license>CC0-1.0</metadata_license>
+	<summary>Online multiplayer shooter game</summary>
+	<description>
+		<p>
+		TeeUniverses is a free online multiplayer game.
+		</p>
+	</description>
+	<url type="homepage">https://github.com/teeuniverses/teeuniverses</url>
+</application>
