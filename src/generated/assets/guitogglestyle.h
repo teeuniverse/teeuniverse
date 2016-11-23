@@ -156,4 +156,9 @@ public:
 	
 };
 
+template<> bool CAsset_GuiToggleStyle::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_GuiToggleStyle::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
+template<> CAssetPath CAsset_GuiToggleStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiToggleStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

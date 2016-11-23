@@ -773,4 +773,11 @@ public:
 	
 };
 
+template<> int CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> CAssetPath CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+template<> CSubPath CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, CSubPath DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, CSubPath Value);
+
 #endif

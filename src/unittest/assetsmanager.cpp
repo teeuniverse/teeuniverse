@@ -30,7 +30,22 @@ CSharedKernel* pKernel = new CSharedKernel();
 TEST(pKernel->Init(argc, argv))
 
 {
+	int PackageId = pKernel->AssetsManager()->NewPackage("unittestpkg");
+	TEST_WITH_OUTPUT(PackageId == 0, PackageId)
 	
+	CAssetPath SpritePath;
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&SpritePath, PackageId);
+	TEST(pSprite)
+	
+	pSprite->SetName("mysprite");
+	TEST_WITH_OUTPUT(str_comp(pSprite->GetName(), "mysprite") == 0, pSprite->GetName());
+	
+	const CAsset_Sprite* pSprite2 = pKernel->AssetsManager()->GetAsset<CAsset_Sprite>(SpritePath);
+	TEST(pSprite2)
+	
+	const char* pSpriteName = pKernel->AssetsManager()->GetAssetValue<const char*>(SpritePath, CSubPath::Null(), CAsset::NAME, NULL);
+	TEST(pSpriteName)
+	TEST_WITH_OUTPUT(str_comp(pSpriteName, "mysprite") == 0, pSpriteName);
 }
 
 pKernel->Shutdown();

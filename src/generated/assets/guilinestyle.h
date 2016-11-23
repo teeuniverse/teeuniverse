@@ -142,4 +142,11 @@ public:
 	
 };
 
+template<> int CAsset_GuiLineStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_GuiLineStyle::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> vec4 CAsset_GuiLineStyle::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_GuiLineStyle::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_GuiLineStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiLineStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

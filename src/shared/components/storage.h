@@ -183,6 +183,7 @@ public:
 						return false;
 				}
 			}
+			return false;
 		}
 		
 		void GetFilename(dynamic_string& Buffer)

@@ -135,4 +135,9 @@ public:
 	
 };
 
+template<> int CAsset_GuiSliderStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_GuiSliderStyle::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> CAssetPath CAsset_GuiSliderStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiSliderStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

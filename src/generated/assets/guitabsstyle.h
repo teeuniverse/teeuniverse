@@ -155,4 +155,9 @@ public:
 	
 };
 
+template<> bool CAsset_GuiTabsStyle::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_GuiTabsStyle::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
+template<> CAssetPath CAsset_GuiTabsStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiTabsStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

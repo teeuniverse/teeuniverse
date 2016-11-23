@@ -241,4 +241,11 @@ public:
 	
 };
 
+template<> int CAsset_Character::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_Character::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> const char* CAsset_Character::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const;
+template<> bool CAsset_Character::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
+template<> CAssetPath CAsset_Character::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_Character::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

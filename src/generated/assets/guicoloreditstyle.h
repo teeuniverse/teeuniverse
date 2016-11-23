@@ -146,4 +146,7 @@ public:
 	
 };
 
+template<> CAssetPath CAsset_GuiColorEditStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiColorEditStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

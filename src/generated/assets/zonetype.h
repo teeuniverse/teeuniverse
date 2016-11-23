@@ -200,4 +200,11 @@ public:
 	
 };
 
+template<> int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const;
+template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
+template<> vec4 CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+
 #endif

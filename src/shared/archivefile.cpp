@@ -338,7 +338,10 @@ const char* CArchiveFile::GetString(tua_stringid StoredStringId)
 		return NULL;
 	
 	uint32 StringId = ReadStringId(StoredStringId);
-	return m_Strings[StringId].m_pText;
+	if(StringId >= m_Strings.size())
+		return NULL;
+	else
+		return m_Strings[StringId].m_pText;
 }
 
 tua_stringid CArchiveFile::AddString(const char* pText)
@@ -358,5 +361,5 @@ tua_stringid CArchiveFile::AddString(const char* pText)
 	String.m_pText = new char[Length+1];
 	str_copy(String.m_pText, pText, sizeof(char)*(Length+1));
 	
-	WriteStringId((uint32) m_Strings.size()-1);
+	return WriteStringId((uint32) m_Strings.size()-1);
 }

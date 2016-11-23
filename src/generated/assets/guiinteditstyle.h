@@ -106,4 +106,7 @@ public:
 	
 };
 
+template<> CAssetPath CAsset_GuiIntEditStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiIntEditStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

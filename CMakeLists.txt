@@ -17,6 +17,8 @@
 #
 
 cmake_minimum_required (VERSION 2.6)
+cmake_policy(SET CMP0012 NEW)
+
 project(TeeUniverses)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
@@ -25,16 +27,24 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 # DEPENDENCIES
 ########################################################################
 
-find_package(SDL2 REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(PNG REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(HarfBuzz REQUIRED)
-find_package(ICU COMPONENTS i18n  REQUIRED)
+find_package(SDL2)
+find_package(OpenGL)
+find_package(PNG)
+find_package(Freetype)
+find_package(HarfBuzz)
+find_package(ICU COMPONENTS i18n)
 
 ########################################################################
 # OPTIONS
 ########################################################################
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/debug)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/release)
 
 set(TU_EXECNAME_GAME teeuniverses)
 set(TU_EXECNAME_EDITOR teeuniverses_editor)
@@ -49,6 +59,52 @@ include_directories(
 	${HARFBUZZ_INCLUDE_DIRS}
 	${ICU_INCLUDE_DIRS}
 )
+
+message(STATUS "******** TeeUniverses ********")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+message(STATUS ${name} "Dependencies:")
+function(show_dependency_status name varFound error)
+	if(${varFound})
+		message(STATUS " * " ${name} " found")
+	else()
+		message(STATUS " * " ${name} " not found (" ${error} ")")
+	endif()
+endfunction()
+
+show_dependency_status("ICU" "${ICU_FOUND}" "needed by all")
+show_dependency_status("SDL" "${SDL2_FOUND}" "needed by: client, editor")
+show_dependency_status("OpenGL" "${OPENGL_FOUND}" "needed by: client, editor")
+show_dependency_status("PNG" "${PNG_FOUND}" "needed by: client, editor, tools")
+show_dependency_status("FreeType" "${FREETYPE_FOUND}" "needed by: client, editor")
+show_dependency_status("Harfbuzz" "${HARFBUZZ_FOUND}" "needed by: client, editor")
+
+message(STATUS ${name} "Target status:")
+if(ICU_FOUND)
+	message(STATUS " * server is ready for compilation")
+	
+	if(SDL2_FOUND AND OPENGL_FOUND AND PNG_FOUND AND FREETYPE_FOUND AND HARFBUZZ_FOUND)
+		message(STATUS " * client is ready for compilation")
+		message(STATUS " * editor is ready for compilation")
+	else()
+		message(STATUS " * client can't be compiled")
+		message(STATUS " * editor can't be compiled")
+	endif()
+	
+	if(PNG_FOUND)
+		message(STATUS " * tools are ready for compilation")
+	else()
+		message(STATUS " * tools can't be compiled")
+	endif()
+else()
+	message(STATUS " * server can't be compiled")
+	message(STATUS " * client can't be compiled")
+	message(STATUS " * editor can't be compiled")
+	message(STATUS " * tools can't be compiled")
+	message(FATAL_ERROR "you must install ICU to compile TeeUniverses")
+endif()
+
+message(STATUS "******************************")
 
 ########################################################################
 # DEFINES
@@ -194,6 +250,16 @@ target_link_libraries (teeuniverses_tools ${teeuniverses_tools_libraries})
 # Make Assets
 function(make_assets progname)
 	add_executable(make_assets_${progname} ${PROJECT_SOURCE_DIR}/src/make_assets_${progname}.cpp)
+	set_target_properties(
+		make_assets_${progname}
+		PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/make_assets"
+		ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+	)
 	target_link_libraries(
 		make_assets_${progname}
 		teeuniverses_tools
@@ -214,6 +280,16 @@ enable_testing()
 
 function(make_test testname)
 	add_executable(test_${testname} src/unittest/${testname}.cpp)
+	set_target_properties(
+		test_${testname}
+		PROPERTIES
+		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/test"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/test"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/test"
+		ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/test"
+		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/test"
+		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/test"
+	)
 	target_link_libraries(
 		test_${testname}
 		teeuniverses_shared
@@ -226,3 +302,4 @@ make_test(system_fs)
 make_test(shared_kernel)
 make_test(localization)
 make_test(archivefile)
+make_test(assetsmanager)

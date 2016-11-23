@@ -417,4 +417,17 @@ public:
 	
 };
 
+template<> int CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> const char* CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
+template<> float CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> vec2 CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
+template<> vec4 CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

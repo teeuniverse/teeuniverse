@@ -355,4 +355,9 @@ public:
 	
 };
 
+template<> int CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> CAssetPath CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

@@ -175,4 +175,11 @@ public:
 	
 };
 
+template<> int CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> uint32 CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
+template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
+template<> CAssetPath CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

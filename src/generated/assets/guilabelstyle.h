@@ -189,4 +189,11 @@ public:
 	
 };
 
+template<> int CAsset_GuiLabelStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_GuiLabelStyle::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> vec4 CAsset_GuiLabelStyle::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_GuiLabelStyle::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_GuiLabelStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiLabelStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

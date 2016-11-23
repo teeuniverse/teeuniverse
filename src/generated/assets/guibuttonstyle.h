@@ -116,4 +116,7 @@ public:
 	
 };
 
+template<> CAssetPath CAsset_GuiButtonStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiButtonStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

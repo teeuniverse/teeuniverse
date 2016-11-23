@@ -144,4 +144,9 @@ public:
 	
 };
 
+template<> int CAsset_Sprite::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_Sprite::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> CAssetPath CAsset_Sprite::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_Sprite::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

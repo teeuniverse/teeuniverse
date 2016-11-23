@@ -23,7 +23,7 @@ cd teeuniverses
 
 Compile the project
 ```
-cmake .
+cmake -DCMAKE_BUILD_TYPE=Release .
 make
 ```
 
@@ -33,12 +33,12 @@ Execution
 
 Before starting TeeUniverses, the assets packages must be generated.
 ```
-for MAKEASSETS in ./make_assets_*; do $MAKEASSETS; done
+for MAKEASSETS in ./bin/release/make_assets/*; do $MAKEASSETS; done
 ```
 This operation is needed because the assets package format changes regularly.
 In the future, those packages will be included directly in the repository.
 
 Finally, start TeeUniverses Editor
 ```
-teeuniverses_editor
+./bin/release/teeuniverses_editor
 ```

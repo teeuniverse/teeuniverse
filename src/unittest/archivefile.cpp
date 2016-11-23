@@ -45,7 +45,7 @@ AssetsFile.append("/test.assets");
 		tua_stringid* pItem = (tua_stringid*) File.GetItem(38, 0);
 		TEST(pItem != NULL);
 		*pItem = File.AddString("Hello");
-		TEST(File.ReadUInt32(*pItem) == 0);
+		TEST_WITH_OUTPUT(File.ReadUInt32(*pItem) == 0, File.ReadUInt32(*pItem));
 	}
 	
 	{

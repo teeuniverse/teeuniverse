@@ -105,4 +105,9 @@ public:
 	
 };
 
+template<> float CAsset_EntityType::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_EntityType::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> CAssetPath CAsset_EntityType::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_EntityType::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

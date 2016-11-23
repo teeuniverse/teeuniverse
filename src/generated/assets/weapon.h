@@ -126,4 +126,7 @@ public:
 	
 };
 
+template<> CAssetPath CAsset_Weapon::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_Weapon::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif

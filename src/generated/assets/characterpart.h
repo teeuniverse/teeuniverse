@@ -115,4 +115,9 @@ public:
 	
 };
 
+template<> CAssetPath CAsset_CharacterPart::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_CharacterPart::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+template<> CSubPath CAsset_CharacterPart::GetValue(int ValueType, const CSubPath& SubPath, CSubPath DefaultValue) const;
+template<> bool CAsset_CharacterPart::SetValue(int ValueType, const CSubPath& SubPath, CSubPath Value);
+
 #endif

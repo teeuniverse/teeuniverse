@@ -27,36 +27,24 @@ CSharedKernel* pKernel = new CSharedKernel();
 TEST(pKernel->Init(argc, argv))
 
 TEST(str_comp(pKernel->Localization()->Localize(NULL, "__something not translated"), "__something not translated") == 0);
-TEST(str_comp(pKernel->Localization()->Localize("ar_FR", "__something not translated"), "__something not translated") == 0);
-
-{
-	const char* pTranslatedText = pKernel->Localization()->Localize("fr", "You must restart the game for all settings to take effect.");
-	TEST_WITH_OUTPUT(
-		str_comp(pTranslatedText, "Les changements prendront effet au prochain redémarrage.") == 0,
-		pTranslatedText
-	);
-}
+TEST(str_comp(pKernel->Localization()->Localize("xx_XX", "__something not translated"), "__something not translated") == 0);
 
 {
 	dynamic_string Buffer;
-	int Value;
+	int IntValue;
+	float FloatValue = 0.5f;
 	
 	Buffer.clear();
-	Value = 5;
-	pKernel->Localization()->Format_LP(Buffer, "fr", Value, "{int:NumPlayers} players left ({percent:PlayerOnCapacity})", "NumPlayers", &Value, NULL);
-	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "5 participant·e·s restant·e·") == 0, Buffer.buffer())
-	
-	Buffer.clear();
-	Value = 1;
-	pKernel->Localization()->Format_LP(Buffer, "fr", Value, "{int:NumPlayers} players left", "NumPlayers", &Value, NULL);
-	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "un·e participant·e") == 0, Buffer.buffer())
+	IntValue = 5;
+	pKernel->Localization()->Format_L(Buffer, "xx_XX", "{int:NumPlayers} players left ({percent:PlayerOnCapacity})", "NumPlayers", &IntValue, "PlayerOnCapacity", &FloatValue, NULL);
+	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "5 players left (50%)") == 0, Buffer.buffer())
 }
 
 {
 	dynamic_string Buffer;
 	int Value = 8254534;
-	pKernel->Localization()->Format(Buffer, "ar", "{int:test}", "test", &Value, NULL);
-	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "٨٬٢٥٤٬٥٣٤") == 0, Buffer.buffer())
+	pKernel->Localization()->Format(Buffer, "xx_XX", "{int:test}", "test", &Value, NULL);
+	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "8,254,534") == 0, Buffer.buffer())
 }
 
 pKernel->Shutdown();

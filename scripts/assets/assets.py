@@ -1085,6 +1085,18 @@ class ClassAsset(Class):
 			res.append("")
 		return res
 	
+	def generateGetSpe(self, t):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.getSetInterfaces():
+				if inter.getSetType == t:
+					counter = counter+1
+		
+		if counter > 0:
+			return [ "template<> "+t+" "+self.fullType()+"::GetValue(int ValueType, const CSubPath& SubPath, "+t+" DefaultValue) const;" ]
+		else:
+			return []
+	
 	def generateGetImpl(self, t):
 		counter = 0
 		for Mem in self.members: 
@@ -1115,6 +1127,18 @@ class ClassAsset(Class):
 			res.append("}")
 			res.append("")
 			return res
+		else:
+			return []
+	
+	def generateSetSpe(self, t):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.getSetInterfaces():
+				if inter.getSetType == t:
+					counter = counter+1
+		
+		if counter > 0:
+			return [ "template<> bool "+self.fullType()+"::SetValue(int ValueType, const CSubPath& SubPath, "+t+" Value);" ]
 		else:
 			return []
 	
@@ -1255,6 +1279,43 @@ def generateHeader(asset):
 	
 	print >>f, ""
 	print >>f, "\n".join(asset.generateClassDefinition())
+	print >>f, ""
+	for l in asset.generateGetSpe("int"):
+		print >>f, l
+	for l in asset.generateSetSpe("int"):
+		print >>f, l
+	for l in asset.generateGetSpe("uint32"):
+		print >>f, l
+	for l in asset.generateSetSpe("uint32"):
+		print >>f, l
+	for l in asset.generateGetSpe("bool"):
+		print >>f, l
+	for l in asset.generateSetSpe("bool"):
+		print >>f, l
+	for l in asset.generateGetSpe("const char*"):
+		print >>f, l
+	for l in asset.generateSetSpe("const char*"):
+		print >>f, l
+	for l in asset.generateGetSpe("float"):
+		print >>f, l
+	for l in asset.generateSetSpe("float"):
+		print >>f, l
+	for l in asset.generateGetSpe("vec2"):
+		print >>f, l
+	for l in asset.generateSetSpe("vec2"):
+		print >>f, l
+	for l in asset.generateGetSpe("vec4"):
+		print >>f, l
+	for l in asset.generateSetSpe("vec4"):
+		print >>f, l
+	for l in asset.generateGetSpe("CAssetPath"):
+		print >>f, l
+	for l in asset.generateSetSpe("CAssetPath"):
+		print >>f, l
+	for l in asset.generateGetSpe("CSubPath"):
+		print >>f, l
+	for l in asset.generateSetSpe("CSubPath"):
+		print >>f, l
 	print >>f, ""
 	print >>f, "#endif"
 	

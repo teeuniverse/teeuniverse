@@ -345,4 +345,17 @@ public:
 	
 };
 
+template<> int CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> float CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> vec2 CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
+template<> vec4 CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+template<> CSubPath CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, CSubPath DefaultValue) const;
+template<> bool CAsset_SkeletonSkin::SetValue(int ValueType, const CSubPath& SubPath, CSubPath Value);
+
 #endif

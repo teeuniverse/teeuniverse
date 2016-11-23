@@ -86,4 +86,7 @@ public:
 	void SubPathOperation(const CAssetPath& Path, const CSubPath::COperation& Operation) { }
 };
 
+template<> const char* CAsset::GetValue<const char*>(int ValueType, const CSubPath& Path, const char* DefaultValue) const;
+template<> bool CAsset::SetValue<const char*>(int ValueType, const CSubPath& Path, const char* Value);
+
 #endif

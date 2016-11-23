@@ -142,4 +142,9 @@ public:
 	
 };
 
+template<> int CAsset_GuiBoxStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_GuiBoxStyle::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> CAssetPath CAsset_GuiBoxStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_GuiBoxStyle::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+
 #endif
