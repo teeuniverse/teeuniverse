@@ -1,4 +1,4 @@
-TeeUniverses
+TeeUniverses [![CircleCI](https://circleci.com/gh/teeuniverses/teeuniverses.svg?style=svg)](https://circleci.com/gh/teeuniverses/teeuniverses)
 =============
 
 TeeUniverses is a fork of TeeWorlds that provides interesting possibilities to make good quality mods.
