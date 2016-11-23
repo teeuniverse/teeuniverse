@@ -351,6 +351,7 @@ public:
 	
 	void Open()
 	{
+		Context()->ShowLoadingCursor();
 		switch(m_Format)
 		{
 			case FORMAT_IMAGE:

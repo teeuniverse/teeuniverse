@@ -127,6 +127,7 @@ bool CGui::PreUpdate()
 	m_MousePos.x = clamp(m_MousePos.x, 0, Graphics()->ScreenWidth()-1);
 	m_MousePos.y = clamp(m_MousePos.y, 0, Graphics()->ScreenHeight()-1);
 	
+	m_ShowLoadingCursor = false;
 	Input()->SetCursorType(CInput::CURSOR_DEFAULT);
 	
 	int BlockedInput = 0x0;
@@ -353,9 +354,17 @@ void CGui::Render()
 	
 void CGui::SetCursor(gui::CWidget* pWidget, int CursorType)
 {
-	if((pWidget == m_pFocusedWidget) || !(m_BlockedInput & BLOCKEDINPUT_MOUSEMOVE))
+	if(!m_ShowLoadingCursor && ((pWidget == m_pFocusedWidget) || !(m_BlockedInput & BLOCKEDINPUT_MOUSEMOVE)))
 	{
 		Input()->SetCursorType(CursorType);
+	}
+}
+
+void CGui::ShowLoadingCursor()
+{
+	if(!m_ShowLoadingCursor)
+	{
+		Input()->SetCursorType(CInput::CURSOR_LOADING);
 	}
 }
 

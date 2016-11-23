@@ -104,6 +104,7 @@ protected:
 	ivec2 m_MousePos;
 	int m_BlockedInput;
 	bool m_Quit;
+	bool m_ShowLoadingCursor;
 	
 	//Style
 	CAssetPath m_LabelStyle;
@@ -170,6 +171,7 @@ public:
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
 	
 	void SetCursor(gui::CWidget* pWidget, int CursorType);
+	void ShowLoadingCursor();
 	
 	//Context
 	inline float GetGuiScale() const { return static_cast<float>(m_Cfg_Scale)/GUI_DEFAULT_SCALE; }
