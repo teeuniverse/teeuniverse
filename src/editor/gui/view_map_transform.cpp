@@ -272,6 +272,15 @@ void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 		
 		return;
 	}
+	
+	const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(AssetsEditor()->GetEditedAssetPath());
+	if(pMapGroup)
+	{
+		m_Token = AssetsManager()->GenerateToken();
+		m_DragType = DRAGTYPE_TRANSLATION;
+		
+		return;
+	}
 }
 	
 void CCursorTool_MapTransform::OnViewButtonRelease(int Button)
@@ -393,6 +402,8 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		if(SelectedEntity.GetType() != CAsset_MapEntities::TYPE_ENTITY || !pEntities->IsValidEntity(SelectedEntity))
 			return;
 		
+		ViewMap()->MapRenderer()->UnsetGroup();
+		
 		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 		int RelX = Context()->GetMouseRelPos().x;
 		int RelY = Context()->GetMouseRelPos().y;
@@ -405,6 +416,20 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedEntity, CAsset_MapEntities::ENTITY_POSITION, NewPosition, m_Token);
 			m_Transformed = true;
 		}
+	}
+	
+	const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(AssetsEditor()->GetEditedAssetPath());
+	if(pMapGroup && m_DragType == DRAGTYPE_TRANSLATION)
+	{
+		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+		
+		vec2 CursorRelPos = vec2(Context()->GetMouseRelPos().x, Context()->GetMouseRelPos().y);
+		vec2 ScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(pMapGroup->GetPosition());
+		vec2 NewPosition = ViewMap()->MapRenderer()->ScreenPosToMapPos(ScreenPos - CursorRelPos);
+		
+		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapGroup::POSITION, NewPosition, m_Token);
+		
+		ViewMap()->MapRenderer()->UnsetGroup();
 	}
 }
 	
@@ -467,6 +492,7 @@ void CCursorTool_MapTransform::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
+		case CAsset_MapGroup::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
 		case CAsset_MapEntities::TypeId:
 			Enable();

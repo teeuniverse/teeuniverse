@@ -348,7 +348,6 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		uint32 PackageCrc = ArchiveFile.ReadUInt32(pItem->m_PackageCrc);
 		if(pPackageName != NULL)
 		{
-			dbg_msg("DEBUG", "Dependency found: %s", pPackageName);
 			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, PackageCrc));
 		}
 	}
@@ -696,14 +695,12 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			pMapGroup->SetPosition(vec2(pGItem->m_OffsetX, pGItem->m_OffsetY));
 			pMapGroup->SetHardParallax(vec2(pGItem->m_ParallaxX/100.0f, pGItem->m_ParallaxY/100.0f));
 
-			//~ if(pGItem->m_Version >= 2)
-			//~ {
-				//~ pGroup->m_UseClipping = pGItem->m_UseClipping;
-				//~ pGroup->m_ClipX = pGItem->m_ClipX;
-				//~ pGroup->m_ClipY = pGItem->m_ClipY;
-				//~ pGroup->m_ClipW = pGItem->m_ClipW;
-				//~ pGroup->m_ClipH = pGItem->m_ClipH;
-			//~ }
+			if(pGItem->m_Version >= 2)
+			{
+				pMapGroup->SetClipping(pGItem->m_UseClipping);
+				pMapGroup->SetClipPosition(vec2(pGItem->m_ClipX, pGItem->m_ClipY));
+				pMapGroup->SetClipSize(vec2(pGItem->m_ClipW, pGItem->m_ClipH));
+			}
 
 			// load group name
 			aBuf[0] = 0;

@@ -1068,6 +1068,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconEntities = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntities");
 		m_Path_Sprite_IconNewFolder = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewFolder");
 		m_Path_Sprite_IconDelete = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDelete");
+		m_Path_Sprite_IconCrop = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCrop");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");

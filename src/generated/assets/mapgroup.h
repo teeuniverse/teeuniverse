@@ -61,6 +61,13 @@ public:
 		HARDPARALLAX_X,
 		HARDPARALLAX_Y,
 		HARDPARALLAX,
+		CLIPPING,
+		CLIPPOSITION_X,
+		CLIPPOSITION_Y,
+		CLIPPOSITION,
+		CLIPSIZE_X,
+		CLIPSIZE_Y,
+		CLIPSIZE,
 	};
 	
 	class CIteratorLayer
@@ -88,6 +95,9 @@ public:
 		CTuaArray m_Layer;
 		CTuaVec2 m_Position;
 		CTuaVec2 m_HardParallax;
+		tua_uint8 m_Clipping;
+		CTuaVec2 m_ClipPosition;
+		CTuaVec2 m_ClipSize;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType);
 	};
@@ -97,6 +107,9 @@ private:
 	array< CAssetPath, allocator_default<CAssetPath> > m_Layer;
 	vec2 m_Position;
 	vec2 m_HardParallax;
+	bool m_Clipping;
+	vec2 m_ClipPosition;
+	vec2 m_ClipSize;
 
 public:
 	template<typename T>
@@ -120,6 +133,9 @@ public:
 		m_Layer.copy(Item.m_Layer);
 		m_Position = Item.m_Position;
 		m_HardParallax = Item.m_HardParallax;
+		m_Clipping = Item.m_Clipping;
+		m_ClipPosition = Item.m_ClipPosition;
+		m_ClipSize = Item.m_ClipSize;
 	}
 	
 	void transfert(CAsset_MapGroup& Item)
@@ -128,6 +144,9 @@ public:
 		m_Layer.transfert(Item.m_Layer);
 		m_Position = Item.m_Position;
 		m_HardParallax = Item.m_HardParallax;
+		m_Clipping = Item.m_Clipping;
+		m_ClipPosition = Item.m_ClipPosition;
+		m_ClipSize = Item.m_ClipSize;
 	}
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
@@ -151,6 +170,20 @@ public:
 	
 	inline float GetHardParallaxY() const { return m_HardParallax.y; }
 	
+	inline bool GetClipping() const { return m_Clipping; }
+	
+	inline vec2 GetClipPosition() const { return m_ClipPosition; }
+	
+	inline float GetClipPositionX() const { return m_ClipPosition.x; }
+	
+	inline float GetClipPositionY() const { return m_ClipPosition.y; }
+	
+	inline vec2 GetClipSize() const { return m_ClipSize; }
+	
+	inline float GetClipSizeX() const { return m_ClipSize.x; }
+	
+	inline float GetClipSizeY() const { return m_ClipSize.y; }
+	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_Layer[SubPath.GetId()] = Value; }
@@ -166,6 +199,20 @@ public:
 	inline void SetHardParallaxX(float Value) { m_HardParallax.x = Value; }
 	
 	inline void SetHardParallaxY(float Value) { m_HardParallax.y = Value; }
+	
+	inline void SetClipping(bool Value) { m_Clipping = Value; }
+	
+	inline void SetClipPosition(vec2 Value) { m_ClipPosition = Value; }
+	
+	inline void SetClipPositionX(float Value) { m_ClipPosition.x = Value; }
+	
+	inline void SetClipPositionY(float Value) { m_ClipPosition.y = Value; }
+	
+	inline void SetClipSize(vec2 Value) { m_ClipSize = Value; }
+	
+	inline void SetClipSizeX(float Value) { m_ClipSize.x = Value; }
+	
+	inline void SetClipSizeY(float Value) { m_ClipSize.y = Value; }
 	
 	inline int AddLayer()
 	{
@@ -199,6 +246,8 @@ public:
 
 template<> int CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
 template<> bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, float Value);
 template<> vec2 CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;

@@ -153,6 +153,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconKeyFrameColor", ImageEditorPath, 27, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconKeyFrameBone", ImageEditorPath, 28, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconKeyFrameLayer", ImageEditorPath, 29, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconCrop", ImageEditorPath, 30, 1, 1, 1);
 	
 	CREATE_SPRITE(PackageId, "gizmoVertexBg", ImageEditorPath, 0, 11, 1, 1);
 	CREATE_SPRITE(PackageId, "gizmoVertexFg", ImageEditorPath, 1, 11, 1, 1);

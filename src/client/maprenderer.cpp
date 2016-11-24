@@ -721,6 +721,15 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 	if(pState && !pState->m_Visible)
 		return;
 	
+	if(pGroup->GetClipping())
+	{
+		UnsetGroup();
+		
+		vec2 ClipMin = MapPosToScreenPos(pGroup->GetClipPosition());
+		vec2 ClipSize = MapPosToScreenPos(pGroup->GetClipPosition() + pGroup->GetClipSize()) - ClipMin;
+		Graphics()->ClipPush(ClipMin.x, ClipMin.y, ClipSize.x, ClipSize.y);
+	}
+	
 	SetGroup(GroupPath);
 	
 	CAsset_MapGroup::CIteratorLayer IterLayer;
@@ -749,6 +758,9 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 			RenderQuads(pLayer->GetQuadPtr(), pLayer->GetQuadArraySize(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), Color);
 		}
 	}
+	
+	if(pGroup->GetClipping())
+		Graphics()->ClipPop();
 }
 
 void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color)

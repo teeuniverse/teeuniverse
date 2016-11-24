@@ -37,6 +37,9 @@ CAsset_MapGroup::CAsset_MapGroup()
 {
 	m_Position = vec2(0.0f, 0.0f);
 	m_HardParallax = vec2(1.0f, 1.0f);
+	m_Clipping = false;
+	m_ClipPosition = vec2(0.0f, 0.0f);
+	m_ClipSize = vec2(64.0f, 64.0f);
 }
 
 void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType)
@@ -57,6 +60,11 @@ void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
 	SysType.m_HardParallax.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_HardParallax.m_X);
 	SysType.m_HardParallax.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_HardParallax.m_Y);
+	SysType.m_Clipping = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Clipping);
+	SysType.m_ClipPosition.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipPosition.m_X);
+	SysType.m_ClipPosition.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipPosition.m_Y);
+	SysType.m_ClipSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_X);
+	SysType.m_ClipSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_Y);
 }
 
 void CAsset_MapGroup::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType)
@@ -77,6 +85,11 @@ void CAsset_MapGroup::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, c
 	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
 	TuaType.m_HardParallax.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_HardParallax.x);
 	TuaType.m_HardParallax.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_HardParallax.y);
+	TuaType.m_Clipping = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Clipping);
+	TuaType.m_ClipPosition.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipPosition.x);
+	TuaType.m_ClipPosition.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipPosition.y);
+	TuaType.m_ClipSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.x);
+	TuaType.m_ClipSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.y);
 }
 
 template<>
@@ -103,6 +116,29 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, int Value
 }
 
 template<>
+bool CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case CLIPPING:
+			return GetClipping();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case CLIPPING:
+			SetClipping(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
+}
+
+template<>
 float CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const
 {
 	switch(ValueType)
@@ -115,6 +151,14 @@ float CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, float De
 			return GetHardParallaxX();
 		case HARDPARALLAX_Y:
 			return GetHardParallaxY();
+		case CLIPPOSITION_X:
+			return GetClipPositionX();
+		case CLIPPOSITION_Y:
+			return GetClipPositionY();
+		case CLIPSIZE_X:
+			return GetClipSizeX();
+		case CLIPSIZE_Y:
+			return GetClipSizeY();
 	}
 	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
 }
@@ -136,6 +180,18 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, float Val
 		case HARDPARALLAX_Y:
 			SetHardParallaxY(Value);
 			return true;
+		case CLIPPOSITION_X:
+			SetClipPositionX(Value);
+			return true;
+		case CLIPPOSITION_Y:
+			SetClipPositionY(Value);
+			return true;
+		case CLIPSIZE_X:
+			SetClipSizeX(Value);
+			return true;
+		case CLIPSIZE_Y:
+			SetClipSizeY(Value);
+			return true;
 	}
 	return CAsset::SetValue<float>(ValueType, SubPath, Value);
 }
@@ -149,6 +205,10 @@ vec2 CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, vec2 Defa
 			return GetPosition();
 		case HARDPARALLAX:
 			return GetHardParallax();
+		case CLIPPOSITION:
+			return GetClipPosition();
+		case CLIPSIZE:
+			return GetClipSize();
 	}
 	return CAsset::GetValue<vec2>(ValueType, SubPath, DefaultValue);
 }
@@ -163,6 +223,12 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, vec2 Valu
 			return true;
 		case HARDPARALLAX:
 			SetHardParallax(Value);
+			return true;
+		case CLIPPOSITION:
+			SetClipPosition(Value);
+			return true;
+		case CLIPSIZE:
+			SetClipSize(Value);
 			return true;
 	}
 	return CAsset::SetValue<vec2>(ValueType, SubPath, Value);

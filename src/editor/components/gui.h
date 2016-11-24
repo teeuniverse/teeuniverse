@@ -135,6 +135,7 @@ public:
 	CAssetPath m_Path_Sprite_IconEntities;
 	CAssetPath m_Path_Sprite_IconNewFolder;
 	CAssetPath m_Path_Sprite_IconDelete;
+	CAssetPath m_Path_Sprite_IconCrop;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

@@ -20,6 +20,7 @@
 
 #include <editor/gui/view_map_stamp.h>
 #include <editor/gui/view_map_transform.h>
+#include <editor/gui/view_map_crop.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
@@ -101,6 +102,9 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	
 	m_pCursorTool_MapEdit = new CCursorTool_MapEdit(this);
 	m_pToolbar->Add(m_pCursorTool_MapEdit);
+	
+	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
+	m_pToolbar->Add(m_pCursorTool_MapCrop);
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
@@ -296,6 +300,7 @@ void CViewMap::Update(bool ParentEnabled)
 			case CAsset_MapLayerQuads::TypeId:
 				SetCursorTool(m_pCursorTool_MapStamp);
 				break;
+			case CAsset_MapGroup::TypeId:
 			case CAsset_MapEntities::TypeId:
 				SetCursorTool(m_pCursorTool_MapTransform);
 				break;
@@ -403,6 +408,22 @@ void CViewMap::RenderView()
 			AssetsRenderer()->DrawGuiRect(&Rect, AssetsEditor()->m_Path_Rect_Border);
 			
 			MapRenderer()->UnsetGroup();
+		}
+	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapGroup::TypeId)
+	{
+		const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(AssetsEditor()->GetEditedAssetPath());
+		if(pGroup && pGroup->GetClipping())
+		{
+			vec2 MinCorner = MapRenderer()->MapPosToScreenPos(pGroup->GetClipPosition());
+			vec2 MaxCorner = MapRenderer()->MapPosToScreenPos(pGroup->GetClipPosition() + pGroup->GetClipSize());
+			
+			gui::CRect Rect;
+			Rect.x = MinCorner.x;
+			Rect.y = MinCorner.y;
+			Rect.w = MaxCorner.x - MinCorner.x;
+			Rect.h = MaxCorner.y - MinCorner.y;
+			AssetsRenderer()->DrawGuiRect(&Rect, AssetsEditor()->m_Path_Rect_Border);
 		}
 	}
 }

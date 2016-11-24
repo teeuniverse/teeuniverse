@@ -422,9 +422,12 @@ protected:
 	int m_Drawing;
 	bool m_DoScreenshot;
 	char m_aScreenshotName[128];
-	
+
+//TAG_DEBUG
+public:
 	array<CCommandBuffer::SClip> m_ClipStack;
 
+protected:
 	CTextureHandle m_InvalidTexture;
 
 	int m_aTextureIndices[MAX_TEXTURES];

@@ -1298,21 +1298,21 @@ void CGraphics::ClipPush(int x, int y, int w, int h)
 		ClipRect.h = ScreenHeight();
 	}
 	
-	x = clamp(x, ClipRect.x, ClipRect.x + ClipRect.w);
-	y = clamp(y, ClipRect.y, ClipRect.y + ClipRect.h);
-	w = clamp(w, 0, ClipRect.x + ClipRect.w - x);
-	h = clamp(h, 0, ClipRect.y + ClipRect.h - y);
+	int X = clamp(x, ClipRect.x, ClipRect.x + ClipRect.w);
+	int Y = clamp(y, ClipRect.y, ClipRect.y + ClipRect.h);
+	int W = clamp(x+w, X, ClipRect.x + ClipRect.w) - X;
+	int H = clamp(y+h, Y, ClipRect.y + ClipRect.h) - Y;
 	
 	m_State.m_ClipEnable = true;
-	m_State.m_ClipX = x;
-	m_State.m_ClipY = ScreenHeight()-(y+h);
-	m_State.m_ClipW = w;
-	m_State.m_ClipH = h;
+	m_State.m_ClipX = X;
+	m_State.m_ClipY = ScreenHeight()-(Y+H);
+	m_State.m_ClipW = W;
+	m_State.m_ClipH = H;
 	
-	ClipRect.x = x;
-	ClipRect.y = y;
-	ClipRect.w = w;
-	ClipRect.h = h;
+	ClipRect.x = X;
+	ClipRect.y = Y;
+	ClipRect.w = W;
+	ClipRect.h = H;
 }
 
 void CGraphics::ClipPop()

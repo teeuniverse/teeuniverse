@@ -227,6 +227,10 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapGroup_Asset()
 	
 	AddField_Vec2(pTab, CAsset_MapGroup::POSITION_X, CAsset_MapGroup::POSITION_Y, "Position");	
 	AddField_Vec2(pTab, CAsset_MapGroup::HARDPARALLAX_X, CAsset_MapGroup::HARDPARALLAX_Y, "Parallax");	
+	pTab->AddSeparator();
+	AddField_Bool(pTab, CAsset_MapGroup::CLIPPING, "Clipping");	
+	AddField_Vec2(pTab, CAsset_MapGroup::CLIPPOSITION_X, CAsset_MapGroup::CLIPPOSITION_Y, "Clip Position");	
+	AddField_Vec2(pTab, CAsset_MapGroup::CLIPSIZE_X, CAsset_MapGroup::CLIPSIZE_Y, "Clip Size");	
 	
 	return pTab;
 }

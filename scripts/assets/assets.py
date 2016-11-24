@@ -1666,6 +1666,9 @@ mapGroup.setInheritance(mainAsset)
 mapGroup.addMember("Layer", TypeArray(TypeAssetPath()))
 mapGroup.addMember("Position", TypeVec2(), "vec2(0.0f, 0.0f)")
 mapGroup.addMember("HardParallax", TypeVec2(), "vec2(1.0f, 1.0f)")
+mapGroup.addMember("Clipping", TypeBool(), "false")
+mapGroup.addMember("ClipPosition", TypeVec2(), "vec2(0.0f, 0.0f)")
+mapGroup.addMember("ClipSize", TypeVec2(), "vec2(64.0f, 64.0f)")
 
 assetsList.append(mapGroup)
 

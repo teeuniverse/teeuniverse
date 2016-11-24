@@ -35,6 +35,7 @@ public:
 	float m_CameraZoom;
 	double m_Time;
 	double m_LocalTime;
+	bool m_Clipping;
 	
 public:	
 	CMapRenderer(CClientKernel* pKernel);
