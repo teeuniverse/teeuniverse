@@ -28,6 +28,109 @@
 
 /* CURSORTOOL STAMP ***************************************************/
 
+class CPopup_EntityPalette : public gui::CPopup
+{
+protected:
+	class CEntityIcon : public gui::CWidget
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CAssetPath m_EntityTypePath;
+		array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> > m_Tiles;
+		int m_Number;
+		
+	public:
+		CEntityIcon(CGuiEditor *pAssetsEditor, CAssetPath EntityTypePath) :
+			gui::CWidget(pAssetsEditor),
+			m_pAssetsEditor(pAssetsEditor),
+			m_EntityTypePath(EntityTypePath)
+		{
+			
+		}
+		
+		virtual void UpdateBoundingSize()
+		{
+			m_BoundingSizeRect.BSMinimum(32.0f*4, 32.0f*3);
+		}
+		
+		virtual void Render()
+		{
+			Graphics()->ClipPush(m_DrawRect.x, m_DrawRect.y, m_DrawRect.w, m_DrawRect.h);
+			
+			vec2 Pos = vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2);
+			
+			const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(m_EntityTypePath);
+			if(pEntityType)
+				AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, 1.0f);
+			else
+				AssetsRenderer()->DrawSprite(m_pAssetsEditor->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, 1.0f);
+			
+			Graphics()->ClipPop();
+		}
+	};
+	
+	class CEntityButton : public gui::CButton
+	{
+	protected:
+		CPopup_EntityPalette* m_pPopup;
+		CCursorTool_MapStamp* m_pCursorTool;
+		CAssetPath m_EntityTypePath;
+		
+	public:
+		CEntityButton(CGuiEditor *pAssetsEditor, CCursorTool_MapStamp* pCursorTool, CPopup_EntityPalette* pPopup, CAssetPath EntityTypePath) :
+			gui::CButton(pAssetsEditor, ""),
+			m_pPopup(pPopup),
+			m_pCursorTool(pCursorTool),
+			m_EntityTypePath(EntityTypePath)
+		{
+			const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(EntityTypePath);
+			if(pEntityType)
+				SetText(pEntityType->GetName());
+			
+			SetButtonStyle(pAssetsEditor->m_Path_Button_PaletteIcon);
+			SetIconWidget(new CEntityIcon(pAssetsEditor, EntityTypePath));
+		}
+		
+		virtual void MouseClickAction()
+		{
+			m_pCursorTool->PaletteCallback_SelectEntityType(m_EntityTypePath);
+			m_pPopup->Close();
+		}
+	};
+	
+public:
+	CPopup_EntityPalette(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool, const gui::CRect& CreatorRect) :
+		gui::CPopup(pAssetsEditor, CreatorRect, CreatorRect.w-16, CreatorRect.h-16, gui::CPopup::ALIGNMENT_INNER)
+	{
+		SetBoxStyle(pAssetsEditor->m_Path_Box_Dialog);
+		
+		gui::CBoxLayout* pList = new gui::CBoxLayout(Context());
+		Add(pList);		
+		
+		for(int p=0; p<AssetsManager()->GetNumPackages(); p++)
+		{
+			if(!AssetsManager()->IsValidPackage(p))
+				continue;
+			
+			for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_EntityType>(p); i++)
+			{
+				CAssetPath EntityPath = CAssetPath(CAsset_EntityType::TypeId, p, i);
+				pList->Add(new CEntityButton(pAssetsEditor, pCursorTool, this, EntityPath));
+			}
+		}
+	}
+	
+	virtual void OnButtonClick(int Button)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+			Close();
+		
+		gui::CPopup::OnButtonClick(Button);
+	}
+	
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
 class CPopup_ZonePalette : public gui::CPopup
 {
 protected:
@@ -147,6 +250,14 @@ public:
 			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *Iter));
 	}
 	
+	virtual void OnButtonClick(int Button)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+			Close();
+		
+		gui::CPopup::OnButtonClick(Button);
+	}
+	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
@@ -191,6 +302,14 @@ public:
 		CImagePicker* pImagePicker = new CPaletteImagePicker(pCursorTool, this, m_ImagePath);
 		pImagePicker->EnableSelection();
 		Add(pImagePicker);
+	}
+	
+	virtual void OnButtonClick(int Button)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+			Close();
+		
+		gui::CPopup::OnButtonClick(Button);
 	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
@@ -254,6 +373,34 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 				m_Pivot = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
 			}
 		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+		{
+			if(m_SelectionEnabled)
+			{
+				const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					m_Token = AssetsManager()->GenerateToken();
+					
+					for(int i=0; i<m_EntitySelection.size(); i++)
+					{
+						CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapEntities::TYPE_ENTITY, m_Token));
+						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), EntityPath, CAsset_MapEntities::ENTITY_POSITION, m_EntitySelection[i].GetPosition() + CursorMapPos, m_Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(AssetsEditor()->GetEditedAssetPath(), EntityPath, CAsset_MapEntities::ENTITY_TYPEPATH, m_EntitySelection[i].GetTypePath(), m_Token);
+					}
+					
+					m_Token = CAssetsHistory::NEW_TOKEN;
+				}
+			}
+			else
+			{
+				m_DragEnabled = true;
+				vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+				m_Pivot = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+			}
+		}
 		else
 		{
 			m_DragEnabled = true;
@@ -276,6 +423,12 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 				const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer)
 					Context()->DisplayPopup(new CPopup_ZonePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetZoneTypePath()));
+			}
+			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+			{
+				const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+					Context()->DisplayPopup(new CPopup_EntityPalette(AssetsEditor(), this, ViewMap()->GetViewRect()));
 			}
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 			{
@@ -403,12 +556,48 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						{
 							CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
 							Quad.copy(pLayer->GetQuad(*Iter));
-							Quad.SetPivot(Quad.GetPivot() - vec2(X0, Y0));
+							Quad.SetPivot(Quad.GetPivot() - vec2(X0 + X1, Y0 + Y1)/2.0f);
 							QuadsFound = true;
 						}
 					}
 					
 					if(QuadsFound)
+					{
+						m_SelectionEnabled = true;
+					}
+				}
+			}
+			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+			{
+				m_EntitySelection.clear();
+				
+				//Copy quads
+				const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					
+					float X0 = min(m_Pivot.x, CursorMapPos.x);
+					float Y0 = min(m_Pivot.y, CursorMapPos.y);
+					float X1 = max(m_Pivot.x, CursorMapPos.x);
+					float Y1 = max(m_Pivot.y, CursorMapPos.y);
+					
+					bool EntitiesFound = false;
+					
+					CAsset_MapEntities::CIteratorEntity Iter;
+					for(Iter = pLayer->BeginEntity(); Iter != pLayer->EndEntity(); ++Iter)
+					{
+						vec2 Position = pLayer->GetEntityPosition(*Iter);					
+						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
+						{
+							CAsset_MapEntities::CEntity& Entity = m_EntitySelection.increment();
+							Entity.copy(pLayer->GetEntity(*Iter));
+							Entity.SetPosition(Entity.GetPosition() - vec2(X0 + X1, Y0 + Y1)/2.0f);
+							EntitiesFound = true;
+						}
+					}
+					
+					if(EntitiesFound)
 					{
 						m_SelectionEnabled = true;
 					}
@@ -509,7 +698,6 @@ void CCursorTool_MapStamp::RenderView()
 	
 	if(m_SelectionEnabled)
 	{
-		
 		if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 		{
 			vec2 LayerPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorTilePos.x), floor(CursorTilePos.y)));
@@ -578,10 +766,38 @@ void CCursorTool_MapStamp::RenderView()
 				);
 			}
 		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+		{
+			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+			if(!pLayer)
+			{
+				ViewMap()->MapRenderer()->UnsetGroup();
+				return;
+			}
+			
+			if(m_EntitySelection.size())
+			{
+				CAsset_MapEntities::CIteratorEntity IterEntity;
+				for(int i=0; i<m_EntitySelection.size(); i++)
+				{
+					vec2 Pos = ViewMap()->MapRenderer()->MapPosToScreenPos(CursorMapPos + m_EntitySelection[i].GetPosition());
+					CAssetPath TypePath = m_EntitySelection[i].GetTypePath();
+					
+					const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
+					if(pEntityType)
+						AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, Color);
+					else
+						AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, Color);
+				}
+			}
+		}
 	}
 	else if(m_DragEnabled)
 	{
-		if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
+		if(
+			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId ||
+			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId
+		)
 		{
 			float X0 = min(m_Pivot.x, CursorMapPos.x);
 			float Y0 = min(m_Pivot.y, CursorMapPos.y);
@@ -633,6 +849,7 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
+		case CAsset_MapEntities::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
@@ -726,5 +943,16 @@ void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePat
 	m_TileSelection.resize(1, 1);
 	m_TileSelection.get_clamp(0, 0).SetIndex(Number);
 	m_TileSelection.get_clamp(0, 0).SetFlags(0x0);		
+	m_SelectionEnabled = true;
+}
+	
+void CCursorTool_MapStamp::PaletteCallback_SelectEntityType(CAssetPath EntityTypePath)
+{
+	m_EntitySelection.clear();
+	
+	CAsset_MapEntities::CEntity& Entity = m_EntitySelection.increment();
+	Entity.SetTypePath(EntityTypePath);
+	Entity.SetPosition(0.0f);
+	
 	m_SelectionEnabled = true;
 }

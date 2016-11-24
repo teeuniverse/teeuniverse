@@ -22,6 +22,7 @@
 #include <editor/gui/view_map.h>
 #include <generated/assets/maplayertiles.h>
 #include <generated/assets/maplayerquads.h>
+#include <generated/assets/mapentities.h>
 
 class CCursorTool_MapStamp : public CViewMap::CCursorTool
 {
@@ -30,6 +31,7 @@ protected:
 	bool m_SelectionEnabled;
 	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > m_TileSelection;
 	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_QuadSelection;
+	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_EntitySelection;
 	vec2 m_Pivot;
 	int m_Token;
 	
@@ -42,6 +44,7 @@ public:
 	virtual void Update(bool ParentEnabled);
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
 	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index);
+	void PaletteCallback_SelectEntityType(CAssetPath ZoneTypePath);
 };
 
 #endif

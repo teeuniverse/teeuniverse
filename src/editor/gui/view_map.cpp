@@ -55,32 +55,6 @@ public:
 	}
 };
 
-//~ class CEntitiesToggle : public gui::CToggle
-//~ {
-//~ protected:
-	//~ CViewMap* m_pViewMap;	
-	
-//~ protected:
-	//~ virtual bool GetValue()
-	//~ {
-		//~ return m_pViewMap->GetShowEntities();
-	//~ }
-	
-	//~ virtual void SetValue(bool Value)
-	//~ {
-		//~ m_pViewMap->SetShowEntities(Value);
-	//~ }
-	
-//~ public:
-	//~ CEntitiesToggle(CViewMap* pViewMap) :
-		//~ gui::CToggle(pViewMap->Context(), pViewMap->AssetsEditor()->m_Path_Sprite_IconEntities),
-		//~ m_pViewMap(pViewMap)
-	//~ {
-		//~ SetToggleStyle(pViewMap->AssetsEditor()->m_Path_Toggle_Toolbar);
-		//~ NoTextClipping();
-	//~ }
-//~ };
-
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
 	m_CameraPos(0.0f, 0.0f),
@@ -90,8 +64,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
-	m_ZoneOpacity(0.5f),
-	m_ShowEntities(true)
+	m_ZoneOpacity(0.5f)
 {
 	
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
@@ -295,13 +268,13 @@ void CViewMap::Update(bool ParentEnabled)
 	{
 		switch(AssetsEditor()->GetEditedAssetPath().GetType())
 		{
+			case CAsset_MapEntities::TypeId:
 			case CAsset_MapLayerTiles::TypeId:
 			case CAsset_MapZoneTiles::TypeId:
 			case CAsset_MapLayerQuads::TypeId:
 				SetCursorTool(m_pCursorTool_MapStamp);
 				break;
 			case CAsset_MapGroup::TypeId:
-			case CAsset_MapEntities::TypeId:
 				SetCursorTool(m_pCursorTool_MapTransform);
 				break;
 		}
@@ -333,7 +306,7 @@ void CViewMap::RenderView()
 	
 	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture, Color);
 	
-	if(m_ShowEntities || AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
 	{
 		const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(GetMapPath());
 		if(pMap)
@@ -343,9 +316,6 @@ void CViewMap::RenderView()
 			{
 				CAssetPath EntitiesPath = pMap->GetEntityLayer(*IterEntityLayer);
 				
-				if(!m_ShowEntities && AssetsEditor()->GetEditedAssetPath() != EntitiesPath)
-					continue;
-				
 				const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(EntitiesPath);
 				if(!pEntities)
 					continue;
@@ -353,6 +323,10 @@ void CViewMap::RenderView()
 				const CAssetState* pState = AssetsManager()->GetAssetState(EntitiesPath);
 				if(pState && !pState->m_Visible)
 					continue;
+				
+				vec4 Color = 1.0f;
+				if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId && EntitiesPath != AssetsEditor()->GetEditedAssetPath())
+					Color = vec4(1.0f, 1.0f, 1.0f, 0.5f);
 				
 				CAsset_MapEntities::CIteratorEntity IterEntity;
 				for(IterEntity = pEntities->BeginEntity(); IterEntity != pEntities->EndEntity(); ++IterEntity)
