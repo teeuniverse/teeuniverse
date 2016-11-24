@@ -250,6 +250,7 @@ public:
 	}
 
 	void DeleteAsset(const CAssetPath& Path, int Token = -1);
+	void DeleteAssets(array<CAssetPath>& Pathes, int Token = -1);
 
 	template<typename T>
 	T GetAssetValue(CAssetPath AssetPath, CSubPath SubPath, int FieldType, T DefaultValue)

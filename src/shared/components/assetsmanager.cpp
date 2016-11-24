@@ -1532,6 +1532,28 @@ void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
 	}
 }
 
+void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
+{
+	for(int a=0; a<Pathes.size(); a++)
+	{
+		if(IsValidPackage(Pathes[a].GetPackageId()))
+		{
+			m_pPackages[Pathes[a].GetPackageId()]->DeleteAsset(Pathes[a]);
+
+			CAssetPath::COperation Operation = CAssetPath::COperation::DeleteAsset(Pathes[a]);
+				
+			for(int i=0; i<m_pPackages.size(); i++)
+			{
+				if(m_pPackages[i])
+					m_pPackages[i]->AssetPathOperation(Operation);
+			}
+			
+			for(int b=a+1; b<Pathes.size(); b++)
+				Operation.Apply(Pathes[b]);
+		}
+	}
+}
+
 CAssetState* CAssetsManager::GetAssetState(CAssetPath Path)
 {
 	if(IsValidPackage(Path.GetPackageId()))
