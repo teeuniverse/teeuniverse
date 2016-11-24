@@ -67,13 +67,16 @@ protected:
 	protected:
 		virtual bool GetValue()
 		{
-			return AssetsManager()->IsReadOnlyPackage(m_PackageId);
+			return !AssetsManager()->IsValidPackage(m_PackageId) || AssetsManager()->IsReadOnlyPackage(m_PackageId);
 		}
 		
 		virtual void SetValue(bool Value)
 		{
-			AssetsManager()->SetPackageReadOnly(m_PackageId, Value);
-			m_pAssetsEditor->RefreshPackageTree();
+			if(AssetsManager()->IsValidPackage(m_PackageId))
+			{
+				AssetsManager()->SetPackageReadOnly(m_PackageId, Value);
+				m_pAssetsEditor->RefreshPackageTree();
+			}
 		}
 
 	public:
