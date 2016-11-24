@@ -838,8 +838,8 @@ int CGraphics::IssueInit()
 		&m_Cfg_ScreenHeight,
 		m_Cfg_FsaaSamples,
 		Flags,
-		&m_DesktopScreenWidth,
-		&m_DesktopScreenHeight
+		&m_DesktopWidth,
+		&m_DesktopHeight
 	);
 }
 
@@ -889,6 +889,7 @@ bool CGraphics::InitConfig(int argc, const char** argv)
 	m_Cfg_Alphabits = 0;
 	m_Cfg_Clear = 1;
 	m_Cfg_Vsync = 1;
+	m_Cfg_Resizable = 1;
 	m_Cfg_DisplayAllModes = 0;
 	m_Cfg_TextureCompression = 0;
 	m_Cfg_HighDetail = 1;
@@ -1142,7 +1143,13 @@ void CGraphics::Maximize()
 
 bool CGraphics::Fullscreen(bool State)
 {
-	return m_pBackend->Fullscreen(State);
+	if(m_pBackend->Fullscreen(State))
+	{
+		SetScreenSize(m_DesktopWidth, m_DesktopHeight);
+		return true;
+	}
+	else
+		return false;
 }
 
 void CGraphics::SetWindowBordered(bool State)
@@ -1339,4 +1346,19 @@ void CGraphics::ClipPop()
 	{
 		m_State.m_ClipEnable = false;
 	}
+}
+	
+void CGraphics::SetScreenSize(int Width, int Height)
+{
+	m_ScreenWidth = Width;
+	m_ScreenHeight = Height;
+	
+	CCommandBuffer::SCommand_SetSize Cmd;
+	Cmd.m_Width = Width;
+	Cmd.m_Height = Height;
+	m_pCommandBuffer->AddCommand(Cmd);
+
+	// kick the buffer and wait for the result
+	KickCommandBuffer();
+	WaitForIdle();
 }

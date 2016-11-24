@@ -138,6 +138,7 @@ public:
 		CMD_VSYNC,
 		CMD_SCREENSHOT,
 		CMD_VIDEOMODES,
+		CMD_SETSIZE,
 
 	};
 
@@ -213,6 +214,13 @@ public:
 		int m_ClipY;
 		int m_ClipW;
 		int m_ClipH;
+	};
+		
+	struct SCommand_SetSize : public SCommand
+	{
+		SCommand_SetSize() : SCommand(CMD_SETSIZE) {}
+		int m_Width;
+		int m_Height;
 	};
 		
 	struct SCommand_Clear : public SCommand
@@ -441,6 +449,8 @@ protected:
 	int64 m_RenderFrameTimeLow;
 	int64 m_RenderFrameTimeHigh;
 	bool m_IsReadyToRender;
+	int m_DesktopWidth;
+	int m_DesktopHeight;
 
 public:
 	int m_Cfg_Alphabits;
@@ -481,7 +491,9 @@ protected:
 
 public:
 	CGraphics(CClientKernel* pKernel);
-
+	
+	void SetScreenSize(int Width, int Height);
+	
 	int ScreenWidth() const { return m_ScreenWidth; }
 	int ScreenHeight() const { return m_ScreenHeight; }
 	float ScreenAspect() const { return (float)ScreenWidth()/(float)ScreenHeight(); }
@@ -597,9 +609,6 @@ public:
 	bool SetVSync(bool State);
 
 	int GetVideoModes(CVideoMode *pModes, int MaxModes, int Screen);
-
-	int GetDesktopScreenWidth() const { return m_DesktopScreenWidth; }
-	int GetDesktopScreenHeight() const { return m_DesktopScreenHeight; }
 
 	// syncronization
 	void InsertSignal(class semaphore* pSemaphore);

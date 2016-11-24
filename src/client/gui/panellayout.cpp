@@ -342,12 +342,18 @@ void CVPanelLayout::UpdateBoundingSize()
 	
 	m_BoundingSizeRect.BSNoConstraint();
 	
+	bool FirstChild = true;
 	for(int i=0; i<m_Childs.size(); i++)
 	{
+		if(m_Childs[i].m_pWidget->IsDisabled())
+			continue;
+		
 		m_Childs[i].m_pWidget->UpdateBoundingSize();
 		
-		if(i != 0)
-			m_BoundingSizeRect.BSAddSpacing(Spacing, 0);
+		if(FirstChild)
+			FirstChild = false;
+		else
+			m_BoundingSizeRect.BSAddSpacing(0, Spacing);
 			
 		m_BoundingSizeRect.BSVerticalAdd(m_Childs[i].m_pWidget->GetBS());
 	}
@@ -375,15 +381,21 @@ void CVPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	
 	int AvailableSpace = m_ClipRect.h;
 	int NumFill = 0;
+	int NumChilds = 0;
 	for(int i=0; i<m_Childs.size(); i++)
 	{
-		if(m_Childs[i].m_Size < 0)
+		if(m_Childs[i].m_pWidget->IsDisabled())
+			continue;
+		
+		NumChilds++;
+		
+		if(m_Childs[i].m_Fill)
 			NumFill++;
 		else
 			AvailableSpace -= max(m_Childs[i].m_Size, m_Childs[i].m_pWidget->GetBS().minw);
 	}
-	if(m_Childs.size() > 1)
-		AvailableSpace -= (m_Childs.size()-1)*Spacing;
+	if(NumChilds > 1)
+		AvailableSpace -= (NumChilds-1)*Spacing;
 	
 	int FillSize = 0;
 	if(NumFill > 0)
@@ -392,9 +404,14 @@ void CVPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	int PosY = m_ClipRect.y;
 	for(int i=0; i<m_Childs.size(); i++)
 	{
-		int ChildHeight = max(m_Childs[i].m_Size, m_Childs[i].m_pWidget->GetBS().minh);
-		if(m_Childs[i].m_Size < 0)
+		if(m_Childs[i].m_pWidget->IsDisabled())
+			continue;
+		
+		int ChildHeight;
+		if(m_Childs[i].m_Fill)
 			ChildHeight = FillSize;
+		else
+			ChildHeight = max(m_Childs[i].m_Size, m_Childs[i].m_pWidget->GetBS().minh);
 		
 		CRect ChildRect(
 			m_ClipRect.x,

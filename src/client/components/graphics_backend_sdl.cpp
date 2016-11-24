@@ -457,6 +457,11 @@ void CCommandProcessorFragment_OpenGL::Cmd_Clear(const CCommandBuffer::SCommand_
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void CCommandProcessorFragment_OpenGL::Cmd_SetSize(const CCommandBuffer::SCommand_SetSize *pCommand)
+{
+	glViewport(0, 0, pCommand->m_Width, pCommand->m_Height);
+}
+
 void CCommandProcessorFragment_OpenGL::Cmd_Render(const CCommandBuffer::SCommand_Render *pCommand)
 {
 	SetState(pCommand->m_State);
@@ -533,6 +538,7 @@ bool CCommandProcessorFragment_OpenGL::RunCommand(const CCommandBuffer::SCommand
 	case CCommandBuffer::CMD_TEXTURE_DESTROY: Cmd_Texture_Destroy(static_cast<const CCommandBuffer::SCommand_Texture_Destroy *>(pBaseCommand)); break;
 	case CCommandBuffer::CMD_TEXTURE_UPDATE: Cmd_Texture_Update(static_cast<const CCommandBuffer::SCommand_Texture_Update *>(pBaseCommand)); break;
 	case CCommandBuffer::CMD_CLEAR: Cmd_Clear(static_cast<const CCommandBuffer::SCommand_Clear *>(pBaseCommand)); break;
+	case CCommandBuffer::CMD_SETSIZE: Cmd_SetSize(static_cast<const CCommandBuffer::SCommand_SetSize *>(pBaseCommand)); break;
 	case CCommandBuffer::CMD_RENDER: Cmd_Render(static_cast<const CCommandBuffer::SCommand_Render *>(pBaseCommand)); break;
 	case CCommandBuffer::CMD_SCREENSHOT: Cmd_Screenshot(static_cast<const CCommandBuffer::SCommand_Screenshot *>(pBaseCommand)); break;
 	default: return false;
@@ -704,8 +710,8 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	// use desktop resolution as default resolution
 	if (*pWidth == 0 || *pWidth == 0)
 	{
-		*pWidth = *pDesktopWidth;
-		*pHeight = *pDesktopHeight;
+		*pWidth = DisplayMode.w;
+		*pHeight = DisplayMode.h;
 	}
 
 	// set flags
@@ -717,8 +723,8 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	if(Flags&INITFLAG_FULLSCREEN)
 #if defined(CONF_PLATFORM_MACOSX)	// Todo SDL: remove this when fixed (game freezes when losing focus in fullscreen)
 		SdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;	// always use "fake" fullscreen
-	*pWidth = *pDesktopWidth;
-	*pHeight = *pDesktopHeight;
+	*pWidth = DisplayMode.w;
+	*pHeight = DisplayMode.h;
 #else
 		SdlFlags |= SDL_WINDOW_FULLSCREEN;
 #endif
@@ -739,10 +745,10 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	// calculate centered position in windowed mode
 	int OffsetX = 0;
 	int OffsetY = 0;
-	if(!(Flags&INITFLAG_FULLSCREEN) && *pDesktopWidth > *pWidth && *pDesktopHeight > *pHeight)
+	if(!(Flags&INITFLAG_FULLSCREEN) && DisplayMode.w > *pWidth && DisplayMode.h > *pHeight)
 	{
-		OffsetX = (*pDesktopWidth - *pWidth) / 2;
-		OffsetY = (*pDesktopHeight - *pHeight) / 2;
+		OffsetX = (DisplayMode.w - *pWidth) / 2;
+		OffsetY = (DisplayMode.h - *pHeight) / 2;
 	}
 
 	// create window

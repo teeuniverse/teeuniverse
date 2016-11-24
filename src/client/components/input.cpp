@@ -37,6 +37,7 @@
 #include <shared/system/memory.h>
 #include <shared/components/cli.h>
 #include <client/keys.h>
+#include <client/components/graphics.h>
 
 #include <SDL.h>
 
@@ -273,16 +274,21 @@ bool CInput::PreUpdate()
 					Action |= CInput::FLAG_RELEASE;
 					break;
 
-#if defined(CONF_PLATFORM_MACOSX)	// Todo SDL: remove this when fixed (mouse state is faulty on start)
 				case SDL_WINDOWEVENT:
-					if(Event.window.event == SDL_WINDOWEVENT_MAXIMIZED)
+					switch(Event.window.event)
 					{
-						MouseModeAbsolute();
-						MouseModeRelative();
+						case SDL_WINDOWEVENT_SIZE_CHANGED:
+							Graphics()->SetScreenSize(Event.window.data1, Event.window.data2);
+							break;
+#if defined(CONF_PLATFORM_MACOSX)	// Todo SDL: remove this when fixed (mouse state is faulty on start)
+						case SDL_WINDOWEVENT_MAXIMIZED:
+							MouseModeAbsolute();
+							MouseModeRelative();
+							break;
+#endif
 					}
 					break;
-#endif
-					
+				
 				// other messages
 				case SDL_QUIT:
 					return false;

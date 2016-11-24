@@ -63,11 +63,6 @@ void CGui::SaveConfig(class CCLI_Output* pOutput)
 	
 bool CGui::Init()
 {
-	m_DrawRect.x = 0;
-	m_DrawRect.y = 0;
-	m_DrawRect.w = Graphics()->ScreenWidth();
-	m_DrawRect.h = Graphics()->ScreenHeight();
-	
 	m_Quit = false;
 	
 	LoadAssets();
@@ -88,6 +83,11 @@ void CGui::DestroyWidget(gui::CWidget* pWidget)
 
 bool CGui::PreUpdate()
 {
+	m_DrawRect.x = 0;
+	m_DrawRect.y = 0;
+	m_DrawRect.w = Graphics()->ScreenWidth();
+	m_DrawRect.h = Graphics()->ScreenHeight();
+	
 	//Remove unused widgets
 	for(int i=0; i<m_pPopups.size(); i++)
 	{
@@ -345,11 +345,6 @@ void CGui::Render()
 			}
 		}
 	}
-	
-	m_DrawRect.x = 0;
-	m_DrawRect.y = 0;
-	m_DrawRect.w = Graphics()->ScreenWidth();
-	m_DrawRect.h = Graphics()->ScreenHeight();
 }
 	
 void CGui::SetCursor(gui::CWidget* pWidget, int CursorType)

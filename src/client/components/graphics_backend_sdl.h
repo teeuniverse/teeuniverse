@@ -115,6 +115,8 @@ protected:
 	SDL_GLContext m_GLContext;
 	volatile int m_TextureMemoryUsage;
 	int m_NumScreens;
+	int m_DesktopWidth;
+	int m_DesktopHeight;
 	
 protected:
 	void StartProcessor(ICommandProcessor *pProcessor);
@@ -199,6 +201,7 @@ private:
 	void Cmd_Texture_Destroy(const CCommandBuffer::SCommand_Texture_Destroy *pCommand);
 	void Cmd_Texture_Create(const CCommandBuffer::SCommand_Texture_Create *pCommand);
 	void Cmd_Clear(const CCommandBuffer::SCommand_Clear *pCommand);
+	void Cmd_SetSize(const CCommandBuffer::SCommand_SetSize *pCommand);
 	void Cmd_Render(const CCommandBuffer::SCommand_Render *pCommand);
 	void Cmd_Screenshot(const CCommandBuffer::SCommand_Screenshot *pCommand);
 
