@@ -53,6 +53,14 @@ public:
 	{
 		
 	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pViewMap->AssetsEditor()->SetHint("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\"");
+		
+		gui::CHSlider::OnMouseMove();
+	}
 };
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :

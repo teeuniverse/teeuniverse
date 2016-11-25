@@ -36,7 +36,7 @@ protected:
 	}
 	
 public:
-	CQuitButton(CGuiGame* pMenu, const CLocalizableString& LocalizationString, CAssetPath IconPath) :
+	CQuitButton(CGuiGame* pMenu, const gui::CLocalizableString& LocalizationString, CAssetPath IconPath) :
 		gui::CButton(pMenu, LocalizationString, IconPath),
 		m_pMenu(pMenu)
 	{
@@ -58,7 +58,7 @@ protected:
 	}
 	
 public:
-	CPageButton(CGuiGame* pMenu, int Page, const CLocalizableString& LocalizationString, CAssetPath IconPath) :
+	CPageButton(CGuiGame* pMenu, int Page, const gui::CLocalizableString& LocalizationString, CAssetPath IconPath) :
 		gui::CButton(pMenu, LocalizationString, IconPath),
 		m_pMenu(pMenu),
 		m_Page(Page)

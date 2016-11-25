@@ -504,6 +504,14 @@ void CCursorTool_MapTransform::Update(bool ParentEnabled)
 	CCursorTool::Update(ParentEnabled);
 }
 
+void CCursorTool_MapTransform::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint("Transform Tool: Move, rotate and scale objects");
+	
+	CCursorTool_MapPicker::OnMouseMove();
+}
+
 /* CURSORTOOL QUAD EDIT ***********************************************/
 
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
@@ -750,4 +758,12 @@ void CCursorTool_MapEdit::Update(bool ParentEnabled)
 	}
 	
 	CCursorTool::Update(ParentEnabled);
+}
+
+void CCursorTool_MapEdit::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint("Edit Tool: Change the shape of object by moving verticies.");
+	
+	CCursorTool_MapPicker::OnMouseMove();
 }

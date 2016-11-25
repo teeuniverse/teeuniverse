@@ -65,6 +65,7 @@ public:
 	virtual void OnViewMouseMove();
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
+	virtual void OnMouseMove();
 };
 
 class CCursorTool_MapEdit : public CCursorTool_MapPicker
@@ -92,6 +93,7 @@ public:
 	virtual void OnViewMouseMove();
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
+	virtual void OnMouseMove();
 };
 
 #endif

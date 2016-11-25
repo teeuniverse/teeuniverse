@@ -105,7 +105,7 @@ protected:
 		
 	public:
 		COpen(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), "Open"),
+			gui::CButton(pPopup->Context(), _GUI("Open")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -125,7 +125,7 @@ protected:
 		
 	public:
 		CSave(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), "Save"),
+			gui::CButton(pPopup->Context(), _GUI("Save")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -145,7 +145,7 @@ protected:
 		
 	public:
 		CCancel(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), "Cancel"),
+			gui::CButton(pPopup->Context(), _GUI("Cancel")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -179,12 +179,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Export Image"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export Image")), false);
 				ListFiles("images", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Import Image"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import Image")), false);
 				ListFiles("images", CStorage::TYPE_ALL);
 			}
 		}
@@ -192,12 +192,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Export TeeWorlds Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export TeeWorlds Map")), false);
 				ListFiles("maps", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Import TeeWorlds Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import TeeWorlds Map")), false);
 				ListFiles("maps", CStorage::TYPE_ALL);
 			}
 		}
@@ -205,12 +205,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Export InfClass Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export InfClass Map")), false);
 				ListFiles("maps", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Import InfClass Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import InfClass Map")), false);
 				ListFiles("maps", CStorage::TYPE_ALL);
 			}
 		}
@@ -218,12 +218,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Export DDNet Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export DDNet Map")), false);
 				ListFiles("maps", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Import DDNet Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import DDNet Map")), false);
 				ListFiles("maps", CStorage::TYPE_ALL);
 			}
 		}
@@ -231,12 +231,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Export OpenFNG Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export OpenFNG Map")), false);
 				ListFiles("maps", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Import OpenFNG Map"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import OpenFNG Map")), false);
 				ListFiles("maps", CStorage::TYPE_ALL);
 			}
 		}
@@ -244,12 +244,12 @@ public:
 		{
 			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Save Package"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Save Package")), false);
 				ListFiles("assets", CStorage::TYPE_SAVE);
 			}
 			else
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), "Open Package"), false);
+				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Open Package")), false);
 				ListFiles("assets", CStorage::TYPE_ALL);
 			}
 		}
@@ -260,7 +260,7 @@ public:
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pLayout->Add(pHList, false);
 			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), "Filename");
+			gui::CLabel* pLabel = new gui::CLabel(Context(), _GUI("Filename"));
 			pLabel->NoTextClipping();
 			pHList->Add(pLabel, false);
 			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_SelectedPackage), true);
@@ -475,7 +475,7 @@ protected:
 
 public:
 	CNewPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, "New Package"),
+		gui::CButton(pAssetsEditor, _GUI("New Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -499,7 +499,7 @@ protected:
 
 public:
 	COpenPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, "Open Package"),
+		gui::CButton(pAssetsEditor, _GUI("Open Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -532,19 +532,19 @@ public:
 		switch(m_Format)
 		{
 			case COpenSavePackageDialog::FORMAT_IMAGE:
-				SetText("Import Image");
+				SetText(_GUI("Import Image"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
-				SetText("Import TeeWorlds Map");
+				SetText(_GUI("Import TeeWorlds Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_DDNET:
-				SetText("Import DDNet Map");
+				SetText(_GUI("Import DDNet Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
-				SetText("Import InfClass Map");
+				SetText(_GUI("Import InfClass Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText("Import OpenFNG");
+				SetText(_GUI("Import OpenFNG"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -580,7 +580,7 @@ protected:
 
 public:
 	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, "Save Package"),
+		gui::CButton(pAssetsEditor, _GUI("Save Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -604,7 +604,7 @@ protected:
 
 public:
 	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, "Save Package As..."),
+		gui::CButton(pAssetsEditor, _GUI("Save Package As...")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -628,7 +628,7 @@ protected:
 
 public:
 	CQuitButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, "Quit"),
+		gui::CButton(pAssetsEditor, _GUI("Quit")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -745,8 +745,8 @@ protected:
 	}
 
 public:
-	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int AssetType, const char* pName) :
-		gui::CButton(pAssetsEditor, pName),
+	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int AssetType, const gui::CLocalizableString& Text) :
+		gui::CButton(pAssetsEditor, Text),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu),
 		m_AssetType(AssetType)
@@ -795,7 +795,7 @@ protected:
 	
 public:
 	CToggleFullscreen(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CToggle(pAssetsEditor, "Fullscreen"),
+		gui::CToggle(pAssetsEditor, _GUI("Fullscreen")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -829,7 +829,7 @@ protected:
 
 public:
 	CFileButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, "File"),
+		gui::CButton(pAssetsEditor, _GUI("File")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -848,14 +848,14 @@ protected:
 		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
 		
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, "New Map"));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _GUI("New Map")));
 		
 		m_pAssetsEditor->DisplayPopup(pMenu);
 	}
 
 public:
 	CAssetButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, "Asset"),
+		gui::CButton(pAssetsEditor, _GUI("Asset")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -880,7 +880,7 @@ protected:
 
 public:
 	CViewButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, "View"),
+		gui::CButton(pAssetsEditor, _GUI("View")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -962,6 +962,12 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateToolbar()
 	pMenuBar->Add(new CFileButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CAssetButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CViewButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new gui::CFiller(Context()), true);
+	
+	m_pAssetsEditor->m_pHintLabel = new gui::CLabel(Context(), "");
+	m_pAssetsEditor->m_pHintLabel->NoTextClipping();
+	
+	pMenuBar->Add(m_pAssetsEditor->m_pHintLabel, false);
 	
 	return pMenuBar;
 }
@@ -974,7 +980,8 @@ CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	m_pEditorKernel(pEditorKernel),
 	m_EditedSubPath(CSubPath::Null()),
 	m_pAssetsTree(NULL),
-	m_pPackagesTree(NULL)
+	m_pPackagesTree(NULL),
+	m_pHintLabel(NULL)
 {
 	SetName("GuiEditor");
 }
@@ -1229,4 +1236,9 @@ void CGuiEditor::RefreshAssetsTree()
 {
 	if(m_pAssetsTree)
 		m_pAssetsTree->Refresh();
+}
+
+void CGuiEditor::SetHint(const char* pText)
+{
+	m_pHintLabel->SetText(pText);
 }

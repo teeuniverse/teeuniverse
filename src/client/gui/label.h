@@ -23,9 +23,20 @@
 
 #include <client/components/textrenderer.h>
 #include <shared/components/localization.h>
-	
+
+#define _GUI(TEXT) (gui::CLocalizableString(TEXT))
+
 namespace gui
 {
+
+struct CLocalizableString
+{
+	const char* m_pText;
+	
+	CLocalizableString(const char* pText) :
+		m_pText(pText)
+	{ }
+};
 
 class CAbstractLabel : public CWidget
 {
@@ -66,6 +77,7 @@ public:
 	inline float GetFontSize() const { return m_FontSize; }
 	
 	void SetText(const char* pText, bool Localize = false);
+	void SetText(const gui::CLocalizableString& Text);
 	inline const char* GetText() const { return m_aText; }
 	
 	inline const CRect& GetTextRect() const { return m_TextRect; }

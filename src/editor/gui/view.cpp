@@ -47,6 +47,8 @@ void CViewManager::CView::CCursorTool::Update(bool ParentEnabled)
 		SetButtonStyle(AssetsEditor()->m_Path_Button_CursorToolHL);
 	else
 		SetButtonStyle(AssetsEditor()->m_Path_Button_CursorTool);
+	
+	gui::CButton::Update(ParentEnabled);
 }
 
 void CViewManager::CView::CCursorTool::OnUse(bool Used)

@@ -29,16 +29,7 @@
 
 #include <stdarg.h>
 
-struct CLocalizableString
-{
-	const char* m_pText;
-	
-	CLocalizableString(const char* pText) :
-		m_pText(pText)
-	{ }
-};
-
-#define _(TEXT) (CLocalizableString(TEXT))
+#define _(TEXT) (TEXT)
 
 class CLocalization : public CSharedKernel::CComponent
 {

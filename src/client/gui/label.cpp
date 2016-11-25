@@ -362,6 +362,11 @@ void CAbstractLabel::SetText(const char* pText, bool Localize)
 	OnTextUpdated();
 }
 
+void CAbstractLabel::SetText(const gui::CLocalizableString& Text)
+{
+	SetText(Text.m_pText, true);
+}
+
 void CAbstractLabel::SetLabelStyle(CAssetPath Path)
 {
 	m_LabelStylePath = Path;

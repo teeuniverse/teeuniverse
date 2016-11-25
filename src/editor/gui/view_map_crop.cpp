@@ -315,3 +315,11 @@ void CCursorTool_MapCrop::Update(bool ParentEnabled)
 	
 	CViewMap::CCursorTool::Update(ParentEnabled);
 }
+
+void CCursorTool_MapCrop::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint("Crop Tool: Edit boundaries of a layer");
+	
+	CViewMap::CCursorTool::OnMouseMove();
+}

@@ -48,7 +48,7 @@ protected:
 
 	public:
 		CCloseButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CButton(pAssetsEditor, "Close", pAssetsEditor->m_Path_Sprite_IconDelete),
+			gui::CButton(pAssetsEditor, _GUI("Close"), pAssetsEditor->m_Path_Sprite_IconDelete),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
@@ -81,7 +81,7 @@ protected:
 
 	public:
 		CRealOnlyToggle(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CToggle(pAssetsEditor, "Read-Only"),
+			gui::CToggle(pAssetsEditor, _GUI("Read-Only")),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
@@ -156,8 +156,8 @@ public:
 class CInactiveText : public gui::CLabel
 {
 public:
-	CInactiveText(CGuiEditor* pAssetsEditor, const char* pText, const CAssetPath& IconPath) :
-		gui::CLabel(pAssetsEditor, pText, IconPath)
+	CInactiveText(CGuiEditor* pAssetsEditor, const gui::CLocalizableString& Text, const CAssetPath& IconPath) :
+		gui::CLabel(pAssetsEditor, Text, IconPath)
 	{
 		SetLabelStyle(pAssetsEditor->m_Path_Label_InactiveListItem);
 	}
@@ -202,8 +202,8 @@ protected:
 		CAssetPath m_AssetPath;
 
 	public:
-		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const char* pName, const CAssetPath& IconPath) :
-			gui::CButton(pAssetsEditor, pName, IconPath),
+		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const gui::CLocalizableString& Name, const CAssetPath& IconPath) :
+			gui::CButton(pAssetsEditor, Name, IconPath),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_AssetPath(AssetPath)
@@ -292,7 +292,7 @@ protected:
 
 	public:
 		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Delete", pAssetsEditor->m_Path_Sprite_IconDelete)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
 		{ }
 	};
 	
@@ -326,7 +326,7 @@ protected:
 
 	public:
 		CAddSpriteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Sprite", pAssetsEditor->m_Path_Sprite_IconSprite)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite)
 		{ }
 	};
 	
@@ -363,7 +363,7 @@ protected:
 
 	public:
 		CAddZoneLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Zone Layer", pAssetsEditor->m_Path_Sprite_IconZoneTiles)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Zone Layer"), pAssetsEditor->m_Path_Sprite_IconZoneTiles)
 		{ }
 	};
 	
@@ -398,7 +398,7 @@ protected:
 
 	public:
 		CAddEntityLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Entities", pAssetsEditor->m_Path_Sprite_IconEntities)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Entities"), pAssetsEditor->m_Path_Sprite_IconEntities)
 		{ }
 	};
 	
@@ -433,7 +433,7 @@ protected:
 
 	public:
 		CAddBgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Background Group", pAssetsEditor->m_Path_Sprite_IconFolder)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Background Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -469,7 +469,7 @@ protected:
 
 	public:
 		CAddFgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Foreground Group", pAssetsEditor->m_Path_Sprite_IconFolder)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Foreground Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -506,7 +506,7 @@ protected:
 
 	public:
 		CAddTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Tile Layer", pAssetsEditor->m_Path_Sprite_IconTiles)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Tile Layer"), pAssetsEditor->m_Path_Sprite_IconTiles)
 		{ }
 	};
 	
@@ -541,7 +541,7 @@ protected:
 
 	public:
 		CAddQuadLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, "Add Quad Layer", pAssetsEditor->m_Path_Sprite_IconQuad)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Quad Layer"), pAssetsEditor->m_Path_Sprite_IconQuad)
 		{ }
 	};
 	
@@ -964,10 +964,10 @@ public:
 		gui::CExpand* pBgExpand = new gui::CExpand(Context());
 		gui::CExpand* pFgExpand = new gui::CExpand(Context());
 		
-		pZoneExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Zones", m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pEntityExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Entities", m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pBgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Background Layers", m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pFgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Foreground Layers", m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pZoneExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Zones"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pEntityExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Entities"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pBgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Background Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pFgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Foreground Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
 		
 		Add(pZoneExpand);
 		Add(pEntityExpand);
@@ -1052,8 +1052,8 @@ void CPackagesTree::Refresh()
 	gui::CExpand* pWriteExpand = new gui::CExpand(Context());
 	gui::CExpand* pReadExpand = new gui::CExpand(Context());
 	
-	pWriteExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Edited Packages", m_pAssetsEditor->m_Path_Sprite_IconNone));
-	pReadExpand->SetTitle(new CInactiveText(m_pAssetsEditor, "Read-Only Packages", m_pAssetsEditor->m_Path_Sprite_IconNone));
+	pWriteExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Edited Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+	pReadExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Read-Only Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
 	
 	Add(pWriteExpand);
 	Add(pReadExpand);

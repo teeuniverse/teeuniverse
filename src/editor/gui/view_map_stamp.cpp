@@ -956,3 +956,11 @@ void CCursorTool_MapStamp::PaletteCallback_SelectEntityType(CAssetPath EntityTyp
 	
 	m_SelectionEnabled = true;
 }
+
+void CCursorTool_MapStamp::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint("Stamp Tool: Create and copy objects. Use right click to open the palette.");
+	
+	CViewMap::CCursorTool::OnMouseMove();
+}

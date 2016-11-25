@@ -57,16 +57,16 @@ private:
 	gui::CVScrollLayout* m_pTabs[NUM_TABS];
 	
 private:
-	void AddField(gui::CVListLayout* pList, gui::CWidget* pWidget, const char* pLabelText);
-	void AddField_Text(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Bool(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Integer(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Color(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Float(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const char* pLabelText);
-	void AddField_Angle(gui::CVListLayout* pList, int Member, const char* pLabelText);
-	void AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const char* pLabelText);
+	void AddField(gui::CVListLayout* pList, gui::CWidget* pWidget, const gui::CLocalizableString& Text);
+	void AddField_Text(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Bool(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Integer(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Color(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Float(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const gui::CLocalizableString& Text);
+	void AddField_Angle(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text);
+	void AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const gui::CLocalizableString& Text);
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
 
 	//Search Tag: TAG_NEW_ASSET

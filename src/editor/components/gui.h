@@ -22,6 +22,7 @@
 #include <client/components/gui.h>
 #include <client/gui/listlayout.h>
 #include <client/gui/popup.h>
+#include <client/gui/label.h>
 #include <shared/components/assetsmanager.h>
 #include <editor/kernel.h>
 
@@ -56,6 +57,7 @@ private:
 public:
 	class CAssetsTree* m_pAssetsTree;
 	class CPackagesTree* m_pPackagesTree;
+	gui::CLabel* m_pHintLabel;
 	
 public:
 	CAssetPath m_Path_Image_ZoneTexture;
@@ -162,6 +164,8 @@ public:
 	
 	void RefreshPackageTree();
 	void RefreshAssetsTree();
+	
+	void SetHint(const char* pText);
 	
 	inline CEditorKernel* EditorKernel() { return m_pEditorKernel; }
 	inline const CEditorKernel* EditorKernel() const { return m_pEditorKernel; }
