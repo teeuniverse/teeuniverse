@@ -59,33 +59,79 @@ public:
 	};
 	
 protected:
+	class CItem_Directory : public gui::CButton
+	{
+	protected:
+		COpenSavePackageDialog* m_pPopup;
+		CGuiEditor* m_pAssetsEditor;
+		dynamic_string m_Directory;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pPopup->SelectDirectory(m_Directory.buffer());
+		}
+		
+	public:
+		CItem_Directory(COpenSavePackageDialog* pPopup, const char* pFilename, const char* pDir) :
+			gui::CButton(pPopup->Context(), pFilename, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
+			m_pPopup(pPopup),
+			m_pAssetsEditor(pPopup->m_pAssetsEditor)
+		{
+			m_Directory.copy(pDir);
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+		}
+		
+		CItem_Directory(COpenSavePackageDialog* pPopup, const CLocalizableString& Title, const char* pDir) :
+			gui::CButton(pPopup->Context(), Title, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
+			m_pPopup(pPopup),
+			m_pAssetsEditor(pPopup->m_pAssetsEditor)
+		{
+			m_Directory.copy(pDir);
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+		}
+	};
+	
 	class CItem_Load : public gui::CButton
 	{
 	protected:
 		COpenSavePackageDialog* m_pPopup;
 		CGuiEditor* m_pAssetsEditor;
 		dynamic_string m_Filename;
-		int m_StorageType;
 		
 	protected:
 		virtual void MouseClickAction()
 		{
-			m_pPopup->Select(m_Filename.buffer(), m_StorageType);
+			m_pPopup->SelectName(m_Filename.buffer());
 		}
 		
 	public:
-		CItem_Load(COpenSavePackageDialog* pPopup, const char* pFilename, int StorageType) :
-			gui::CButton(pPopup->Context(), pFilename, pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset),
+		CItem_Load(COpenSavePackageDialog* pPopup, const char* pFilename) :
+			gui::CButton(pPopup->Context(), pFilename),
 			m_pPopup(pPopup),
 			m_pAssetsEditor(pPopup->m_pAssetsEditor)
 		{
+			switch(m_pPopup->GetFormat())
+			{
+				case FORMAT_IMAGE:
+					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconImage);
+					break;
+				case FORMAT_MAP_TW:
+				case FORMAT_MAP_DDNET:
+				case FORMAT_MAP_INFCLASS:
+				case FORMAT_MAP_OPENFNG:
+					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
+					break;
+				default:
+					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
+					break;
+			}
 			m_Filename.copy(pFilename);
-			m_StorageType = StorageType;
 		}
 		
 		virtual void Update(bool ParentEnabled)
 		{
-			if(m_Filename == m_pPopup->m_SelectedPackage)
+			if(m_Filename == m_pPopup->m_Filename)
 				SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
 			else
 				SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
@@ -154,11 +200,12 @@ protected:
 
 protected:
 	CGuiEditor* m_pAssetsEditor;
-	dynamic_string m_SelectedPackage;
-	int m_SelectedStorageType;
+	dynamic_string m_Filename;
+	dynamic_string m_Directory;
 	gui::CVScrollLayout* m_pFilelist;
 	int m_Format;
 	bool m_Save;
+	bool m_RefreshList;
 	
 public:
 	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, bool Save, int Format) :
@@ -166,92 +213,106 @@ public:
 		m_pAssetsEditor(pAssetsEditor),
 		m_pFilelist(NULL),
 		m_Save(Save),
-		m_Format(Format)
+		m_Format(Format),
+		m_RefreshList(true)
 	{
 		gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 		pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 		Add(pLayout);
 		
-		m_pFilelist = new gui::CVScrollLayout(Context());
-		pLayout->Add(m_pFilelist, true);
+		switch(m_Format)
+		{
+			case FORMAT_IMAGE:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export Image")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import Image")), false);
+				break;
+			case FORMAT_MAP_TW:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export TeeWorlds Map")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import TeeWorlds Map")), false);
+				break;
+			case FORMAT_MAP_INFCLASS:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export InfClass Map")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import InfClass Map")), false);
+				break;
+			case FORMAT_MAP_DDNET:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export DDNet Map")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import DDNet Map")), false);
+				break;
+			case FORMAT_MAP_OPENFNG:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export OpenFNG Map")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import OpenFNG Map")), false);
+				break;
+			default:
+				if(m_Save)
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Save Package")), false);
+				else
+					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Open Package")), false);
+				break;
+		}
 		
-		if(m_Format == FORMAT_IMAGE)
 		{
-			if(m_Save)
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export Image")), false);
-				ListFiles("images", CStorage::TYPE_SAVE);
-			}
-			else
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import Image")), false);
-				ListFiles("images", CStorage::TYPE_ALL);
-			}
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pLayout->Add(pHList, false);
+			
+			gui::CLabel* pLabel = new gui::CLabel(Context(), _GUI("Directory"));
+			pLabel->NoTextClipping();
+			pHList->Add(pLabel, false);
+			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
+			
 		}
-		else if(m_Format == FORMAT_MAP_TW)
+		
 		{
-			if(m_Save)
+			gui::CHPanelLayout* pPanel = new gui::CHPanelLayout(Context());
+			pLayout->Add(pPanel, true);
+			
+			gui::CVScrollLayout* pPlaces = new gui::CVScrollLayout(Context());
+			pPanel->Add(pPlaces, 200);
+			pPlaces->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+			
+			dynamic_string Buffer;
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export TeeWorlds Map")), false);
-				ListFiles("maps", CStorage::TYPE_SAVE);
+				Buffer.clear();
+				Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
+				pPlaces->Add(new CItem_Directory(this, _GUI("My packages"), Buffer.buffer()), false);			
 			}
-			else
+			pPlaces->AddSeparator();
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import TeeWorlds Map")), false);
-				ListFiles("maps", CStorage::TYPE_ALL);
+				Buffer.clear();
+				fs_storage_path("teeworlds", Buffer);
+				Buffer.append("/maps");
+				pPlaces->Add(new CItem_Directory(this, _GUI("TeeWorlds Maps"), Buffer.buffer()), false);
 			}
-		}
-		else if(m_Format == FORMAT_MAP_INFCLASS)
-		{
-			if(m_Save)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export InfClass Map")), false);
-				ListFiles("maps", CStorage::TYPE_SAVE);
+				Buffer.clear();
+				fs_storage_path("teeworlds", Buffer);
+				Buffer.append("/downloadedmaps");
+				pPlaces->Add(new CItem_Directory(this, _GUI("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
 			}
-			else
+			pPlaces->AddSeparator();
+			for(int i=0; i<Storage()->GetNumPaths(); i++)
 			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import InfClass Map")), false);
-				ListFiles("maps", CStorage::TYPE_ALL);
+				Buffer.clear();
+				Storage()->GetCompletePath(i, "assets", Buffer);
+				
+				CLocalizableString LString(_("Data Directory {int:Id}"));
+				LString.AddInteger("Id", i+1);
+				
+				pPlaces->Add(new CItem_Directory(this, LString, Buffer.buffer()), false);
 			}
-		}
-		else if(m_Format == FORMAT_MAP_DDNET)
-		{
-			if(m_Save)
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export DDNet Map")), false);
-				ListFiles("maps", CStorage::TYPE_SAVE);
-			}
-			else
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import DDNet Map")), false);
-				ListFiles("maps", CStorage::TYPE_ALL);
-			}
-		}
-		else if(m_Format == FORMAT_MAP_OPENFNG)
-		{
-			if(m_Save)
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Export OpenFNG Map")), false);
-				ListFiles("maps", CStorage::TYPE_SAVE);
-			}
-			else
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Import OpenFNG Map")), false);
-				ListFiles("maps", CStorage::TYPE_ALL);
-			}
-		}
-		else
-		{
-			if(m_Save)
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Save Package")), false);
-				ListFiles("assets", CStorage::TYPE_SAVE);
-			}
-			else
-			{
-				m_pFilelist->Add(new gui::CLabelHeader(Context(), _GUI("Open Package")), false);
-				ListFiles("assets", CStorage::TYPE_ALL);
-			}
+			
+			m_pFilelist = new gui::CVScrollLayout(Context());
+			m_pFilelist->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+			pPanel->Add(m_pFilelist, -1);
 		}
 		
 		//Filename
@@ -263,7 +324,7 @@ public:
 			gui::CLabel* pLabel = new gui::CLabel(Context(), _GUI("Filename"));
 			pLabel->NoTextClipping();
 			pHList->Add(pLabel, false);
-			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_SelectedPackage), true);
+			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Filename), true);
 			
 		}
 		
@@ -282,69 +343,175 @@ public:
 			else
 				pHList->Add(new COpen(this), false);
 		}
+		
+		switch(m_Format)
+		{
+			case FORMAT_IMAGE:
+				SelectDirectory("images", CStorage::TYPE_SAVE);
+				break;
+			case FORMAT_MAP_TW:
+				SelectDirectory("maps", CStorage::TYPE_SAVE);
+				break;
+			case FORMAT_MAP_INFCLASS:
+				SelectDirectory("maps", CStorage::TYPE_SAVE);
+				break;
+			case FORMAT_MAP_DDNET:
+				SelectDirectory("maps", CStorage::TYPE_SAVE);
+				break;
+			case FORMAT_MAP_OPENFNG:
+				SelectDirectory("maps", CStorage::TYPE_SAVE);
+				break;
+			default:
+				SelectDirectory("assets", CStorage::TYPE_SAVE);
+				break;
+		}
 	}
 	
-	void ListFiles(const char* pDir, int StorageType)
+	virtual void Update(bool ParentEnabled)
 	{
-		CStorage::CListDirIterator* pIter = Storage()->CreateListDirIterator(pDir, StorageType);
+		if(m_RefreshList)
+		{
+			ListFiles();
+			m_RefreshList = false;
+		}
+		
+		gui::CPopup::Update(ParentEnabled);
+	}
+	
+	void ListFiles()
+	{
+		m_pFilelist->Clear();
+		
+		dynamic_string Buffer;
+		
+		fs_listdir_iterator* pIter = fs_create_listdir_iterator(m_Directory.buffer());
+		int PathSize = str_length(m_Directory.buffer());
 		
 		if(!pIter)
 			return;
 		
-		while(pIter->Next())
+		sorted_array< dynamic_string, allocator_copy<dynamic_string> > Directories;
+		sorted_array< dynamic_string, allocator_copy<dynamic_string> > Files;
+		bool ParentFolder = false;
+		
+		while(pIter->next())
 		{
-			dynamic_string Buffer;
-			pIter->GetFilename(Buffer);
+			const char* pFilename = pIter->get_filename();
+			
+			if(str_length(pFilename) > PathSize+1 && str_comp_num(pFilename, m_Directory.buffer(), PathSize) == 0)
+				Buffer.copy(pFilename + PathSize +1);
+			else
+				Buffer.copy(pFilename);
 			
 			int Length = Buffer.length();
-			if(Buffer.buffer()[0] == '.' && (Buffer.buffer()[1] == 0))
-				continue;
-			
-			bool Found = false;
-			switch(m_Format)
+			if(Length > 0 && Buffer.buffer()[0] == '.')
 			{
-				case FORMAT_IMAGE:
-					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".png") == 0)
-					{
-						Found = true;
-						Buffer.buffer()[Length-4] = 0;
-					}
-					break;
-				case FORMAT_MAP_TW:
-				case FORMAT_MAP_INFCLASS:
-				case FORMAT_MAP_DDNET:
-				case FORMAT_MAP_OPENFNG:
-					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
-					{
-						Found = true;
-						Buffer.buffer()[Length-4] = 0;
-					}
-					break;
-				case FORMAT_PACKAGE:
-					if(Length >= 7 && str_comp(Buffer.buffer()+Length-7, ".assets") == 0)
-					{
-						Found = true;
-						Buffer.buffer()[Length-7] = 0;
-					}
-					break;
+				if(Buffer.buffer()[1] == 0)
+					continue;
+				if(Length > 1 && Buffer.buffer()[1] == '.' && (Buffer.buffer()[2] == 0))
+				{
+					ParentFolder = true;
+					continue;
+				}
 			}
 			
-			if(Found)
-				m_pFilelist->Add(new CItem_Load(this, Buffer.buffer(), StorageType), false);
+			if(fs_is_dir(pFilename))
+				Directories.add_by_copy(pFilename);
+			else
+			{
+				bool Found = false;
+				switch(m_Format)
+				{
+					case FORMAT_IMAGE:
+						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".png") == 0)
+						{
+							Found = true;
+							Buffer.buffer()[Length-4] = 0;
+						}
+						break;
+					case FORMAT_MAP_TW:
+					case FORMAT_MAP_INFCLASS:
+					case FORMAT_MAP_DDNET:
+					case FORMAT_MAP_OPENFNG:
+						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
+						{
+							Found = true;
+							Buffer.buffer()[Length-4] = 0;
+						}
+						break;
+					case FORMAT_PACKAGE:
+						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".tup") == 0)
+						{
+							Found = true;
+							Buffer.buffer()[Length-4] = 0;
+						}
+						break;
+				}
+				
+				if(Found)
+					Files.add_by_copy(Buffer);
+			}
 		}
+		
+		if(ParentFolder)
+		{
+			int i=m_Directory.length()-1;
+			for(; i>=0; i--)
+				if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
+					break;
+			for(; i>=0; i--)
+				if(m_Directory.buffer()[i] == '/' || m_Directory.buffer()[i] == '\\')
+					break;
+			for(; i>=0; i--)
+				if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
+					break;
+				
+			if(i>=0)
+			{
+				Buffer.clear();
+				Buffer.append_at_num(0, m_Directory.buffer(), i+1);
+				m_pFilelist->Add(new CItem_Directory(this, _GUI("Parent Directory"), Buffer.buffer()), false);
+			}
+		}
+		for(int i=0; i<Directories.size(); i++)
+		{
+			const char* pName = Directories[i].buffer();
+			if(Directories[i].length() > PathSize+1 && Directories[i].comp_num(m_Directory, PathSize) == 0)
+				pName += PathSize+1;
+			
+			m_pFilelist->Add(new CItem_Directory(this, pName, Directories[i].buffer()), false);
+		}
+		for(int i=0; i<Files.size(); i++)
+			m_pFilelist->Add(new CItem_Load(this, Files[i].buffer()), false);
 		
 		delete pIter;
 	}
 	
-	void Select(const char* pFilename, int StorageType)
+	int GetFormat() const
 	{
-		m_SelectedStorageType = StorageType;
-		m_SelectedPackage.copy(pFilename);
+		return m_Format;
+	}
+	
+	void SelectName(const char* pFilename)
+	{
+		m_Filename.copy(pFilename);
+	}
+	
+	void SelectDirectory(const char* pDirectory)
+	{
+		m_Directory.copy(pDirectory);
+		m_RefreshList = true;
+	}
+	
+	void SelectDirectory(const char* pDirectory, int StorageType)
+	{
+		Storage()->GetCompletePath(StorageType, pDirectory, m_Directory);
+		m_RefreshList = true;
 	}
 	
 	void Save()
 	{
-		AssetsManager()->Save_AssetsFile(m_SelectedPackage.buffer(), m_pAssetsEditor->GetEditedPackageId());
+		AssetsManager()->Save_AssetsFile(m_Filename.buffer(), m_pAssetsEditor->GetEditedPackageId());
 		m_pAssetsEditor->RefreshPackageTree();
 		Close();
 	}
@@ -352,22 +519,27 @@ public:
 	void Open()
 	{
 		Context()->ShowLoadingCursor();
+		dynamic_string Buffer;
+		int TextIter = 0;
 		switch(m_Format)
 		{
 			case FORMAT_IMAGE:
 			{
-				dynamic_string Buffer;
-				Buffer.append("images/");
-				Buffer.append(m_SelectedPackage);
-				Buffer.append(".png");
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".png");
 				
-				CAssetPath ImageEditorPath = CreateNewImage(m_pAssetsEditor->SharedKernel(), m_pAssetsEditor->GetEditedPackageId(), m_SelectedPackage.buffer(), Buffer.buffer(), -1, -1);
+				CAssetPath ImageEditorPath = CreateNewImage(m_pAssetsEditor->SharedKernel(), m_pAssetsEditor->GetEditedPackageId(), m_Filename.buffer(), Buffer.buffer(), -1, -1);
 				m_pAssetsEditor->SetEditedAsset(ImageEditorPath, CSubPath::Null());
 				break;
 			}
 			case FORMAT_MAP_TW:
 			{
-				int PackageId = AssetsManager()->Load_Map(m_SelectedPackage.buffer(), m_SelectedStorageType, CAssetsManager::MAPFORMAT_TW);
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_TW);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -375,7 +547,11 @@ public:
 			}
 			case FORMAT_MAP_DDNET:
 			{
-				int PackageId = AssetsManager()->Load_Map(m_SelectedPackage.buffer(), m_SelectedStorageType, CAssetsManager::MAPFORMAT_DDNET);
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_DDNET);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -383,7 +559,11 @@ public:
 			}
 			case FORMAT_MAP_INFCLASS:
 			{
-				int PackageId = AssetsManager()->Load_Map(m_SelectedPackage.buffer(), m_SelectedStorageType, CAssetsManager::MAPFORMAT_INFCLASS);
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_INFCLASS);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -391,7 +571,11 @@ public:
 			}
 			case FORMAT_MAP_OPENFNG:
 			{
-				int PackageId = AssetsManager()->Load_Map(m_SelectedPackage.buffer(), m_SelectedStorageType, CAssetsManager::MAPFORMAT_OPENFNG);
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_OPENFNG);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -399,7 +583,11 @@ public:
 			}
 			case FORMAT_PACKAGE:
 			{
-				int PackageId = AssetsManager()->Load_AssetsFile(m_SelectedPackage.buffer(), m_SelectedStorageType);
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".tup");
+				int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -745,7 +933,7 @@ protected:
 	}
 
 public:
-	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int AssetType, const gui::CLocalizableString& Text) :
+	CNewAsset(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int AssetType, const CLocalizableString& Text) :
 		gui::CButton(pAssetsEditor, Text),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu),
@@ -995,13 +1183,14 @@ void CGuiEditor::LoadAssets()
 {
 	int PackageId;
 	
-	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
+	PackageId = AssetsManager()->Load_AssetsFile("gui/editor", CStorage::TYPE_ALL);
 	if(PackageId >= 0)
 	{
 		m_Path_Image_ZoneTexture = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "zoneTexture");
 		
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
+		m_Path_Rect_Focus = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "focus");
 		
 		m_Path_Box_Popup = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "popup");
 		m_Path_Box_View = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "view");
@@ -1098,6 +1287,7 @@ void CGuiEditor::LoadAssets()
 	m_TabsStyle = m_Path_Tabs_Default;
 	m_PopupStyle = m_Path_Box_Popup;
 	m_ComposeStyle = m_Path_Label_Compose;
+	m_FocusStyle = m_Path_Rect_Focus;
 	
 	PackageId = AssetsManager()->NewPackage("mypackage");
 	AssetsManager()->SetPackageReadOnly(PackageId, false);

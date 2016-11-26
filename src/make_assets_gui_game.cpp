@@ -645,7 +645,7 @@ int main(int argc, const char **argv)
 	Make_GuiSliderStyle(pKernel);
 	Make_GuiTabsStyle(pKernel);
 	
-	pKernel->AssetsManager()->Save_AssetsFile("assets/gui/game.assets", CAssetPath::SRC_GUI);
+	pKernel->AssetsManager()->Save_AssetsFile("gui/game", CAssetPath::SRC_GUI);
 	
 	pKernel->Shutdown();
 	delete pKernel;

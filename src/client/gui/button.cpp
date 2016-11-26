@@ -59,6 +59,9 @@ void CAbstractButton::SetButtonStyle(CAssetPath StylePath)
 	
 void CAbstractButton::Update(bool ParentEnabled)
 {
+	if(ParentEnabled && IsEnabled())
+		Context()->TryToGetFocus(this);
+	
 	RefreshLabelStyle();
 	CAbstractLabel::Update(ParentEnabled);
 }
@@ -68,10 +71,10 @@ void CAbstractButton::OnButtonClick(int Button)
 	if(!m_Editable || Button != KEY_MOUSE_1)
 		return;
 	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
-	{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
 		m_Clicked = true;
-	}
+	else
+		Context()->StopFocus(this);
 }
 
 void CAbstractButton::OnButtonRelease(int Button)
@@ -97,19 +100,25 @@ void CAbstractButton::OnMouseMove()
 		m_MouseOver = false;
 }
 
+void CAbstractButton::OnInputEvent(const CInput::CEvent& Event)
+{
+	if(Context()->HasFocus(this) && (Event.m_Flags & CInput::FLAG_PRESS) && (Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER))
+		MouseClickAction();
+}
+
 /* BUTTON *************************************************************/
 
 CButton::CButton(CGui* pContext, const char* pText, CAssetPath IconPath) :
 	CAbstractButton(pContext)
 {
-	SetText(pText, false);
+	SetText(pText);
 	SetIcon(IconPath);
 }
 
 CButton::CButton(CGui* pContext, const CLocalizableString& LocalizableString, CAssetPath IconPath) :
 	CAbstractButton(pContext)
 {
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 	SetIcon(IconPath);
 }
 

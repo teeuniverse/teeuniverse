@@ -50,6 +50,7 @@ protected:
 	CAssetPath m_BoxStylePath;
 	array<CChild> m_Childs;
 	CRect m_ClipRect;
+	bool m_ClipEnabled;
 
 public:
 	CAbstractListLayout(class CGui *pConfig);

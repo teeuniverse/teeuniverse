@@ -294,9 +294,7 @@ const dynamic_string& CStorage::GetPath(int Type, const char *pDir, dynamic_stri
 		Path.append(pDir);
 	}
 	else
-	{
 		Path.copy(pDir);
-	}
 	
 	return Path;
 }

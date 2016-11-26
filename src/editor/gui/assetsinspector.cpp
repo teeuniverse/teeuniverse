@@ -301,7 +301,7 @@ public:
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
 	}
 	
-	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const gui::CLocalizableString& Text, CAssetPath IconPath) :
+	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const CLocalizableString& Text, CAssetPath IconPath) :
 		gui::CButton(pAssetsEditor, Text, IconPath),
 		m_pAssetsEditor(pAssetsEditor),
 		m_SubPath(SubPath)
@@ -644,22 +644,20 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiTabsStyle_Asset()
 	return pTab;
 }
 
-void CAssetsInspector::AddField(gui::CVListLayout* pList, gui::CWidget* pWidget, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField(gui::CVListLayout* pList, gui::CWidget* pWidget, const CLocalizableString& Text)
 {
-	if(Text.m_pText)
-	{
-		gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
-		pList->Add(pLayout, false);
-		
-		gui::CLabel* pLabel = new gui::CLabel(Context(), Text);
-		pLayout->Add(pLabel, true);
-		
-		pLayout->Add(pWidget, true);
-	}
-	else
-	{
-		pList->Add(pWidget, false);
-	}
+	gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+	pList->Add(pLayout, false);
+	
+	gui::CLabel* pLabel = new gui::CLabel(Context(), Text);
+	pLayout->Add(pLabel, true);
+	
+	pLayout->Add(pWidget, true);
+}
+
+void CAssetsInspector::AddField(gui::CVListLayout* pList, gui::CWidget* pWidget)
+{
+	pList->Add(pWidget, false);
 }
 
 void CAssetsInspector::AddField_AssetProperties(gui::CVScrollLayout* pTab)
@@ -687,7 +685,7 @@ protected:
 		
 		if(pName)
 		{
-			if(str_comp(pName, m_aText) != 0)
+			if(m_Text != pName)
 				SetText(pName);
 		}
 		else
@@ -750,12 +748,12 @@ protected:
 			m_pAssetsEditor->GetEditedAssetPath(),
 			m_pAssetsEditor->GetEditedSubPath(),
 			m_Member,
-			GetText()
+			NULL
 		);
 		
 		if(pName)
 		{
-			if(str_comp(pName, m_aText) != 0)
+			if(m_Text != pName)
 				SetText(pName);
 		}
 		else
@@ -783,7 +781,7 @@ public:
 	}
 };
 
-void CAssetsInspector::AddField_Text(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Text(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberTextEdit* pWidget = new CMemberTextEdit(
 		m_pAssetsEditor,
@@ -847,7 +845,7 @@ public:
 	}
 };
 
-void CAssetsInspector::AddField_Integer(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Integer(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberIntegerEdit* pWidget = new CMemberIntegerEdit(
 		m_pAssetsEditor,
@@ -857,7 +855,7 @@ void CAssetsInspector::AddField_Integer(gui::CVListLayout* pList, int Member, co
 	AddField(pList, pWidget, Text);
 }
 
-void CAssetsInspector::AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberIntegerEdit* pWidget = new CMemberIntegerEdit(
 		m_pAssetsEditor,
@@ -904,7 +902,7 @@ public:
 	{ }
 };
 
-void CAssetsInspector::AddField_Bool(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Bool(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberBoolEdit* pWidget = new CMemberBoolEdit(
 		m_pAssetsEditor,
@@ -963,7 +961,7 @@ public:
 	}
 };
 
-void CAssetsInspector::AddField_Float(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Float(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberFloatEdit* pWidget = new CMemberFloatEdit(
 		m_pAssetsEditor,
@@ -973,7 +971,7 @@ void CAssetsInspector::AddField_Float(gui::CVListLayout* pList, int Member, cons
 	AddField(pList, pWidget, Text);
 }
 
-void CAssetsInspector::AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const CLocalizableString& Text)
 {
 	gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
 	
@@ -1025,7 +1023,7 @@ public:
 	{ }
 };
 
-void CAssetsInspector::AddField_Angle(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Angle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberAngleEdit* pWidget = new CMemberAngleEdit(
 		m_pAssetsEditor,
@@ -1071,7 +1069,7 @@ public:
 	{ }
 };
 
-void CAssetsInspector::AddField_Color(gui::CVListLayout* pList, int Member, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Color(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberColorEdit* pWidget = new CMemberColorEdit(
 		m_pAssetsEditor,
@@ -1257,7 +1255,7 @@ public:
 	}
 };
 
-void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const gui::CLocalizableString& Text)
+void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text)
 {
 	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
 		m_pAssetsEditor,

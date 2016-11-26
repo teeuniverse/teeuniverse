@@ -30,21 +30,14 @@ TEST(str_comp(pKernel->Localization()->Localize(NULL, "__something not translate
 TEST(str_comp(pKernel->Localization()->Localize("xx_XX", "__something not translated"), "__something not translated") == 0);
 
 {
-	dynamic_string Buffer;
-	int IntValue;
-	float FloatValue = 0.5f;
+	CLocalizableString LString("A big integer: {int:BigNumber}");
+	LString.AddInteger("BigNumber", 41652864);
 	
-	Buffer.clear();
-	IntValue = 5;
-	pKernel->Localization()->Format_L(Buffer, "xx_XX", "{int:NumPlayers} players left ({percent:PlayerOnCapacity})", "NumPlayers", &IntValue, "PlayerOnCapacity", &FloatValue, NULL);
-	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "5 players left (50%)") == 0, Buffer.buffer())
-}
-
-{
 	dynamic_string Buffer;
-	int Value = 8254534;
-	pKernel->Localization()->Format(Buffer, "xx_XX", "{int:test}", "test", &Value, NULL);
-	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "8,254,534") == 0, Buffer.buffer())
+	Buffer.clear();
+	
+	pKernel->Localization()->Format(Buffer, "xx_XX", LString);
+	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "A big integer: 41,652,864") == 0, Buffer.buffer())
 }
 
 pKernel->Shutdown();

@@ -25,85 +25,56 @@
 namespace gui
 {
 
-bool LineInput(CInput::CEvent Event, char *pStr, int StrMaxSize, int StrMaxChars, int *pStrLenPtr, int *pCursorPosPtr, int *pNumCharsPtr)
+bool LineInput(CInput::CEvent Event, dynamic_string& String, int& CursorPos)
 {
-	int NumChars = *pNumCharsPtr;
-	int CursorPos = *pCursorPosPtr;
-	int Len = *pStrLenPtr;
 	bool Changes = false;
-
-	if(CursorPos > Len)
-		CursorPos = Len;
-
 	if(Event.m_Flags&CInput::FLAG_TEXT)
 	{
-		// gather string stats
-		int CharCount = 0;
-		int CharSize = 0;
-		while(Event.m_aText[CharSize])
-		{
-			int NewCharSize = str_utf8_forward(Event.m_aText, CharSize);
-			if(NewCharSize != CharSize)
-			{
-				++CharCount;
-				CharSize = NewCharSize;
-			}
-		}
-
-		// add new string
-		if(CharCount)
-		{
-			if(Len+CharSize < StrMaxSize && CursorPos+CharSize < StrMaxSize && NumChars+CharCount < StrMaxChars)
-			{
-				mem_move(pStr + CursorPos + CharSize, pStr + CursorPos, Len-CursorPos+1);
-				for(int i = 0; i < CharSize; i++)
-					pStr[CursorPos+i] = Event.m_aText[i];
-				CursorPos += CharSize;
-				Len += CharSize;
-				NumChars += CharCount;
-				Changes = true;
-			}
-		}
+		String.insert_at(CursorPos, Event.m_aText);
+		CursorPos += str_length(Event.m_aText);
+		Changes = true;
 	}
-
+	
+	int Length = String.length();
+	
 	if(Event.m_Flags&CInput::FLAG_PRESS)
 	{
 		int Key = Event.m_Key;
 		if(Key == KEY_BACKSPACE && CursorPos > 0)
 		{
-			int NewCursorPos = str_utf8_rewind(pStr, CursorPos);
-			int CharSize = CursorPos-NewCursorPos;
-			mem_move(pStr+NewCursorPos, pStr+CursorPos, Len - NewCursorPos - CharSize + 1);
-			CursorPos = NewCursorPos;
-			Len -= CharSize;
+			int NextCharPos = CursorPos;
+			CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
+			int CharSize = NextCharPos-CursorPos;
 			if(CharSize > 0)
-				--NumChars;
+			{
+				for(int c=NextCharPos; String.buffer()[c]; c++)
+					String.buffer()[c-CharSize] = String.buffer()[c];
+				String.buffer()[Length-CharSize] = 0;
+			}
 			Changes = true;
 		}
-		else if(Key == KEY_DELETE && CursorPos < Len)
+		else if(Key == KEY_DELETE && CursorPos < Length)
 		{
-			int p = str_utf8_forward(pStr, CursorPos);
-			int CharSize = p-CursorPos;
-			mem_move(pStr + CursorPos, pStr + CursorPos + CharSize, Len - CursorPos - CharSize + 1);
-			Len -= CharSize;
+			int NextCharPos = str_utf8_forward(String.buffer(), CursorPos);
+			int CharSize = NextCharPos-CursorPos;
 			if(CharSize > 0)
-				--NumChars;
+			{
+				for(int c=NextCharPos; String.buffer()[c]; c++)
+					String.buffer()[c-CharSize] = String.buffer()[c];
+				String.buffer()[Length-CharSize] = 0;
+			}
 			Changes = true;
 		}
 		else if(Key == KEY_LEFT && CursorPos > 0)
-			CursorPos = str_utf8_rewind(pStr, CursorPos);
-		else if(Key == KEY_RIGHT && CursorPos < Len)
-			CursorPos = str_utf8_forward(pStr, CursorPos);
+			CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
+		else if(Key == KEY_RIGHT && CursorPos < Length)
+			CursorPos = str_utf8_forward(String.buffer(), CursorPos);
 		else if(Key == KEY_HOME)
 			CursorPos = 0;
 		else if(Key == KEY_END)
-			CursorPos = Len;
+			CursorPos = Length;
 	}
-
-	*pNumCharsPtr = NumChars;
-	*pCursorPosPtr = CursorPos;
-	*pStrLenPtr = Len;
-
+	
 	return Changes;
 }
 
@@ -244,9 +215,9 @@ void CAbstractTextEdit::OnButtonClick(int Button)
 	
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
 	{
-		if(Context()->HasFocus(this))
-			m_TextCursor = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
-		else
+		m_TextCursor = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
+		
+		if(!Context()->HasFocus(this))
 			Context()->StartFocus(this);
 	}
 	else
@@ -274,10 +245,11 @@ void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
 	{
 		int TextIter = m_TextCursor.m_TextIter;
 		
-		int Len = str_length(m_aText);
+		int Len = m_Text.length();
 		int NumChars = Len;
-		if(LineInput(Event, m_aText, sizeof(m_aText), sizeof(m_aText), &Len, &TextIter, &NumChars))
+		if(LineInput(Event, m_Text, TextIter))
 		{
+			m_Localize = false;
 			OnTextUpdated();
 			
 			if(m_SaveOnChange)
@@ -303,13 +275,15 @@ void CAbstractTextEdit::Clear()
 	m_Changes = true;
 	SetText("");
 	if(Context()->HasFocus(this))
-		m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
+		m_TextCursor.m_TextIter = -1;
 }
 
 void CAbstractTextEdit::OnFocusStart()
 {
+	m_Localize = false;
 	Input()->StartTextEditing(GetTextRect().x, GetTextRect().y, GetTextRect().w, GetTextRect().h);
-	m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
+	if(m_TextCursor.m_TextIter < 0)
+		m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
 }
 
 void CAbstractTextEdit::OnFocusStop()

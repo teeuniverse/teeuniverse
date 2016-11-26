@@ -34,7 +34,7 @@ CAbstractLabel::CAbstractLabel(CGui *pContext) :
 	m_ClipText(true)
 {
 	SetLabelStyle(Context()->GetLabelStyle());
-	m_aText[0] = 0;
+	m_Text.clear();
 }
 
 void CAbstractLabel::Destroy()
@@ -46,15 +46,21 @@ void CAbstractLabel::Destroy()
 void CAbstractLabel::OnTextUpdated()
 {
 	if(m_Localize)
-		m_TextCache.SetText(Localization()->Localize(NULL, m_aText));
-	else
-		m_TextCache.SetText(m_aText);
+		ApplyLocalization();
+	
+	m_TextCache.SetText(m_Text.buffer());
+}
+
+void CAbstractLabel::ApplyLocalization()
+{
+	m_Text.clear();
+	Localization()->Format(m_Text, NULL, m_LString);
 }
 
 void CAbstractLabel::Update(bool ParentEnabled)
 {
 	if(ParentEnabled && m_Localize && Context()->LocalizationUpdated())
-		m_TextCache.SetText(Localization()->Localize(NULL, m_aText));
+		OnTextUpdated();
 	
 	if(m_pIconWidget)
 		m_pIconWidget->Update(ParentEnabled);
@@ -347,24 +353,29 @@ void CAbstractLabel::Render()
 	}
 	
 	Graphics()->ClipPop();
+	
+	if(Context()->HasFocus(this))
+		Context()->DrawFocusRect(m_DrawRect);
 }
 
-void CAbstractLabel::SetText(const char* pText, bool Localize)
+void CAbstractLabel::SetText(const char* pText)
 {
+	m_Localize = false;
+	
 	if(pText)
-	{
-		str_copy(m_aText, pText, sizeof(m_aText));
-		m_Localize = Localize;
-	}
+		m_Text.copy(pText);
 	else
-		m_aText[0] = 0;
+		m_Text.clear();
 	
 	OnTextUpdated();
 }
 
-void CAbstractLabel::SetText(const gui::CLocalizableString& Text)
+void CAbstractLabel::SetText(const CLocalizableString& Text)
 {
-	SetText(Text.m_pText, true);
+	m_Localize = true;
+	m_LString.copy(Text);
+	
+	OnTextUpdated();
 }
 
 void CAbstractLabel::SetLabelStyle(CAssetPath Path)
@@ -397,14 +408,14 @@ CLabel::CLabel(CGui* pContext, const CLocalizableString& LocalizableString, CAss
 	CAbstractLabel(pContext)
 {
 	SetIcon(IconPath);
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 }
 
 CLabel::CLabel(CGui* pContext, const CLocalizableString& LocalizableString, gui::CWidget* pIconWidget) :
 	CAbstractLabel(pContext)
 {
 	SetIconWidget(pIconWidget);
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 }
 
 /* LABEL HEADER *******************************************************/
@@ -422,7 +433,7 @@ CLabelHeader::CLabelHeader(CGui* pContext, const CLocalizableString& Localizable
 {
 	SetLabelStyle(Context()->GetLabelHeaderStyle());
 	SetIcon(IconPath);
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 }
 
 }

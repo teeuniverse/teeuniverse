@@ -156,7 +156,7 @@ public:
 class CInactiveText : public gui::CLabel
 {
 public:
-	CInactiveText(CGuiEditor* pAssetsEditor, const gui::CLocalizableString& Text, const CAssetPath& IconPath) :
+	CInactiveText(CGuiEditor* pAssetsEditor, const CLocalizableString& Text, const CAssetPath& IconPath) :
 		gui::CLabel(pAssetsEditor, Text, IconPath)
 	{
 		SetLabelStyle(pAssetsEditor->m_Path_Label_InactiveListItem);
@@ -202,7 +202,7 @@ protected:
 		CAssetPath m_AssetPath;
 
 	public:
-		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const gui::CLocalizableString& Name, const CAssetPath& IconPath) :
+		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& Name, const CAssetPath& IconPath) :
 			gui::CButton(pAssetsEditor, Name, IconPath),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),

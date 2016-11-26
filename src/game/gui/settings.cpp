@@ -39,7 +39,7 @@ protected:
 	virtual void SetValue(bool Value) { *m_pValue = Value; }
 
 public:
-	CConfigCheckBox(CGui* pContext, int* pValue, const gui::CLocalizableString& LocalizableString) :
+	CConfigCheckBox(CGui* pContext, int* pValue, const CLocalizableString& LocalizableString) :
 		gui::CToggle(pContext, LocalizableString),
 		m_pValue(pValue)
 	{ }
@@ -92,7 +92,7 @@ private:
 	}
 
 public:
-	CConfigDynamicCamera(CGuiGame* pContext, const gui::CLocalizableString& LocalizableString) :
+	CConfigDynamicCamera(CGuiGame* pContext, const CLocalizableString& LocalizableString) :
 		gui::CToggle(pContext, LocalizableString),
 		m_pMenu(pContext)
 	{ }
@@ -261,7 +261,7 @@ protected:
 	};
 	
 public:
-	CControlEdit(CGuiGame* pMenu, const gui::CLocalizableString& LocalizableString, const char* pCommand) :
+	CControlEdit(CGuiGame* pMenu, const CLocalizableString& LocalizableString, const char* pCommand) :
 		gui::CHListLayout(pMenu),
 		m_pMenu(pMenu)
 	{

@@ -28,7 +28,8 @@ namespace gui
 
 CAbstractListLayout::CAbstractListLayout(CGui* pConfig) :
 	CWidget(pConfig),
-	m_BoxStylePath(CAssetPath::Null())
+	m_BoxStylePath(CAssetPath::Null()),
+	m_ClipEnabled(false)
 {
 	
 }
@@ -83,7 +84,8 @@ void CAbstractListLayout::Render()
 	}
 	
 	//Childs
-	Graphics()->ClipPush(m_ClipRect.x, m_ClipRect.y, m_ClipRect.w, m_ClipRect.h);
+	if(m_ClipEnabled)
+		Graphics()->ClipPush(m_ClipRect.x, m_ClipRect.y, m_ClipRect.w, m_ClipRect.h);
 	
 	for(int i=0; i<m_Childs.size(); i++)
 	{
@@ -91,7 +93,8 @@ void CAbstractListLayout::Render()
 			m_Childs[i].m_pWidget->Render();
 	}
 		
-	Graphics()->ClipPop();
+	if(m_ClipEnabled)
+		Graphics()->ClipPop();
 }
 
 void CAbstractListLayout::OnMouseMove()

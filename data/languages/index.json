@@ -3,6 +3,10 @@
 	{
 		"file": "en",
 		"name": "English"
+	},
+	{
+		"file": "fr",
+		"name": "Français"
 	}
 ]
 }

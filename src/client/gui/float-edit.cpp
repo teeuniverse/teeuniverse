@@ -36,13 +36,15 @@ CAbstractFloatEdit::CAbstractFloatEdit(CGui* pContext) :
 
 void CAbstractFloatEdit::SaveFromTextBuffer()
 {
-	SetValue(atof(GetText()));
+	float Value = Localization()->ParseFloat(NULL, GetText());
+	SetValue(Value);
 }
 
 void CAbstractFloatEdit::CopyToTextBuffer()
 {
-	str_format(m_aText, sizeof(m_aText), "%.02f", GetValue());
-	OnTextUpdated();
+	CLocalizableString LString("{float:v}");
+	LString.AddFloat("v", GetValue());
+	SetText(LString);
 }
 
 /* FLOAT EDIT *********************************************************/

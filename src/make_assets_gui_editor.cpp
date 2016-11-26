@@ -55,7 +55,7 @@ int main(int argc, const char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	int PackageId = pKernel->AssetsManager()->NewPackage("gui_editor");
+	int PackageId = pKernel->AssetsManager()->NewPackage("gui/editor");
 	
 	//Colors
 	vec4 ColorBorder = vec4(40.0f/255.0f, 40.0f/255.0f, 40.0f/255.0f, 1.0f);
@@ -165,6 +165,7 @@ int main(int argc, const char **argv)
 	CAssetPath RectStampPath;
 	CAssetPath RectSelectionPath;
 	CAssetPath RectDialogPath;
+	CAssetPath RectFocusPath;
 	CAssetPath RectButtonPath;
 	CAssetPath RectButtonMoPath;
 	CAssetPath RectEditPath;
@@ -221,6 +222,38 @@ int main(int argc, const char **argv)
 	
 		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectStampPath, PackageId);
 		pAsset->SetName("border");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+		pAsset->SetImagePadding(1.0f);
+	}
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
+		
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxFocusTL", ImageBoxesPath, 12, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxFocusT" , ImageBoxesPath, 13, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxFocusTR", ImageBoxesPath, 14, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxFocusL" , ImageBoxesPath, 12, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxFocusR" , ImageBoxesPath, 14, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxFocusBL", ImageBoxesPath, 12, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxFocusB" , ImageBoxesPath, 13, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxFocusBR", ImageBoxesPath, 14, 2, 1, 1);
+	
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectFocusPath, PackageId);
+		pAsset->SetName("focus");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetImageTLPath(SpriteTL);
 		pAsset->SetImageTPath(SpriteT);

@@ -27,12 +27,20 @@ namespace gui
 /* TABS ***************************************************************/
 
 	//Button
-CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const char* pName, CAssetPath IconPath, bool Localized) :
+CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const char* pName, CAssetPath IconPath) :
 	CButton(pContext, IconPath),
 	m_pTabs(pTabs),
 	m_Id(Id)
 {
-	SetText(pName, Localized);
+	SetText(pName);
+}
+
+CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const CLocalizableString& Name, CAssetPath IconPath) :
+	CButton(pContext, IconPath),
+	m_pTabs(pTabs),
+	m_Id(Id)
+{
+	SetText(Name);
 }
 
 void CTabs::CTabButton::MouseClickAction()
@@ -69,7 +77,7 @@ void CTabs::OpenTab(int TabId)
 		m_SelectedTab = -1;
 }
 
-void CTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath, bool Localized)
+void CTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizableString* pLocalizableName, CAssetPath IconPath)
 {
 	bool Fill = true;
 	bool ButtonListText = true;
@@ -82,20 +90,16 @@ void CTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath, boo
 	int TabId = m_Tabs.size();
 	CTab& Tab = m_Tabs.increment();
 	
-	Tab.m_IconPath = IconPath;
-	Tab.m_Disabled = pWidget->IsDisabled();
 	Tab.m_pWidget = pWidget;
 	Tab.m_pTabButton = 0;
-	str_copy(Tab.m_aName, pName, sizeof(Tab.m_aName));
-	Tab.m_Localized = Localized;
 	
-	if(!Tab.m_Disabled)
-	{
-		Tab.m_pTabButton = new CTabButton(Context(), this, TabId, (ButtonListText ? Tab.m_aName : ""), IconPath, Tab.m_Localized);
-		m_pButtonList->Add(Tab.m_pTabButton, Fill);
-		if(pTabsStyle)
-			Tab.m_pTabButton->SetButtonStyle(pTabsStyle->GetInactiveButtonPath());
-	}
+	if(pName)
+		Tab.m_pTabButton = new CTabButton(Context(), this, TabId, pName, IconPath);
+	else
+		Tab.m_pTabButton = new CTabButton(Context(), this, TabId, *pLocalizableName, IconPath);
+	m_pButtonList->Add(Tab.m_pTabButton, Fill);
+	if(pTabsStyle)
+		Tab.m_pTabButton->SetButtonStyle(pTabsStyle->GetInactiveButtonPath());
 	
 	if(m_SelectedTab < 0)
 		m_SelectedTab = TabId;
@@ -103,12 +107,12 @@ void CTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath, boo
 
 void CTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath)
 {
-	AddTab(pWidget, pName, IconPath, false);
+	AddTab(pWidget, pName, NULL, IconPath);
 }
 
 void CTabs::AddTab(CWidget* pWidget, const CLocalizableString& LocalizableString, CAssetPath IconPath)
 {
-	AddTab(pWidget, LocalizableString.m_pText, IconPath, true);
+	AddTab(pWidget, NULL, &LocalizableString, IconPath);
 }
 
 void CTabs::Clear()
@@ -218,23 +222,25 @@ void CTabs::Update(bool ParentEnabled)
 	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
 	if(pTabsStyle)
 		m_pButtonList->SetBoxStyle(pTabsStyle->GetButtonListPath());
-	
-	bool NeedUpdate = false;
-	
+		
 	for(int i=0; i<m_Tabs.size(); i++)
 		m_Tabs[i].m_pWidget->Update(ParentEnabled && IsEnabled());
 	
+	int FirstEnabledTab = -1;
 	for(int i=0; i<m_Tabs.size(); i++)
 	{
-		if(m_Tabs[i].m_pWidget->IsDisabled() != m_Tabs[i].m_Disabled)
+		if(m_Tabs[i].m_pWidget->IsDisabled())
+			m_Tabs[i].m_pTabButton->Disable();
+		else
 		{
-			m_Tabs[i].m_Disabled = m_Tabs[i].m_pWidget->IsDisabled();
-			NeedUpdate = true;
+			m_Tabs[i].m_pTabButton->Enable();
+			if(FirstEnabledTab < 0)
+				FirstEnabledTab = i;
 		}
 	}
 	
-	if(NeedUpdate)
-		RegenerateButtons();
+	if(m_SelectedTab >= 0 && m_SelectedTab < m_Tabs.size() && m_Tabs[m_SelectedTab].m_pWidget->IsDisabled())
+		m_SelectedTab = FirstEnabledTab;
 	
 	if(pTabsStyle)
 	{
@@ -251,36 +257,6 @@ void CTabs::Update(bool ParentEnabled)
 	}
 	
 	m_pButtonList->Update(ParentEnabled && IsEnabled());
-}
-
-void CTabs::RegenerateButtons()
-{
-	bool Fill = true;
-	bool ButtonListText = true;
-	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
-	if(pTabsStyle)
-	{
-		Fill = pTabsStyle->GetButtonListFill();
-		ButtonListText = pTabsStyle->GetButtonListText();
-	}
-	
-	m_pButtonList->Clear();
-	int FirstEnabledChild = -1;
-	for(int i=0; i<m_Tabs.size(); i++)
-	{
-		m_Tabs[i].m_pTabButton = 0;
-		
-		if(!m_Tabs[i].m_pWidget->IsDisabled())
-		{
-			m_Tabs[i].m_pTabButton = new CTabButton(Context(), this, i, (ButtonListText ? m_Tabs[i].m_aName : ""), m_Tabs[i].m_IconPath, m_Tabs[i].m_Localized);
-			m_pButtonList->Add(m_Tabs[i].m_pTabButton, Fill);
-			if(FirstEnabledChild < 0)
-				FirstEnabledChild = i;
-		}
-	}
-	
-	if(m_Tabs[m_SelectedTab].m_pWidget->IsDisabled())
-		m_SelectedTab = max(FirstEnabledChild, 0);
 }
 
 void CTabs::Render()

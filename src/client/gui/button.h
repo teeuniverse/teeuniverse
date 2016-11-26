@@ -42,6 +42,7 @@ public:
 	virtual void OnButtonClick(int Button);
 	virtual void OnButtonRelease(int Button);
 	virtual void OnMouseMove();
+	virtual void OnInputEvent(const CInput::CEvent& Event);
 	
 	void RefreshLabelStyle();
 	inline CAssetPath GetButtonStyle() const { return m_ButtonStylePath; }

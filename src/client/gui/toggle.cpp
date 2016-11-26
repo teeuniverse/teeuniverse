@@ -117,7 +117,7 @@ CToggle::CToggle(CGui* pContext, const char* pText) :
 CToggle::CToggle(CGui* pContext, const CLocalizableString& LocalizableString) :
 	CAbstractToggle(pContext)
 {
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 }
 
 CToggle::CToggle(CGui* pContext, const char* pText, CAssetPath IconPath) :
@@ -130,7 +130,7 @@ CToggle::CToggle(CGui* pContext, const char* pText, CAssetPath IconPath) :
 CToggle::CToggle(CGui* pContext, const CLocalizableString& LocalizableString, CAssetPath IconPath) :
 	CAbstractToggle(pContext)
 {
-	SetText(LocalizableString.m_pText, true);
+	SetText(LocalizableString);
 	SetIcon(IconPath);
 }
 

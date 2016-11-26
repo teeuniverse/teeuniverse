@@ -44,7 +44,7 @@ int main(int argc, const char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	int PackageId = pKernel->AssetsManager()->NewPackage("univ_infclass");
+	int PackageId = pKernel->AssetsManager()->NewPackage("universes/infclass");
 	
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);

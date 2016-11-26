@@ -64,7 +64,7 @@ R partition_linear(R range, T value)
 
 
 template<class R, class T>
-R partition_binary(R range, T value)
+R partition_binary(R range, const T& value)
 {
 	concept_empty::check(range);
 	concept_index::check(range);

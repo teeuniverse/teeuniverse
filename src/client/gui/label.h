@@ -24,19 +24,10 @@
 #include <client/components/textrenderer.h>
 #include <shared/components/localization.h>
 
-#define _GUI(TEXT) (gui::CLocalizableString(TEXT))
+#define _GUI(TEXT) (CLocalizableString(TEXT))
 
 namespace gui
 {
-
-struct CLocalizableString
-{
-	const char* m_pText;
-	
-	CLocalizableString(const char* pText) :
-		m_pText(pText)
-	{ }
-};
 
 class CAbstractLabel : public CWidget
 {
@@ -48,13 +39,18 @@ private:
 	float m_IconScaling;
 	CRect m_IconRect;
 	CRect m_TextRect;
-	bool m_Localize;
 	bool m_ClipText;
 
 protected:
-	char m_aText[128];
+	bool m_Localize;
+	CLocalizableString m_LString;
+	dynamic_string m_Text;
 	CTextRenderer::CTextCache m_TextCache;
-	
+
+protected:
+	void OnTextUpdated();
+	void ApplyLocalization();
+
 public:
 	CAbstractLabel(CGui *pContext);
 	
@@ -76,15 +72,14 @@ public:
 	inline ivec2 GetTextPosition() const { return ivec2(m_TextRect.x, m_TextRect.y); }
 	inline float GetFontSize() const { return m_FontSize; }
 	
-	void SetText(const char* pText, bool Localize = false);
-	void SetText(const gui::CLocalizableString& Text);
-	inline const char* GetText() const { return m_aText; }
+	void SetText(const char* pText);
+	void SetText(const CLocalizableString& Text);
+	inline const char* GetText() const { return m_Text.buffer(); }
 	
 	inline const CRect& GetTextRect() const { return m_TextRect; }
 	
 	inline void NoTextClipping() { m_ClipText = false; }
 	
-	void OnTextUpdated();
 };
 
 class CLabel : public CAbstractLabel

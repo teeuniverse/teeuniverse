@@ -58,6 +58,18 @@ TEST(!str_check_pathname(".."))
 	String.append(" hello universe");
 	TEST_WITH_OUTPUT(String == "test hello universe", String.buffer())
 	TEST(String.maxsize() == 32)
+	
+	String.clear();
+	TEST_WITH_OUTPUT(String == "", String.buffer())
+	
+	String.copy("teeworlds");
+	String.insert_at(3, "universes is a fork of tee");
+	TEST_WITH_OUTPUT(String == "teeuniverses is a fork of teeworlds", String.buffer())
+	
+	String.clear();
+	String.copy("123456789");
+	String.insert_at(4, "a");
+	TEST_WITH_OUTPUT(String == "1234a56789", String.buffer())
 }
 
 TEST_END

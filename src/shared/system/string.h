@@ -395,6 +395,27 @@ public:
 		
 		return min(Pos + Num, m_MaxSize-1);
 	}
+	
+	inline void insert_at(int Pos, const char* pBuffer)
+	{
+		int Length = str_length(m_pBuffer);
+		int BufferSize = str_length(pBuffer);
+		int Size = Length+BufferSize+1;
+		if(Size > m_MaxSize)
+		{
+			int NewSize = m_MaxSize*2;
+			while(Size > NewSize)
+				NewSize *= 2;
+			
+			resize_buffer(NewSize);
+		}
+		
+		for(int c=Length-1; c>=Pos; c--)
+			m_pBuffer[c+BufferSize] = m_pBuffer[c];
+		for(int c=0; c<BufferSize; c++)
+			m_pBuffer[Pos+c] = pBuffer[c];
+		m_pBuffer[Length+BufferSize] = 0;
+	}
 };
 
 template<typename BASE>

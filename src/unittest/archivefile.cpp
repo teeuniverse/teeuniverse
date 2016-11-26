@@ -34,7 +34,7 @@ TEST(fs_makedir(Dir.buffer()))
 
 dynamic_string AssetsFile;
 AssetsFile.append(Dir);
-AssetsFile.append("/test.assets");
+AssetsFile.append("/test.tup");
 
 {
 	CArchiveFile File;
@@ -110,7 +110,7 @@ AssetsFile.append("/test.assets");
 		TEST(File.ReadUInt32(pItem->m_Data) == 2);
 	}
 	
-	TEST(File.Write(pKernel->Storage(), "__unittestdir__/test.assets"))
+	TEST(File.Write(pKernel->Storage(), "__unittestdir__/test.tup"))
 	
 	File.Close();
 }
@@ -118,7 +118,7 @@ AssetsFile.append("/test.assets");
 {
 	CArchiveFile File;
 	
-	TEST(File.Open(pKernel->Storage(), "__unittestdir__/test.assets", CStorage::TYPE_SAVE))
+	TEST(File.Open(pKernel->Storage(), "__unittestdir__/test.tup", CStorage::TYPE_SAVE))
 	
 	TEST(File.GetNumItems(38) == 4)
 	TEST(File.GetNumItems(52) == 3)

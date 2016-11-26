@@ -31,6 +31,116 @@
 
 #define _(TEXT) (TEXT)
 
+
+class CLocalizableString
+{
+public:
+	enum
+	{
+		TYPE_STRING=0,
+		TYPE_INTEGER,
+		TYPE_FLOAT,
+		TYPE_PERCENT,
+		TYPE_SECONDS,
+	};
+	
+	struct CParameter 
+	{
+		union
+		{
+			struct
+			{
+				char* m_pValue;
+			} m_String;
+			struct
+			{
+				int m_Value;
+			} m_Integer;
+			struct
+			{
+				float m_Value;
+			} m_Float;
+			struct
+			{
+				float m_Value;
+			} m_Percent;
+			struct
+			{
+				float m_Value;
+			} m_Seconds;
+		};
+		dynamic_string m_Name;
+		int m_Type;
+		
+		inline void copy(const CParameter& Param)
+		{
+			m_String = Param.m_String;
+			m_Type = Param.m_Type;
+			m_Name.copy(Param.m_Name);
+		}
+		
+		inline void transfert(CParameter& Param)
+		{
+			m_Integer = Param.m_Integer;
+			m_Type = Param.m_Type;
+			m_Name.transfert(Param.m_Name);
+			
+			if(m_Type == TYPE_STRING)
+				Param.m_String.m_pValue = NULL;
+		}
+	};
+	
+protected:
+	dynamic_string m_Text;
+	array< CParameter, allocator_copy<CParameter> > m_Parameters;
+
+public:
+	CLocalizableString()
+	{ }
+	
+	CLocalizableString(const char* pText)
+	{
+		m_Text.copy(pText);
+	}
+	
+	~CLocalizableString()
+	{
+		
+	}
+		
+	inline void copy(const CLocalizableString& LString)
+	{
+		m_Text.copy(LString.m_Text);
+		m_Parameters.copy(LString.m_Parameters);
+	}
+	
+	inline void transfert(CLocalizableString& LString)
+	{
+		m_Text.transfert(LString.m_Text);
+		m_Parameters.transfert(LString.m_Parameters);
+	}
+	
+	inline const char* GetText() const { return m_Text.buffer(); }
+	inline const array< CParameter, allocator_copy<CParameter> >& GetParameters() const { return m_Parameters; }
+	
+	inline void AddInteger(const char* pName, int Value)
+	{
+		CParameter& Param = m_Parameters.increment();
+		Param.m_Name.copy(pName);
+		Param.m_Integer.m_Value = Value;
+		Param.m_Type = TYPE_INTEGER;
+	}
+	
+	inline void AddFloat(const char* pName, float Value)
+	{
+		CParameter& Param = m_Parameters.increment();
+		Param.m_Name.copy(pName);
+		Param.m_Float.m_Value = Value;
+		Param.m_Type = TYPE_FLOAT;
+	}
+};
+
+
 class CLocalization : public CSharedKernel::CComponent
 {
 public:
@@ -127,7 +237,8 @@ protected:
 	const char* LocalizeWithDepth(const char* pLanguageCode, const char* pText, int Depth);
 	const char* LocalizeWithDepth_P(const char* pLanguageCode, int Number, const char* pText, int Depth);
 	
-	void AppendNumber(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, int Number);
+	void AppendInteger(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, int Number);
+	void AppendFloat(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, float Number);
 	void AppendPercent(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, double Number);
 	void AppendDuration(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, int Number, icu::TimeUnit::UTimeUnitFields Type);
 	
@@ -151,14 +262,10 @@ public:
 	const char* Localize_P(const char* pLanguageCode, int Number, const char* pText);
 	
 	//format
-	void Format_V(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, va_list VarArgs);
-	void Format(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, ...);
-	//localize, format
-	void Format_VL(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, va_list VarArgs);
-	void Format_L(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, ...);
-	//localize, find the appropriate plural form based on Number and format
-	void Format_VLP(dynamic_string& Buffer, const char* pLanguageCode, int Number, const char* pText, va_list VarArgs);
-	void Format_LP(dynamic_string& Buffer, const char* pLanguageCode, int Number, const char* pText, ...);
+	void Format(dynamic_string& Buffer, const char* pLanguageCode, const CLocalizableString& LString);
+	
+	int ParseInteger(const char* pLanguageCode, const char* pText);
+	float ParseFloat(const char* pLanguageCode, const char* pText);
 };
 
 #endif

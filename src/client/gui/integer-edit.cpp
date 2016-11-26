@@ -36,13 +36,15 @@ CAbstractIntegerEdit::CEntry::CEntry(CAbstractIntegerEdit *pIntegerEdit) :
 
 void CAbstractIntegerEdit::CEntry::SaveFromTextBuffer()
 {
-	m_pIntegerEdit->SetValue(atoi(GetText()));
+	int Value = Localization()->ParseInteger(NULL, GetText());
+	m_pIntegerEdit->SetValue(Value);
 }
 
 void CAbstractIntegerEdit::CEntry::CopyToTextBuffer()
 {
-	str_format(m_aText, sizeof(m_aText), "%d", m_pIntegerEdit->GetValue());
-	OnTextUpdated();
+	CLocalizableString LString("{int:v}");
+	LString.AddInteger("v", m_pIntegerEdit->GetValue());
+	SetText(LString);
 }
 
 	//Decrease Button

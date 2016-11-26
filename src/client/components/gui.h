@@ -120,6 +120,7 @@ protected:
 	CAssetPath m_TabsStyle;
 	CAssetPath m_PopupStyle;
 	CAssetPath m_ComposeStyle;
+	CAssetPath m_FocusStyle;
 	
 public:
 	CGui(CClientKernel* pKernel);
@@ -150,6 +151,7 @@ public:
 	void StartFocus(gui::CWidget* pWidget);
 	void StopFocus(gui::CWidget* pWidget);
 	void TryToGetFocus(gui::CWidget* pWidget);
+	void DrawFocusRect(gui::CRect Rect);
 	
 	//Input
 	const ivec2& GetMousePos() { return m_MousePos; }
@@ -169,6 +171,7 @@ public:
 	inline CAssetPath GetTabsStyle() const { return m_TabsStyle; }
 	inline CAssetPath GetPopupStyle() const { return m_PopupStyle; }
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
+	inline CAssetPath GetFocusStyle() const { return m_FocusStyle; }
 	
 	void SetCursor(gui::CWidget* pWidget, int CursorType);
 	void ShowLoadingCursor();

@@ -34,7 +34,7 @@ int main(int argc, const char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	int PackageId = pKernel->AssetsManager()->NewPackage("univ_ddnet");
+	int PackageId = pKernel->AssetsManager()->NewPackage("universes/ddnet");
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	

@@ -489,12 +489,37 @@ const char* CLocalization::Localize_P(const char* pLanguageCode, int Number, con
 	return LocalizeWithDepth_P(pLanguageCode, Number, pText, 0);
 }
 
-void CLocalization::AppendNumber(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, int Number)
+void CLocalization::AppendInteger(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, int Number)
 {
 	UChar aBufUtf16[128];
 	
 	UErrorCode Status = U_ZERO_ERROR;
 	unum_format(pLanguage->m_pNumberFormater, Number, aBufUtf16, sizeof(aBufUtf16), NULL, &Status);
+	if(U_FAILURE(Status))
+		BufferIter = Buffer.append_at(BufferIter, "_NUMBER_");
+	else
+	{
+		//Update buffer size
+		int SrcLength = u_strlen(aBufUtf16);
+		int NeededSize = UCNV_GET_MAX_BYTES_FOR_STRING(SrcLength, ucnv_getMaxCharSize(m_pUtf8Converter));
+		
+		while(Buffer.maxsize() - BufferIter <= NeededSize)
+			Buffer.resize_buffer(Buffer.maxsize()*2);
+		
+		int Length = ucnv_fromUChars(m_pUtf8Converter, Buffer.buffer()+BufferIter, Buffer.maxsize() - BufferIter, aBufUtf16, SrcLength, &Status);
+		if(U_FAILURE(Status))
+			BufferIter = Buffer.append_at(BufferIter, "_NUMBER_");
+		else
+			BufferIter += Length;
+	}
+}
+
+void CLocalization::AppendFloat(dynamic_string& Buffer, int& BufferIter, CLanguage* pLanguage, float Number)
+{
+	UChar aBufUtf16[128];
+	
+	UErrorCode Status = U_ZERO_ERROR;
+	unum_formatDouble(pLanguage->m_pNumberFormater, Number, aBufUtf16, sizeof(aBufUtf16), NULL, &Status);
 	if(U_FAILURE(Status))
 		BufferIter = Buffer.append_at(BufferIter, "_NUMBER_");
 	else
@@ -569,8 +594,10 @@ void CLocalization::AppendDuration(dynamic_string& Buffer, int& BufferIter, CLan
 	}
 }
 
-void CLocalization::Format_V(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, va_list VarArgs)
+void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, const CLocalizableString& LString)
 {
+	const char* pText = Localize(pLanguageCode, LString.GetText());
+	
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
@@ -588,6 +615,8 @@ void CLocalization::Format_V(dynamic_string& Buffer, const char* pLanguageCode, 
 		Buffer.append(pText);
 		return;
 	}
+	
+	const array< CLocalizableString::CParameter, allocator_copy<CLocalizableString::CParameter> >& Parameters = LString.GetParameters();
 	
 	const char* pVarArgName = NULL;
 	const void* pVarArgValue = NULL;
@@ -608,32 +637,33 @@ void CLocalization::Format_V(dynamic_string& Buffer, const char* pLanguageCode, 
 			if(pText[Iter] == '}') //End of the macro, try to apply it
 			{
 				//Try to find an argument with this name
-				va_list VarArgsIter;
-				va_copy(VarArgsIter, VarArgs);
-				pVarArgName = va_arg(VarArgsIter, const char*);
-				while(pVarArgName)
+				for(int PIter=0; PIter<Parameters.size(); PIter++)
 				{
-					pVarArgValue = va_arg(VarArgsIter, const void*);
+					const char* pVarArgName = Parameters[PIter].m_Name.buffer();
+					
 					if(str_comp_num(pText+ParamNameStart, pVarArgName, ParamNameLength) == 0)
 					{
 						//Get argument type
 						if(str_comp_num("str:", pText+ParamTypeStart, 4) == 0)
 						{
-							BufferIter = Buffer.append_at(BufferIter, (const char*) pVarArgValue);
+							const char* pValue = Parameters[PIter].m_String.m_pValue;
+							BufferIter = Buffer.append_at(BufferIter, pValue);
 						}
 						else if(str_comp_num("int:", pText+ParamTypeStart, 4) == 0)
 						{
-							int Number = *((const int*) pVarArgValue);
-							AppendNumber(Buffer, BufferIter, pLanguage, Number);
+							AppendInteger(Buffer, BufferIter, pLanguage, Parameters[PIter].m_Integer.m_Value);
 						}
-						else if(str_comp_num("percent:", pText+ParamTypeStart, 4) == 0)
+						else if(str_comp_num("percent:", pText+ParamTypeStart, 8) == 0)
 						{
-							float Number = (*((const float*) pVarArgValue));
-							AppendPercent(Buffer, BufferIter, pLanguage, Number);
+							AppendPercent(Buffer, BufferIter, pLanguage, Parameters[PIter].m_Percent.m_Value);
+						}
+						else if(str_comp_num("float:", pText+ParamTypeStart, 6) == 0)
+						{
+							AppendFloat(Buffer, BufferIter, pLanguage, Parameters[PIter].m_Float.m_Value);
 						}
 						else if(str_comp_num("sec:", pText+ParamTypeStart, 4) == 0)
 						{
-							int Duration = *((const int*) pVarArgValue);
+							int Duration = Parameters[PIter].m_Seconds.m_Value;
 							int Minutes = Duration / 60;
 							int Seconds = Duration - Minutes*60;
 							if(Minutes > 0)
@@ -650,10 +680,7 @@ void CLocalization::Format_V(dynamic_string& Buffer, const char* pLanguageCode, 
 						}
 						break;
 					}
-					
-					pVarArgName = va_arg(VarArgsIter, const char*);
 				}
-				va_end(VarArgsIter);
 				
 				//Close the macro
 				Start = Iter+1;
@@ -700,46 +727,54 @@ void CLocalization::Format_V(dynamic_string& Buffer, const char* pLanguageCode, 
 	}
 }
 
-void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, ...)
+int CLocalization::ParseInteger(const char* pLanguageCode, const char* pText)
 {
-	va_list VarArgs;
-	va_start(VarArgs, pText);
+	CLanguage* pLanguage = m_pMainLanguage;	
+	if(pLanguageCode)
+	{
+		for(int i=0; i<m_pLanguages.size(); i++)
+		{
+			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
+			{
+				pLanguage = m_pLanguages[i];
+				break;
+			}
+		}
+	}
 	
-	Format_V(Buffer, pLanguageCode, pText, VarArgs);
+	if(!pLanguage)
+		return 0;
 	
-	va_end(VarArgs);
+	UChar aBufUtf16[128];
+	
+	UErrorCode Status = U_ZERO_ERROR;
+	int Length = ucnv_toUChars(m_pUtf8Converter, aBufUtf16, sizeof(aBufUtf16), pText, -1, &Status);
+	
+	return unum_parse(pLanguage->m_pNumberFormater, aBufUtf16, Length, NULL, &Status);
 }
 
-void CLocalization::Format_VL(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, va_list VarArgs)
+float CLocalization::ParseFloat(const char* pLanguageCode, const char* pText)
 {
-	const char* pLocalText = Localize(pLanguageCode, pText);
+	CLanguage* pLanguage = m_pMainLanguage;	
+	if(pLanguageCode)
+	{
+		for(int i=0; i<m_pLanguages.size(); i++)
+		{
+			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
+			{
+				pLanguage = m_pLanguages[i];
+				break;
+			}
+		}
+	}
 	
-	Format_V(Buffer, pLanguageCode, pLocalText, VarArgs);
-}
-
-void CLocalization::Format_L(dynamic_string& Buffer, const char* pLanguageCode, const char* pText, ...)
-{
-	va_list VarArgs;
-	va_start(VarArgs, pText);
+	if(!pLanguage)
+		return 0.0f;
 	
-	Format_VL(Buffer, pLanguageCode, pText, VarArgs);
+	UChar aBufUtf16[128];
 	
-	va_end(VarArgs);
-}
-
-void CLocalization::Format_VLP(dynamic_string& Buffer, const char* pLanguageCode, int Number, const char* pText, va_list VarArgs)
-{
-	const char* pLocalText = Localize_P(pLanguageCode, Number, pText);
+	UErrorCode Status = U_ZERO_ERROR;
+	int Length = ucnv_toUChars(m_pUtf8Converter, aBufUtf16, sizeof(aBufUtf16), pText, -1, &Status);
 	
-	Format_V(Buffer, pLanguageCode, pLocalText, VarArgs);
-}
-
-void CLocalization::Format_LP(dynamic_string& Buffer, const char* pLanguageCode, int Number, const char* pText, ...)
-{
-	va_list VarArgs;
-	va_start(VarArgs, pText);
-	
-	Format_VLP(Buffer, pLanguageCode, Number, pText, VarArgs);
-	
-	va_end(VarArgs);
+	return unum_parseDouble(pLanguage->m_pNumberFormater, aBufUtf16, Length, NULL, &Status);
 }
