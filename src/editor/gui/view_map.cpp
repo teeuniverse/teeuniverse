@@ -57,7 +57,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pViewMap->AssetsEditor()->SetHint("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\"");
+			m_pViewMap->AssetsEditor()->SetHint(_GUI("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\""));
 		
 		gui::CHSlider::OnMouseMove();
 	}
@@ -86,6 +86,10 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	
 	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
 	m_pToolbar->Add(m_pCursorTool_MapCrop);
+	
+	m_pCursorTool_MapStamp->UpdateToolbar();
+	m_pCursorTool_MapEdit->UpdateToolbar();
+	m_pCursorTool_MapCrop->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);

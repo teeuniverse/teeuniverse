@@ -26,7 +26,7 @@
 #include <generated/assets/maplayertiles.h>
 #include <generated/assets/mapzonetiles.h>
 
-/* CURSORTOOL STAMP ***************************************************/
+/* ENTITY PALETTE *****************************************************/
 
 class CPopup_EntityPalette : public gui::CPopup
 {
@@ -130,6 +130,8 @@ public:
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
+
+/* ZONE PALETTE *******************************************************/
 
 class CPopup_ZonePalette : public gui::CPopup
 {
@@ -261,6 +263,8 @@ public:
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
+/* IMAGE PALETTE ******************************************************/
+
 class CPopup_ImagePalette : public gui::CPopup
 {
 protected:
@@ -315,11 +319,135 @@ public:
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
+/* FLIP AND ROTATE BUTTON *********************************************/
+
+class CVFlipButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CCursorTool_MapStamp* m_pCursorTool;
+	
+protected:
+	virtual void MouseClickAction() { m_pCursorTool->VFlipSelection(); }
+
+public:
+	CVFlipButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconVFlip),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pCursorTool(pCursorTool)
+	{
+		
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pAssetsEditor->SetHint(_GUI("Flip vertically the current stamp selection"));
+		
+		gui::CButton::OnMouseMove();
+	}
+};
+
+class CHFlipButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CCursorTool_MapStamp* m_pCursorTool;
+	
+protected:
+	virtual void MouseClickAction() { m_pCursorTool->HFlipSelection(); }
+
+public:
+	CHFlipButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconHFlip),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pCursorTool(pCursorTool)
+	{
+		
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pAssetsEditor->SetHint(_GUI("Flip horizontally the current stamp selection"));
+		
+		gui::CButton::OnMouseMove();
+	}
+};
+
+class CRotateCCWButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CCursorTool_MapStamp* m_pCursorTool;
+	
+protected:
+	virtual void MouseClickAction() { m_pCursorTool->RotateCCWSelection(); }
+
+public:
+	CRotateCCWButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconRotateCCW),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pCursorTool(pCursorTool)
+	{
+		
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pAssetsEditor->SetHint(_GUI("Rotate counter-clockwise the current stamp selection"));
+		
+		gui::CButton::OnMouseMove();
+	}
+};
+
+class CRotateCWButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CCursorTool_MapStamp* m_pCursorTool;
+	
+protected:
+	virtual void MouseClickAction() { m_pCursorTool->RotateCWSelection(); }
+
+public:
+	CRotateCWButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconRotateCW),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pCursorTool(pCursorTool)
+	{
+		
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pAssetsEditor->SetHint(_GUI("Rotate clockwise the current stamp selection"));
+		
+		gui::CButton::OnMouseMove();
+	}
+};
+
+/* CURSOR TOOL ********************************************************/
+
 CCursorTool_MapStamp::CCursorTool_MapStamp(CViewMap* pViewMap) :
-	CCursorTool(pViewMap, "Stamp", pViewMap->AssetsEditor()->m_Path_Sprite_IconStamp)
+	CCursorTool(pViewMap, _GUI("Stamp"), pViewMap->AssetsEditor()->m_Path_Sprite_IconStamp),
+	m_pOptions(NULL)
 {
 	m_SelectionEnabled = false;
 	m_DragEnabled = false;
+}
+
+void CCursorTool_MapStamp::UpdateToolbar()
+{
+	m_pOptions = new gui::CHListLayout(Context());
+	m_pOptions->AddSeparator();
+	m_pOptions->Add(new CRotateCCWButton(AssetsEditor(), this), false);
+	m_pOptions->Add(new CRotateCWButton(AssetsEditor(), this), false);
+	m_pOptions->Add(new CVFlipButton(AssetsEditor(), this), false);
+	m_pOptions->Add(new CHFlipButton(AssetsEditor(), this), false);
+	ViewMap()->GetToolbar()->Add(m_pOptions, false);
 }
 
 void CCursorTool_MapStamp::OnViewButtonClick(int Button)
@@ -859,6 +987,14 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 			Disable();
 	}
 	
+	if(m_pOptions)
+	{
+		if(IsUsed() && m_SelectionEnabled)
+			m_pOptions->Enable();
+		else
+			m_pOptions->Disable();
+	}
+	
 	CCursorTool::Update(ParentEnabled);
 }
 	
@@ -957,10 +1093,268 @@ void CCursorTool_MapStamp::PaletteCallback_SelectEntityType(CAssetPath EntityTyp
 	m_SelectionEnabled = true;
 }
 
+void CCursorTool_MapStamp::VFlipSelection()
+{
+	if(!m_SelectionEnabled)
+		return;
+	
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerTiles::TypeId:
+		case CAsset_MapZoneTiles::TypeId:
+		{
+			CAsset_MapLayerTiles::CTile TmpTile;
+			int Width = m_TileSelection.get_width();
+			int Flags;
+			for(int j=0; j<m_TileSelection.get_height(); j++)
+			{
+				int MaxWidth = Width/2;
+				if(Width%2 == 1)
+					MaxWidth++;
+				
+				for(int i=0; i<MaxWidth; i++)
+				{
+					CAsset_MapLayerTiles::CTile& Tile0 = m_TileSelection.get_clamp(i, j);
+					CAsset_MapLayerTiles::CTile& Tile1 = m_TileSelection.get_clamp(Width-i-1, j);
+					
+					if(i != Width-i-1)
+					{
+						TmpTile.copy(Tile0);
+						Tile0.copy(Tile1);
+						Tile1.copy(TmpTile);
+						
+						Flags = Tile0.GetFlags();
+						if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
+							Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP;
+						else
+							Flags ^= CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+						Tile0.SetFlags(Flags);
+					}
+						
+					Flags = Tile1.GetFlags();
+					if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP;
+					else
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+					Tile1.SetFlags(Flags);
+				}
+			}
+			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_QuadSelection.size(); i++)
+			{
+				m_QuadSelection[i].SetPivotX(-m_QuadSelection[i].GetPivotX());
+				m_QuadSelection[i].SetSizeX(-m_QuadSelection[i].GetSizeX());
+				m_QuadSelection[i].SetAngle(-m_QuadSelection[i].GetAngle());
+			}
+			break;
+		}
+		case CAsset_MapEntities::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_EntitySelection.size(); i++)
+			{
+				m_EntitySelection[i].SetPositionX(-m_EntitySelection[i].GetPositionX());
+			}
+			break;
+		}
+	}
+}
+
+void CCursorTool_MapStamp::HFlipSelection()
+{
+	if(!m_SelectionEnabled)
+		return;
+	
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerTiles::TypeId:
+		case CAsset_MapZoneTiles::TypeId:
+		{
+			CAsset_MapLayerTiles::CTile TmpTile;
+			int Height = m_TileSelection.get_height();
+			int Flags;
+			for(int i=0; i<m_TileSelection.get_width(); i++)
+			{
+				int MaxHeight = Height/2;
+				if(Height%2 == 1)
+					MaxHeight++;
+				
+				for(int j=0; j<MaxHeight; j++)
+				{
+					CAsset_MapLayerTiles::CTile& Tile0 = m_TileSelection.get_clamp(i, j);
+					CAsset_MapLayerTiles::CTile& Tile1 = m_TileSelection.get_clamp(i, Height-j-1);
+					
+					if(j != Height-j-1)
+					{
+						TmpTile.copy(Tile0);
+						Tile0.copy(Tile1);
+						Tile1.copy(TmpTile);
+						
+						Flags = Tile0.GetFlags();
+						if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
+							Flags ^= CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+						else
+							Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP;
+						Tile0.SetFlags(Flags);
+					}
+						
+					Flags = Tile1.GetFlags();
+					if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+					else
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP;
+					Tile1.SetFlags(Flags);
+				}
+			}
+			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_QuadSelection.size(); i++)
+			{
+				m_QuadSelection[i].SetPivotY(-m_QuadSelection[i].GetPivotY());
+				m_QuadSelection[i].SetSizeY(-m_QuadSelection[i].GetSizeY());
+				m_QuadSelection[i].SetAngle(-m_QuadSelection[i].GetAngle());
+			}
+			break;
+		}
+		case CAsset_MapEntities::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_EntitySelection.size(); i++)
+			{
+				m_EntitySelection[i].SetPositionY(-m_EntitySelection[i].GetPositionY());
+			}
+			break;
+		}
+	}
+}
+
+void CCursorTool_MapStamp::RotateCCWSelection()
+{
+	if(!m_SelectionEnabled)
+		return;
+	
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerTiles::TypeId:
+		case CAsset_MapZoneTiles::TypeId:
+		{
+			array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > TmpSelection;
+			TmpSelection.resize(m_TileSelection.get_height(), m_TileSelection.get_width());
+			
+			for(int j=0; j<m_TileSelection.get_height(); j++)
+			{
+				for(int i=0; i<m_TileSelection.get_width(); i++)
+				{
+					int I = j;
+					int J = m_TileSelection.get_width()-i-1;
+					
+					CAsset_MapLayerTiles::CTile& Tile = TmpSelection.get_clamp(I, J);
+					Tile.copy(m_TileSelection.get_clamp(i, j));
+					
+					int Flags = Tile.GetFlags();
+					if(!(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE))
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP|CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+					Flags ^= CAsset_MapLayerTiles::TILEFLAG_ROTATE;
+					
+					Tile.SetFlags(Flags);
+				}
+			}
+			
+			m_TileSelection.transfert(TmpSelection);
+			
+			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_QuadSelection.size(); i++)
+			{
+				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
+				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapEntities::TypeId:
+		{
+			float Angle = -pi/4.0f;
+			for(int i=0; i<m_EntitySelection.size(); i++)
+			{
+				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));
+			}
+			break;
+		}
+	}
+}
+
+void CCursorTool_MapStamp::RotateCWSelection()
+{
+	if(!m_SelectionEnabled)
+		return;
+	
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerTiles::TypeId:
+		case CAsset_MapZoneTiles::TypeId:
+		{
+			array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > TmpSelection;
+			TmpSelection.resize(m_TileSelection.get_height(), m_TileSelection.get_width());
+			
+			for(int j=0; j<m_TileSelection.get_height(); j++)
+			{
+				for(int i=0; i<m_TileSelection.get_width(); i++)
+				{
+					int I = m_TileSelection.get_height()-j-1;
+					int J = i;
+					
+					CAsset_MapLayerTiles::CTile& Tile = TmpSelection.get_clamp(I, J);
+					Tile.copy(m_TileSelection.get_clamp(i, j));
+					
+					int Flags = Tile.GetFlags();
+					if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
+						Flags ^= CAsset_MapLayerTiles::TILEFLAG_HFLIP|CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+					Flags ^= CAsset_MapLayerTiles::TILEFLAG_ROTATE;
+					
+					Tile.SetFlags(Flags);
+				}
+			}
+			
+			m_TileSelection.transfert(TmpSelection);
+			
+			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			float Angle = pi/4.0f;
+			for(int i=0; i<m_QuadSelection.size(); i++)
+			{
+				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
+				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapEntities::TypeId:
+		{
+			float Angle = pi/4.0f;
+			for(int i=0; i<m_EntitySelection.size(); i++)
+			{
+				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));
+			}
+			break;
+		}
+	}
+}
+
 void CCursorTool_MapStamp::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint("Stamp Tool: Create and copy objects. Use right click to open the palette.");
+		ViewMap()->AssetsEditor()->SetHint(_GUI("Stamp Tool: Create and copy objects. Use right click to open the palette."));
 	
 	CViewMap::CCursorTool::OnMouseMove();
 }

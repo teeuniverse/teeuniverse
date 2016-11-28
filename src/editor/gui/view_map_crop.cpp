@@ -24,7 +24,7 @@
 /* CURSORTOOL CROP ****************************************************/
 
 CCursorTool_MapCrop::CCursorTool_MapCrop(CViewMap* pViewMap) :
-	CViewMap::CCursorTool(pViewMap, "Crop", pViewMap->AssetsEditor()->m_Path_Sprite_IconCrop),
+	CViewMap::CCursorTool(pViewMap, _GUI("Crop"), pViewMap->AssetsEditor()->m_Path_Sprite_IconCrop),
 	m_Token(CAssetsHistory::NEW_TOKEN),
 	m_DragType(DRAGTYPE_NONE)
 {
@@ -319,7 +319,7 @@ void CCursorTool_MapCrop::Update(bool ParentEnabled)
 void CCursorTool_MapCrop::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint("Crop Tool: Edit boundaries of a layer");
+		ViewMap()->AssetsEditor()->SetHint(_GUI("Crop Tool: Edit boundaries of a layer"));
 	
 	CViewMap::CCursorTool::OnMouseMove();
 }

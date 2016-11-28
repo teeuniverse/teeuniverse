@@ -1274,7 +1274,11 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconCrop = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCrop");
 		m_Path_Sprite_IconUp = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconUp");
 		m_Path_Sprite_IconDown = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDown");
-		
+		m_Path_Sprite_IconVFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVFlip");
+		m_Path_Sprite_IconHFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconHFlip");
+		m_Path_Sprite_IconRotateCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotateCW");
+		m_Path_Sprite_IconRotateCCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotateCCW");
+	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
 		m_Path_Sprite_GizmoPivot = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoPivot");
@@ -1437,7 +1441,7 @@ void CGuiEditor::RefreshAssetsTree()
 		m_pAssetsTree->Refresh();
 }
 
-void CGuiEditor::SetHint(const char* pText)
+void CGuiEditor::SetHint(const CLocalizableString& LString)
 {
-	m_pHintLabel->SetText(pText);
+	m_pHintLabel->SetText(LString);
 }

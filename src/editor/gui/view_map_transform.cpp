@@ -25,8 +25,8 @@
 
 /* CURSORTOOL QUAD PICKER *********************************************/
 
-CCursorTool_MapPicker::CCursorTool_MapPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath) :
-	CCursorTool(pViewMap, pName, IconPath)
+CCursorTool_MapPicker::CCursorTool_MapPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath) :
+	CCursorTool(pViewMap, LString, IconPath)
 {
 	
 }
@@ -156,7 +156,7 @@ void CCursorTool_MapPicker::RenderPivots()
 /* CURSORTOOL QUAD TRANSFORM ******************************************/
 
 CCursorTool_MapTransform::CCursorTool_MapTransform(CViewMap* pViewMap) :
-	CCursorTool_MapPicker(pViewMap, "Transform", pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
+	CCursorTool_MapPicker(pViewMap, _GUI("Transform"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
 	m_Token(CAssetsHistory::NEW_TOKEN)
 {
 	
@@ -507,7 +507,7 @@ void CCursorTool_MapTransform::Update(bool ParentEnabled)
 void CCursorTool_MapTransform::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint("Transform Tool: Move, rotate and scale objects");
+		ViewMap()->AssetsEditor()->SetHint(_GUI("Transform Tool: Move, rotate and scale objects"));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
@@ -515,7 +515,7 @@ void CCursorTool_MapTransform::OnMouseMove()
 /* CURSORTOOL QUAD EDIT ***********************************************/
 
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
-	CCursorTool_MapPicker(pViewMap, "Edit", pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
+	CCursorTool_MapPicker(pViewMap, _GUI("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
 	m_Token(CAssetsHistory::NEW_TOKEN),
 	m_Vertex(VERTEX_NONE)
 {
@@ -763,7 +763,7 @@ void CCursorTool_MapEdit::Update(bool ParentEnabled)
 void CCursorTool_MapEdit::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint("Edit Tool: Change the shape of object by moving verticies.");
+		ViewMap()->AssetsEditor()->SetHint(_GUI("Edit Tool: Change the shape of object by moving verticies."));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }

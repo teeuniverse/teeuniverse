@@ -39,11 +39,15 @@ public:
 			virtual void MouseClickAction();
 		
 		public:
-			CCursorTool(CView* pView, const char* pName, CAssetPath IconPath);
+			CCursorTool(CView* pView, const CLocalizableString& LString, CAssetPath IconPath);
+			
+			virtual void UpdateToolbar() {};
 			
 			virtual void Update(bool ParentEnabled);
 			
-			virtual void OnUse(bool Used);
+			inline void OnUse(bool Used) { m_OnUse = Used; }
+			inline bool IsUsed() { return m_OnUse; }
+			
 			virtual void UpdateView() {};
 			virtual void RenderView() {};
 			virtual void OnViewMouseMove() {};
@@ -78,6 +82,8 @@ public:
 		inline const gui::CRect& GetViewRect() const { return m_ViewRect; }
 		
 		class CGuiEditor* AssetsEditor() { return m_pAssetsEditor; }
+		
+		gui::CHListLayout* GetToolbar() { return m_pToolbar; }
 	};
 	
 private:

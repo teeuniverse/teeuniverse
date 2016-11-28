@@ -31,8 +31,8 @@ public:
 		CViewMap* m_pViewMap;
 
 	public:
-		CCursorTool(CViewMap* pViewMap, const char* pName, CAssetPath IconPath) :
-			CViewManager::CView::CCursorTool(pViewMap, pName, IconPath),
+		CCursorTool(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath) :
+			CViewManager::CView::CCursorTool(pViewMap, LString, IconPath),
 			m_pViewMap(pViewMap)
 		{
 			

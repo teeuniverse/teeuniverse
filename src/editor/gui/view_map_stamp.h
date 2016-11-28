@@ -34,9 +34,11 @@ protected:
 	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_EntitySelection;
 	vec2 m_Pivot;
 	int m_Token;
+	gui::CHListLayout* m_pOptions;
 	
 public:
 	CCursorTool_MapStamp(CViewMap* pViewMap);
+	virtual void UpdateToolbar();
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();
@@ -46,6 +48,10 @@ public:
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
 	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index);
 	void PaletteCallback_SelectEntityType(CAssetPath ZoneTypePath);
+	void VFlipSelection();
+	void HFlipSelection();
+	void RotateCWSelection();
+	void RotateCCWSelection();
 };
 
 #endif

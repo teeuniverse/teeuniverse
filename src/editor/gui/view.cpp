@@ -28,7 +28,7 @@
 
 /* CURSORTOOL *********************************************************/
 
-CViewManager::CView::CCursorTool::CCursorTool(CView* pView, const char* pName, CAssetPath IconPath) :
+CViewManager::CView::CCursorTool::CCursorTool(CView* pView, const CLocalizableString& LString, CAssetPath IconPath) :
 	gui::CButton(pView->Context(), IconPath),
 	m_pView(pView),
 	m_OnUse(false)
@@ -49,11 +49,6 @@ void CViewManager::CView::CCursorTool::Update(bool ParentEnabled)
 		SetButtonStyle(AssetsEditor()->m_Path_Button_CursorTool);
 	
 	gui::CButton::Update(ParentEnabled);
-}
-
-void CViewManager::CView::CCursorTool::OnUse(bool Used)
-{
-	m_OnUse = Used;
 }
 
 /* VIEW ***************************************************************/

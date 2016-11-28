@@ -142,6 +142,10 @@ public:
 	CAssetPath m_Path_Sprite_IconCrop;
 	CAssetPath m_Path_Sprite_IconUp;
 	CAssetPath m_Path_Sprite_IconDown;
+	CAssetPath m_Path_Sprite_IconVFlip;
+	CAssetPath m_Path_Sprite_IconHFlip;
+	CAssetPath m_Path_Sprite_IconRotateCW;
+	CAssetPath m_Path_Sprite_IconRotateCCW;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
@@ -169,7 +173,7 @@ public:
 	void RefreshPackageTree();
 	void RefreshAssetsTree();
 	
-	void SetHint(const char* pText);
+	void SetHint(const CLocalizableString& LString);
 	
 	inline CEditorKernel* EditorKernel() { return m_pEditorKernel; }
 	inline const CEditorKernel* EditorKernel() const { return m_pEditorKernel; }

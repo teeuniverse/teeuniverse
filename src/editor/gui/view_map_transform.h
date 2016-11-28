@@ -29,7 +29,7 @@ protected:
 	void RenderPivots();
 	
 public:
-	CCursorTool_MapPicker(CViewMap* pViewMap, const char* pName, CAssetPath IconPath);
+	CCursorTool_MapPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath);
 };
 
 class CCursorTool_MapTransform : public CCursorTool_MapPicker
