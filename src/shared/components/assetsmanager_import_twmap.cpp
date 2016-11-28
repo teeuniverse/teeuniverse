@@ -357,6 +357,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				CSubPath MapSubPath = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
 				pMap->SetFgGroup(MapSubPath, MapGroupPath);
 			}
+			pMapGroup->SetParentPath(MapPath);
 			
 			//Don't forget to add parameters when the game group is splitted
 			pMapGroup->SetPosition(vec2(pGItem->m_OffsetX, pGItem->m_OffsetY));
@@ -402,6 +403,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						CAssetPath PhysicsZonePath;
 						CAsset_MapZoneTiles* pPhysicsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
 						pPhysicsZone->SetName("Physics");
+						pPhysicsZone->SetParentPath(MapPath);
 						
 						if(Format == MAPFORMAT_INFCLASS)
 							pPhysicsZone->SetZoneTypePath(m_Path_ZoneType_InfClassPhysics);
@@ -421,7 +423,8 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						{
 							CAssetPath EntitiesPath;
 							pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-							pEntities->SetName("Entities");	
+							pEntities->SetName("Entities");
+							pEntities->SetParentPath(MapPath);
 					
 							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
 							pMap->SetEntityLayer(MapSubPath, EntitiesPath);	
@@ -547,6 +550,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
 							pDamageZone->SetName("Damage");
 							pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
+							pDamageZone->SetParentPath(MapPath);
 							
 							{
 								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pDamageZone->GetTileArray();
@@ -606,7 +610,8 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						CAssetPath EntitiesPath;
 						CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						pEntities->SetName("Spawn");	
+						pEntities->SetName("Spawn");
+						pEntities->SetParentPath(MapPath);
 					
 						CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
 						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
@@ -645,7 +650,8 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						Height = pTilemapItem->m_Height;
 						
 						pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						pEntities->SetName("Flags");	
+						pEntities->SetName("Flags");
+						pEntities->SetParentPath(MapPath);	
 					
 						MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
 						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
@@ -682,6 +688,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						CAsset_MapZoneTiles* pInfClassZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
 						pInfClassZone->SetName("Zones");
 						pInfClassZone->SetZoneTypePath(m_Path_ZoneType_InfClassZones);
+						pInfClassZone->SetParentPath(MapPath);
 						
 						{
 							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pInfClassZone->GetTileArray();
@@ -725,6 +732,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
 						pDamageZone->SetName("Damage");
 						pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
+						pDamageZone->SetParentPath(MapPath);
 						
 						{
 							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pDamageZone->GetTileArray();
@@ -768,6 +776,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 						pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
+						pMapLayer->SetParentPath(MapGroupPath);
 						
 						//Name
 						aBuf[0] = 0;
@@ -839,6 +848,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					
 					CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 					pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
+					pMapLayer->SetParentPath(MapGroupPath);
 					
 					//Name
 					aBuf[0] = 0;

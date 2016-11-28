@@ -72,6 +72,8 @@ int main(int argc, const char **argv)
 	//Sprites
 	CAssetPath IconDecreasePath;
 	CAssetPath IconIncreasePath;
+	CAssetPath IconVisibilePath;
+	CAssetPath IconInvisibilePath;
 	
 	CREATE_SPRITE(PackageId, "iconVoid", ImageEditorPath, 0, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDefault", ImageEditorPath, 1, 0, 1, 1);
@@ -79,7 +81,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE_PATH(IconIncreasePath, PackageId, "iconIncrease", ImageEditorPath, 3, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDelete", ImageEditorPath, 4, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEdit", ImageEditorPath, 9, 0, 1, 1);
-	CREATE_SPRITE(PackageId, "iconView", ImageEditorPath, 10, 0, 1, 1);
+	CREATE_SPRITE_PATH(IconVisibilePath, PackageId, "iconView", ImageEditorPath, 10, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconUp", ImageEditorPath, 11, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDown", ImageEditorPath, 12, 0, 1, 1);
 	CREATE_SPRITE(PackageId, "iconDuplicate", ImageEditorPath, 13, 0, 1, 1);
@@ -110,7 +112,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconEntityType", ImageEditorPath, 7, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconAsset", ImageEditorPath, 8, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconNewAsset", ImageEditorPath, 9, 1, 1, 1);
-	CREATE_SPRITE(PackageId, "iconHidden", ImageEditorPath, 10, 1, 1, 1);
+	CREATE_SPRITE_PATH(IconInvisibilePath, PackageId, "iconHidden", ImageEditorPath, 10, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconEntities", ImageEditorPath, 11, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconNewFolder", ImageEditorPath, 12, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconLayer", ImageEditorPath, 13, 1, 1, 1);
@@ -838,6 +840,7 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath ButtonPath;
+		CAssetPath TogglePath;
 		
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
@@ -853,6 +856,18 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
 			pAsset->SetReadOnlyStylePath(LabelIdlePath);
+		}
+		
+		{
+			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiToggleStyle>(&TogglePath, PackageId);
+			pAsset->SetName("listVisibility");
+			pAsset->SetIdleTrueStylePath(LabelIdlePath);
+			pAsset->SetMouseOverTrueStylePath(LabelIdlePath);
+			pAsset->SetIconTruePath(IconVisibilePath);
+			pAsset->SetIdleFalseStylePath(LabelIdlePath);
+			pAsset->SetMouseOverFalseStylePath(LabelIdlePath);
+			pAsset->SetIconFalsePath(IconInvisibilePath);
+			pAsset->SetSwitchIcon(true);
 		}
 	}
 	

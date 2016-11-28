@@ -106,47 +106,19 @@ CAssetPath CViewMap::GetMapGroupPath()
 		case CAsset_MapGroup::TypeId:
 			return AssetsEditor()->GetEditedAssetPath();
 		case CAsset_MapLayerTiles::TypeId:
-		case CAsset_MapLayerQuads::TypeId:
-			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
-			{
-				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
-				{
-					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
-					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
-					if(pMap)
-					{
-						CAsset_Map::CIteratorBgGroup IterBgGroup;
-						for(IterBgGroup = pMap->BeginBgGroup(); IterBgGroup != pMap->EndBgGroup(); ++IterBgGroup)
-						{
-							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetBgGroup(*IterBgGroup));
-							if(pGroup)
-							{
-								CAsset_MapGroup::CIteratorLayer IterLayer;
-								for(IterLayer = pGroup->BeginLayer(); IterLayer != pGroup->EndLayer(); ++IterLayer)
-								{
-									if(pGroup->GetLayer(*IterLayer) == AssetsEditor()->GetEditedAssetPath())
-										return pMap->GetBgGroup(*IterBgGroup);
-								}
-							}
-						}
-						CAsset_Map::CIteratorFgGroup IterFgGroup;
-						for(IterFgGroup = pMap->BeginFgGroup(); IterFgGroup != pMap->EndFgGroup(); ++IterFgGroup)
-						{
-							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetFgGroup(*IterFgGroup));
-							if(pGroup)
-							{
-								CAsset_MapGroup::CIteratorLayer IterLayer;
-								for(IterLayer = pGroup->BeginLayer(); IterLayer != pGroup->EndLayer(); ++IterLayer)
-								{
-									if(pGroup->GetLayer(*IterLayer) == AssetsEditor()->GetEditedAssetPath())
-										return pMap->GetFgGroup(*IterFgGroup);
-								}
-							}
-						}
-					}
-				}
-			}
+		{
+			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
 			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
+			break;
+		}
 	}
 	
 	return CAssetPath::Null();
@@ -159,110 +131,48 @@ CAssetPath CViewMap::GetMapPath()
 		case CAsset_Map::TypeId:
 			return AssetsEditor()->GetEditedAssetPath();
 		case CAsset_MapZoneTiles::TypeId:
-			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
-			{
-				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
-				{
-					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
-					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
-					if(pMap)
-					{
-						CAsset_Map::CIteratorZoneLayer IterZoneLayer;
-						for(IterZoneLayer = pMap->BeginZoneLayer(); IterZoneLayer != pMap->EndZoneLayer(); ++IterZoneLayer)
-						{
-							if(pMap->GetZoneLayer(*IterZoneLayer) == AssetsEditor()->GetEditedAssetPath())
-								return MapPath;
-						}
-					}
-				}
-			}
+		{
+			const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
 			break;
+		}
 		case CAsset_MapEntities::TypeId:
-			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
-			{
-				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
-				{
-					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
-					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
-					if(pMap)
-					{
-						CAsset_Map::CIteratorEntityLayer IterEntityLayer;
-						for(IterEntityLayer = pMap->BeginEntityLayer(); IterEntityLayer != pMap->EndEntityLayer(); ++IterEntityLayer)
-						{
-							if(pMap->GetEntityLayer(*IterEntityLayer) == AssetsEditor()->GetEditedAssetPath())
-								return MapPath;
-						}
-					}
-				}
-			}
+		{
+			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
 			break;
+		}
 		case CAsset_MapGroup::TypeId:
-			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
-			{
-				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
-				{
-					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
-					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
-					if(pMap)
-					{
-						CAsset_Map::CIteratorBgGroup IterBgGroup;
-						for(IterBgGroup = pMap->BeginBgGroup(); IterBgGroup != pMap->EndBgGroup(); ++IterBgGroup)
-						{
-							if(pMap->GetBgGroup(*IterBgGroup) == AssetsEditor()->GetEditedAssetPath())
-								return MapPath;
-						}
-						CAsset_Map::CIteratorFgGroup IterFgGroup;
-						for(IterFgGroup = pMap->BeginFgGroup(); IterFgGroup != pMap->EndFgGroup(); ++IterFgGroup)
-						{
-							if(pMap->GetFgGroup(*IterFgGroup) == AssetsEditor()->GetEditedAssetPath())
-								return MapPath;
-						}
-					}
-				}
-			}
+		{
+			const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(AssetsEditor()->GetEditedAssetPath());
+			if(pGroup)
+				return pGroup->GetParentPath();
 			break;
+		}
 		case CAsset_MapLayerTiles::TypeId:
-		case CAsset_MapLayerQuads::TypeId:
-			for(int s=0; s<AssetsManager()->GetNumPackages(); s++)
+		{
+			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
 			{
-				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_Map>(s); i++)
-				{
-					CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, s, i);
-					const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
-					if(pMap)
-					{
-						CAsset_Map::CIteratorBgGroup IterBgGroup;
-						for(IterBgGroup = pMap->BeginBgGroup(); IterBgGroup != pMap->EndBgGroup(); ++IterBgGroup)
-						{
-							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetBgGroup(*IterBgGroup));
-							if(pGroup)
-							{
-								CAsset_MapGroup::CIteratorLayer IterLayer;
-								for(IterLayer = pGroup->BeginLayer(); IterLayer != pGroup->EndLayer(); ++IterLayer)
-								{
-									if(pGroup->GetLayer(*IterLayer) == AssetsEditor()->GetEditedAssetPath())
-										return MapPath;
-								}
-							}
-						}
-						CAsset_Map::CIteratorFgGroup IterFgGroup;
-						for(IterFgGroup = pMap->BeginFgGroup(); IterFgGroup != pMap->EndFgGroup(); ++IterFgGroup)
-						{
-							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetFgGroup(*IterFgGroup));
-							if(pGroup)
-							{
-								CAsset_MapGroup::CIteratorLayer IterLayer;
-								for(IterLayer = pGroup->BeginLayer(); IterLayer != pGroup->EndLayer(); ++IterLayer)
-								{
-									if(pGroup->GetLayer(*IterLayer) == AssetsEditor()->GetEditedAssetPath())
-										return MapPath;
-								}
-							}
-						}
-					}
-				}
+				const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pLayer->GetParentPath());
+				if(pGroup)
+					return pGroup->GetParentPath();
 			}
 			break;
+		}
+		case CAsset_MapLayerQuads::TypeId:
+		{
+			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+			{
+				const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pLayer->GetParentPath());
+				if(pGroup)
+					return pGroup->GetParentPath();
+			}
+			break;
+		}
 	}
 	
 	return CAssetPath::Null();
@@ -328,8 +238,7 @@ void CViewMap::RenderView()
 				if(!pEntities)
 					continue;
 				
-				const CAssetState* pState = AssetsManager()->GetAssetState(EntitiesPath);
-				if(pState && !pState->m_Visible)
+				if(!pEntities->GetVisibility())
 					continue;
 				
 				vec4 Color = 1.0f;

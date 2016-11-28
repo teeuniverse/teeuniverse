@@ -1663,12 +1663,14 @@ assetsList.append(_map)
 # MAP GROUP ############################################################
 mapGroup = ClassAsset("MapGroup", len(assetsList))
 mapGroup.setInheritance(mainAsset)
+mapGroup.addMember("ParentPath", TypeAssetPath())
 mapGroup.addMember("Layer", TypeArray(TypeAssetPath()))
 mapGroup.addMember("Position", TypeVec2(), "vec2(0.0f, 0.0f)")
 mapGroup.addMember("HardParallax", TypeVec2(), "vec2(1.0f, 1.0f)")
 mapGroup.addMember("Clipping", TypeBool(), "false")
 mapGroup.addMember("ClipPosition", TypeVec2(), "vec2(0.0f, 0.0f)")
 mapGroup.addMember("ClipSize", TypeVec2(), "vec2(64.0f, 64.0f)")
+mapGroup.addMember("Visibility", TypeBool(), "true")
 
 assetsList.append(mapGroup)
 
@@ -1698,12 +1700,15 @@ mapLayerQuads_quad.addPublicFunc([
 mapLayerQuads = ClassAsset("MapLayerQuads", len(assetsList))
 mapLayerQuads.setInheritance(mainAsset)
 mapLayerQuads.addClass(mapLayerQuads_quad)
+mapLayerQuads.addMember("ParentPath", TypeAssetPath())
 mapLayerQuads.addMember("ImagePath", TypeAssetPath())
 mapLayerQuads.addMember("Quad", TypeArray(mapLayerQuads_quad))
 mapLayerQuads.addPublicFunc([
 	"void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
 ])
+mapLayerQuads.addMember("Visibility", TypeBool(), "true")
+
 assetsList.append(mapLayerQuads)
 
 # MAP LAYER TILES ######################################################
@@ -1714,9 +1719,11 @@ mapLayerTiles_tile.addMember("Flags", TypeUInt8(), "0x0")
 mapLayerTiles = ClassAsset("MapLayerTiles", len(assetsList))
 mapLayerTiles.setInheritance(mainAsset)
 mapLayerTiles.addClass(mapLayerTiles_tile)
+mapLayerTiles.addMember("ParentPath", TypeAssetPath())
 mapLayerTiles.addMember("ImagePath", TypeAssetPath())
 mapLayerTiles.addMember("Color", TypeColor(), "1.0f")
 mapLayerTiles.addMember("Tile", TypeArray2d(mapLayerTiles_tile))
+mapLayerTiles.addMember("Visibility", TypeBool(), "true")
 
 mapLayerTiles.addPublicLines([
 	"enum",
@@ -1738,8 +1745,10 @@ mapZoneTiles_tile.addMember("Index", TypeUInt8(), "0")
 mapZoneTiles = ClassAsset("MapZoneTiles", len(assetsList))
 mapZoneTiles.setInheritance(mainAsset)
 mapZoneTiles.addClass(mapZoneTiles_tile)
+mapZoneTiles.addMember("ParentPath", TypeAssetPath())
 mapZoneTiles.addMember("ZoneTypePath", TypeAssetPath())
 mapZoneTiles.addMember("Tile", TypeArray2d(mapZoneTiles_tile))
+mapZoneTiles.addMember("Visibility", TypeBool(), "true")
 
 assetsList.append(mapZoneTiles)
 
@@ -1751,7 +1760,9 @@ mapEntities_entity.addMember("Position", TypeVec2(), "0.0f")
 mapEntities = ClassAsset("MapEntities", len(assetsList))
 mapEntities.setInheritance(mainAsset)
 mapEntities.addClass(mapEntities_entity)
+mapEntities.addMember("ParentPath", TypeAssetPath())
 mapEntities.addMember("Entity", TypeArray(mapEntities_entity))
+mapEntities.addMember("Visibility", TypeBool(), "true")
 
 assetsList.append(mapEntities)
 

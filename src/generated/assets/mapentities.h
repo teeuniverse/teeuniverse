@@ -34,6 +34,7 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+#include <shared/assets/assetpath.h>
 
 class CAsset_MapEntities : public CAsset
 {
@@ -50,6 +51,7 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
+		PARENTPATH,
 		ENTITY_ARRAYSIZE,
 		ENTITY_PTR,
 		ENTITY_ARRAY,
@@ -58,6 +60,7 @@ public:
 		ENTITY_POSITION_X,
 		ENTITY_POSITION_Y,
 		ENTITY,
+		VISIBILITY,
 	};
 	
 	class CIteratorEntity
@@ -135,14 +138,18 @@ public:
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
+		CAssetPath::CTuaType m_ParentPath;
 		CTuaArray m_Entity;
+		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapEntities& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
+	CAssetPath m_ParentPath;
 	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_Entity;
+	bool m_Visibility;
 
 public:
 	template<typename T>
@@ -159,17 +166,24 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	CAsset_MapEntities();
 	void copy(const CAsset_MapEntities& Item)
 	{
 		CAsset::copy(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_Entity.copy(Item.m_Entity);
+		m_Visibility = Item.m_Visibility;
 	}
 	
 	void transfert(CAsset_MapEntities& Item)
 	{
 		CAsset::transfert(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_Entity.transfert(Item.m_Entity);
+		m_Visibility = Item.m_Visibility;
 	}
+	
+	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline int GetEntityArraySize() const { return m_Entity.size(); }
 	
@@ -188,6 +202,10 @@ public:
 	
 	inline float GetEntityPositionY(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()].GetPositionY(); }
 	
+	inline bool GetVisibility() const { return m_Visibility; }
+	
+	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
+	
 	inline void SetEntityArraySize(int Value) { m_Entity.resize(Value); }
 	
 	inline void SetEntity(const CSubPath& SubPath, const CAsset_MapEntities::CEntity& Value) { m_Entity[SubPath.GetId()].copy(Value); }
@@ -200,6 +218,8 @@ public:
 	
 	inline void SetEntityPositionY(const CSubPath& SubPath, float Value) { m_Entity[SubPath.GetId()].SetPositionY(Value); }
 	
+	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
 	inline int AddEntity()
 	{
 		int Id = m_Entity.size();
@@ -211,6 +231,7 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		Operation.Apply(m_ParentPath);
 		for(int i=0; i<m_Entity.size(); i++)
 		{
 			m_Entity[i].AssetPathOperation(Operation);
@@ -221,6 +242,8 @@ public:
 
 template<> int CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
 template<> bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, float Value);
 template<> vec2 CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;

@@ -717,8 +717,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 	if(!pGroup)
 		return;
 	
-	const CAssetState* pState = AssetsManager()->GetAssetState(GroupPath);
-	if(pState && !pState->m_Visible)
+	if(!pGroup->GetVisibility())
 		return;
 	
 	if(pGroup->GetClipping())
@@ -737,16 +736,15 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 	{
 		CAssetPath LayerPath = pGroup->GetLayer(*IterLayer);
 			
-		const CAssetState* pState = AssetsManager()->GetAssetState(LayerPath);
-		if(pState && !pState->m_Visible)
-			continue;
-			
 		if(LayerPath.GetType() == CAsset_MapLayerTiles::TypeId)
 		{
 			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(LayerPath);
 			if(!pLayer)
 				continue;
 			
+			if(!pLayer->GetVisibility())
+				return;
+				
 			RenderTiles_Image(pLayer->GetTileArray(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), pLayer->GetColor()*Color, true);
 		}
 		else if(LayerPath.GetType() == CAsset_MapLayerQuads::TypeId)
@@ -754,6 +752,9 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(LayerPath);
 			if(!pLayer)
 				continue;
+			
+			if(!pLayer->GetVisibility())
+				return;
 			
 			RenderQuads(pLayer->GetQuadPtr(), pLayer->GetQuadArraySize(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), Color);
 		}
@@ -767,10 +768,6 @@ void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color)
 {
 	const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
 	if(!pMap)
-		return;
-	
-	const CAssetState* pState = AssetsManager()->GetAssetState(MapPath);
-	if(pState && !pState->m_Visible)
 		return;
 	
 	{
@@ -797,10 +794,6 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, v
 	if(!pMap)
 		return;
 	
-	const CAssetState* pState = AssetsManager()->GetAssetState(MapPath);
-	if(pState && !pState->m_Visible)
-		return;
-	
 	CAsset_Map::CIteratorZoneLayer Iter;
 	for(Iter = pMap->BeginZoneLayer(); Iter != pMap->EndZoneLayer(); ++Iter)
 	{
@@ -809,9 +802,8 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, v
 		if(!pZone)
 			continue;
 	
-		const CAssetState* pState = AssetsManager()->GetAssetState(ZonePath);
-		if(pState && !pState->m_Visible)
-			continue;
+		if(!pZone->GetVisibility())
+			return;
 		
 		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, ZoneTexture, true);
 	}

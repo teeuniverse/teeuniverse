@@ -91,6 +91,7 @@ public:
 	
 	CAssetPath m_Path_Toggle_Default;
 	CAssetPath m_Path_Toggle_Toolbar;
+	CAssetPath m_Path_Toggle_Visibility;
 	
 	CAssetPath m_Path_IntEdit_Default;
 	CAssetPath m_Path_ColorEdit_Default;
@@ -139,6 +140,8 @@ public:
 	CAssetPath m_Path_Sprite_IconNewFolder;
 	CAssetPath m_Path_Sprite_IconDelete;
 	CAssetPath m_Path_Sprite_IconCrop;
+	CAssetPath m_Path_Sprite_IconUp;
+	CAssetPath m_Path_Sprite_IconDown;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

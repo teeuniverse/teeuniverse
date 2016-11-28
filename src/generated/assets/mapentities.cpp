@@ -38,6 +38,10 @@ CAsset_MapEntities::CEntity::CEntity()
 	m_Position = 0.0f;
 }
 
+CAsset_MapEntities::CAsset_MapEntities()
+{
+	m_Visibility = true;
+}
 
 void CAsset_MapEntities::CEntity::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapEntities::CEntity& SysType)
 {
@@ -50,6 +54,7 @@ void CAsset_MapEntities::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext,
 {
 	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
 
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	{
 		const CAsset_MapEntities::CEntity::CTuaType* pData = (const CAsset_MapEntities::CEntity::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Entity.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Entity.m_Size);
@@ -60,6 +65,7 @@ void CAsset_MapEntities::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext,
 		}
 	}
 	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
 void CAsset_MapEntities::CEntity::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType& TuaType)
@@ -73,6 +79,7 @@ void CAsset_MapEntities::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext
 {
 	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
 
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType* pData = new CAsset_MapEntities::CEntity::CTuaType[SysType.m_Entity.size()];
@@ -83,6 +90,7 @@ void CAsset_MapEntities::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext
 		TuaType.m_Entity.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType)*SysType.m_Entity.size());
 		delete[] pData;
 	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 template<>
@@ -106,6 +114,29 @@ bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, int Va
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+bool CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			return GetVisibility();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			SetVisibility(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -164,6 +195,8 @@ CAssetPath CAsset_MapEntities::GetValue(int ValueType, const CSubPath& SubPath, 
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			return GetParentPath();
 		case ENTITY_TYPEPATH:
 			return GetEntityTypePath(SubPath);
 	}
@@ -175,6 +208,9 @@ bool CAsset_MapEntities::SetValue(int ValueType, const CSubPath& SubPath, CAsset
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			SetParentPath(Value);
+			return true;
 		case ENTITY_TYPEPATH:
 			SetEntityTypePath(SubPath, Value);
 			return true;

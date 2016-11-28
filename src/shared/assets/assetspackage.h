@@ -25,12 +25,10 @@
 struct CAssetState
 {
 	bool m_ListedInEditor;
-	bool m_Visible;
 	
 	CAssetState()
 	{
 		m_ListedInEditor = false;
-		m_Visible = true;
 	};
 };
 

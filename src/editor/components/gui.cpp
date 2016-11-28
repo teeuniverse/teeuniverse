@@ -848,6 +848,7 @@ protected:
 					break;
 				AssetsManager()->TryChangeAssetName(AssetPath, "map", Tokken);
 				
+				CAssetPath GroupPath;
 				CAssetPath SubAssetPath;
 				CAsset_MapGroup* pMapGroup;
 				CAsset_MapLayerTiles* pMapLayerTiles;
@@ -867,6 +868,7 @@ protected:
 					Data.resize(64, 64);
 					
 					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TWPhysics);
+					pMapZoneTiles->SetParentPath(AssetPath);
 				}
 				
 				//Zone, Damage
@@ -880,6 +882,7 @@ protected:
 					Data.resize(64, 64);
 					
 					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TWDamage);
+					pMapZoneTiles->SetParentPath(AssetPath);
 				}
 				
 				//Entites
@@ -887,19 +890,22 @@ protected:
 				AssetsManager()->TryChangeAssetName(SubAssetPath, "entities", Tokken);
 				SubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
 				pMap->SetEntityLayer(SubPath, SubAssetPath);
+				pMapEntities->SetParentPath(AssetPath);
 				
 				//Background
-				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "background", Tokken);
+				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				AssetsManager()->TryChangeAssetName(GroupPath, "background", Tokken);
 				SubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
-				pMap->SetBgGroup(SubPath, SubAssetPath);
+				pMap->SetBgGroup(SubPath, GroupPath);
 				pMapGroup->SetHardParallax(vec2(0.0f, 0.0f));
+				pMapGroup->SetParentPath(AssetPath);
 				
 					//Sky
 				pMapLayerQuads = AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
 				AssetsManager()->TryChangeAssetName(SubAssetPath, "sky", Tokken);
 				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 				pMapGroup->SetLayer(SubPath, SubAssetPath);
+				pMapLayerQuads->SetParentPath(GroupPath);
 				
 						//Quad
 				SubPath = CAsset_MapLayerQuads::SubPath_Quad(pMapLayerQuads->AddQuad());
@@ -1217,6 +1223,7 @@ void CGuiEditor::LoadAssets()
 		
 		m_Path_Toggle_Default = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "default");
 		m_Path_Toggle_Toolbar = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "toolbar");
+		m_Path_Toggle_Visibility = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "listVisibility");
 		
 		m_Path_IntEdit_Default = AssetsManager()->FindAsset<CAsset_GuiIntEditStyle>(PackageId, "default");
 		m_Path_ColorEdit_Default = AssetsManager()->FindAsset<CAsset_GuiColorEditStyle>(PackageId, "default");
@@ -1265,6 +1272,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconNewFolder = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewFolder");
 		m_Path_Sprite_IconDelete = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDelete");
 		m_Path_Sprite_IconCrop = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCrop");
+		m_Path_Sprite_IconUp = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconUp");
+		m_Path_Sprite_IconDown = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDown");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");

@@ -42,6 +42,7 @@ CAsset_MapLayerTiles::CTile::CTile()
 CAsset_MapLayerTiles::CAsset_MapLayerTiles()
 {
 	m_Color = 1.0f;
+	m_Visibility = true;
 }
 
 void CAsset_MapLayerTiles::CTile::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerTiles::CTile& SysType)
@@ -54,6 +55,7 @@ void CAsset_MapLayerTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 {
 	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
 
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
@@ -71,6 +73,7 @@ void CAsset_MapLayerTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 		}
 	}
 	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
 void CAsset_MapLayerTiles::CTile::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType& TuaType)
@@ -83,6 +86,7 @@ void CAsset_MapLayerTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 {
 	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
 
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
@@ -97,6 +101,7 @@ void CAsset_MapLayerTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapLayerTiles::CTile::CTuaType)*SysType.m_Tile.get_linear_size());
 		delete[] pData;
 	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 template<>
@@ -156,6 +161,29 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, uint
 }
 
 template<>
+bool CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			return GetVisibility();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			SetVisibility(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
+}
+
+template<>
 vec4 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const
 {
 	switch(ValueType)
@@ -183,6 +211,8 @@ CAssetPath CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			return GetParentPath();
 		case IMAGEPATH:
 			return GetImagePath();
 	}
@@ -194,6 +224,9 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, CAss
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			SetParentPath(Value);
+			return true;
 		case IMAGEPATH:
 			SetImagePath(Value);
 			return true;

@@ -60,6 +60,7 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
+		PARENTPATH,
 		IMAGEPATH,
 		COLOR,
 		TILE_WIDTH,
@@ -69,6 +70,7 @@ public:
 		TILE_INDEX,
 		TILE_FLAGS,
 		TILE,
+		VISIBILITY,
 	};
 	
 	class CTile
@@ -118,18 +120,22 @@ public:
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
+		CAssetPath::CTuaType m_ParentPath;
 		CAssetPath::CTuaType m_ImagePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerTiles& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
+	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
 	vec4 m_Color;
 	array2d< CTile, allocator_copy<CTile> > m_Tile;
+	bool m_Visibility;
 
 public:
 	template<typename T>
@@ -150,18 +156,24 @@ public:
 	void copy(const CAsset_MapLayerTiles& Item)
 	{
 		CAsset::copy(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ImagePath = Item.m_ImagePath;
 		m_Color = Item.m_Color;
 		m_Tile.copy(Item.m_Tile);
+		m_Visibility = Item.m_Visibility;
 	}
 	
 	void transfert(CAsset_MapLayerTiles& Item)
 	{
 		CAsset::transfert(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ImagePath = Item.m_ImagePath;
 		m_Color = Item.m_Color;
 		m_Tile.transfert(Item.m_Tile);
+		m_Visibility = Item.m_Visibility;
 	}
+	
+	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
 	
@@ -182,6 +194,10 @@ public:
 	
 	inline uint8 GetTileFlags(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).GetFlags(); }
 	
+	inline bool GetVisibility() const { return m_Visibility; }
+	
+	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
+	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
 	inline void SetColor(vec4 Value) { m_Color = Value; }
@@ -196,8 +212,11 @@ public:
 	
 	inline void SetTileFlags(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetFlags(Value); }
 	
+	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_ImagePath);
 		for(int i=0; i<m_Tile.get_linear_size(); i++)
 		{
@@ -211,6 +230,8 @@ template<> int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& Sub
 template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int Value);
 template<> uint32 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
 template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
+template<> bool CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> vec4 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
 template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
 template<> CAssetPath CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;

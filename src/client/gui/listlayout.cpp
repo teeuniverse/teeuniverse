@@ -420,6 +420,7 @@ CVScrollLayout::CVScrollLayout(CGui *pContext) :
 	m_ShowScrollBar(false),
 	m_pScrollBar(NULL)
 {
+	m_ClipEnabled = true;
 	m_pScrollBar = new CVScrollBar(pContext);
 }
 

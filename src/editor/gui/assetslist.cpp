@@ -417,6 +417,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP);
 					if(Id >= 0)
@@ -453,6 +454,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP);
 					if(Id >= 0)
@@ -473,6 +475,208 @@ protected:
 		{ }
 	};
 	
+	class CMoveGroupButton : public CMenuButton
+	{
+	protected:
+		int m_Shift;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+			if(!pGroup)
+				return;
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(pGroup->GetParentPath());
+			if(!pMap)
+				return;
+			
+			CAsset_Map::CIteratorBgGroup IterBgGroup;
+			for(IterBgGroup = pMap->BeginBgGroup(); IterBgGroup != pMap->EndBgGroup(); ++IterBgGroup)
+			{
+				if(pMap->GetBgGroup(*IterBgGroup) == m_AssetPath)
+				{
+					int Id = (*IterBgGroup).GetId();
+					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetBgGroupArraySize())
+					{
+						CSubPath TmpSubPath = CAsset_Map::SubPath_BgGroup(Id+m_Shift);
+						CAssetPath TmpAssetPath = pMap->GetBgGroup(TmpSubPath);
+						
+						int Token = AssetsManager()->GenerateToken();
+						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), *IterBgGroup, CAsset_Map::BGGROUP, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), TmpSubPath, CAsset_Map::BGGROUP, m_AssetPath, Token);
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+						return;
+					}
+				}
+			}
+			
+			CAsset_Map::CIteratorFgGroup IterFgGroup;
+			for(IterFgGroup = pMap->BeginFgGroup(); IterFgGroup != pMap->EndFgGroup(); ++IterFgGroup)
+			{
+				if(pMap->GetFgGroup(*IterFgGroup) == m_AssetPath)
+				{
+					int Id = (*IterFgGroup).GetId();
+					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetFgGroupArraySize())
+					{
+						CSubPath TmpSubPath = CAsset_Map::SubPath_FgGroup(Id+m_Shift);
+						CAssetPath TmpAssetPath = pMap->GetFgGroup(TmpSubPath);
+						
+						int Token = AssetsManager()->GenerateToken();
+						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), *IterFgGroup, CAsset_Map::FGGROUP, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), TmpSubPath, CAsset_Map::FGGROUP, m_AssetPath, Token);
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+						return;
+					}
+				}
+			}
+		}
+
+	public:
+		CMoveGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			m_Shift(Shift)
+		{ }
+	};
+	
+	class CMoveZoneButton : public CMenuButton
+	{
+	protected:
+		int m_Shift;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(m_AssetPath);
+			if(!pLayer)
+				return;
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(pLayer->GetParentPath());
+			if(!pMap)
+				return;
+			
+			CAsset_Map::CIteratorZoneLayer Iter;
+			for(Iter = pMap->BeginZoneLayer(); Iter != pMap->EndZoneLayer(); ++Iter)
+			{
+				if(pMap->GetZoneLayer(*Iter) == m_AssetPath)
+				{
+					int Id = (*Iter).GetId();
+					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetZoneLayerArraySize())
+					{
+						CSubPath TmpSubPath = CAsset_Map::SubPath_ZoneLayer(Id+m_Shift);
+						CAssetPath TmpAssetPath = pMap->GetZoneLayer(TmpSubPath);
+						
+						int Token = AssetsManager()->GenerateToken();
+						AssetsManager()->SetAssetValue<CAssetPath>(pLayer->GetParentPath(), *Iter, CAsset_Map::ZONELAYER, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(pLayer->GetParentPath(), TmpSubPath, CAsset_Map::ZONELAYER, m_AssetPath, Token);
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+						return;
+					}
+				}
+			}
+		}
+
+	public:
+		CMoveZoneButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			m_Shift(Shift)
+		{ }
+	};
+	
+	class CMoveEntitiesButton : public CMenuButton
+	{
+	protected:
+		int m_Shift;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(m_AssetPath);
+			if(!pLayer)
+				return;
+			
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(pLayer->GetParentPath());
+			if(!pMap)
+				return;
+			
+			CAsset_Map::CIteratorEntityLayer Iter;
+			for(Iter = pMap->BeginEntityLayer(); Iter != pMap->EndEntityLayer(); ++Iter)
+			{
+				if(pMap->GetEntityLayer(*Iter) == m_AssetPath)
+				{
+					int Id = (*Iter).GetId();
+					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetEntityLayerArraySize())
+					{
+						CSubPath TmpSubPath = CAsset_Map::SubPath_EntityLayer(Id+m_Shift);
+						CAssetPath TmpAssetPath = pMap->GetEntityLayer(TmpSubPath);
+						
+						int Token = AssetsManager()->GenerateToken();
+						AssetsManager()->SetAssetValue<CAssetPath>(pLayer->GetParentPath(), *Iter, CAsset_Map::ENTITYLAYER, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(pLayer->GetParentPath(), TmpSubPath, CAsset_Map::ENTITYLAYER, m_AssetPath, Token);
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+						return;
+					}
+				}
+			}
+		}
+
+	public:
+		CMoveEntitiesButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			m_Shift(Shift)
+		{ }
+	};
+	
+	template<typename T>
+	class CMoveLayerButton : public CMenuButton
+	{
+	protected:
+		int m_Shift;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			const T* pLayer = AssetsManager()->template GetAsset<T>(m_AssetPath);
+			if(!pLayer)
+				return;
+			
+			const CAsset_MapGroup* pGroup = AssetsManager()->template GetAsset<CAsset_MapGroup>(pLayer->GetParentPath());
+			if(!pGroup)
+				return;
+			
+			CAsset_MapGroup::CIteratorLayer Iter;
+			for(Iter = pGroup->BeginLayer(); Iter != pGroup->EndLayer(); ++Iter)
+			{
+				if(pGroup->GetLayer(*Iter) == m_AssetPath)
+				{
+					int Id = (*Iter).GetId();
+					if(Id+m_Shift >= 0 && Id+m_Shift < pGroup->GetLayerArraySize())
+					{
+						CSubPath TmpSubPath = CAsset_MapGroup::SubPath_Layer(Id+m_Shift);
+						CAssetPath TmpAssetPath = pGroup->GetLayer(TmpSubPath);
+						
+						int Token = AssetsManager()->GenerateToken();
+						AssetsManager()->template SetAssetValue<CAssetPath>(pLayer->GetParentPath(), *Iter, CAsset_MapGroup::LAYER, TmpAssetPath, Token);
+						AssetsManager()->template SetAssetValue<CAssetPath>(pLayer->GetParentPath(), TmpSubPath, CAsset_MapGroup::LAYER, m_AssetPath, Token);
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+						return;
+					}
+				}
+			}
+		}
+
+	public:
+		CMoveLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			m_Shift(Shift)
+		{ }
+	};
+	
 	class CAddTileLayerButton : public CMenuButton
 	{
 	protected:
@@ -490,6 +694,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(LayerPath, "tiles", Token);
 					pLayer->SetTileWidth(64);
 					pLayer->SetTileHeight(64);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
 					if(Id >= 0)
@@ -525,6 +730,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(LayerPath, "quads", Token);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
 					if(Id >= 0)
@@ -545,38 +751,32 @@ protected:
 		{ }
 	};
 	
-	class CViewButton : public gui::CButton
+	class CVisibilityButton : public gui::CToggle
 	{
 	protected:
 		CGuiEditor* m_pAssetsEditor;
 		CAssetPath m_AssetPath;
+		int m_Member;
 	
 	protected:
-		virtual void MouseClickAction()
+		virtual bool GetValue()
 		{
-			CAssetState* pState = AssetsManager()->GetAssetState(m_AssetPath);
-			if(pState)
-				pState->m_Visible = !pState->m_Visible;
+			return AssetsManager()->GetAssetValue<bool>(m_AssetPath, CSubPath::Null(), m_Member, true);
+		}
+		
+		virtual void SetValue(bool Value)
+		{
+			AssetsManager()->SetAssetValue<bool>(m_AssetPath, CSubPath::Null(), m_Member, Value);
 		}
 
 	public:
-		CViewButton(CGuiEditor* pAssetsEditor, const CAssetPath& AssetPath) :
-			gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconView),
+		CVisibilityButton(CGuiEditor* pAssetsEditor, const CAssetPath& AssetPath, int Member) :
+			gui::CToggle(pAssetsEditor, ""),
 			m_pAssetsEditor(pAssetsEditor),
-			m_AssetPath(AssetPath)
+			m_AssetPath(AssetPath),
+			m_Member(Member)
 		{
-			
-		}
-	
-		virtual void Update(bool ParentEnabled)
-		{
-			CAssetState* pState = AssetsManager()->GetAssetState(m_AssetPath);
-			if(pState && pState->m_Visible)
-				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconView);
-			else
-				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconHidden);
-			
-			gui::CButton::Update(ParentEnabled);
+			SetToggleStyle(m_pAssetsEditor->m_Path_Toggle_Visibility);
 		}
 	};
 	
@@ -643,13 +843,20 @@ public:
 		
 		switch(m_AssetPath.GetType())
 		{
-			case CAsset_Map::TypeId:
 			case CAsset_MapGroup::TypeId:
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapGroup::VISIBILITY), false);
+				break;
 			case CAsset_MapLayerTiles::TypeId:
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapLayerTiles::VISIBILITY), false);
+				break;
 			case CAsset_MapLayerQuads::TypeId:
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapLayerQuads::VISIBILITY), false);
+				break;
 			case CAsset_MapZoneTiles::TypeId:
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapZoneTiles::VISIBILITY), false);
+				break;
 			case CAsset_MapEntities::TypeId:
-				Add(new CViewButton(m_pAssetsEditor, AssetPath), false);
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapEntities::VISIBILITY), false);
 				break;
 		}
 	}
@@ -679,6 +886,33 @@ public:
 				{
 					pMenu->List()->Add(new CAddTileLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->Add(new CAddQuadLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapZoneTiles::TypeId)
+				{
+					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapEntities::TypeId)
+				{
+					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)
+				{
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapLayerQuads::TypeId)
+				{
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				

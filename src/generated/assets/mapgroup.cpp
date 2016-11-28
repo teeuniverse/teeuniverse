@@ -40,12 +40,14 @@ CAsset_MapGroup::CAsset_MapGroup()
 	m_Clipping = false;
 	m_ClipPosition = vec2(0.0f, 0.0f);
 	m_ClipSize = vec2(64.0f, 64.0f);
+	m_Visibility = true;
 }
 
 void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType)
 {
 	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
 
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	{
 		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
@@ -65,12 +67,14 @@ void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 	SysType.m_ClipPosition.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipPosition.m_Y);
 	SysType.m_ClipSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_X);
 	SysType.m_ClipSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_Y);
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
 void CAsset_MapGroup::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType)
 {
 	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
 
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
@@ -90,6 +94,7 @@ void CAsset_MapGroup::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, c
 	TuaType.m_ClipPosition.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipPosition.y);
 	TuaType.m_ClipSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.x);
 	TuaType.m_ClipSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.y);
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 template<>
@@ -122,6 +127,8 @@ bool CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, bool Defa
 	{
 		case CLIPPING:
 			return GetClipping();
+		case VISIBILITY:
+			return GetVisibility();
 	}
 	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
 }
@@ -133,6 +140,9 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, bool Valu
 	{
 		case CLIPPING:
 			SetClipping(Value);
+			return true;
+		case VISIBILITY:
+			SetVisibility(Value);
 			return true;
 	}
 	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
@@ -239,6 +249,8 @@ CAssetPath CAsset_MapGroup::GetValue(int ValueType, const CSubPath& SubPath, CAs
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			return GetParentPath();
 		case LAYER:
 			return GetLayer(SubPath);
 	}
@@ -250,6 +262,9 @@ bool CAsset_MapGroup::SetValue(int ValueType, const CSubPath& SubPath, CAssetPat
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			SetParentPath(Value);
+			return true;
 		case LAYER:
 			SetLayer(SubPath, Value);
 			return true;

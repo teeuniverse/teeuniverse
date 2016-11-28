@@ -38,6 +38,10 @@ CAsset_MapZoneTiles::CTile::CTile()
 	m_Index = 0;
 }
 
+CAsset_MapZoneTiles::CAsset_MapZoneTiles()
+{
+	m_Visibility = true;
+}
 
 void CAsset_MapZoneTiles::CTile::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapZoneTiles::CTile& SysType)
 {
@@ -48,6 +52,7 @@ void CAsset_MapZoneTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext
 {
 	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
 
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_ZoneTypePath, SysType.m_ZoneTypePath);
 	{
 		const CAsset_MapZoneTiles::CTile::CTuaType* pData = (const CAsset_MapZoneTiles::CTile::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -64,6 +69,7 @@ void CAsset_MapZoneTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext
 		}
 	}
 	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
 void CAsset_MapZoneTiles::CTile::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType& TuaType)
@@ -75,6 +81,7 @@ void CAsset_MapZoneTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContex
 {
 	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
 
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	pLoadingContext->WriteAssetPath(SysType.m_ZoneTypePath, TuaType.m_ZoneTypePath);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -88,6 +95,7 @@ void CAsset_MapZoneTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContex
 		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType)*SysType.m_Tile.get_linear_size());
 		delete[] pData;
 	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 template<>
@@ -142,10 +150,35 @@ bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, uint3
 }
 
 template<>
+bool CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			return GetVisibility();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			SetVisibility(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
+}
+
+template<>
 CAssetPath CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			return GetParentPath();
 		case ZONETYPEPATH:
 			return GetZoneTypePath();
 	}
@@ -157,6 +190,9 @@ bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, CAsse
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			SetParentPath(Value);
+			return true;
 		case ZONETYPEPATH:
 			SetZoneTypePath(Value);
 			return true;

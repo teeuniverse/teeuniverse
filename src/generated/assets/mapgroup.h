@@ -35,6 +35,7 @@
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
 #include <shared/math/vector.h>
+#include <shared/assets/assetpath.h>
 
 class CAsset_MapGroup : public CAsset
 {
@@ -51,6 +52,7 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
+		PARENTPATH,
 		LAYER_ARRAYSIZE,
 		LAYER_PTR,
 		LAYER_ARRAY,
@@ -68,6 +70,7 @@ public:
 		CLIPSIZE_X,
 		CLIPSIZE_Y,
 		CLIPSIZE,
+		VISIBILITY,
 	};
 	
 	class CIteratorLayer
@@ -92,24 +95,28 @@ public:
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
+		CAssetPath::CTuaType m_ParentPath;
 		CTuaArray m_Layer;
 		CTuaVec2 m_Position;
 		CTuaVec2 m_HardParallax;
 		tua_uint8 m_Clipping;
 		CTuaVec2 m_ClipPosition;
 		CTuaVec2 m_ClipSize;
+		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
+	CAssetPath m_ParentPath;
 	array< CAssetPath, allocator_default<CAssetPath> > m_Layer;
 	vec2 m_Position;
 	vec2 m_HardParallax;
 	bool m_Clipping;
 	vec2 m_ClipPosition;
 	vec2 m_ClipSize;
+	bool m_Visibility;
 
 public:
 	template<typename T>
@@ -130,24 +137,30 @@ public:
 	void copy(const CAsset_MapGroup& Item)
 	{
 		CAsset::copy(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_Layer.copy(Item.m_Layer);
 		m_Position = Item.m_Position;
 		m_HardParallax = Item.m_HardParallax;
 		m_Clipping = Item.m_Clipping;
 		m_ClipPosition = Item.m_ClipPosition;
 		m_ClipSize = Item.m_ClipSize;
+		m_Visibility = Item.m_Visibility;
 	}
 	
 	void transfert(CAsset_MapGroup& Item)
 	{
 		CAsset::transfert(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_Layer.transfert(Item.m_Layer);
 		m_Position = Item.m_Position;
 		m_HardParallax = Item.m_HardParallax;
 		m_Clipping = Item.m_Clipping;
 		m_ClipPosition = Item.m_ClipPosition;
 		m_ClipSize = Item.m_ClipSize;
+		m_Visibility = Item.m_Visibility;
 	}
+	
+	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
@@ -184,6 +197,10 @@ public:
 	
 	inline float GetClipSizeY() const { return m_ClipSize.y; }
 	
+	inline bool GetVisibility() const { return m_Visibility; }
+	
+	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
+	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_Layer[SubPath.GetId()] = Value; }
@@ -214,6 +231,8 @@ public:
 	
 	inline void SetClipSizeY(float Value) { m_ClipSize.y = Value; }
 	
+	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
@@ -225,6 +244,7 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		Operation.Apply(m_ParentPath);
 		{
 			int Shift = 0;
 			for(int i=0; i<m_Layer.size(); i++)

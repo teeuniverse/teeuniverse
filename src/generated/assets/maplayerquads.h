@@ -51,6 +51,7 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
+		PARENTPATH,
 		IMAGEPATH,
 		QUAD_ARRAYSIZE,
 		QUAD_PTR,
@@ -92,6 +93,7 @@ public:
 		QUAD_COLOR3,
 		QUAD_ANIMATIONPATH,
 		QUAD,
+		VISIBILITY,
 	};
 	
 	class CIteratorQuad
@@ -355,16 +357,20 @@ public:
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
+		CAssetPath::CTuaType m_ParentPath;
 		CAssetPath::CTuaType m_ImagePath;
 		CTuaArray m_Quad;
+		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerQuads& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
+	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
 	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_Quad;
+	bool m_Visibility;
 
 public:
 	void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -383,19 +389,26 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	CAsset_MapLayerQuads();
 	void copy(const CAsset_MapLayerQuads& Item)
 	{
 		CAsset::copy(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ImagePath = Item.m_ImagePath;
 		m_Quad.copy(Item.m_Quad);
+		m_Visibility = Item.m_Visibility;
 	}
 	
 	void transfert(CAsset_MapLayerQuads& Item)
 	{
 		CAsset::transfert(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ImagePath = Item.m_ImagePath;
 		m_Quad.transfert(Item.m_Quad);
+		m_Visibility = Item.m_Visibility;
 	}
+	
+	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
 	
@@ -480,6 +493,10 @@ public:
 	
 	inline CAssetPath GetQuadAnimationPath(const CSubPath& SubPath) const { return m_Quad[SubPath.GetId()].GetAnimationPath(); }
 	
+	inline bool GetVisibility() const { return m_Visibility; }
+	
+	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
+	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
 	inline void SetQuadArraySize(int Value) { m_Quad.resize(Value); }
@@ -558,6 +575,8 @@ public:
 	
 	inline void SetQuadAnimationPath(const CSubPath& SubPath, const CAssetPath& Value) { m_Quad[SubPath.GetId()].SetAnimationPath(Value); }
 	
+	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
 	inline int AddQuad()
 	{
 		int Id = m_Quad.size();
@@ -569,6 +588,7 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_ImagePath);
 		for(int i=0; i<m_Quad.size(); i++)
 		{
@@ -580,6 +600,8 @@ public:
 
 template<> int CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
 template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, float Value);
 template<> vec2 CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;

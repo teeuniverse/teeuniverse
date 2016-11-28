@@ -51,6 +51,7 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
+		PARENTPATH,
 		ZONETYPEPATH,
 		TILE_WIDTH,
 		TILE_HEIGHT,
@@ -58,6 +59,7 @@ public:
 		TILE_ARRAY,
 		TILE_INDEX,
 		TILE,
+		VISIBILITY,
 	};
 	
 	class CTile
@@ -99,16 +101,20 @@ public:
 	class CTuaType : public CAsset::CTuaType
 	{
 	public:
+		CAssetPath::CTuaType m_ParentPath;
 		CAssetPath::CTuaType m_ZoneTypePath;
 		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapZoneTiles& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType& TuaType);
 	};
 	
 
 private:
+	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
 	array2d< CTile, allocator_copy<CTile> > m_Tile;
+	bool m_Visibility;
 
 public:
 	template<typename T>
@@ -125,19 +131,26 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	CAsset_MapZoneTiles();
 	void copy(const CAsset_MapZoneTiles& Item)
 	{
 		CAsset::copy(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ZoneTypePath = Item.m_ZoneTypePath;
 		m_Tile.copy(Item.m_Tile);
+		m_Visibility = Item.m_Visibility;
 	}
 	
 	void transfert(CAsset_MapZoneTiles& Item)
 	{
 		CAsset::transfert(Item);
+		m_ParentPath = Item.m_ParentPath;
 		m_ZoneTypePath = Item.m_ZoneTypePath;
 		m_Tile.transfert(Item.m_Tile);
+		m_Visibility = Item.m_Visibility;
 	}
+	
+	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetZoneTypePath() const { return m_ZoneTypePath; }
 	
@@ -154,6 +167,10 @@ public:
 	
 	inline uint8 GetTileIndex(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).GetIndex(); }
 	
+	inline bool GetVisibility() const { return m_Visibility; }
+	
+	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
+	
 	inline void SetZoneTypePath(const CAssetPath& Value) { m_ZoneTypePath = Value; }
 	
 	inline void SetTileWidth(int Value) { m_Tile.resize_width(max(Value, 1)); }
@@ -164,8 +181,11 @@ public:
 	
 	inline void SetTileIndex(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetIndex(Value); }
 	
+	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_ZoneTypePath);
 		for(int i=0; i<m_Tile.get_linear_size(); i++)
 		{
@@ -179,6 +199,8 @@ template<> int CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubP
 template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, int Value);
 template<> uint32 CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
 template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
+template<> bool CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> CAssetPath CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
 template<> bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
 

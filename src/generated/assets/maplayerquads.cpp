@@ -52,6 +52,10 @@ CAsset_MapLayerQuads::CQuad::CQuad()
 	m_Color3 = 1.0f;
 }
 
+CAsset_MapLayerQuads::CAsset_MapLayerQuads()
+{
+	m_Visibility = true;
+}
 
 void CAsset_MapLayerQuads::CQuad::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerQuads::CQuad& SysType)
 {
@@ -87,6 +91,7 @@ void CAsset_MapLayerQuads::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 {
 	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
 
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	{
 		const CAsset_MapLayerQuads::CQuad::CTuaType* pData = (const CAsset_MapLayerQuads::CQuad::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Quad.m_Data);
@@ -98,6 +103,7 @@ void CAsset_MapLayerQuads::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 		}
 	}
 	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
 void CAsset_MapLayerQuads::CQuad::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType& TuaType)
@@ -134,6 +140,7 @@ void CAsset_MapLayerQuads::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 {
 	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
 
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
@@ -145,6 +152,7 @@ void CAsset_MapLayerQuads::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 		TuaType.m_Quad.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType)*SysType.m_Quad.size());
 		delete[] pData;
 	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 template<>
@@ -168,6 +176,29 @@ bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int 
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+bool CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			return GetVisibility();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case VISIBILITY:
+			SetVisibility(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -404,6 +435,8 @@ CAssetPath CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			return GetParentPath();
 		case IMAGEPATH:
 			return GetImagePath();
 		case QUAD_ANIMATIONPATH:
@@ -417,6 +450,9 @@ bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, CAss
 {
 	switch(ValueType)
 	{
+		case PARENTPATH:
+			SetParentPath(Value);
+			return true;
 		case IMAGEPATH:
 			SetImagePath(Value);
 			return true;
