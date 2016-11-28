@@ -146,6 +146,7 @@ public:
 	CAssetPath m_Path_Sprite_IconHFlip;
 	CAssetPath m_Path_Sprite_IconRotateCW;
 	CAssetPath m_Path_Sprite_IconRotateCCW;
+	CAssetPath m_Path_Sprite_IconGrid;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

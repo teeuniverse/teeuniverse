@@ -46,6 +46,7 @@ protected:
 	vec2 m_CameraPos;
 	bool m_CameraDraged;
 	float m_ZoneOpacity;
+	bool m_ShowGrid;
 	
 	class CMapRenderer* m_pMapRenderer;
 	
@@ -70,6 +71,9 @@ public:
 	
 	inline float GetZoneOpacity() const { return m_ZoneOpacity; }
 	inline void SetZoneOpacity(float Value) { m_ZoneOpacity = Value; }
+	
+	inline bool GetShowGrid() const { return m_ShowGrid; }
+	inline void SetShowGrid(bool Value) { m_ShowGrid = Value; }
 };
 
 #endif

@@ -87,10 +87,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 		case MAPFORMAT_TW:
 			Load_UnivTeeWorlds();
 			break;
-		case MAPFORMAT_DDNET:
-			Load_UnivTeeWorlds();
-			Load_UnivDDNet();
-			break;
 		case MAPFORMAT_INFCLASS:
 			Load_UnivTeeWorlds();
 			Load_UnivInfClass();
@@ -580,6 +576,82 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									for(int s=0; s<Skip; s++)
 									{
 										pDamageZone->SetTileIndex(TilePath, 0);
+										i++;
+										
+										TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									}
+								}
+							}
+						}
+						
+						if(Format == MAPFORMAT_OPENFNG)
+						{
+							CAssetPath ShrineZonePath;
+							CAsset_MapZoneTiles* pShrineZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ShrineZonePath, PackageId);
+							pShrineZone->SetName("Shrines");
+							pShrineZone->SetZoneTypePath(m_Path_ZoneType_OpenFNGShrine);
+							pShrineZone->SetParentPath(MapPath);
+							
+							{
+								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pShrineZone->GetTileArray();
+								Data.resize(Width, Height);
+								
+								CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
+								pMap->SetZoneLayer(ZoneLayer, ShrineZonePath);
+							}
+							
+							CAssetPath OpenFNGEntitiesPath;
+							CAsset_MapEntities* pOpenFNGEntities = NewAsset_Hard<CAsset_MapEntities>(&OpenFNGEntitiesPath, PackageId);
+							pOpenFNGEntities->SetName("ScoreDisplay");
+							pOpenFNGEntities->SetParentPath(MapPath);	
+					
+							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+							pMap->SetEntityLayer(MapSubPath, OpenFNGEntitiesPath);		
+							
+							for(int j=0; j<Height; j++)
+							{
+								for(int i=0; i<Width; i++)
+								{
+									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									
+									switch(pTiles[j*Width+i].m_Index)
+									{
+										case 8:
+											pShrineZone->SetTileIndex(TilePath, 1);
+											break;
+										case 9:
+											pShrineZone->SetTileIndex(TilePath, 2);
+											break;
+										case 10:
+											pShrineZone->SetTileIndex(TilePath, 3);
+											break;
+										default:
+											pShrineZone->SetTileIndex(TilePath, 0);
+											break;
+									}
+									
+									switch(pTiles[j*Width+i].m_Index)
+									{
+										case 11:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pOpenFNGEntities->AddEntity());
+											pOpenFNGEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_OpenFNGRedScore);
+											pOpenFNGEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case 12:
+										{
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pOpenFNGEntities->AddEntity());
+											pOpenFNGEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_OpenFNGBlueScore);
+											pOpenFNGEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+									}
+									
+									int Skip = pTiles[j*Width+i].m_Skip;
+									for(int s=0; s<Skip; s++)
+									{
+										pShrineZone->SetTileIndex(TilePath, 0);
 										i++;
 										
 										TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);

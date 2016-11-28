@@ -53,6 +53,7 @@ public:
 		INDEX_ARRAYSIZE,
 		INDEX_PTR,
 		INDEX_ARRAY,
+		INDEX_USED,
 		INDEX_DESCRIPTION,
 		INDEX_COLOR,
 		INDEX,
@@ -83,6 +84,7 @@ public:
 		class CTuaType
 		{
 		public:
+			tua_uint8 m_Used;
 			tua_stringid m_Description;
 			tua_uint32 m_Color;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType::CIndex& SysType);
@@ -91,6 +93,7 @@ public:
 		
 	
 	private:
+		bool m_Used;
 		string< _fixed_string_core<128> > m_Description;
 		vec4 m_Color;
 	
@@ -98,19 +101,25 @@ public:
 		CIndex();
 		void copy(const CAsset_ZoneType::CIndex& Item)
 		{
+			m_Used = Item.m_Used;
 			m_Description.copy(Item.m_Description);
 			m_Color = Item.m_Color;
 		}
 		
 		void transfert(CAsset_ZoneType::CIndex& Item)
 		{
+			m_Used = Item.m_Used;
 			m_Description.transfert(Item.m_Description);
 			m_Color = Item.m_Color;
 		}
 		
+		inline bool GetUsed() const { return m_Used; }
+		
 		inline const char* GetDescription() const { return m_Description.buffer(); }
 		
 		inline vec4 GetColor() const { return m_Color; }
+		
+		inline void SetUsed(bool Value) { m_Used = Value; }
 		
 		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
 		
@@ -169,6 +178,8 @@ public:
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()]; }
 	
+	inline bool GetIndexUsed(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetUsed(); }
+	
 	inline const char* GetIndexDescription(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetDescription(); }
 	
 	inline vec4 GetIndexColor(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetColor(); }
@@ -176,6 +187,8 @@ public:
 	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
 	
 	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value) { m_Index[SubPath.GetId()].copy(Value); }
+	
+	inline void SetIndexUsed(const CSubPath& SubPath, bool Value) { m_Index[SubPath.GetId()].SetUsed(Value); }
 	
 	inline void SetIndexDescription(const CSubPath& SubPath, const char* Value) { m_Index[SubPath.GetId()].SetDescription(Value); }
 	
@@ -202,6 +215,8 @@ public:
 
 template<> int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const;
 template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
 template<> vec4 CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;

@@ -347,6 +347,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(ZoneLayerPath, "zone", Token);
 					pLayer->SetTileWidth(64);
 					pLayer->SetTileHeight(64);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER);
 					if(Id >= 0)
@@ -382,6 +383,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(EntityLayerPath, "entities", Token);
+					pLayer->SetParentPath(m_AssetPath);
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ENTITYLAYER);
 					if(Id >= 0)

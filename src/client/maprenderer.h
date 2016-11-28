@@ -60,7 +60,7 @@ public:
 	vec2 TilePosToMapPos(vec2 MapPos) const;
 	vec2 TilePosToScreenPos(vec2 MapPos) const;
 	
-	void RenderGrid(int Width, int Height, float Scale);
+	void RenderGrid(float Step, vec4 Color);
 	void RenderGrid_LayerTiles(CAssetPath LayerPath);
 	void RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat);
 	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat);

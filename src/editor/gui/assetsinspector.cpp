@@ -28,6 +28,75 @@
 #include <client/gui/expand.h>
 #include <shared/components/localization.h>
 
+class CSubItemEditor : public gui::CVListLayout
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_SubPathType;
+	
+public:
+	CSubItemEditor(CGuiEditor* pAssetsEditor, int SubPathType) :
+		gui::CVListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPathType(SubPathType)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled)
+		{
+			if(m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType)
+				Enable();
+			else
+				Disable();
+		}
+		
+		gui::CVListLayout::Update(ParentEnabled);
+	}
+};
+
+class CSubItem : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
+	}
+
+public:
+	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const char* pName, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, pName, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+	}
+	
+	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const CLocalizableString& Text, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, Text, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(m_pAssetsEditor->GetEditedSubPath() == m_SubPath)
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
+		else
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+		
+		gui::CButton::Update(ParentEnabled);
+	}
+};
+
 /* ASSETS INSPECTOR ***************************************************/
 
 CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
@@ -251,74 +320,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	return pTab;
 }
 
-class CSubItemEditor : public gui::CVListLayout
-{
-protected:
-	CGuiEditor* m_pAssetsEditor;
-	int m_SubPathType;
-	
-public:
-	CSubItemEditor(CGuiEditor* pAssetsEditor, int SubPathType) :
-		gui::CVListLayout(pAssetsEditor),
-		m_pAssetsEditor(pAssetsEditor),
-		m_SubPathType(SubPathType)
-	{
-		
-	}
-	
-	virtual void Update(bool ParentEnabled)
-	{
-		if(ParentEnabled)
-		{
-			if(m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType)
-				Enable();
-			else
-				Disable();
-		}
-		
-		gui::CVListLayout::Update(ParentEnabled);
-	}
-};
-
-class CSubItem : public gui::CButton
-{
-protected:
-	CGuiEditor* m_pAssetsEditor;
-	CSubPath m_SubPath;
-	
-protected:
-	virtual void MouseClickAction()
-	{
-		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
-	}
-
-public:
-	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const char* pName, CAssetPath IconPath) :
-		gui::CButton(pAssetsEditor, pName, IconPath),
-		m_pAssetsEditor(pAssetsEditor),
-		m_SubPath(SubPath)
-	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-	}
-	
-	CSubItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const CLocalizableString& Text, CAssetPath IconPath) :
-		gui::CButton(pAssetsEditor, Text, IconPath),
-		m_pAssetsEditor(pAssetsEditor),
-		m_SubPath(SubPath)
-	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-	}
-	
-	virtual void Update(bool ParentEnabled)
-	{
-		if(m_pAssetsEditor->GetEditedSubPath() == m_SubPath)
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
-		else
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-		
-		gui::CButton::Update(ParentEnabled);
-	}
-};
+/* MAP LAYER QUADS ****************************************************/
 
 class CSubItemList_MapLayerQuads : public gui::CVScrollLayout
 {
@@ -396,6 +398,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 	return pTab;
 }
 
+/* MAP ZONE TILES *****************************************************/
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -410,6 +414,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 	
 	return pTab;
 }
+
+/* MAP ENTITIES *******************************************************/
 
 class CSubItemList_MapEntities : public gui::CVScrollLayout
 {
@@ -480,6 +486,57 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapEntities_Asset()
 	return pTab;
 }
 
+/* ZONE TYPE **********************************************************/
+
+class CSubItemList_ZoneTypeIndices : public gui::CVScrollLayout
+{
+protected:
+	CAssetPath m_AssetPath;
+	CGuiEditor* m_pAssetsEditor;
+	bool m_UpdateNeeded;
+	
+public:
+	CSubItemList_ZoneTypeIndices(CGuiEditor* pAssetsEditor) :
+		gui::CVScrollLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_UpdateNeeded(true)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_ZoneType::TypeId && m_AssetPath != m_pAssetsEditor->GetEditedAssetPath())
+			{
+				m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+				m_UpdateNeeded = true;
+			}
+			
+			if(m_UpdateNeeded)
+			{
+				Clear();
+				char aBuf[128];
+					
+				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_pAssetsEditor->GetEditedAssetPath());
+				if(pZoneType)
+				{
+					CAsset_ZoneType::CIteratorIndex Iter;
+					for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
+					{
+						Add(new CSubItem(m_pAssetsEditor, *Iter, pZoneType->GetIndexDescription(*Iter), m_pAssetsEditor->m_Path_Sprite_IconZoneTiles), false);
+					}
+					
+					m_UpdateNeeded = false;
+				}
+			}
+		}
+		
+		gui::CVScrollLayout::Update(ParentEnabled);
+	}
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -488,8 +545,19 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
+	pTab->Add(new CSubItemList_ZoneTypeIndices(AssetsEditor()), true);
+	
+	gui::CVListLayout* pEditor = new CSubItemEditor(AssetsEditor(), CAsset_ZoneType::TYPE_INDEX);
+	pTab->Add(pEditor);
+	
+	AddField_Bool(pEditor, CAsset_ZoneType::INDEX_USED, _GUI("Is used"));
+	AddField_Text(pEditor, CAsset_ZoneType::INDEX_DESCRIPTION, _GUI("Description"));
+	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _GUI("Color"));
+	
 	return pTab;
 }
+
+/* ENTITY TYPE ********************************************************/
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_EntityType_Asset()
 {

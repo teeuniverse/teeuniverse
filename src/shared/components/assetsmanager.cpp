@@ -39,7 +39,6 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_EnvSun(-1),
 	m_PackageId_EnvWinter(-1),
 	m_PackageId_UnivTeeWorlds(-1),
-	m_PackageId_UnivDDNet(-1),
 	m_PackageId_UnivInfClass(-1),
 	m_PackageId_UnivOpenFNG(-1)
 {
@@ -397,7 +396,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		uint32 PackageCrc = ArchiveFile.ReadUInt32(pItem->m_PackageCrc);
 		if(pPackageName != NULL)
 		{
-			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, PackageCrc));
+			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, CStorage::TYPE_ALL, PackageCrc));
 		}
 	}
 	
@@ -609,14 +608,6 @@ void CAssetsManager::Load_UnivTeeWorlds()
 	}
 }
 
-void CAssetsManager::Load_UnivDDNet()
-{
-	if(m_PackageId_UnivDDNet < 0)
-	{
-		m_PackageId_UnivTeeWorlds = Load_AssetsFile("universes/ddnet", CStorage::TYPE_ALL);
-	}
-}
-
 void CAssetsManager::Load_UnivInfClass()
 {
 	if(m_PackageId_UnivInfClass < 0)
@@ -639,6 +630,12 @@ void CAssetsManager::Load_UnivOpenFNG()
 	if(m_PackageId_UnivOpenFNG < 0)
 	{
 		m_PackageId_UnivOpenFNG = Load_AssetsFile("universes/openfng", CStorage::TYPE_ALL);
+		if(m_PackageId_UnivOpenFNG >= 0)
+		{
+			m_Path_ZoneType_OpenFNGShrine = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "shrine");
+			m_Path_EntityType_OpenFNGRedScore = FindAsset<CAsset_EntityType>(m_PackageId_UnivOpenFNG, "redTeamScore");
+			m_Path_EntityType_OpenFNGBlueScore = FindAsset<CAsset_EntityType>(m_PackageId_UnivOpenFNG, "blueTeamScore");
+		}
 	}
 }
 

@@ -25,6 +25,16 @@
 
 #include <cstdlib>
 
+#define CREATE_SPRITE_PATH(path, packageid, name, image, x, y, w, h) {\
+	CAsset_Sprite* pSprite = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&path, packageid);\
+	pSprite->SetName(name);\
+	pSprite->SetImagePath(image);\
+	pSprite->SetX(x);\
+	pSprite->SetY(y);\
+	pSprite->SetWidth(w);\
+	pSprite->SetHeight(h);\
+}
+
 int main(int argc, const char **argv)
 {
 	CSharedKernel* pKernel = new CSharedKernel();
@@ -35,6 +45,59 @@ int main(int argc, const char **argv)
 	}
 	
 	int PackageId = pKernel->AssetsManager()->NewPackage("universes/openfng");
+	
+	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_openfng/entities.png", 8, 4);
+	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
+	
+	//Shrine
+	{
+		CAssetPath AssetPath;
+		CSubPath SubPath;
+		
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
+		pAsset->SetName("shrine");
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexUsed(SubPath, false);
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Shrine");
+		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Red Team Shrine");
+		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Blue Team Shrine");
+		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.0f, 1.0f, 1.0f));
+	}
+	
+	//EntityType, Red Team Score
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoScoreRed", ImageEntitiesPath, 0, 1, 3, 3);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("redTeamScore");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	
+	//EntityType, Blue Team Score
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoScoreBlue", ImageEntitiesPath, 3, 1, 3, 3);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("blueTeamScore");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	

@@ -94,71 +94,6 @@ vec2 CMapRenderer::TilePosToScreenPos(vec2 TilePos) const
 	return MapPosToScreenPos(TilePosToMapPos(TilePos));
 }
 
-void CMapRenderer::RenderGrid(int Width, int Height, float Scale)
-{
-	Graphics()->TextureClear();
-	Graphics()->LinesBegin();
-	Graphics()->SetColor(0.5f, 0.5f, 0.5f, 0.5f);
-	
-	vec2 minCorner = MapPosToScreenPos(vec2(0.0f, 0.0f));
-	vec2 maxCorner = MapPosToScreenPos(vec2(Width*Scale, Height*Scale));
-	vec2 size = maxCorner - minCorner;
-	
-	{
-		CGraphics::CLineItem Lines[4];
-		Lines[0] = CGraphics::CLineItem(minCorner.x, minCorner.y, maxCorner.x, minCorner.y);
-		Lines[1] = CGraphics::CLineItem(maxCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
-		Lines[2] = CGraphics::CLineItem(maxCorner.x, maxCorner.y, minCorner.x, maxCorner.y);
-		Lines[3] = CGraphics::CLineItem(minCorner.x, maxCorner.y, minCorner.x, minCorner.y);
-		
-		Graphics()->LinesDraw(Lines, 4);
-	}
-
-	//Draw tile layer
-	vec2 MinTilePos = ScreenPosToTilePos(vec2(GetCanvas().x, GetCanvas().y));
-	vec2 MaxTilePos = ScreenPosToTilePos(vec2(GetCanvas().x + GetCanvas().w, GetCanvas().y + GetCanvas().h));
-	int MinX = clamp((int) MinTilePos.x, 0, Width-1);
-	int MaxX = clamp((int) MaxTilePos.x+1, 0, Width-1);
-	int MinY = clamp((int) MinTilePos.y, 0, Height-1);
-	int MaxY = clamp((int) MaxTilePos.y+1, 0, Height-1);
-	
-	Graphics()->SetColor(0.25f, 0.25f, 0.25f, 0.25f);
-	for(int j=MinY; j<=MaxY; j++)
-	{
-		float y = minCorner.y+size.y*(static_cast<float>(j)/Height);
-		CGraphics::CLineItem Line(minCorner.x, y, maxCorner.x, y);
-		Graphics()->LinesDraw(&Line, 1);
-	}
-	for(int i=MinX; i<=MaxX; i++)
-	{
-		float x = minCorner.x+size.x*(static_cast<float>(i)/Width);
-		CGraphics::CLineItem Line(x, minCorner.y, x, maxCorner.y);
-		Graphics()->LinesDraw(&Line, 1);
-	}
-	
-	Graphics()->LinesEnd();
-}
-
-void CMapRenderer::RenderGrid_LayerTiles(CAssetPath LayerPath)
-{
-	if(LayerPath.GetType() == CAsset_MapLayerTiles::TypeId)
-	{
-		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(LayerPath);
-		if(!pLayer)
-			return;
-		
-		RenderGrid(pLayer->GetTileWidth(), pLayer->GetTileHeight(), 32.0f);
-	}
-	else if(LayerPath.GetType() == CAsset_MapZoneTiles::TypeId)
-	{
-		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(LayerPath);
-		if(!pLayer)
-			return;
-		
-		RenderGrid(pLayer->GetTileWidth(), pLayer->GetTileHeight(), 32.0f);
-	}
-}
-
 template<class TILE>
 void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, vec4 LayerColor, CAssetPath ZoneTexture, bool Repeat)
 {	
@@ -252,10 +187,18 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			float Shift = fmod(pMapRenderer->m_LocalTime/4.0f, 1.0f);
 			int Size = 8;
 			
-			float x0 = ((i%Size))/static_cast<float>(Size) + Shift;
-			float y0 = ((j%Size))/static_cast<float>(Size) + Shift;
-			float x2 = x0 + 1.0f/static_cast<float>(Size);
-			float y2 = y0 + 1.0f/static_cast<float>(Size);
+			//~ float x0 = ((i%Size))/static_cast<float>(Size) + Shift;
+			//~ float y0 = ((j%Size))/static_cast<float>(Size) + Shift;
+			//~ float x2 = x0 + 1.0f/static_cast<float>(Size);
+			//~ float y2 = y0 + 1.0f/static_cast<float>(Size);
+			//~ float x1 = x2;
+			//~ float y1 = y0;
+			//~ float x3 = x0;
+			//~ float y3 = y2;
+			float x0 = (TilePos.x/TileSize)/16.0f + Shift;
+			float y0 = (TilePos.y/TileSize)/16.0f + Shift;
+			float x2 = (TilePos.x/TileSize+1.0f)/16.0f + Shift;
+			float y2 = (TilePos.y/TileSize+1.0f)/16.0f + Shift;
 			float x1 = x2;
 			float y1 = y0;
 			float x3 = x0;
@@ -424,6 +367,47 @@ void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsse
 void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat)
 {
 	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, ZoneTexture, Repeat);
+}
+
+void CMapRenderer::RenderGrid(float Step, vec4 Color)
+{
+	//Draw tile layer
+	vec2 MinMapPos = ScreenPosToMapPos(vec2(GetCanvas().x, GetCanvas().y));
+	vec2 MaxMapPos = ScreenPosToMapPos(vec2(GetCanvas().x + GetCanvas().w, GetCanvas().y + GetCanvas().h));
+	int MinX = (int)(MinMapPos.x/Step)-1;
+	int MaxX = (int)(MaxMapPos.x/Step)+1;
+	int MinY = (int)(MinMapPos.y/Step)-1;
+	int MaxY = (int)(MaxMapPos.y/Step)+1;
+	MinMapPos.x = MinX*Step;
+	MinMapPos.y = MinY*Step;
+	MaxMapPos.x = MaxX*Step;
+	MaxMapPos.y = MaxY*Step;
+	
+	Graphics()->TextureClear();
+	Graphics()->LinesBegin();
+	Graphics()->SetColor(Color, true);
+	
+	//Draw tile layer
+	float Iter = MinMapPos.x;
+	while(Iter < MaxMapPos.x)
+	{
+		vec2 Pos0 = MapPosToScreenPos(vec2(Iter, MinMapPos.y));
+		vec2 Pos1 = MapPosToScreenPos(vec2(Iter, MaxMapPos.y));
+		CGraphics::CLineItem Line(static_cast<int>(Pos0.x)+0.5f, static_cast<int>(Pos0.y)+0.5f, static_cast<int>(Pos1.x)+0.5f, static_cast<int>(Pos1.y)+0.5f);
+		Graphics()->LinesDraw(&Line, 1);
+		Iter += Step;
+	}
+	Iter = MinMapPos.y;
+	while(Iter < MaxMapPos.y)
+	{
+		vec2 Pos0 = MapPosToScreenPos(vec2(MinMapPos.x, Iter));
+		vec2 Pos1 = MapPosToScreenPos(vec2(MaxMapPos.x, Iter));
+		CGraphics::CLineItem Line(static_cast<int>(Pos0.x)+0.5f, static_cast<int>(Pos0.y)+0.5f, static_cast<int>(Pos1.x)+0.5f, static_cast<int>(Pos1.y)+0.5f);
+		Graphics()->LinesDraw(&Line, 1);
+		Iter += Step;
+	}
+	
+	Graphics()->LinesEnd();
 }
 
 void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat)
@@ -743,7 +727,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 				continue;
 			
 			if(!pLayer->GetVisibility())
-				return;
+				continue;
 				
 			RenderTiles_Image(pLayer->GetTileArray(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), pLayer->GetColor()*Color, true);
 		}
@@ -754,7 +738,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 				continue;
 			
 			if(!pLayer->GetVisibility())
-				return;
+				continue;
 			
 			RenderQuads(pLayer->GetQuadPtr(), pLayer->GetQuadArraySize(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), Color);
 		}
@@ -803,7 +787,7 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, v
 			continue;
 	
 		if(!pZone->GetVisibility())
-			return;
+			continue;
 		
 		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, ZoneTexture, true);
 	}

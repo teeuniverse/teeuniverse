@@ -270,7 +270,6 @@ if(PNG_FOUND)
 
 	make_assets(gui_editor)
 	make_assets(univ_teeworlds)
-	make_assets(univ_ddnet)
 	make_assets(univ_infclass)
 	make_assets(univ_openfng)
 	

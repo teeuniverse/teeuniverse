@@ -83,6 +83,12 @@ int main(int argc, const char **argv)
 		pAsset->SetName("infcZones");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexUsed(SubPath, false);
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexUsed(SubPath, false);
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Infected area");
 		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.7f, 0.0f, 1.0f));
 		

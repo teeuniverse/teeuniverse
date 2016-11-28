@@ -54,7 +54,6 @@ public:
 		FORMAT_MAP_TW,
 		FORMAT_MAP_INFCLASS,
 		FORMAT_MAP_OPENFNG,
-		FORMAT_MAP_DDNET,
 		FORMAT_IMAGE,
 	};
 	
@@ -117,7 +116,6 @@ protected:
 					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconImage);
 					break;
 				case FORMAT_MAP_TW:
-				case FORMAT_MAP_DDNET:
 				case FORMAT_MAP_INFCLASS:
 				case FORMAT_MAP_OPENFNG:
 					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
@@ -240,12 +238,6 @@ public:
 				else
 					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import InfClass Map")), false);
 				break;
-			case FORMAT_MAP_DDNET:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export DDNet Map")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import DDNet Map")), false);
-				break;
 			case FORMAT_MAP_OPENFNG:
 				if(m_Save)
 					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export OpenFNG Map")), false);
@@ -355,9 +347,6 @@ public:
 			case FORMAT_MAP_INFCLASS:
 				SelectDirectory("maps", CStorage::TYPE_SAVE);
 				break;
-			case FORMAT_MAP_DDNET:
-				SelectDirectory("maps", CStorage::TYPE_SAVE);
-				break;
 			case FORMAT_MAP_OPENFNG:
 				SelectDirectory("maps", CStorage::TYPE_SAVE);
 				break;
@@ -431,7 +420,6 @@ public:
 						break;
 					case FORMAT_MAP_TW:
 					case FORMAT_MAP_INFCLASS:
-					case FORMAT_MAP_DDNET:
 					case FORMAT_MAP_OPENFNG:
 						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
 						{
@@ -540,18 +528,6 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_TW);
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
-				m_pAssetsEditor->SetEditedPackage(PackageId);
-				m_pAssetsEditor->RefreshAssetsTree();
-				break;
-			}
-			case FORMAT_MAP_DDNET:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_DDNET);
 				AssetsManager()->SetPackageReadOnly(PackageId, false);
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				m_pAssetsEditor->RefreshAssetsTree();
@@ -725,14 +701,11 @@ public:
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetText(_GUI("Import TeeWorlds Map"));
 				break;
-			case COpenSavePackageDialog::FORMAT_MAP_DDNET:
-				SetText(_GUI("Import DDNet Map"));
-				break;
 			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
 				SetText(_GUI("Import InfClass Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText(_GUI("Import OpenFNG"));
+				SetText(_GUI("Import OpenFNG Map"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -1012,7 +985,6 @@ protected:
 		pMenu->List()->Add(new CSavePackageAsButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
-		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_DDNET));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
@@ -1278,6 +1250,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconHFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconHFlip");
 		m_Path_Sprite_IconRotateCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotateCW");
 		m_Path_Sprite_IconRotateCCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotateCCW");
+		m_Path_Sprite_IconGrid = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGrid");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");

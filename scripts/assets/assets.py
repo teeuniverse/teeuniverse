@@ -1768,6 +1768,7 @@ assetsList.append(mapEntities)
 
 # ZONE TYPE ############################################################
 zoneType_index = Class("Index")
+zoneType_index.addMember("Used", TypeBool(), "true")
 zoneType_index.addMember("Description", TypeString(128))
 zoneType_index.addMember("Color", TypeColor(), "1.0f")
 

@@ -30,6 +30,39 @@
 
 /* VIEW MAP ***********************************************************/
 
+class CShowGridToggle : public gui::CToggle
+{
+protected:
+	CViewMap* m_pViewMap;
+	
+protected:
+	virtual bool GetValue()
+	{
+		return m_pViewMap->GetShowGrid();
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		m_pViewMap->SetShowGrid(Value);
+	}
+	
+public:
+	CShowGridToggle(CViewMap* pViewMap, CAssetPath IconPath) :
+		gui::CToggle(pViewMap->AssetsEditor(), IconPath),
+		m_pViewMap(pViewMap)
+	{
+		SetToggleStyle(m_pViewMap->AssetsEditor()->m_Path_Toggle_Toolbar);
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pViewMap->AssetsEditor()->SetHint(_GUI("Show grid"));
+		
+		gui::CToggle::OnMouseMove();
+	}
+};
+
 class CZoneOpacitySlider : public gui::CHSlider
 {
 protected:
@@ -72,7 +105,8 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
-	m_ZoneOpacity(0.5f)
+	m_ZoneOpacity(0.5f),
+	m_ShowGrid(false)
 {
 	
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
@@ -92,6 +126,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapCrop->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
+	m_pToolbar->Add(new CShowGridToggle(this, AssetsEditor()->m_Path_Sprite_IconGrid), false);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
 	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
@@ -228,7 +263,22 @@ void CViewMap::RenderView()
 	
 	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture, Color);
 	
-	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+	//Draw grid
+	if(m_ShowGrid)
+	{
+		float Log = log((1.0/m_CameraZoom)*32.0)/log(2.0);
+		float Int = floor(Log);
+		float Frac = Log - Int;
+		float Alpha = 1.f-Frac;
+		float Step = pow(2.0, Int);
+		
+		MapRenderer()->SetGroup(GetMapGroupPath());
+		MapRenderer()->RenderGrid(Step, vec4(1.0f, 1.0f, 1.0f, 0.5f*(Alpha)));
+		MapRenderer()->RenderGrid(Step*2.0f, vec4(1.0f, 1.0f, 1.0f, 0.5f*(1.0f-Alpha)));
+		MapRenderer()->UnsetGroup();
+	}
+	
+	//Draw entities
 	{
 		const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(GetMapPath());
 		if(pMap)
@@ -257,20 +307,21 @@ void CViewMap::RenderView()
 					
 					const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
 					if(pEntityType)
-						AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, 1.0f);
+						AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, Color);
 					else
-						AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, 1.0f);
+						AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, Color);
 				}
 			}
 		}
 	}
 	
+	//Draw boxes
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
-			MapRenderer()->SetGroup(AssetsEditor()->GetEditedAssetPath());
+			MapRenderer()->SetGroup(GetMapGroupPath());
 			
 			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(0.0f, 0.0f));
 			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight()));
@@ -290,7 +341,7 @@ void CViewMap::RenderView()
 		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
-			MapRenderer()->SetGroup(AssetsEditor()->GetEditedAssetPath());
+			MapRenderer()->SetGroup(GetMapGroupPath());
 			
 			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(0.0f, 0.0f));
 			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight()));

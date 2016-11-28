@@ -35,12 +35,14 @@
 
 CAsset_ZoneType::CIndex::CIndex()
 {
+	m_Used = true;
 	m_Color = 1.0f;
 }
 
 
 void CAsset_ZoneType::CIndex::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
+	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
 	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
@@ -63,6 +65,7 @@ void CAsset_ZoneType::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 
 void CAsset_ZoneType::CIndex::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType& TuaType)
 {
+	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
 	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
@@ -104,6 +107,29 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+bool CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case INDEX_USED:
+			return GetIndexUsed(SubPath);
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case INDEX_USED:
+			SetIndexUsed(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
 }
 
 template<>
