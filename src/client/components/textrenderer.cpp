@@ -37,7 +37,7 @@ CTextRenderer::CFont::~CFont()
 
 CTextRenderer::CGlyphCache::CGlyphCache(CClientKernel* pKernel) :
 	CClientKernel::CGuest(pKernel),
-	m_pData(0),
+	m_pData(NULL),
 	m_Version(0)
 {
 	
@@ -497,6 +497,14 @@ CTextRenderer::CGlyph* CTextRenderer::LoadGlyph(CGlyphCache* pCache, CGlyphId Gl
 	pGlyph->m_OffsetX = pFont->m_FtFace->glyph->bitmap_left - s_Margin;
 	pGlyph->m_OffsetY = pFont->m_FtFace->glyph->bitmap_top + s_Margin;
 	
+	for(int j=0; j<pGlyph->m_Granularity.y * pCache->m_PPG; j++)
+	{
+		for(int i=0; i<pGlyph->m_Granularity.x * pCache->m_PPG; i++)
+		{
+			pGlyph->m_pData[j*pCache->m_Width + i] = 0;
+		}
+	}
+	
 	if(pBitmap->pixel_mode == FT_PIXEL_MODE_GRAY)
 	{
 		for(int j = 0; j < BitmapHeight; j++)
@@ -907,73 +915,4 @@ bool CTextRenderer::PreUpdate()
 		m_GlyphCaches[i]->m_RenderTick = m_RenderTick;
 	
 	return true;
-}
-
-void CTextRenderer::Debug_DrawCaches()
-{
-	int Scale = 1;
-	int PosX = 0;
-	int PosY = 0;
-	int MaxX = 0;
-	
-	for(int i=0; i<m_GlyphCaches.size(); i++)
-	{
-		if(!m_GlyphCaches[i]->m_Texture.IsValid())
-		
-		if(PosY + m_GlyphCaches[i]->m_Height/Scale > Graphics()->ScreenHeight())
-		{
-			PosY = 0;
-			PosX += MaxX;
-			MaxX = 0;
-		}
-		else if(MaxX < m_GlyphCaches[i]->m_Width/Scale)
-		{
-			MaxX = m_GlyphCaches[i]->m_Width/Scale;
-		}
-		
-		{
-			Graphics()->TextureClear();
-			Graphics()->QuadsBegin();
-			Graphics()->SetColor(0.0f, 0.0f, 0.0f, 1.0f);
-			
-			Graphics()->QuadsSetSubset(0.0f, 0.0f, 1.0f, 1.0f);
-			CGraphics::CQuadItem QuadItem(PosX, PosY, m_GlyphCaches[i]->m_Width/Scale, m_GlyphCaches[i]->m_Height/Scale);
-			Graphics()->QuadsDrawTL(&QuadItem, 1);
-			
-			Graphics()->QuadsEnd();
-		}
-		{
-			Graphics()->TextureSet(m_GlyphCaches[i]->m_Texture);
-			Graphics()->QuadsBegin();
-			Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-			
-			Graphics()->QuadsSetSubset(0.0f, 0.0f, 1.0f, 1.0f);
-			CGraphics::CQuadItem QuadItem(PosX, PosY, m_GlyphCaches[i]->m_Width/Scale, m_GlyphCaches[i]->m_Height/Scale);
-			Graphics()->QuadsDrawTL(&QuadItem, 1);
-			
-			Graphics()->QuadsEnd();
-		}
-		{
-			Graphics()->TextureClear();
-			Graphics()->LinesBegin();
-			Graphics()->SetColor(1.0f, 1.0f, 0.0f, 1.0f);
-			
-			vec2 minCorner = vec2(PosX-0.5f, PosY-0.5f);
-			vec2 maxCorner = vec2(PosX+m_GlyphCaches[i]->m_Width/Scale+0.5f, PosY+m_GlyphCaches[i]->m_Height/Scale+0.5f);
-
-			{
-				CGraphics::CLineItem Lines[4];
-				Lines[0] = CGraphics::CLineItem(minCorner.x, minCorner.y, maxCorner.x, minCorner.y);
-				Lines[1] = CGraphics::CLineItem(maxCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
-				Lines[2] = CGraphics::CLineItem(maxCorner.x, maxCorner.y, minCorner.x, maxCorner.y);
-				Lines[3] = CGraphics::CLineItem(minCorner.x, maxCorner.y, minCorner.x, minCorner.y);
-				
-				Graphics()->LinesDraw(Lines, 4);
-			}
-			
-			Graphics()->LinesEnd();
-		}
-		
-		PosY += m_GlyphCaches[i]->m_Height/Scale;
-	}
 }

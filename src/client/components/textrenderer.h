@@ -208,7 +208,6 @@ public:
 	CTextCursor GetTextCursorFromPosition(CTextCache* pTextCache, ivec2 TextPosition, ivec2 MousePosition);
 	CTextCursor GetTextCursorFromTextIter(CTextCache* pTextCache, ivec2 TextPosition, int TextIter);
 	void DrawText(CTextCache* pTextCache, ivec2 Position, vec4 Color);
-	void Debug_DrawCaches();
 };
 
 #endif
