@@ -261,7 +261,7 @@ int CAssetsManager::AddNameToResolve(const char* pName)
 	return m_pNamesToResolved.size()-1;
 }
 
-bool CAssetsManager::Save_AssetsFile(const char* pFilename, int PackageId)
+bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int PackageId)
 {
 	if(!IsValidPackage(PackageId))
 		return false;
@@ -290,7 +290,7 @@ bool CAssetsManager::Save_AssetsFile(int PackageId)
 	if(!IsValidPackage(PackageId))
 		return false;
 	
-	return Save_AssetsFile(m_pPackages[PackageId]->GetName(), PackageId);
+	return Save_AssetsFile(m_pPackages[PackageId]->GetName(), CStorage::TYPE_SAVE, PackageId);
 }
 
 int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType, unsigned Crc)

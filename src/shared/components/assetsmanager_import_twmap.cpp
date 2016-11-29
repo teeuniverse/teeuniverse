@@ -437,8 +437,11 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									case tw07::TILE_SOLID:
 										pPhysicsZone->SetTileIndex(TilePath, 1);
 										break;
-									case tw07::TILE_NOHOOK:
+									case tw07::TILE_DEATH:
 										pPhysicsZone->SetTileIndex(TilePath, 2);
+										break;
+									case tw07::TILE_NOHOOK:
+										pPhysicsZone->SetTileIndex(TilePath, 3);
 										break;
 									default:
 										pPhysicsZone->SetTileIndex(TilePath, 0);
@@ -536,50 +539,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									i++;
 									
 									TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								}
-							}
-						}
-						
-						if(Format != MAPFORMAT_INFCLASS)
-						{
-							CAssetPath DamageZonePath;
-							CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
-							pDamageZone->SetName("Damage");
-							pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
-							pDamageZone->SetParentPath(MapPath);
-							
-							{
-								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pDamageZone->GetTileArray();
-								Data.resize(Width, Height);
-								
-								CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-								pMap->SetZoneLayer(ZoneLayer, DamageZonePath);
-							}			
-							
-							for(int j=0; j<Height; j++)
-							{
-								for(int i=0; i<Width; i++)
-								{
-									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-									
-									switch(pTiles[j*Width+i].m_Index)
-									{
-										case tw07::TILE_DEATH:
-											pDamageZone->SetTileIndex(TilePath, 1);
-											break;
-										default:
-											pDamageZone->SetTileIndex(TilePath, 0);
-											break;
-									}
-									
-									int Skip = pTiles[j*Width+i].m_Skip;
-									for(int s=0; s<Skip; s++)
-									{
-										pDamageZone->SetTileIndex(TilePath, 0);
-										i++;
-										
-										TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-									}
 								}
 							}
 						}
@@ -976,4 +935,506 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	ArchiveFile.Close();
 	
 	return PackageId;
+}
+
+void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId)
+{
+	const CAsset_MapGroup* pGroup = GetAsset<CAsset_MapGroup>(GroupPath);
+	if(!pGroup)
+		return;
+	
+	int StartLayer = LayerId;
+	
+	CAsset_MapGroup::CIteratorLayer LayerIter;
+	for(LayerIter = pGroup->BeginLayer(); LayerIter != pGroup->EndLayer(); ++LayerIter)
+	{
+		CAssetPath LayerPath = pGroup->GetLayer(*LayerIter);
+		
+		if(LayerPath.GetType() == CAsset_MapLayerTiles::TypeId)
+		{
+			const CAsset_MapLayerTiles* pLayer = GetAsset<CAsset_MapLayerTiles>(LayerPath);
+			if(!pLayer)
+				continue;
+			
+			int Width = pLayer->GetTileWidth();
+			int Height = pLayer->GetTileHeight();
+			tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+			
+			for(int j=0; j<Height; j++)
+			{
+				for(int i=0; i<Width; i++)
+				{
+					CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
+					pTiles[j*Width+i].m_Index = pLayer->GetTileIndex(TilePath);
+					pTiles[j*Width+i].m_Flags = pLayer->GetTileFlags(TilePath);
+					pTiles[j*Width+i].m_Skip = 0;
+					pTiles[j*Width+i].m_Reserved = 0;
+				}
+			}
+			
+			{
+				tw07::CMapItemLayerTilemap LItem;
+				
+				LItem.m_Version = 3;
+				LItem.m_Flags = 0;
+				LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Width = Width;
+				LItem.m_Height = Height;
+				LItem.m_Color.r = pLayer->GetColor().r*255.0f;
+				LItem.m_Color.g = pLayer->GetColor().g*255.0f;
+				LItem.m_Color.b = pLayer->GetColor().b*255.0f;
+				LItem.m_Color.a = pLayer->GetColor().a*255.0f;
+				LItem.m_ColorEnv = -1;
+				LItem.m_ColorEnvOffset = 0;
+				LItem.m_Image = -1;
+				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+				StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
+			
+				const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
+				if(pImage)
+				{
+					for(int i=0; i<Images.size(); i++)
+					{
+						if(Images[i] == pLayer->GetImagePath())
+						{
+							LItem.m_Image = i;
+							break;
+						}
+					}
+					
+					if(LItem.m_Image == -1)
+					{
+						LItem.m_Image = Images.size();
+						Images.increment() = pLayer->GetImagePath();
+					}
+				}
+				
+				ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+			}
+			
+			delete[] pTiles;
+		}
+		else if(LayerPath.GetType() == CAsset_MapLayerQuads::TypeId)
+		{
+			const CAsset_MapLayerQuads* pLayer = GetAsset<CAsset_MapLayerQuads>(LayerPath);
+			if(!pLayer)
+				continue;
+			
+			tw07::CQuad* pQuads = new tw07::CQuad[pLayer->GetQuadArraySize()];
+			
+			for(int i=0; i<pLayer->GetQuadArraySize(); i++)
+			{
+				const CAsset_MapLayerQuads::CQuad& Quad = pLayer->GetQuad(CAsset_MapLayerQuads::SubPath_Quad(i));
+				
+				vec2 Pos;
+				
+				Pos = rotate(Quad.GetVertex0() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
+				pQuads[i].m_aPoints[0].x = f2fx(Pos.x);
+				pQuads[i].m_aPoints[0].y = f2fx(Pos.y);
+				pQuads[i].m_aTexcoords[0].x = f2fx(Quad.GetUV0X());
+				pQuads[i].m_aTexcoords[0].y = f2fx(Quad.GetUV0Y());
+				pQuads[i].m_aColors[0].r = Quad.GetColor0().r*255.0f;
+				pQuads[i].m_aColors[0].g = Quad.GetColor0().g*255.0f;
+				pQuads[i].m_aColors[0].b = Quad.GetColor0().b*255.0f;
+				pQuads[i].m_aColors[0].a = Quad.GetColor0().a*255.0f;
+				
+				Pos = rotate(Quad.GetVertex1() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
+				pQuads[i].m_aPoints[1].x = f2fx(Pos.x);
+				pQuads[i].m_aPoints[1].y = f2fx(Pos.y);
+				pQuads[i].m_aTexcoords[1].x = f2fx(Quad.GetUV1X());
+				pQuads[i].m_aTexcoords[1].y = f2fx(Quad.GetUV1Y());
+				pQuads[i].m_aColors[1].r = Quad.GetColor1().r*255.0f;
+				pQuads[i].m_aColors[1].g = Quad.GetColor1().g*255.0f;
+				pQuads[i].m_aColors[1].b = Quad.GetColor1().b*255.0f;
+				pQuads[i].m_aColors[1].a = Quad.GetColor1().a*255.0f;
+				
+				Pos = rotate(Quad.GetVertex2() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
+				pQuads[i].m_aPoints[2].x = f2fx(Pos.x);
+				pQuads[i].m_aPoints[2].y = f2fx(Pos.y);
+				pQuads[i].m_aTexcoords[2].x = f2fx(Quad.GetUV2X());
+				pQuads[i].m_aTexcoords[2].y = f2fx(Quad.GetUV2Y());
+				pQuads[i].m_aColors[2].r = Quad.GetColor2().r*255.0f;
+				pQuads[i].m_aColors[2].g = Quad.GetColor2().g*255.0f;
+				pQuads[i].m_aColors[2].b = Quad.GetColor2().b*255.0f;
+				pQuads[i].m_aColors[2].a = Quad.GetColor2().a*255.0f;
+				
+				Pos = rotate(Quad.GetVertex3() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
+				pQuads[i].m_aPoints[3].x = f2fx(Pos.x);
+				pQuads[i].m_aPoints[3].y = f2fx(Pos.y);
+				pQuads[i].m_aTexcoords[3].x = f2fx(Quad.GetUV3X());
+				pQuads[i].m_aTexcoords[3].y = f2fx(Quad.GetUV3Y());
+				pQuads[i].m_aColors[3].r = Quad.GetColor3().r*255.0f;
+				pQuads[i].m_aColors[3].g = Quad.GetColor3().g*255.0f;
+				pQuads[i].m_aColors[3].b = Quad.GetColor3().b*255.0f;
+				pQuads[i].m_aColors[3].a = Quad.GetColor3().a*255.0f;
+				
+				pQuads[i].m_aPoints[4].x = f2fx(Quad.GetPivotX());
+				pQuads[i].m_aPoints[4].y = f2fx(Quad.GetPivotY());
+				
+				pQuads[i].m_PosEnv = -1;
+				pQuads[i].m_PosEnvOffset = 0;
+				pQuads[i].m_ColorEnv = -1;
+				pQuads[i].m_ColorEnvOffset = 0;
+			}
+			
+			tw07::CMapItemLayerQuads LItem;
+			LItem.m_Version = 2;
+			LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Image = -1;
+			LItem.m_NumQuads = pLayer->GetQuadArraySize();
+			LItem.m_Data = ArchiveFile.AddDataSwapped(pLayer->GetQuadArraySize()*sizeof(tw07::CQuad), pQuads);
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
+			
+			const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
+			if(pImage)
+			{
+				for(int i=0; i<Images.size(); i++)
+				{
+					if(Images[i] == pLayer->GetImagePath())
+					{
+						LItem.m_Image = i;
+						break;
+					}
+				}
+				
+				if(LItem.m_Image == -1)
+				{
+					LItem.m_Image = Images.size();
+					Images.increment() = pLayer->GetImagePath();
+				}
+			}
+
+			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+			
+			delete[] pQuads;
+		}
+	}		
+	
+	tw07::CMapItemGroup GItem;
+	GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+	GItem.m_OffsetX = pGroup->GetPositionX();
+	GItem.m_OffsetY = pGroup->GetPositionY();
+	GItem.m_ParallaxX = pGroup->GetHardParallaxX()*100.0f;
+	GItem.m_ParallaxY = pGroup->GetHardParallaxY()*100.0f;
+	GItem.m_StartLayer = StartLayer;
+	GItem.m_NumLayers = LayerId-StartLayer;
+	GItem.m_UseClipping = pGroup->GetClipping();
+	GItem.m_ClipX = pGroup->GetClipPositionX();
+	GItem.m_ClipY = pGroup->GetClipPositionY();
+	GItem.m_ClipW = pGroup->GetClipSizeX();
+	GItem.m_ClipH = pGroup->GetClipSizeX();
+	StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
+	ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+}
+
+bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int PackageId, int Format)
+{
+	if(!IsValidPackage(PackageId))
+		return false;
+	
+	CAssetPath MapPath = CAssetPath(CAsset_Map::TypeId, PackageId, 0);
+	const CAsset_Map* pMap = GetAsset<CAsset_Map>(MapPath);
+	if(!pMap)
+	{
+		dbg_msg("AssetsManager", "No map to export", pFileName);
+		return false;
+	}
+	
+	tw07::CDataFileWriter ArchiveFile;
+	
+	if(!ArchiveFile.Open(Storage(), StorageType, pFileName))
+	{
+		dbg_msg("AssetsManager", "Can't export the map at this location: %s", pFileName);
+		return false;
+	}
+	
+	array<CAssetPath> Images;
+	
+	//Map version
+	tw07::CMapItemVersion VerItem;
+	VerItem.m_Version = 1;
+	ArchiveFile.AddItem(tw07::MAPITEMTYPE_VERSION, 0, sizeof(tw07::CMapItemVersion), &VerItem);
+	
+	//Map info
+	tw07::CMapItemInfo InfoItem;
+	InfoItem.m_Version = 1;
+	InfoItem.m_MapVersion = -1;
+	InfoItem.m_Author = ArchiveFile.AddData(str_length("TeeUniverse editor")+1, (char*) "TeeUniverse editor");
+	InfoItem.m_Credits = -1;
+	InfoItem.m_License = -1;
+	ArchiveFile.AddItem(tw07::MAPITEMTYPE_INFO, 0, sizeof(tw07::CMapItemInfo), &InfoItem);
+	
+	int GroupId = 0;
+	int LayerId = 0;
+	
+	{
+		CAsset_Map::CIteratorBgGroup Iter;
+		for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
+		{
+			Save_Map_Group(ArchiveFile, pMap->GetBgGroup(*Iter), Images, GroupId, LayerId);
+		}
+	}
+	
+	//Zones
+	{
+		int StartLayer = LayerId;
+		
+		//Get layer size
+		int Width = 0;
+		int Height = 0;
+		
+		{
+			CAsset_Map::CIteratorZoneLayer ZoneIter;
+			for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+			{
+				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+				if(!pZone)
+					continue;
+				
+				Width = max(pZone->GetTileWidth(), Width);
+				Height = max(pZone->GetTileHeight(), Height);
+			}
+		}
+		
+		tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+		
+		for(int j=0; j<Height; j++)
+		{
+			for(int i=0; i<Width; i++)
+			{
+				pTiles[j*Width+i].m_Index = 0;
+				pTiles[j*Width+i].m_Flags = 0;
+				pTiles[j*Width+i].m_Skip = 0;
+				pTiles[j*Width+i].m_Reserved = 0;
+			}
+		}
+		
+		//Game layer
+		if(Format != MAPFORMAT_INFCLASS)
+		{
+			CAsset_Map::CIteratorZoneLayer ZoneIter;
+			for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+			{
+				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+				if(!pZone)
+					continue;
+				
+				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics)
+				{
+					for(int j=0; j<pZone->GetTileHeight(); j++)
+					{
+						for(int i=0; i<pZone->GetTileWidth(); i++)
+						{
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							
+							switch(pZone->GetTileIndex(TilePath))
+							{
+								case 1:
+									pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
+									break;
+								case 2:
+									if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+										pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
+									break;
+								case 3:
+									pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
+									break;
+							}
+						}
+					}
+				}
+				else if(pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNGShrine)
+				{
+					if(Format == MAPFORMAT_OPENFNG)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								
+								switch(pZone->GetTileIndex(TilePath))
+								{
+									case 1:
+										if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+											pTiles[j*Width+i].m_Index = 8;
+										break;
+									case 2:
+										if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+											pTiles[j*Width+i].m_Index = 9;
+										break;
+									case 3:
+										if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+											pTiles[j*Width+i].m_Index = 10;
+										break;
+										
+								}
+							}
+						}
+					}
+					else
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								
+								switch(pZone->GetTileIndex(TilePath))
+								{
+									case 1:
+									case 2:
+									case 3:
+										if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+											pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			CAsset_Map::CIteratorEntityLayer EntityLayerIter;
+			for(EntityLayerIter = pMap->BeginEntityLayer(); EntityLayerIter != pMap->EndEntityLayer(); ++EntityLayerIter)
+			{
+				const CAsset_MapEntities* pEntities = GetAsset<CAsset_MapEntities>(pMap->GetEntityLayer(*EntityLayerIter));
+				if(!pEntities)
+					continue;
+				
+				for(int i=0; i<pEntities->GetEntityArraySize(); i++)
+				{
+					CSubPath SubPath = CAsset_MapEntities::SubPath_Entity(i);
+					CAssetPath EntityTypePath = pEntities->GetEntityTypePath(SubPath);
+					int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f;
+					int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f;
+					
+					if(X < 0 || X >= Width || Y < 0 || Y >= Height)
+						continue;
+					if(pTiles[Y*Width+X].m_Index == tw07::TILE_SOLID || pTiles[Y*Width+X].m_Index == tw07::TILE_NOHOOK)
+						continue;
+					
+					if(EntityTypePath == m_Path_EntityType_TWSpawn)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN_RED;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWShotgun)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_SHOTGUN;
+					else if(EntityTypePath == m_Path_EntityType_TWGrenade)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_GRENADE;
+					else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_LASER;
+					else if(EntityTypePath == m_Path_EntityType_TWNinja)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_POWERUP_NINJA;
+					else if(EntityTypePath == m_Path_EntityType_TWHeart)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_HEALTH_1;
+					else if(EntityTypePath == m_Path_EntityType_TWArmor)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_ARMOR_1;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
+						pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_RED;
+					else if(Format == MAPFORMAT_OPENFNG)
+					{
+						if(EntityTypePath == m_Path_EntityType_OpenFNGRedScore)
+							pTiles[Y*Width+X].m_Index = 11;
+						else if(EntityTypePath == m_Path_EntityType_OpenFNGBlueScore)
+							pTiles[Y*Width+X].m_Index = 12;
+					}
+				}
+			}
+			
+			tw07::CMapItemLayerTilemap LItem;
+			
+			LItem.m_Version = 3;
+			LItem.m_Flags = tw07::TILESLAYERFLAG_GAME;
+			LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Width = Width;
+			LItem.m_Height = Height;
+			LItem.m_Color.r = 255;
+			LItem.m_Color.g = 255;
+			LItem.m_Color.b = 255;
+			LItem.m_Color.a = 255;
+			LItem.m_ColorEnv = -1;
+			LItem.m_ColorEnvOffset = 0;
+			LItem.m_Image = -1;
+			LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Game");
+			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+		}
+		
+		tw07::CMapItemGroup GItem;
+		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		GItem.m_OffsetX = 0;
+		GItem.m_OffsetY = 0;
+		GItem.m_ParallaxX = 100;
+		GItem.m_ParallaxY = 100;
+		GItem.m_StartLayer = StartLayer;
+		GItem.m_NumLayers = LayerId-StartLayer;
+		GItem.m_UseClipping = 0;
+		GItem.m_ClipX = 0;
+		GItem.m_ClipY = 0;
+		GItem.m_ClipW = 0;
+		GItem.m_ClipH = 0;
+		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "Game");
+		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		
+		delete[] pTiles;
+	}
+	
+	{
+		CAsset_Map::CIteratorFgGroup Iter;
+		for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
+		{
+			Save_Map_Group(ArchiveFile, pMap->GetFgGroup(*Iter), Images, GroupId, LayerId);
+		}
+	}
+	
+	//Images
+	{
+		for(int i=0; i<Images.size(); i++)
+		{
+			tw07::CMapItemImage IItem;
+			IItem.m_Version = tw07::CMapItemImage::CURRENT_VERSION;
+			IItem.m_Width = 0;
+			IItem.m_Height = 0;
+			IItem.m_External = 1;
+			IItem.m_ImageName = -1;
+			IItem.m_ImageData = -1;
+			IItem.m_Format = CImageInfo::FORMAT_RGB;
+			
+			const CAsset_Image* pImage = GetAsset<CAsset_Image>(Images[i]);
+			if(pImage)
+			{
+				IItem.m_Width = pImage->GetDataWidth();
+				IItem.m_Height = pImage->GetDataHeight();
+				IItem.m_External = 0;
+				IItem.m_ImageName = ArchiveFile.AddData(str_length(pImage->GetName())+1, (char*) pImage->GetName());
+				IItem.m_ImageData = ArchiveFile.AddData(pImage->GetDataArray().get_linear_size(), (char*) pImage->GetDataPtr());
+				switch(pImage->GetDataArray().get_depth())
+				{
+					case 1:
+						IItem.m_Format = CImageInfo::FORMAT_ALPHA;
+						break;
+					case 3:
+						IItem.m_Format = CImageInfo::FORMAT_RGB;
+						break;
+					case 4:
+						IItem.m_Format = CImageInfo::FORMAT_RGBA;
+						break;
+				}
+			}
+			
+			ArchiveFile.AddItem(tw07::MAPITEMTYPE_IMAGE, i, sizeof(IItem), &IItem);
+		}
+	}
+	
+	ArchiveFile.Finish();
+	
+	return true;
 }

@@ -287,7 +287,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 
 const dynamic_string& CStorage::GetPath(int Type, const char *pDir, dynamic_string& Path) const
 {
-	if(m_StoragePaths.size() >= Type && !m_StoragePaths[Type].empty())
+	if(Type >= 0 && Type < m_StoragePaths.size() && !m_StoragePaths[Type].empty())
 	{
 		Path.copy(m_StoragePaths[Type]);
 		Path.append("/");
@@ -326,7 +326,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 	// open file
 	if(Flags&IOFLAG_WRITE)
 	{
-		return io_open(GetPath(TYPE_SAVE, pFilename, FullPath).buffer(), Flags);
+		return io_open(GetPath(Type, pFilename, FullPath).buffer(), Flags);
 	}
 	else
 	{

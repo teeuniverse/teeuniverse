@@ -499,7 +499,45 @@ public:
 	
 	void Save()
 	{
-		AssetsManager()->Save_AssetsFile(m_Filename.buffer(), m_pAssetsEditor->GetEditedPackageId());
+		Context()->ShowLoadingCursor();
+		dynamic_string Buffer;
+		int TextIter = 0;
+		switch(m_Format)
+		{
+			case FORMAT_MAP_TW:
+			{
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW);
+				break;
+			}
+			case FORMAT_MAP_INFCLASS:
+			{
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_INFCLASS);
+				break;
+			}
+			case FORMAT_MAP_OPENFNG:
+			{
+				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
+				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+				TextIter = Buffer.append_at(TextIter, ".map");
+				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_OPENFNG);
+				break;
+			}
+			case FORMAT_PACKAGE:
+			{
+				AssetsManager()->Save_AssetsFile(m_Filename.buffer(), CStorage::TYPE_SAVE, m_pAssetsEditor->GetEditedPackageId());
+				break;
+			}
+		}
+			
 		m_pAssetsEditor->RefreshPackageTree();
 		Close();
 	}
@@ -723,6 +761,44 @@ public:
 		}
 		
 		gui::CButton::Update(ParentEnabled);
+	}
+};
+
+class CExportButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CPopup_Menu* m_pPopupMenu;
+	int m_Format;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, true, m_Format));
+		m_pPopupMenu->Close();
+	}
+
+public:
+	CExportButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu, int Format) :
+		gui::CButton(pAssetsEditor, ""),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pPopupMenu(pPopupMenu),
+		m_Format(Format)
+	{
+		switch(m_Format)
+		{
+			case COpenSavePackageDialog::FORMAT_MAP_TW:
+				SetText(_GUI("Export TeeWorlds Map"));
+				break;
+			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
+				SetText(_GUI("Export InfClass Map"));
+				break;
+			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
+				SetText(_GUI("Export OpenFNG Map"));
+				break;
+		}
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSave);
 	}
 };
 
@@ -987,6 +1063,9 @@ protected:
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
+		pMenu->List()->AddSeparator();
+		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
+		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CQuitButton(m_pAssetsEditor, pMenu));
 		

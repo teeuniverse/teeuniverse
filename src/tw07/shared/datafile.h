@@ -117,7 +117,7 @@ class CDataFileWriter
 public:
 	CDataFileWriter();
 	~CDataFileWriter();
-	bool Open(CStorage *pStorage, const char *Filename);
+	bool Open(CStorage *pStorage, int StorageType, const char *Filename);
 	int AddData(int Size, void *pData);
 	int AddDataSwapped(int Size, void *pData);
 	int AddItem(int Type, int ID, int Size, void *pData);

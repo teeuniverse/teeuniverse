@@ -24,6 +24,7 @@
 #include <shared/assets/assetpath.h>
 #include <shared/assets/assetspackage.h>
 #include <shared/components/assetsmanager_history.h>
+#include <tw07/shared/datafile.h>
 
 class CAssetsManager : public CSharedKernel::CComponent
 {
@@ -153,9 +154,12 @@ public:
 	void InitAssetState(int Source, const CAssetState& State);
 	
 	bool Save_AssetsFile(int PackageId);
-	bool Save_AssetsFile(const char *pFileName, int PackageId);
+	bool Save_AssetsFile(const char *pFileName, int StorageType, int PackageId);
 	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0);
 	int Load_AssetsFile(const char *pFileName, int StorageType, unsigned Crc = 0);
+	
+	void Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId);
+	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	
 	void Load_UnivTeeWorlds();

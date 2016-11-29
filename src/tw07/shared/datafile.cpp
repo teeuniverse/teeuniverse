@@ -417,10 +417,10 @@ CDataFileWriter::~CDataFileWriter()
 	m_pDatas = 0;
 }
 
-bool CDataFileWriter::Open(CStorage *pStorage, const char *pFilename)
+bool CDataFileWriter::Open(CStorage *pStorage, int StorageType, const char *pFilename)
 {
 	dbg_assert(!m_File, "a file already exists");
-	m_File = pStorage->OpenFile(pFilename, IOFLAG_WRITE, CStorage::TYPE_SAVE);
+	m_File = pStorage->OpenFile(pFilename, IOFLAG_WRITE, StorageType);
 	if(!m_File)
 		return false;
 

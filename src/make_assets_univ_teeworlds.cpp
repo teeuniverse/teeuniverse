@@ -69,25 +69,12 @@ int main(int argc, const char **argv)
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
-		pAsset->SetIndexColor(SubPath, vec4(228.0f/255.0f, 255.0f/255.0f, 0.0f/255.0f, 1.0f));
-	}
-	
-	//Damage zone
-	{
-		CAssetPath AssetPath;
-		CSubPath SubPath;
-		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("damage");
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "No Damage");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 0.0f));
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Death");
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
+		pAsset->SetIndexColor(SubPath, vec4(228.0f/255.0f, 255.0f/255.0f, 0.0f/255.0f, 1.0f));
 	}
 	
 	//EntityType, Spawn
