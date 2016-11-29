@@ -743,10 +743,19 @@ public:
 			case FORMAT_IMAGE:
 			{
 				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+				TextIter = Buffer.append_at(TextIter, "/");
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".png");
 				
-				CAssetPath ImageEditorPath = CreateNewImage(m_pAssetsEditor->SharedKernel(), m_pAssetsEditor->GetEditedPackageId(), m_Filename.buffer(), Buffer.buffer(), -1, -1);
+				CAssetPath ImageEditorPath = CreateNewImage(
+					m_pAssetsEditor->SharedKernel(),
+					m_pAssetsEditor->GetEditedPackageId(),
+					m_Filename.buffer(),
+					Buffer.buffer(),
+					CStorage::TYPE_ABSOLUTE,
+					-1, -1
+				);
+				
 				m_pAssetsEditor->SetEditedAsset(ImageEditorPath, CSubPath::Null());
 				break;
 			}

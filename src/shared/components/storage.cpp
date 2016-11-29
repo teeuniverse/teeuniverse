@@ -343,6 +343,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 		else if(Type == TYPE_ABSOLUTE)
 		{
 			// check all available directories
+			FullPath.copy(pFilename);
 			IOHANDLE Handle = io_open(pFilename, Flags);
 			if(Handle)
 				return Handle;

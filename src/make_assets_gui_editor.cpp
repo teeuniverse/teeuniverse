@@ -68,9 +68,9 @@ int main(int argc, const char **argv)
 	vec4 ColorLightHL = vec4(108.0f/255.0f, 108.0f/255.0f, 108.0f/255.0f, 1.0f);
 	
 	//Images
-	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "datasrc/images/gui_editor.png", 32, 16);
-	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "datasrc/images/gui_editor_box.png", 16, 16);
-	CAssetPath ImageZoneTexturePath = CreateNewImage(pKernel, PackageId, "zoneTexture", "datasrc/images/gui_editor_zonetexture.png", 1, 1);
+	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "datasrc/images/gui_editor.png", CStorage::TYPE_ALL, 32, 16);
+	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "datasrc/images/gui_editor_box.png", CStorage::TYPE_ALL, 16, 16);
+	CAssetPath ImageZoneTexturePath = CreateNewImage(pKernel, PackageId, "zoneTexture", "datasrc/images/gui_editor_zonetexture.png", CStorage::TYPE_ALL, 1, 1);
 	
 	//Sprites
 	CAssetPath IconDecreasePath;

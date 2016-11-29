@@ -19,7 +19,7 @@
 #include <client/loading_tools.h>
 #include <shared/components/storage.h>
 
-void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& pBuffer, const char* pFilename)
+void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& pBuffer, const char* pFilename, int StorageType)
 {
 	pBuffer = 0;
 	
@@ -27,11 +27,9 @@ void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& 
 	png_init(0, 0);
 
 	dynamic_string Buffer;
-	IOHANDLE File = pKernel->Storage()->OpenFile(pFilename, IOFLAG_READ, CStorage::TYPE_ALL, Buffer);
+	IOHANDLE File = pKernel->Storage()->OpenFile(pFilename, IOFLAG_READ, StorageType, Buffer);
 	if(File)
-	{
 		io_close(File);
-	}
 	else
 	{
 		dbg_msg("CreateNewImage", "failed to open file. filename='%s'", pFilename);
@@ -41,7 +39,7 @@ void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& 
 	int Error = png_open_file(&Png, Buffer.buffer());
 	if(Error != PNG_NO_ERROR)
 	{
-		dbg_msg("CreateNewImage", "failed to open file. filename='%s', error=%s", Buffer.buffer(), png_error_string(Error));
+		dbg_msg("CreateNewImage", "failed to open file. filename='%s', error=%s", pFilename, png_error_string(Error));
 		if(Error != PNG_FILE_ERROR)
 			png_close_file(&Png);
 		return;
@@ -120,12 +118,12 @@ void CreateNewImage_CopyData(png_t& Png, unsigned char*& pBuffer, CAsset_Image* 
 	delete[] pBuffer;
 }
 
-CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int GridWidth, int GridHeight, bool TilingEnabled, int GridSpacing)
+CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int StorageType, int GridWidth, int GridHeight, bool TilingEnabled, int GridSpacing)
 {
 	png_t Png;
 	unsigned char* pBuffer;
 	
-	CreateNewImage_LoadPng(pKernel, Png, pBuffer, pFilename);
+	CreateNewImage_LoadPng(pKernel, Png, pBuffer, pFilename, StorageType);
 	if(!pBuffer)
 		return CAssetPath::Null();
 	

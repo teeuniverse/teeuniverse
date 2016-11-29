@@ -133,7 +133,7 @@ bool CCountryFlags::Init()
 					{
 						str_format(aBuf, sizeof(aBuf), "countryflags/%s.png", pCountryName);
 						
-						CAssetPath ImagePath = CreateNewImage(SharedKernel(), PackageId, pCountryName, aBuf, 1, 1);
+						CAssetPath ImagePath = CreateNewImage(SharedKernel(), PackageId, pCountryName, aBuf, CStorage::TYPE_ALL, 1, 1);
 						if(!ImagePath.IsNull())
 						{
 							CAsset_Sprite* pSprite = AssetsManager()->NewAsset_Hard<CAsset_Sprite>(&SpritePath, PackageId);
