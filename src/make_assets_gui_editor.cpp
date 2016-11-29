@@ -56,6 +56,9 @@ int main(int argc, const char **argv)
 	}
 	
 	int PackageId = pKernel->AssetsManager()->NewPackage("gui/editor");
+	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
 	//Colors
 	vec4 ColorBorder = vec4(40.0f/255.0f, 40.0f/255.0f, 40.0f/255.0f, 1.0f);

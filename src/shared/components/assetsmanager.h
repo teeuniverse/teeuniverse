@@ -147,6 +147,16 @@ public:
 	bool IsReadOnlyPackage(int PackageId) const;
 	void SetPackageReadOnly(int PackageId , bool Value);
 	
+	inline const char* GetPackageAuthor(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetAuthor() : ""); }
+	inline const char* GetPackageCredits(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetCredits() : ""); }
+	inline const char* GetPackageLicense(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetLicense() : ""); }
+	inline const char* GetPackageVersion(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetVersion() : ""); }
+	
+	inline void SetPackageAuthor(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetAuthor(pValue); }
+	inline void SetPackageCredits(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetCredits(pValue); }
+	inline void SetPackageLicense(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetLicense(pValue); }
+	inline void SetPackageVersion(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetVersion(pValue); }
+	
 	int AddNameToResolve(const char* pName);
 	
 	CAssetState* GetAssetState(CAssetPath AssetPath);

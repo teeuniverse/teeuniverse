@@ -37,7 +37,11 @@ class CAssetsPackage
 public:
 	struct CTuaType_Info
 	{
-		tua_uint32 m_Version;
+		tua_uint32 m_AssetsVersion;
+		tua_stringid m_Author;
+		tua_stringid m_Credits;
+		tua_stringid m_License;
+		tua_stringid m_Version;
 		//TODO: add credits
 	};
 	
@@ -60,6 +64,11 @@ private:
 	int m_State;
 	array<int> Dependencies;
 	bool m_ReadOnly;
+	
+	dynamic_string m_Author;
+	dynamic_string m_Credits;
+	dynamic_string m_License;
+	dynamic_string m_Version;
 
 	#define MACRO_ASSETTYPE(Name) CAssetsList<CAsset_##Name, CAssetState> m_##Name;
 	#include <generated/assets/assetsmacro.h>
@@ -95,6 +104,16 @@ public:
 		m_Name.copy(pName);
 		m_Crc = Crc;
 	}
+	
+	inline const char* GetAuthor() const { return m_Author.buffer(); }
+	inline const char* GetCredits() const { return m_Credits.buffer(); }
+	inline const char* GetLicense() const { return m_License.buffer(); }
+	inline const char* GetVersion() const { return m_Version.buffer(); }
+	
+	inline void SetAuthor(const char* pValue) { return m_Author.copy(pValue); }
+	inline void SetCredits(const char* pValue) { return m_Credits.copy(pValue); }
+	inline void SetLicense(const char* pValue) { return m_License.copy(pValue); }
+	inline void SetVersion(const char* pValue) { return m_Version.copy(pValue); }
 	
 	template<typename ASSET>
 	const ASSET* GetAsset(const CAssetPath& Path) const

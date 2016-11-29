@@ -107,7 +107,6 @@ CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
 		m_pTabs[TAB_IMAGE_ASSET] = 0;
 	
 	//TAG_NEW_ASSET
-	m_pTabs[TAB_PACKAGE] = CreateTab_Package();
 	m_pTabs[TAB_GENERIC_ASSET] = CreateTab_Generic_Asset();
 	m_pTabs[TAB_GUIRECTSTYLE_ASSET] = CreateTab_GuiRectStyle_Asset();
 	m_pTabs[TAB_GUILINESTYLE_ASSET] = CreateTab_GuiLineStyle_Asset();
@@ -208,14 +207,6 @@ void CAssetsInspector::Update(bool ParentEnabled)
 				m_pTabs[TAB_GENERIC_ASSET]->Enable();
 				break;
 		}
-		
-		gui::CTabs::Update(ParentEnabled);
-	}
-	else if(AssetsManager()->IsValidPackage(AssetsEditor()->GetEditedPackageId()))
-	{
-		Enable();
-		
-		m_pTabs[TAB_PACKAGE]->Enable();
 		
 		gui::CTabs::Update(ParentEnabled);
 	}
@@ -733,63 +724,6 @@ void CAssetsInspector::AddField_AssetProperties(gui::CVScrollLayout* pTab)
 	AddField_Text(pTab, CAsset::NAME, _GUI("Name"));
 	
 	pTab->AddSeparator();
-}
-
-/* PACKAGE EDIT *******************************************************/
-	
-class CPackageNameEdit : public gui::CAbstractTextEdit
-{
-protected:
-	CGuiEditor* m_pAssetsEditor;
-	
-	virtual void SaveFromTextBuffer()
-	{
-		AssetsManager()->SetPackageName(m_pAssetsEditor->GetEditedPackageId(), GetText());
-	}
-	
-	virtual void CopyToTextBuffer()
-	{
-		const char* pName = AssetsManager()->GetPackageName(m_pAssetsEditor->GetEditedPackageId());
-		
-		if(pName)
-		{
-			if(m_Text != pName)
-				SetText(pName);
-		}
-		else
-			SetText("");
-	}
-	
-public:
-	CPackageNameEdit(CGuiEditor* pAssetsEditor) :
-		gui::CAbstractTextEdit(pAssetsEditor),
-		m_pAssetsEditor(pAssetsEditor)
-	{ }
-	
-	virtual void Update(bool ParentEnabled)
-	{
-		if(IsEnabled() && ParentEnabled)
-		{
-			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
-				Editable(false);
-			else
-				Editable(true);
-		}
-		
-		gui::CAbstractTextEdit::Update(ParentEnabled);
-	}
-};
-
-gui::CVScrollLayout* CAssetsInspector::CreateTab_Package()
-{
-	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
-	
-	pTab->Disable();
-	AddTab(pTab, _GUI("Package"), AssetsEditor()->m_Path_Sprite_IconAsset);
-	
-	AddField(pTab, new CPackageNameEdit(AssetsEditor()), _GUI("Name"));
-	
-	return pTab;
 }
 
 /* TEXT EDIT **********************************************************/

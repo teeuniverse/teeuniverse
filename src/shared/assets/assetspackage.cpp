@@ -35,18 +35,36 @@ void CAssetsPackage::InitAssetState(const CAssetState& State)
 	
 void CAssetsPackage::Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)
 {
+	m_State = STATE_JUST_LOADED;
+	
+	CTuaType_Info* pItem = reinterpret_cast<CTuaType_Info*>(pLoadingContext->ArchiveFile()->GetItem(0, 0));
+	if(!pItem)
+		return;
+	
+	int AssetsVersion = pLoadingContext->ArchiveFile()->ReadUInt32(pItem->m_AssetsVersion);
+	if(AssetsVersion != 0)
+		return;
+	
+	m_Author.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Author));
+	m_Credits.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Credits));
+	m_License.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_License));
+	m_Version.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Version));
+	
 	#define MACRO_ASSETTYPE(Name) m_##Name.Load_AssetsFile(pLoadingContext);
 	#include <generated/assets/assetsmacro.h>
 	#undef MACRO_ASSETTYPE
-	
-	m_State = STATE_JUST_LOADED;
 }
 	
 void CAssetsPackage::Save_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)
 {
 	pLoadingContext->ArchiveFile()->SetItemType(0, sizeof(CTuaType_Info), 1);
 	CTuaType_Info* pItem = reinterpret_cast<CTuaType_Info*>(pLoadingContext->ArchiveFile()->GetItem(0, 0));
-	pItem->m_Version = pLoadingContext->ArchiveFile()->WriteUInt32((uint32) 0);
+	
+	pItem->m_AssetsVersion = pLoadingContext->ArchiveFile()->WriteUInt32((uint32) 0);
+	pItem->m_Author = pLoadingContext->ArchiveFile()->AddString(m_Author.buffer());
+	pItem->m_Credits = pLoadingContext->ArchiveFile()->AddString(m_Credits.buffer());
+	pItem->m_License = pLoadingContext->ArchiveFile()->AddString(m_License.buffer());
+	pItem->m_Version = pLoadingContext->ArchiveFile()->AddString(m_Version.buffer());
 	
 	#define MACRO_ASSETTYPE(Name) m_##Name.Save_AssetsFile(pLoadingContext);
 	#include <generated/assets/assetsmacro.h>

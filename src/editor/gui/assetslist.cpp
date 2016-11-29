@@ -57,6 +57,31 @@ protected:
 		}
 	};
 	
+	class CPropertiesButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CContextMenu* m_pContextMenu;
+		int m_PackageId;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pAssetsEditor->DisplayPopup(new PackagePropertiesDialog(m_pAssetsEditor, m_PackageId));
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CPropertiesButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
+			gui::CButton(pAssetsEditor, _GUI("Properties"), pAssetsEditor->m_Path_Sprite_IconSystem),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu),
+			m_PackageId(PackageId)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		}
+	};
+	
 	class CRealOnlyToggle : public gui::CToggle
 	{
 	protected:
@@ -138,6 +163,8 @@ public:
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 			
 				pMenu->List()->Add(new CRealOnlyToggle(m_pAssetsEditor, pMenu, m_PackageId));
+				pMenu->List()->AddSeparator();
+				pMenu->List()->Add(new CPropertiesButton(m_pAssetsEditor, pMenu, m_PackageId));
 				pMenu->List()->AddSeparator();
 				pMenu->List()->Add(new CCloseButton(m_pAssetsEditor, pMenu, m_PackageId));
 				
@@ -1296,7 +1323,7 @@ void CPackagesTree::Refresh()
 	
 	for(int i=0; i<AssetsManager()->GetNumPackages(); i++)
 	{
-		if(AssetsManager()->IsValidPackage(i))
+		if(AssetsManager()->IsValidPackage(i) && str_comp(AssetsManager()->GetPackageName(i), "gui/editor") != 0)
 		{
 			if(AssetsManager()->IsReadOnlyPackage(i))
 				pReadExpand->Add(new CPackageItem(AssetsEditor(), i));

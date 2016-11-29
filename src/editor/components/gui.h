@@ -132,6 +132,7 @@ public:
 	CAssetPath m_Path_Sprite_IconGuiSlider;
 	CAssetPath m_Path_Sprite_IconGuiScrollbar;
 	CAssetPath m_Path_Sprite_IconGuiTabs;
+	CAssetPath m_Path_Sprite_IconSystem;
 	CAssetPath m_Path_Sprite_IconStamp;
 	CAssetPath m_Path_Sprite_IconMove;
 	CAssetPath m_Path_Sprite_IconView;
@@ -191,6 +192,35 @@ public:
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 	inline gui::CVListLayout* List() { return m_pList; }
+};
+
+class PackagePropertiesDialog : public gui::CPopup
+{
+protected:
+	class CClose : public gui::CButton
+	{
+	protected:
+		PackagePropertiesDialog* m_pPopup;
+		
+	protected:
+		virtual void MouseClickAction() { m_pPopup->Close(); }
+		
+	public:
+		CClose(PackagePropertiesDialog* pPopup) :
+			gui::CButton(pPopup->Context(), _GUI("Close")),
+			m_pPopup(pPopup)
+		{
+			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+		}
+	};
+
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+	
+public:
+	PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId);
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
 #endif

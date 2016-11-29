@@ -45,6 +45,9 @@ int main(int argc, const char **argv)
 	}
 	
 	int PackageId = pKernel->AssetsManager()->NewPackage("universes/infclass");
+	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);

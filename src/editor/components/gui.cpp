@@ -45,6 +45,197 @@ CContextMenu::CContextMenu(CGuiEditor* pAssetsEditor) :
 	Add(m_pList);
 }
 
+class CPackageNameEntry : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+
+protected:
+	virtual void SaveFromTextBuffer()
+			{ AssetsManager()->SetPackageName(m_PackageId, GetText()); }
+	
+	virtual void CopyToTextBuffer()
+		{
+			const char* pName = AssetsManager()->GetPackageName(m_PackageId);
+			if(m_Text != pName)
+				SetText(pName);
+			else if(!pName)
+				SetText("");
+		}
+
+public:
+	CPackageNameEntry(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_PackageId(PackageId)
+	{ }
+};
+
+class CPackageAuthorEntry : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+
+protected:
+	virtual void SaveFromTextBuffer()
+			{ AssetsManager()->SetPackageAuthor(m_PackageId, GetText()); }
+	
+	virtual void CopyToTextBuffer()
+		{
+			const char* pName = AssetsManager()->GetPackageAuthor(m_PackageId);
+			if(m_Text != pName)
+				SetText(pName);
+			else if(!pName)
+				SetText("");
+		}
+
+public:
+	CPackageAuthorEntry(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_PackageId(PackageId)
+	{ }
+};
+
+class CPackageCreditsEntry : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+
+protected:
+	virtual void SaveFromTextBuffer()
+			{ AssetsManager()->SetPackageCredits(m_PackageId, GetText()); }
+	
+	virtual void CopyToTextBuffer()
+		{
+			const char* pName = AssetsManager()->GetPackageCredits(m_PackageId);
+			if(m_Text != pName)
+				SetText(pName);
+			else if(!pName)
+				SetText("");
+		}
+
+public:
+	CPackageCreditsEntry(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_PackageId(PackageId)
+	{ }
+};
+
+class CPackageLicenseEntry : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+
+protected:
+	virtual void SaveFromTextBuffer()
+			{ AssetsManager()->SetPackageLicense(m_PackageId, GetText()); }
+	
+	virtual void CopyToTextBuffer()
+		{
+			const char* pName = AssetsManager()->GetPackageLicense(m_PackageId);
+			if(m_Text != pName)
+				SetText(pName);
+			else if(!pName)
+				SetText("");
+		}
+
+public:
+	CPackageLicenseEntry(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_PackageId(PackageId)
+	{ }
+};
+
+class CPackageVersionEntry : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_PackageId;
+
+protected:
+	virtual void SaveFromTextBuffer()
+			{ AssetsManager()->SetPackageVersion(m_PackageId, GetText()); }
+	
+	virtual void CopyToTextBuffer()
+		{
+			const char* pName = AssetsManager()->GetPackageVersion(m_PackageId);
+			if(m_Text != pName)
+				SetText(pName);
+			else if(!pName)
+				SetText("");
+		}
+
+public:
+	CPackageVersionEntry(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_PackageId(PackageId)
+	{ }
+};
+
+PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId) :
+	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 450, 250, gui::CPopup::ALIGNMENT_INNER),
+	m_pAssetsEditor(pAssetsEditor),
+	m_PackageId(PackageId)
+{
+	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+	Add(pLayout);
+	
+	pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Package Properties")), false);
+	pLayout->Add(new gui::CFiller(Context()), true);
+	
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _GUI("Name")), true);
+		pHList->Add(new CPackageNameEntry(m_pAssetsEditor, m_PackageId), true);
+	}
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _GUI("Version")), true);
+		pHList->Add(new CPackageVersionEntry(m_pAssetsEditor, m_PackageId), true);
+	}
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _GUI("Author")), true);
+		pHList->Add(new CPackageAuthorEntry(m_pAssetsEditor, m_PackageId), true);
+	}
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _GUI("Credits")), true);
+		pHList->Add(new CPackageCreditsEntry(m_pAssetsEditor, m_PackageId), true);
+	}
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _GUI("License")), true);
+		pHList->Add(new CPackageLicenseEntry(m_pAssetsEditor, m_PackageId), true);
+	}
+	
+	pLayout->Add(new gui::CFiller(Context()), true);
+	pLayout->AddSeparator();
+	
+	//Buttonlist
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CFiller(Context()), true);
+		pHList->Add(new CClose(this), false);
+	}
+}
+
 class COpenSavePackageDialog : public gui::CPopup
 {
 public:
@@ -668,9 +859,12 @@ protected:
 	{
 		int PackageId = AssetsManager()->NewPackage("mypackage");
 		AssetsManager()->SetPackageReadOnly(PackageId, false);
+		AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 		m_pAssetsEditor->SetEditedPackage(PackageId);
 		m_pAssetsEditor->RefreshPackageTree();
 		m_pAssetsEditor->RefreshAssetsTree();
+		
+		m_pAssetsEditor->DisplayPopup(new PackagePropertiesDialog(m_pAssetsEditor, PackageId));
 		
 		m_pPopupMenu->Close();
 	}
@@ -920,20 +1114,6 @@ protected:
 					pMapZoneTiles->SetParentPath(AssetPath);
 				}
 				
-				//Zone, Damage
-				pMapZoneTiles = AssetsManager()->NewAsset<CAsset_MapZoneTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "damage", Tokken);
-				SubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-				pMap->SetZoneLayer(SubPath, SubAssetPath);
-				
-				{
-					array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pMapZoneTiles->GetTileArray();
-					Data.resize(64, 64);
-					
-					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TWDamage);
-					pMapZoneTiles->SetParentPath(AssetPath);
-				}
-				
 				//Entites
 				pMapEntities = AssetsManager()->NewAsset<CAsset_MapEntities>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
 				AssetsManager()->TryChangeAssetName(SubAssetPath, "entities", Tokken);
@@ -982,6 +1162,7 @@ protected:
 		}
 		
 		m_pAssetsEditor->SetEditedAsset(AssetPath, CSubPath::Null());
+		m_pAssetsEditor->RefreshPackageTree();
 		m_pAssetsEditor->RefreshAssetsTree();
 		
 		m_pPopupMenu->Close();
@@ -1315,6 +1496,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconGuiSlider = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiSlider");
 		m_Path_Sprite_IconGuiScrollbar = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiScrollbar");
 		m_Path_Sprite_IconGuiTabs = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiTabs");
+		m_Path_Sprite_IconSystem = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSystem");
 		m_Path_Sprite_IconStamp = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconStamp");
 		m_Path_Sprite_IconMove = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMove");
 		m_Path_Sprite_IconView = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconView");
@@ -1354,9 +1536,10 @@ void CGuiEditor::LoadAssets()
 	m_ComposeStyle = m_Path_Label_Compose;
 	m_FocusStyle = m_Path_Rect_Focus;
 	
-	PackageId = AssetsManager()->NewPackage("mypackage");
-	AssetsManager()->SetPackageReadOnly(PackageId, false);
-	SetEditedPackage(PackageId);
+	//~ PackageId = AssetsManager()->NewPackage("mypackage");
+	//~ AssetsManager()->SetPackageReadOnly(PackageId, false);
+	
+	SetEditedPackage(-1);
 }
 
 gui::CWidget* CGuiEditor::CreateMainWidget()

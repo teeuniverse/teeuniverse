@@ -27,7 +27,6 @@ class CAssetsInspector : public gui::CTabs
 	//Search Tag: TAG_NEW_ASSET
 	enum
 	{
-		TAB_PACKAGE,
 		TAB_GENERIC_ASSET,
 		TAB_GUIRECTSTYLE_ASSET,
 		TAB_GUILINESTYLE_ASSET,
@@ -71,7 +70,6 @@ private:
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
 
 	//Search Tag: TAG_NEW_ASSET
-	gui::CVScrollLayout* CreateTab_Package();
 	gui::CVScrollLayout* CreateTab_Generic_Asset();
 	gui::CVScrollLayout* CreateTab_GuiRectStyle_Asset();
 	gui::CVScrollLayout* CreateTab_GuiLineStyle_Asset();
