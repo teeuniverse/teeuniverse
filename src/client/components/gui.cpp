@@ -137,6 +137,7 @@ bool CGui::PreUpdate()
 	//Process input event
 	bool ForceMouseMove = false;
 	bool NextFocusWanted = false;
+	bool PrevFocusWanted = false;
 	for(int i=0; i<Input()->NumEvents(); i++)
 	{
 		CInput::CEvent Event = Input()->GetEvent(i);
@@ -207,7 +208,12 @@ bool CGui::PreUpdate()
 					
 				case KEY_TAB:
 					if(Event.m_Flags & CInput::FLAG_PRESS)
-						NextFocusWanted = true;
+					{
+						if(Input()->KeyIsPressed(KEY_LSHIFT))
+							PrevFocusWanted = true;
+						else
+							NextFocusWanted = true;
+					}
 				default:
 				{
 					if(m_pFocusedWidget && (m_pFocusedWidget->GetInputToBlock() & BLOCKEDINPUT_KEY))
@@ -288,8 +294,8 @@ bool CGui::PreUpdate()
 		}
 	}
 
-	m_FocusIteratorState = (NextFocusWanted ? TRYTOGETFOCUS_SEARCHNEXT : TRYTOGETFOCUS_NO);
-	m_pFocusCandidate = 0;
+	m_FocusIteratorState = (NextFocusWanted ? TRYTOGETFOCUS_SEARCHNEXT : (PrevFocusWanted ? TRYTOGETFOCUS_SEARCHPREV : TRYTOGETFOCUS_NO));
+	m_pFocusCandidate = NULL;
 	
 	m_BlockedInput = 0x0;
 	if(m_pFocusedWidget)
@@ -316,7 +322,7 @@ bool CGui::PreUpdate()
 	}
 	
 	m_FocusIteratorState = TRYTOGETFOCUS_NO;
-	m_pFocusCandidate = 0;
+	m_pFocusCandidate = NULL;
 	
 	Input()->Clear();
 	
@@ -408,11 +414,20 @@ void CGui::TryToGetFocus(gui::CWidget* pWidget)
 {
 	switch(m_FocusIteratorState)
 	{
+		case TRYTOGETFOCUS_SEARCHPREV:
+			if(HasFocus(pWidget))
+			{
+				if(m_pFocusCandidate)
+					StartFocus(m_pFocusCandidate);
+				m_FocusIteratorState = TRYTOGETFOCUS_NO;
+			}
+			else
+				m_pFocusCandidate = pWidget;
+			break;
+		
 		case TRYTOGETFOCUS_SEARCHNEXT:
 			if(HasFocus(pWidget))
 				m_FocusIteratorState = TRYTOGETFOCUS_TAKENEXT;
-			else
-				m_pFocusCandidate = pWidget;
 			break;
 		
 		case TRYTOGETFOCUS_TAKENEXT:
