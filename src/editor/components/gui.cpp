@@ -815,7 +815,10 @@ public:
 				if(ImagePath.IsNull())
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The image can't be loaded")));
 				else
+				{
 					m_pAssetsEditor->SetEditedAsset(ImagePath, CSubPath::Null());
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
 				
 				break;
 			}
@@ -1177,6 +1180,41 @@ public:
 	}
 };
 
+class CUndoButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CPopup_Menu* m_pPopupMenu;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		AssetsManager()->Undo();
+		m_pAssetsEditor->RefreshPackageTree();
+		m_pAssetsEditor->RefreshAssetsTree();
+	}
+
+public:
+	CUndoButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
+		gui::CButton(pAssetsEditor, _GUI("Undo")),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pPopupMenu(pPopupMenu)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconErase);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(AssetsManager()->GetHistorySize())
+			Editable(true);
+		else
+			Editable(false);
+		
+		gui::CButton::Update(ParentEnabled);
+	}
+};
+
 class CNewAsset : public gui::CButton
 {
 protected:
@@ -1372,7 +1410,7 @@ public:
 	}
 };
 
-class CAssetButton : public gui::CButton
+class CEditButton : public gui::CButton
 {
 protected:
 	CGuiEditor* m_pAssetsEditor;
@@ -1382,6 +1420,8 @@ protected:
 	{
 		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
 		
+		pMenu->List()->Add(new CUndoButton(m_pAssetsEditor, pMenu));
+		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _GUI("New Map")));
 		
@@ -1389,8 +1429,8 @@ protected:
 	}
 
 public:
-	CAssetButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, _GUI("Asset")),
+	CEditButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _GUI("Edit")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -1474,6 +1514,8 @@ void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_Z && (Event.m_Flags & CInput::FLAG_RELEASE))
 	{
 		AssetsManager()->Undo();
+		m_pAssetsEditor->RefreshPackageTree();
+		m_pAssetsEditor->RefreshAssetsTree();
 		return;
 	}
 	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_A && (Event.m_Flags & CInput::FLAG_RELEASE))
@@ -1495,7 +1537,7 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateToolbar()
 	CMenuBar* pMenuBar = new CMenuBar(m_pAssetsEditor);
 	
 	pMenuBar->Add(new CFileButton(m_pAssetsEditor), false);
-	pMenuBar->Add(new CAssetButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new CEditButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CViewButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new gui::CFiller(Context()), true);
 	

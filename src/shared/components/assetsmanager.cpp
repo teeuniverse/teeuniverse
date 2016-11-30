@@ -110,6 +110,9 @@ int CAssetsManager::NewPackage(const char* pName)
 	if(pName)
 		SetPackageName_Hard(PackageId, pName);
 		
+	if(m_pHistory)
+		m_pHistory->Flush();
+	
 	return PackageId;
 }
 
@@ -173,6 +176,9 @@ void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName,
 	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
 		return;
 	
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
+		
 	char aNumBuffer[32];
 	dynamic_string Buffer;
 	Buffer.copy(pName);
@@ -256,6 +262,9 @@ void CAssetsManager::ClosePackage(int PackageId)
 	
 	delete m_pPackages[PackageId];
 	m_pPackages[PackageId] = NULL;
+	
+	if(m_pHistory)
+		m_pHistory->Flush();
 }
 
 int CAssetsManager::AddNameToResolve(const char* pName)
@@ -422,6 +431,10 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		RequestUpdate(CAssetPath(CAsset_Image::TypeId, PackageId, i));
 	
 	pPackage->SetEdited(false);
+	
+	if(m_pHistory)
+		m_pHistory->Flush();
+	
 	return PackageId;
 }
 
@@ -765,7 +778,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 	return NewAssetPath;
 }
 
-void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
+void CAssetsManager::DeleteAsset_Hard(const CAssetPath& Path)
 {
 	if(IsValidPackage(Path.GetPackageId()))
 	{
@@ -779,6 +792,13 @@ void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
 				m_pPackages[i]->AssetPathOperation(Operation);
 		}
 	}
+}
+
+void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
+{
+	DeleteAsset_Hard(Path);
+	if(m_pHistory)
+		m_pHistory->Flush();
 }
 
 void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
@@ -801,6 +821,8 @@ void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
 				Operation.Apply(Pathes[b]);
 		}
 	}
+	if(m_pHistory)
+		m_pHistory->Flush();
 }
 
 CAssetState* CAssetsManager::GetAssetState(CAssetPath Path)
@@ -846,4 +868,12 @@ int CAssetsManager::GenerateToken()
 		return m_pHistory->GenerateToken();
 	else
 		return CAssetsHistory::NO_TOKEN;
+}
+
+int CAssetsManager::GetHistorySize()
+{
+	if(m_pHistory)
+		return m_pHistory->GetHistorySize();
+	else
+		return 0;
 }

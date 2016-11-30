@@ -390,7 +390,7 @@ protected:
 					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_Map::SubPath_ZoneLayer(Id);
@@ -426,7 +426,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(EntityLayerPath, "entities", Token);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ENTITYLAYER);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ENTITYLAYER, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_Map::SubPath_EntityLayer(Id);
@@ -462,7 +462,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_Map::SubPath_BgGroup(Id);
@@ -499,7 +499,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(GroupPath, "group", Token);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_Map::SubPath_FgGroup(Id);
@@ -739,7 +739,7 @@ protected:
 					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(Id);
@@ -775,7 +775,7 @@ protected:
 					AssetsManager()->TryChangeAssetName(LayerPath, "quads", Token);
 					pLayer->SetParentPath(m_AssetPath);
 					
-					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER);
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token);
 					if(Id >= 0)
 					{
 						CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(Id);

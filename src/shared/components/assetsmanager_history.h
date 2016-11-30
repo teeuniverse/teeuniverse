@@ -79,8 +79,10 @@ public:
 	void AddOperation_EditAsset(CAssetPath AssetPath, int Token);
 	void AddOperation_AddAsset(CAssetPath AssetPath, int Token);
 	
+	void Flush();
 	void Undo();
 	int GenerateToken();
+	inline int GetHistorySize() { return m_Size; }
 };
 
 #endif

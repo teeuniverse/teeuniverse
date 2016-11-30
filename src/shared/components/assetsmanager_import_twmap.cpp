@@ -921,6 +921,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	if(IsValidPackage(PackageId))
 		m_pPackages[PackageId]->SetEdited(true);
 	
+	if(m_pHistory)
+		m_pHistory->Flush();
+	
 	return PackageId;
 }
 

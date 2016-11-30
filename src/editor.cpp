@@ -18,6 +18,7 @@
 
 #include <shared/system/debug.h>
 #include <shared/system/string.h>
+#include <shared/components/assetsmanager.h>
 #include <editor/kernel.h>
 
 #include <cstdlib>
@@ -42,6 +43,8 @@ int main(int argc, const char **argv)
 		dbg_msg("Kernel", "unable to initialize client kernel");
 		exit(EXIT_FAILURE);
 	}
+	
+	pKernel->AssetsManager()->EnableAssetsHistory();
 	
 	bool Running = true;
 	do
