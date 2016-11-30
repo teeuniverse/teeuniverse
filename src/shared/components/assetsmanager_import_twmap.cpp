@@ -650,6 +650,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							pNewGroup->SetName(pMapGroup->GetName());
 							pNewGroup->SetPosition(pMapGroup->GetPosition());
 							pNewGroup->SetHardParallax(pMapGroup->GetHardParallax());
+							pNewGroup->SetParentPath(MapPath);
 							pMapGroup = pNewGroup;
 						}
 					}

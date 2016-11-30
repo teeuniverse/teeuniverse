@@ -806,12 +806,19 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	
 	int CharPos = pTextCache->m_Quads[NearestQuad].m_CharPos;
 	Cursor.m_Position.x = TextPosition.x + pTextCache->m_Quads[NearestQuad].m_AdvancePos.x;
-	//~ if(TestPos.x > pTextCache->m_Quads[NearestQuad].m_QuadPos.x + pTextCache->m_Quads[NearestQuad].m_Size.x/2.0f)
-	//~ {
-		//~ CharPos++;
-		//~ if(NearestQuad == pTextCache->m_Quads.size()-1)
-			//~ Cursor.m_Position.x = TextPosition.x + pTextCache->m_TextWidth;
-	//~ }
+	if(TestPos.x > pTextCache->m_Quads[NearestQuad].m_QuadPos.x + pTextCache->m_Quads[NearestQuad].m_Size.x/2.0f)
+	{
+		if(NearestQuad == pTextCache->m_Quads.size()-1)
+		{
+			CharPos++;
+			Cursor.m_Position.x = TextPosition.x + pTextCache->m_TextWidth;
+		}
+		else
+		{
+			CharPos = pTextCache->m_Quads[NearestQuad+1].m_CharPos;
+			Cursor.m_Position.x += pTextCache->m_Quads[NearestQuad].m_Size.x;
+		}
+	}
 	
 	//Find the position of the character in the string
 	const char* pText = pTextCache->m_Text.buffer();

@@ -44,6 +44,9 @@ protected:
 			AssetsManager()->ClosePackage(m_PackageId);
 			m_pContextMenu->Close();
 			m_pAssetsEditor->RefreshPackageTree();
+			m_pAssetsEditor->RefreshAssetsTree();
+			m_pAssetsEditor->SetEditedPackage(-1);
+			m_pAssetsEditor->SetEditedAsset(CAssetPath::Null(), CSubPath::Null());
 		}
 
 	public:

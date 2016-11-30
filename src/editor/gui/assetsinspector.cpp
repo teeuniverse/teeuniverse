@@ -344,7 +344,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapGroup_Asset()
 	pTab->AddSeparator();
 	AddField_Bool(pTab, CAsset_MapGroup::CLIPPING, _GUI("Clipping"));	
 	AddField_Vec2(pTab, CAsset_MapGroup::CLIPPOSITION_X, CAsset_MapGroup::CLIPPOSITION_Y, _GUI("Clip Position"));	
-	AddField_Vec2(pTab, CAsset_MapGroup::CLIPSIZE_X, CAsset_MapGroup::CLIPSIZE_Y, _GUI("Clip Size"));	
+	AddField_Vec2(pTab, CAsset_MapGroup::CLIPSIZE_X, CAsset_MapGroup::CLIPSIZE_Y, _GUI("Clip Size"));
 	
 	return pTab;
 }
