@@ -70,17 +70,6 @@ public:
 
 class CCursorTool_MapEdit : public CCursorTool_MapPicker
 {
-public:
-	enum
-	{
-		VERTEX0=0,
-		VERTEX1,
-		VERTEX2,
-		VERTEX3,
-		VERTEX_PIVOT,
-		VERTEX_NONE,
-	};
-	
 protected:
 	vec2 m_ClickDiff;
 	int m_Vertex;

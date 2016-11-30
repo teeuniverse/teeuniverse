@@ -1708,6 +1708,18 @@ mapLayerQuads.addPublicFunc([
 	"void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
 ])
 mapLayerQuads.addMember("Visibility", TypeBool(), "true")
+mapLayerQuads.addPublicLines([
+	"enum",
+	"{",
+	"	VERTEX_NONE=0,",
+	"	VERTEX_PIVOT,",
+	"	VERTEX0,",
+	"	VERTEX1,",
+	"	VERTEX2,",
+	"	VERTEX3,",
+	"};",
+	""
+])
 
 assetsList.append(mapLayerQuads)
 

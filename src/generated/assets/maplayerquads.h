@@ -39,6 +39,16 @@
 class CAsset_MapLayerQuads : public CAsset
 {
 public:
+	enum
+	{
+		VERTEX_NONE=0,
+		VERTEX_PIVOT,
+		VERTEX0,
+		VERTEX1,
+		VERTEX2,
+		VERTEX3,
+	};
+	
 	static const int TypeId = 16;
 	
 	enum

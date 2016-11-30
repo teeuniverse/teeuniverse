@@ -367,6 +367,68 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 
 /* MAP LAYER QUADS ****************************************************/
 
+class CSubItemEditor_Quad : public gui::CVListLayout
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CSubItemEditor_Quad(CGuiEditor* pAssetsEditor) :
+		gui::CVListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled)
+		{
+			if(
+				m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
+				m_pAssetsEditor->GetEditedSubPath().GetId2() < CAsset_MapLayerQuads::VERTEX0
+			)
+				Enable();
+			else
+				Disable();
+		}
+		
+		gui::CVListLayout::Update(ParentEnabled);
+	}
+};
+
+class CSubItemEditor_QuadVertex : public gui::CVListLayout
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Vertex;
+	
+public:
+	CSubItemEditor_QuadVertex(CGuiEditor* pAssetsEditor, int Vertex) :
+		gui::CVListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Vertex(Vertex)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled)
+		{
+			if(
+				m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
+				m_pAssetsEditor->GetEditedSubPath().GetId2() == m_Vertex
+			)
+				Enable();
+			else
+				Disable();
+		}
+		
+		gui::CVListLayout::Update(ParentEnabled);
+	}
+};
+
 class CSubItemList_MapLayerQuads : public gui::CVScrollLayout
 {
 protected:
@@ -432,13 +494,51 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 	
 	pTab->Add(new CSubItemList_MapLayerQuads(AssetsEditor()), true);
 	
-	gui::CVListLayout* pQuadEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerQuads::TYPE_QUAD);
-	pTab->Add(pQuadEditor);
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_Quad(AssetsEditor());
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_PIVOT_X, CAsset_MapLayerQuads::QUAD_PIVOT_Y, _GUI("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _GUI("Size"));
+		AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _GUI("Angle"));
+		AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _GUI("Animation"));
+	}
 	
-	AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_PIVOT_X, CAsset_MapLayerQuads::QUAD_PIVOT_Y, _GUI("Position"));
-	AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _GUI("Size"));
-	AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _GUI("Angle"));
-	AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _GUI("Animation"));
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX0);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX0_X, CAsset_MapLayerQuads::QUAD_VERTEX0_Y, _GUI("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV0_X, CAsset_MapLayerQuads::QUAD_UV0_Y, _GUI("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR0, _GUI("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX1);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX1_X, CAsset_MapLayerQuads::QUAD_VERTEX1_Y, _GUI("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV1_X, CAsset_MapLayerQuads::QUAD_UV1_Y, _GUI("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR1, _GUI("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX2);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX2_X, CAsset_MapLayerQuads::QUAD_VERTEX2_Y, _GUI("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV2_X, CAsset_MapLayerQuads::QUAD_UV2_Y, _GUI("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR2, _GUI("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX3);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX3_X, CAsset_MapLayerQuads::QUAD_VERTEX3_Y, _GUI("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV3_X, CAsset_MapLayerQuads::QUAD_UV3_Y, _GUI("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR3, _GUI("Color"));
+	}
 	
 	return pTab;
 }

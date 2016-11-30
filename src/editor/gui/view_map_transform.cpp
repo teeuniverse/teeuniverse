@@ -517,7 +517,7 @@ void CCursorTool_MapTransform::OnMouseMove()
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
 	CCursorTool_MapPicker(pViewMap, _GUI("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
 	m_Token(CAssetsHistory::NEW_TOKEN),
-	m_Vertex(VERTEX_NONE)
+	m_Vertex(CAsset_MapLayerQuads::VERTEX_NONE)
 {
 	
 }
@@ -551,7 +551,7 @@ void CCursorTool_MapEdit::OnViewButtonClick(int Button)
 		if(length(CursorPos - PivotPos) < GizmoSize*(12.0f/16.0f))
 		{
 			m_ClickDiff = CursorPos - PivotPos;
-			m_Vertex = VERTEX_PIVOT;
+			m_Vertex = CAsset_MapLayerQuads::VERTEX_PIVOT;
 			
 			m_Token = AssetsManager()->GenerateToken();
 			
@@ -562,7 +562,7 @@ void CCursorTool_MapEdit::OnViewButtonClick(int Button)
 			for(int p=3; p>=0; p--)
 			{
 				vec2 VertexPos;
-				int VertexId = p;
+				int VertexId = CAsset_MapLayerQuads::VERTEX0+p;
 				
 				switch(p)
 				{
@@ -588,6 +588,8 @@ void CCursorTool_MapEdit::OnViewButtonClick(int Button)
 						
 					m_Token = AssetsManager()->GenerateToken();
 					
+					SelectedQuad.SetId2(m_Vertex);
+					AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), SelectedQuad);
 					return;
 				}
 			}
@@ -620,7 +622,7 @@ void CCursorTool_MapEdit::OnViewButtonRelease(int Button)
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
 	
-	m_Vertex = VERTEX_NONE;
+	m_Vertex = CAsset_MapLayerQuads::VERTEX_NONE;
 	m_Token = CAssetsHistory::NEW_TOKEN;
 }
 	
@@ -654,13 +656,13 @@ void CCursorTool_MapEdit::OnViewMouseMove()
 		CAsset_MapLayerQuads::QUAD_VERTEX3
 	};
 	
-	if(m_Vertex >= VERTEX0 && m_Vertex <= VERTEX3)
+	if(m_Vertex >= CAsset_MapLayerQuads::VERTEX0 && m_Vertex <= CAsset_MapLayerQuads::VERTEX3)
 	{
 		vec2 NewPos = InvTransform*(CursorMapPos - Position);
 		
-		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, Members[m_Vertex], NewPos, m_Token);
+		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, Members[m_Vertex-CAsset_MapLayerQuads::VERTEX0], NewPos, m_Token);
 	}
-	else if(m_Vertex == VERTEX_PIVOT)
+	else if(m_Vertex == CAsset_MapLayerQuads::VERTEX_PIVOT)
 	{
 		vec2 Diff = InvTransform*(CursorMapPos - Position);
 		vec2 NewPivot = Diff + pMapLayer->GetQuadPivot(SelectedQuad);
