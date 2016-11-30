@@ -934,6 +934,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	
 	ArchiveFile.Close();
 	
+	if(IsValidPackage(PackageId))
+		m_pPackages[PackageId]->SetEdited(true);
+	
 	return PackageId;
 }
 

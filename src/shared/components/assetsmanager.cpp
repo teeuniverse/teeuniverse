@@ -125,8 +125,8 @@ void CAssetsManager::SetPackageName(int PackageId, const char* pName)
 {
 	if(!IsValidPackage(PackageId) || IsReadOnlyPackage(PackageId))
 		return;
-	
 	SetPackageName_Hard(PackageId, pName);
+	m_pPackages[PackageId]->SetEdited(true);
 }
 
 void CAssetsManager::SetPackageName_Hard(int PackageId, const char* pName)
@@ -211,6 +211,8 @@ void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName,
 	{
 		#include <generated/assets/assetsmacro.h>
 	}
+	
+	m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);
 
 	#undef MACRO_ASSETTYPE
 }
@@ -228,6 +230,17 @@ bool CAssetsManager::IsValidPackage(int PackageId) const
 bool CAssetsManager::IsReadOnlyPackage(int PackageId) const
 {
 	return m_pPackages[PackageId]->IsReadOnly();
+}
+
+void CAssetsManager::SetPackageEdited(int PackageId , bool Value)
+{
+	if(IsValidPackage(PackageId))
+		m_pPackages[PackageId]->SetEdited(Value);
+}
+
+bool CAssetsManager::IsEditedPackage(int PackageId) const
+{
+	return m_pPackages[PackageId]->IsEdited();
 }
 
 void CAssetsManager::SetPackageReadOnly(int PackageId , bool Value)
@@ -281,6 +294,8 @@ bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int
 		dbg_msg("AssetsManager", "can't write the file %s", FullPath.buffer());
 		return false;
 	}
+	
+	m_pPackages[PackageId]->SetEdited(false);
 	
 	return true;
 }
@@ -406,6 +421,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	for(int i=0; i<GetNumAssets<CAsset_Image>(PackageId); i++)
 		RequestUpdate(CAssetPath(CAsset_Image::TypeId, PackageId, i));
 	
+	pPackage->SetEdited(false);
 	return PackageId;
 }
 
@@ -651,7 +667,10 @@ int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type,
 	{\
 		CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
 		if(pAsset)\
+		{\
+			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
 			return pAsset->AddSubItem(Type, SubPath);\
+		}\
 		else\
 			return -1;\
 	}
@@ -706,6 +725,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 		}\
 		while(NameFound);\
 		pNewAsset->SetName(aBuf);\
+		m_pPackages[PackageId]->SetEdited(true);\
 		break;\
 	}
 	

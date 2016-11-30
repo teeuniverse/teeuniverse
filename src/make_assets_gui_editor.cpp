@@ -158,7 +158,9 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconKeyFrameColor", ImageEditorPath, 27, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconKeyFrameBone", ImageEditorPath, 28, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconKeyFrameLayer", ImageEditorPath, 29, 1, 1, 1);
-	CREATE_SPRITE(PackageId, "iconCrop", ImageEditorPath, 30, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconFolderEdited", ImageEditorPath, 30, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31, 1, 1, 1);
+	CREATE_SPRITE(PackageId, "iconCrop", ImageEditorPath, 22, 2, 1, 1);
 	
 	CREATE_SPRITE(PackageId, "gizmoVertexBg", ImageEditorPath, 0, 11, 1, 1);
 	CREATE_SPRITE(PackageId, "gizmoVertexFg", ImageEditorPath, 1, 11, 1, 1);
@@ -429,6 +431,16 @@ int main(int argc, const char **argv)
 		pAsset->SetSpacing(4);
 		pAsset->SetFontSize(16);
 		pAsset->SetTextColor(vec4(1.0f, 1.0f, 0.5f, 1.0f));
+		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+	}
+	{
+		CAssetPath AssetPath;
+		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&AssetPath, PackageId);
+		pAsset->SetName("dialogMessage");
+		pAsset->SetPadding(2);
+		pAsset->SetSpacing(4);
+		pAsset->SetFontSize(12);
+		pAsset->SetTextColor(1.0f);
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	

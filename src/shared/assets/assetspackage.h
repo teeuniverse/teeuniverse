@@ -64,6 +64,7 @@ private:
 	int m_State;
 	array<int> Dependencies;
 	bool m_ReadOnly;
+	bool m_Edited;
 	
 	dynamic_string m_Author;
 	dynamic_string m_Credits;
@@ -96,6 +97,9 @@ public:
 	
 	inline bool IsReadOnly() const { return m_ReadOnly; }
 	inline void SetReadOnly(bool Value) { m_ReadOnly = Value; }
+	
+	inline bool IsEdited() const { return m_Edited; }
+	inline void SetEdited(bool Value) { m_Edited = Value; }
 	
 	inline const char* GetName() const { return m_Name.buffer(); }
 	inline bool Identify(const char* pName, uint32 Crc) const { return (Crc == 0 || Crc == m_Crc) && (m_Name == pName); }

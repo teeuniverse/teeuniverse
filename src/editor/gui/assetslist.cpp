@@ -139,7 +139,6 @@ public:
 		m_PackageId(PackageId)
 	{
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconFolder);
 	}
 	
 	virtual void Update(bool ParentEnabled)
@@ -150,6 +149,13 @@ public:
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
 		else
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+		
+		if(AssetsManager()->IsEditedPackage(m_PackageId))
+			SetIcon(m_pAssetsEditor->m_Path_Sprite_IconFolderEdited);
+		else if(AssetsManager()->IsReadOnlyPackage(m_PackageId))
+			SetIcon(m_pAssetsEditor->m_Path_Sprite_IconFolderReadOnly);
+		else
+			SetIcon(m_pAssetsEditor->m_Path_Sprite_IconFolder);
 		
 		gui::CButton::Update(ParentEnabled);
 	}

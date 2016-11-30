@@ -75,6 +75,7 @@ public:
 	
 	CAssetPath m_Path_Label_Text;
 	CAssetPath m_Path_Label_Header;
+	CAssetPath m_Path_Label_DialogMessage;
 	CAssetPath m_Path_Label_Compose;
 	CAssetPath m_Path_Label_InactiveListItem;
 	
@@ -148,6 +149,8 @@ public:
 	CAssetPath m_Path_Sprite_IconRotateCW;
 	CAssetPath m_Path_Sprite_IconRotateCCW;
 	CAssetPath m_Path_Sprite_IconGrid;
+	CAssetPath m_Path_Sprite_IconFolderEdited;
+	CAssetPath m_Path_Sprite_IconFolderReadOnly;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
@@ -194,19 +197,19 @@ public:
 	inline gui::CVListLayout* List() { return m_pList; }
 };
 
-class PackagePropertiesDialog : public gui::CPopup
+class CDialog : public gui::CPopup
 {
 protected:
 	class CClose : public gui::CButton
 	{
 	protected:
-		PackagePropertiesDialog* m_pPopup;
+		CDialog* m_pPopup;
 		
 	protected:
 		virtual void MouseClickAction() { m_pPopup->Close(); }
 		
 	public:
-		CClose(PackagePropertiesDialog* pPopup) :
+		CClose(CDialog* pPopup) :
 			gui::CButton(pPopup->Context(), _GUI("Close")),
 			m_pPopup(pPopup)
 		{
@@ -216,11 +219,25 @@ protected:
 
 protected:
 	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CDialog(CGuiEditor* pAssetsEditor);
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
+class PackagePropertiesDialog : public CDialog
+{
+protected:
 	int m_PackageId;
 	
 public:
 	PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId);
-	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
+class CErrorDialog : public CDialog
+{
+public:
+	CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString);
 };
 
 #endif

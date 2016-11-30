@@ -175,9 +175,15 @@ public:
 	{ }
 };
 
+CDialog::CDialog(CGuiEditor* pAssetsEditor) :
+	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 400, 300, gui::CPopup::ALIGNMENT_INNER),
+	m_pAssetsEditor(pAssetsEditor)
+{
+	
+}
+
 PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId) :
-	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 450, 250, gui::CPopup::ALIGNMENT_INNER),
-	m_pAssetsEditor(pAssetsEditor),
+	CDialog(pAssetsEditor),
 	m_PackageId(PackageId)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
@@ -224,6 +230,32 @@ PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int 
 	}
 	
 	pLayout->Add(new gui::CFiller(Context()), true);
+	pLayout->AddSeparator();
+	
+	//Buttonlist
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CFiller(Context()), true);
+		pHList->Add(new CClose(this), false);
+	}
+}
+
+CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
+	CDialog(pAssetsEditor)
+{
+	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+	Add(pLayout);
+	
+	pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Error")), false);
+	
+	gui::CLabel* pMessage = new gui::CLabel(Context(), LString);
+	pMessage->SetLabelStyle(m_pAssetsEditor->m_Path_Label_DialogMessage);
+	pMessage->NoTextClipping();
+	pLayout->Add(pMessage, true);
+	
 	pLayout->AddSeparator();
 	
 	//Buttonlist
@@ -701,7 +733,10 @@ public:
 				TextIter = Buffer.append_at(TextIter, "/");
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
-				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW);
+				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW))
+				{
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+				}
 				break;
 			}
 			case FORMAT_MAP_INFCLASS:
@@ -710,7 +745,10 @@ public:
 				TextIter = Buffer.append_at(TextIter, "/");
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
-				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_INFCLASS);
+				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_INFCLASS))
+				{
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+				}
 				break;
 			}
 			case FORMAT_MAP_OPENFNG:
@@ -719,12 +757,18 @@ public:
 				TextIter = Buffer.append_at(TextIter, "/");
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
-				AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_OPENFNG);
+				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_OPENFNG))
+				{
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+				}
 				break;
 			}
 			case FORMAT_PACKAGE:
 			{
-				AssetsManager()->Save_AssetsFile(m_Filename.buffer(), CStorage::TYPE_SAVE, m_pAssetsEditor->GetEditedPackageId());
+				if(!AssetsManager()->Save_AssetsFile(m_Filename.buffer(), CStorage::TYPE_SAVE, m_pAssetsEditor->GetEditedPackageId()))
+				{
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The package can't be saved")));
+				}
 				break;
 			}
 		}
@@ -747,7 +791,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".png");
 				
-				CAssetPath ImageEditorPath = CreateNewImage(
+				CAssetPath ImagePath = CreateNewImage(
 					m_pAssetsEditor->SharedKernel(),
 					m_pAssetsEditor->GetEditedPackageId(),
 					m_Filename.buffer(),
@@ -755,8 +799,11 @@ public:
 					CStorage::TYPE_ABSOLUTE,
 					-1, -1
 				);
+				if(ImagePath.IsNull())
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The image can't be loaded")));
+				else
+					m_pAssetsEditor->SetEditedAsset(ImagePath, CSubPath::Null());
 				
-				m_pAssetsEditor->SetEditedAsset(ImageEditorPath, CSubPath::Null());
 				break;
 			}
 			case FORMAT_MAP_TW:
@@ -766,9 +813,14 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_TW);
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
-				m_pAssetsEditor->SetEditedPackage(PackageId);
-				m_pAssetsEditor->RefreshAssetsTree();
+				if(PackageId < 0)
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+				else
+				{
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
+					m_pAssetsEditor->SetEditedPackage(PackageId);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
 				break;
 			}
 			case FORMAT_MAP_INFCLASS:
@@ -778,9 +830,14 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_INFCLASS);
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
-				m_pAssetsEditor->SetEditedPackage(PackageId);
-				m_pAssetsEditor->RefreshAssetsTree();
+				if(PackageId < 0)
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+				else
+				{
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
+					m_pAssetsEditor->SetEditedPackage(PackageId);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
 				break;
 			}
 			case FORMAT_MAP_OPENFNG:
@@ -790,9 +847,14 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_OPENFNG);
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
-				m_pAssetsEditor->SetEditedPackage(PackageId);
-				m_pAssetsEditor->RefreshAssetsTree();
+				if(PackageId < 0)
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+				else
+				{
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
+					m_pAssetsEditor->SetEditedPackage(PackageId);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
 				break;
 			}
 			case FORMAT_PACKAGE:
@@ -802,9 +864,14 @@ public:
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".tup");
 				int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
-				m_pAssetsEditor->SetEditedPackage(PackageId);
-				m_pAssetsEditor->RefreshAssetsTree();
+				if(PackageId < 0)
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The package can't be loaded")));
+				else
+				{
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
+					m_pAssetsEditor->SetEditedPackage(PackageId);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
 				break;
 			}
 		}
@@ -1448,6 +1515,7 @@ void CGuiEditor::LoadAssets()
 		
 		m_Path_Label_Text = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "text");
 		m_Path_Label_Header = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "header");
+		m_Path_Label_DialogMessage = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "dialogMessage");
 		m_Path_Label_Compose = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "compose");
 		m_Path_Label_InactiveListItem = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "inactiveListItem");
 		
@@ -1477,6 +1545,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconNone = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNone");
 		m_Path_Sprite_IconDefault = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDefault");
 		m_Path_Sprite_IconFolder = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFolder");
+		m_Path_Sprite_IconFolderEdited = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFolderEdited");
+		m_Path_Sprite_IconFolderReadOnly = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFolderReadOnly");
 		m_Path_Sprite_IconLoad = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLoad");
 		m_Path_Sprite_IconSave = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSave");
 		m_Path_Sprite_IconAsset = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconAsset");

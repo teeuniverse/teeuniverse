@@ -146,16 +146,18 @@ public:
 	bool IsValidPackage(int PackageId) const;
 	bool IsReadOnlyPackage(int PackageId) const;
 	void SetPackageReadOnly(int PackageId , bool Value);
+	bool IsEditedPackage(int PackageId) const;
+	void SetPackageEdited(int PackageId , bool Value);
 	
 	inline const char* GetPackageAuthor(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetAuthor() : ""); }
 	inline const char* GetPackageCredits(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetCredits() : ""); }
 	inline const char* GetPackageLicense(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetLicense() : ""); }
 	inline const char* GetPackageVersion(int PackageId) const { return (IsValidPackage(PackageId) ? m_pPackages[PackageId]->GetVersion() : ""); }
 	
-	inline void SetPackageAuthor(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetAuthor(pValue); }
-	inline void SetPackageCredits(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetCredits(pValue); }
-	inline void SetPackageLicense(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetLicense(pValue); }
-	inline void SetPackageVersion(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) m_pPackages[PackageId]->SetVersion(pValue); }
+	inline void SetPackageAuthor(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) { m_pPackages[PackageId]->SetEdited(true); m_pPackages[PackageId]->SetAuthor(pValue); } }
+	inline void SetPackageCredits(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) { m_pPackages[PackageId]->SetEdited(true); m_pPackages[PackageId]->SetCredits(pValue); } }
+	inline void SetPackageLicense(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) { m_pPackages[PackageId]->SetEdited(true); m_pPackages[PackageId]->SetLicense(pValue); } }
+	inline void SetPackageVersion(int PackageId, const char* pValue) { if(IsValidPackage(PackageId)) { m_pPackages[PackageId]->SetEdited(true); m_pPackages[PackageId]->SetVersion(pValue); } }
 	
 	int AddNameToResolve(const char* pName);
 	
@@ -232,6 +234,7 @@ public:
 				pAssetPath->SetPackageId(PackageId);
 				if(m_pHistory)
 					m_pHistory->AddOperation_AddAsset(*pAssetPath, Token);
+				m_pPackages[PackageId]->SetEdited(true);
 			}
 			return pNewAsset;
 		}
@@ -247,6 +250,7 @@ public:
 			ASSET* pNewAsset = m_pPackages[PackageId]->NewAsset<ASSET>(this, pAssetPath);
 			if(pNewAsset)
 				pAssetPath->SetPackageId(PackageId);
+			m_pPackages[PackageId]->SetEdited(true);
 			return pNewAsset;
 		}
 		else
@@ -325,7 +329,13 @@ public:
 		{\
 			CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
 			if(pAsset)\
-				return pAsset->SetValue<T>(FieldType, SubPath, Value);\
+			{\
+				if(pAsset->SetValue<T>(FieldType, SubPath, Value))\
+				{\
+					m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
+					return true;\
+				}\
+			}\
 			else\
 				return false;\
 		}

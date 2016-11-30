@@ -21,7 +21,8 @@
 
 CAssetsPackage::CAssetsPackage() :
 	m_State(STATE_CREATED),
-	m_ReadOnly(true)
+	m_ReadOnly(true),
+	m_Edited(false)
 {
 	
 }
