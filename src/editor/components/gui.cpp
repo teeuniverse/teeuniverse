@@ -830,8 +830,13 @@ public:
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
 				else
 				{
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->SetEditedPackage(PackageId);
+		
+					//Search for maps
+					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+					
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
 				break;
@@ -847,8 +852,13 @@ public:
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
 				else
 				{
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->SetEditedPackage(PackageId);
+					
+					//Search for maps
+					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+					
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
 				break;
@@ -864,8 +874,13 @@ public:
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
 				else
 				{
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->SetEditedPackage(PackageId);
+					
+					//Search for maps
+					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+						
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
 				break;
@@ -881,8 +896,13 @@ public:
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The package can't be loaded")));
 				else
 				{
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->SetEditedPackage(PackageId);
+					
+					//Search for maps
+					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+					
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
 				break;
