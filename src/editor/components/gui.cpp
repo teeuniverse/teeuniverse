@@ -377,6 +377,19 @@ protected:
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
 		}
+		
+		virtual void Update(bool ParentEnabled)
+		{
+			if(ParentEnabled)
+			{
+				if(m_pPopup->m_Filename.empty())
+					Editable(false);
+				else
+					Editable(true);
+			}
+			
+			gui::CButton::Update(ParentEnabled);
+		}
 	};
 	
 	class CSave : public gui::CButton
