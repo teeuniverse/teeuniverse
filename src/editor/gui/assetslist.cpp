@@ -1337,7 +1337,7 @@ void CPackagesTree::Refresh()
 	
 	for(int i=0; i<AssetsManager()->GetNumPackages(); i++)
 	{
-		if(AssetsManager()->IsValidPackage(i) && str_comp(AssetsManager()->GetPackageName(i), "gui/editor") != 0)
+		if(AssetsManager()->IsValidPackage(i) && str_comp(AssetsManager()->GetPackageName(i), "gui_editor") != 0)
 		{
 			if(AssetsManager()->IsReadOnlyPackage(i))
 				pReadExpand->Add(new CPackageItem(AssetsEditor(), i));

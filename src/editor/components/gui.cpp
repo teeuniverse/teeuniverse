@@ -1572,7 +1572,7 @@ void CGuiEditor::LoadAssets()
 {
 	int PackageId;
 	
-	PackageId = AssetsManager()->Load_AssetsFile("gui/editor", CStorage::TYPE_ALL);
+	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
 	if(PackageId >= 0)
 	{
 		m_Path_Image_ZoneTexture = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "zoneTexture");

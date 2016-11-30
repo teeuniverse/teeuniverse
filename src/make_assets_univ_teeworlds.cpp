@@ -47,7 +47,7 @@ int main(int argc, const char **argv)
 	int PackageId = -1;
 	
 	/* UNIV TEEWORLDS */
-	PackageId = pKernel->AssetsManager()->NewPackage("universes/teeworlds");
+	PackageId = pKernel->AssetsManager()->NewPackage("univ_teeworlds");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -241,7 +241,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV CLOUDS */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/clouds");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_clouds");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -252,7 +252,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV DESERT */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/desert");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_desert");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -265,7 +265,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV GENERIC */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/generic");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_generic");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -275,7 +275,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV GRASS */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/grass");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_grass");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -285,7 +285,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV JUNGLE */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/jungle");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_jungle");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -299,7 +299,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV MOON */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/moon");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_moon");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -308,7 +308,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV MOUNTAINS */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/mountains");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_mountains");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -317,7 +317,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV SNOW */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/snow");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_snow");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -326,7 +326,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV STARS */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/stars");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_stars");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -335,7 +335,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV SUN */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/sun");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_sun");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
@@ -344,7 +344,7 @@ int main(int argc, const char **argv)
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV WINTER */
-	PackageId = pKernel->AssetsManager()->NewPackage("environments/winter");
+	PackageId = pKernel->AssetsManager()->NewPackage("env_winter");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");

@@ -467,7 +467,7 @@ void CAssetsManager::Load_EnvClouds()
 {
 	if(m_PackageId_EnvClouds < 0)
 	{
-		m_PackageId_EnvClouds = Load_AssetsFile("environments/clouds", CStorage::TYPE_ALL);
+		m_PackageId_EnvClouds = Load_AssetsFile("env_clouds", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvClouds >= 0)
 		{
 			m_Path_Image_Cloud1 = FindAsset<CAsset_Image>(m_PackageId_EnvClouds, "cloud1");
@@ -481,7 +481,7 @@ void CAssetsManager::Load_EnvDesert()
 {
 	if(m_PackageId_EnvDesert < 0)
 	{
-		m_PackageId_EnvDesert = Load_AssetsFile("environments/desert", CStorage::TYPE_ALL);
+		m_PackageId_EnvDesert = Load_AssetsFile("env_desert", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvDesert >= 0)
 		{
 			m_Path_Image_DesertMain = FindAsset<CAsset_Image>(m_PackageId_EnvDesert, "desertMain");
@@ -497,7 +497,7 @@ void CAssetsManager::Load_EnvGeneric()
 {
 	if(m_PackageId_EnvGeneric < 0)
 	{
-		m_PackageId_EnvGeneric = Load_AssetsFile("environments/generic", CStorage::TYPE_ALL);
+		m_PackageId_EnvGeneric = Load_AssetsFile("env_generic", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvGeneric >= 0)
 		{
 			m_Path_Image_GenericSpikes = FindAsset<CAsset_Image>(m_PackageId_EnvGeneric, "genericSpikes");
@@ -510,7 +510,7 @@ void CAssetsManager::Load_EnvGrass()
 {
 	if(m_PackageId_EnvGrass < 0)
 	{
-		m_PackageId_EnvGrass = Load_AssetsFile("environments/grass", CStorage::TYPE_ALL);
+		m_PackageId_EnvGrass = Load_AssetsFile("env_grass", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvGrass >= 0)
 		{
 			m_Path_Image_GrassMain = FindAsset<CAsset_Image>(m_PackageId_EnvGrass, "grassMain");
@@ -523,7 +523,7 @@ void CAssetsManager::Load_EnvJungle()
 {
 	if(m_PackageId_EnvJungle < 0)
 	{
-		m_PackageId_EnvJungle = Load_AssetsFile("environments/jungle", CStorage::TYPE_ALL);
+		m_PackageId_EnvJungle = Load_AssetsFile("env_jungle", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvJungle >= 0)
 		{
 			m_Path_Image_JungleMain = FindAsset<CAsset_Image>(m_PackageId_EnvJungle, "jungleMain");
@@ -540,7 +540,7 @@ void CAssetsManager::Load_EnvMoon()
 {
 	if(m_PackageId_EnvMoon < 0)
 	{
-		m_PackageId_EnvMoon = Load_AssetsFile("environments/moon", CStorage::TYPE_ALL);
+		m_PackageId_EnvMoon = Load_AssetsFile("env_moon", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvMoon >= 0)
 		{
 			m_Path_Image_Moon = FindAsset<CAsset_Image>(m_PackageId_EnvMoon, "moon");
@@ -552,7 +552,7 @@ void CAssetsManager::Load_EnvMountains()
 {
 	if(m_PackageId_EnvMountains < 0)
 	{
-		m_PackageId_EnvMountains = Load_AssetsFile("environments/mountains", CStorage::TYPE_ALL);
+		m_PackageId_EnvMountains = Load_AssetsFile("env_mountains", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvMountains >= 0)
 		{
 			m_Path_Image_Mountains = FindAsset<CAsset_Image>(m_PackageId_EnvMountains, "mountains");
@@ -564,7 +564,7 @@ void CAssetsManager::Load_EnvSnow()
 {
 	if(m_PackageId_EnvSnow < 0)
 	{
-		m_PackageId_EnvSnow = Load_AssetsFile("environments/snow", CStorage::TYPE_ALL);
+		m_PackageId_EnvSnow = Load_AssetsFile("env_snow", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvSnow >= 0)
 		{
 			m_Path_Image_Snow = FindAsset<CAsset_Image>(m_PackageId_EnvSnow, "snow");
@@ -576,7 +576,7 @@ void CAssetsManager::Load_EnvStars()
 {
 	if(m_PackageId_EnvStars < 0)
 	{
-		m_PackageId_EnvStars = Load_AssetsFile("environments/stars", CStorage::TYPE_ALL);
+		m_PackageId_EnvStars = Load_AssetsFile("env_stars", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvStars >= 0)
 		{
 			m_Path_Image_Stars = FindAsset<CAsset_Image>(m_PackageId_EnvSnow, "stars");
@@ -588,7 +588,7 @@ void CAssetsManager::Load_EnvSun()
 {
 	if(m_PackageId_EnvSun < 0)
 	{
-		m_PackageId_EnvSun = Load_AssetsFile("environments/sun", CStorage::TYPE_ALL);
+		m_PackageId_EnvSun = Load_AssetsFile("env_sun", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvSun >= 0)
 		{
 			m_Path_Image_Sun = FindAsset<CAsset_Image>(m_PackageId_EnvSun, "sun");
@@ -600,7 +600,7 @@ void CAssetsManager::Load_EnvWinter()
 {
 	if(m_PackageId_EnvWinter < 0)
 	{
-		m_PackageId_EnvWinter = Load_AssetsFile("environments/winter", CStorage::TYPE_ALL);
+		m_PackageId_EnvWinter = Load_AssetsFile("env_winter", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvWinter >= 0)
 		{
 			m_Path_Image_WinterMain = FindAsset<CAsset_Image>(m_PackageId_EnvWinter, "winterMain");
@@ -616,7 +616,7 @@ void CAssetsManager::Load_UnivTeeWorlds()
 {
 	if(m_PackageId_UnivTeeWorlds < 0)
 	{
-		m_PackageId_UnivTeeWorlds = Load_AssetsFile("universes/teeworlds", CStorage::TYPE_ALL);
+		m_PackageId_UnivTeeWorlds = Load_AssetsFile("univ_teeworlds", CStorage::TYPE_ALL);
 		if(m_PackageId_UnivTeeWorlds >= 0)
 		{
 			m_Path_ZoneType_TWPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "physics");
@@ -641,7 +641,7 @@ void CAssetsManager::Load_UnivInfClass()
 {
 	if(m_PackageId_UnivInfClass < 0)
 	{
-		m_PackageId_UnivInfClass = Load_AssetsFile("universes/infclass", CStorage::TYPE_ALL);
+		m_PackageId_UnivInfClass = Load_AssetsFile("univ_infclass", CStorage::TYPE_ALL);
 		if(m_PackageId_UnivInfClass >= 0)
 		{
 			m_Path_ZoneType_InfClassPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "infcPhysics");
@@ -658,7 +658,7 @@ void CAssetsManager::Load_UnivOpenFNG()
 {
 	if(m_PackageId_UnivOpenFNG < 0)
 	{
-		m_PackageId_UnivOpenFNG = Load_AssetsFile("universes/openfng", CStorage::TYPE_ALL);
+		m_PackageId_UnivOpenFNG = Load_AssetsFile("univ_openfng", CStorage::TYPE_ALL);
 		if(m_PackageId_UnivOpenFNG >= 0)
 		{
 			m_Path_ZoneType_OpenFNGShrine = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "shrine");

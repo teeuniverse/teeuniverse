@@ -44,7 +44,7 @@ int main(int argc, const char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	int PackageId = pKernel->AssetsManager()->NewPackage("universes/openfng");
+	int PackageId = pKernel->AssetsManager()->NewPackage("univ_openfng");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
