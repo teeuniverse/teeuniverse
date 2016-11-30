@@ -89,7 +89,8 @@ int main(int argc, const char **argv)
 		pAsset->SetIndexUsed(SubPath, false);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexUsed(SubPath, false);
+		pAsset->SetIndexDescription(SubPath, "Death");
+		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Infected area");
@@ -97,7 +98,7 @@ int main(int argc, const char **argv)
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "No spawn");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.3f, 1.0f, 1.0f));
+		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.3f, 1.0f, 0.3f));
 	}
 	//EntityType, Spawn
 	{

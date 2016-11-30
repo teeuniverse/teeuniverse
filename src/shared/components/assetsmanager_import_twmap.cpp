@@ -432,20 +432,41 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 								
-								switch(pTiles[j*Width+i].m_Index)
+								if(Format == MAPFORMAT_INFCLASS)
 								{
-									case tw07::TILE_SOLID:
-										pPhysicsZone->SetTileIndex(TilePath, 1);
-										break;
-									case tw07::TILE_DEATH:
-										pPhysicsZone->SetTileIndex(TilePath, 2);
-										break;
-									case tw07::TILE_NOHOOK:
-										pPhysicsZone->SetTileIndex(TilePath, 3);
-										break;
-									default:
-										pPhysicsZone->SetTileIndex(TilePath, 0);
-										break;
+									switch(pTiles[j*Width+i].m_Index)
+									{
+										case 1:
+											pPhysicsZone->SetTileIndex(TilePath, 1);
+											break;
+										case 3:
+											pPhysicsZone->SetTileIndex(TilePath, 2);
+											break;
+										case 4:
+											pPhysicsZone->SetTileIndex(TilePath, 3);
+											break;
+										default:
+											pPhysicsZone->SetTileIndex(TilePath, 0);
+											break;
+									}
+								}
+								else
+								{
+									switch(pTiles[j*Width+i].m_Index)
+									{
+										case tw07::TILE_SOLID:
+											pPhysicsZone->SetTileIndex(TilePath, 1);
+											break;
+										case tw07::TILE_DEATH:
+											pPhysicsZone->SetTileIndex(TilePath, 2);
+											break;
+										case tw07::TILE_NOHOOK:
+											pPhysicsZone->SetTileIndex(TilePath, 3);
+											break;
+										default:
+											pPhysicsZone->SetTileIndex(TilePath, 0);
+											break;
+									}
 								}
 								
 								if(pEntities)
@@ -737,6 +758,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								
 								switch(pTiles[j*Width+i].m_Index)
 								{
+									case 1:
+										pInfClassZone->SetTileIndex(TilePath, 1);
+										break;
 									case 2:
 										pInfClassZone->SetTileIndex(TilePath, 2);
 										break;
