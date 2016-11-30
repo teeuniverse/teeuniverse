@@ -230,6 +230,56 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Generic_Asset()
 	return pTab;
 }
 
+/* IMAGE **************************************************************/
+	
+class CImageTilingToggle : public gui::CAbstractToggle
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+	virtual bool GetValue()
+	{
+		return m_pAssetsEditor->AssetsManager()->GetAssetValue<bool>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			CSubPath::Null(),
+			CAsset_Image::TILINGENABLED,
+			false
+		);
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		m_pAssetsEditor->AssetsManager()->SetAssetValue<bool>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			CSubPath::Null(),
+			CAsset_Image::TILINGENABLED,
+			Value
+		);
+		if(Value)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				CSubPath::Null(),
+				CAsset_Image::GRIDWIDTH,
+				16
+			);
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				CSubPath::Null(),
+				CAsset_Image::GRIDHEIGHT,
+				16
+			);
+		}
+		AssetsManager()->RequestUpdate(m_pAssetsEditor->GetEditedAssetPath());
+	}
+	
+public:
+	CImageTilingToggle(CGuiEditor* pAssetsEditor) :
+		gui::CAbstractToggle(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -244,10 +294,14 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 	AddField_Integer(pTab, CAsset_Image::GRIDWIDTH, _GUI("Grid width"));
 	AddField_Integer(pTab, CAsset_Image::GRIDHEIGHT, _GUI("Grid height"));
 	AddField_Integer(pTab, CAsset_Image::GRIDSPACING, _GUI("Grid spacing"));
-	AddField_Bool(pTab, CAsset_Image::TILINGENABLED, _GUI("Compatible with tiles"));
+	
+	CImageTilingToggle* pWidget = new CImageTilingToggle(m_pAssetsEditor);
+	AddField(pTab, pWidget, _GUI("Compatible with tiles"));
 	
 	return pTab;
 }
+
+/* SPRITE *************************************************************/
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Sprite_Asset()
 {
@@ -305,7 +359,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 		
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _GUI("Width"));	
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _GUI("Height"));	
-	AddField_Asset(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _GUI("Image"));
+	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _GUI("Image"));
 	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _GUI("Color"));	
 	
 	return pTab;
@@ -727,7 +781,7 @@ void CAssetsInspector::AddField_AssetProperties(gui::CVScrollLayout* pTab)
 }
 
 /* TEXT EDIT **********************************************************/
-	
+
 class CMemberTextEdit : public gui::CAbstractTextEdit
 {
 protected:
@@ -1102,7 +1156,7 @@ public:
 			}
 			
 		public:
-			CItem(CPopup* pPopup, CAssetPath AssetPath) :
+			CItem(CPopup* pPopup, CAssetPath AssetPath, bool CheckTileCompatibility) :
 				gui::CButton(pPopup->Context(), ""),
 				m_pPopup(pPopup),
 				m_AssetPath(AssetPath)
@@ -1116,6 +1170,13 @@ public:
 				{
 					SetIcon(m_pPopup->m_pAssetsEditor->GetItemIcon(m_AssetPath, CSubPath::Null()));
 					SetText(m_pPopup->m_pAssetsEditor->GetItemName(m_AssetPath, CSubPath::Null()));
+				}
+				
+				if(CheckTileCompatibility)
+				{
+					const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_AssetPath);
+					if(!pImage || !pImage->GetTilingEnabled())
+						Editable(false);
 				}
 			}
 			
@@ -1137,20 +1198,22 @@ public:
 		CGuiEditor* m_pAssetsEditor;
 		int m_Member;
 		int m_AssetType;
+		bool m_CheckTileCompatibility;
 	
 	public:
-		CPopup(CGuiEditor* pAssetsEditor, int Member, int AssetType, gui::CRect ParentRect) :
+		CPopup(CGuiEditor* pAssetsEditor, int Member, int AssetType, gui::CRect ParentRect, int CheckTileCompatibility) :
 			gui::CPopup(pAssetsEditor, ParentRect, 250, 400, gui::CPopup::ALIGNMENT_SIDE),
 			m_pAssetsEditor(pAssetsEditor),
 			m_Member(Member),
-			m_AssetType(AssetType)
+			m_AssetType(AssetType),
+			m_CheckTileCompatibility(CheckTileCompatibility)
 		{
 			
 			gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 			Add(pLayout);
 			
 			SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
-			pLayout->Add(new CItem(this, CAssetPath::Null()), false);
+			pLayout->Add(new CItem(this, CAssetPath::Null(), false), false);
 			
 			#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 				{\
@@ -1158,7 +1221,7 @@ public:
 					pLayout->Add(pExpand);\
 					pExpand->SetTitle(new gui::CLabel(Context(), AssetsManager()->GetPackageName(m_pAssetsEditor->GetEditedPackageId()), m_pAssetsEditor->m_Path_Sprite_IconFolder));\
 					for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_##Name>(m_pAssetsEditor->GetEditedPackageId()); i++)\
-						pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, m_pAssetsEditor->GetEditedPackageId(), i)));\
+						pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, m_pAssetsEditor->GetEditedPackageId(), i), m_CheckTileCompatibility));\
 				}\
 				for(int p=0; p<AssetsManager()->GetNumPackages(); p++)\
 				{\
@@ -1168,7 +1231,7 @@ public:
 						pLayout->Add(pExpand);\
 						pExpand->SetTitle(new gui::CLabel(Context(), AssetsManager()->GetPackageName(p), m_pAssetsEditor->m_Path_Sprite_IconFolder));\
 						for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_##Name>(p); i++)\
-							pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, p, i)));\
+							pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, p, i), m_CheckTileCompatibility));\
 					}\
 				}\
 				break;
@@ -1208,11 +1271,12 @@ protected:
 	CGuiEditor* m_pAssetsEditor;
 	int m_Member;
 	int m_AssetType;
+	bool m_CheckTileCompatibility;
 	
 protected:
 	virtual void MouseClickAction()
 	{
-		Context()->DisplayPopup(new CPopup(m_pAssetsEditor, m_Member, m_AssetType, m_DrawRect));
+		Context()->DisplayPopup(new CPopup(m_pAssetsEditor, m_Member, m_AssetType, m_DrawRect, m_CheckTileCompatibility));
 	}
 
 public:
@@ -1220,7 +1284,8 @@ public:
 		gui::CButton(pAssetsEditor, "", CAssetPath::Null()),
 		m_pAssetsEditor(pAssetsEditor),
 		m_Member(Member),
-		m_AssetType(AssetType)
+		m_AssetType(AssetType),
+		m_CheckTileCompatibility(false)
 	{
 		
 	}
@@ -1255,6 +1320,11 @@ public:
 		
 		gui::CButton::Update(ParentEnabled);
 	}
+	
+	void CheckTileCompatibility()
+	{
+		m_CheckTileCompatibility = true;
+	}
 };
 
 void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text)
@@ -1264,6 +1334,18 @@ void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int 
 		Member,
 		AssetType
 	);
+	
+	AddField(pList, pWidget, Text);
+}
+
+void CAssetsInspector::AddField_ImageTiles(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text)
+{
+	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
+		m_pAssetsEditor,
+		Member,
+		AssetType
+	);
+	pWidget->CheckTileCompatibility();
 	
 	AddField(pList, pWidget, Text);
 }

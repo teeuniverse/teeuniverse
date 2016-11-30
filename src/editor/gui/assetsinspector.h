@@ -67,6 +67,7 @@ private:
 	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const CLocalizableString& Text);
 	void AddField_Angle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text);
+	void AddField_ImageTiles(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text);
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
 
 	//Search Tag: TAG_NEW_ASSET

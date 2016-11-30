@@ -842,6 +842,7 @@ int main(int argc, const char **argv)
 	//Active List Item
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath TogglePath;
 		
@@ -852,13 +853,20 @@ int main(int argc, const char **argv)
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("listItemIdleRo");
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("listItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
-			pAsset->SetReadOnlyStylePath(LabelIdlePath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		
 		{
@@ -877,6 +885,7 @@ int main(int argc, const char **argv)
 	//Active List Item HL
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		
 		{
@@ -887,13 +896,21 @@ int main(int argc, const char **argv)
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
+			pAsset->SetName("listItemHLRo");
+			pAsset->SetRectPath(RectListItemHlPath);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("listItemHL");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
-			pAsset->SetReadOnlyStylePath(LabelIdlePath);
+			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
 	
