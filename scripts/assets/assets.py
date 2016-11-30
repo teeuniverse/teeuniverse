@@ -1,19 +1,19 @@
 #
 # Copyright (C) 2016 necropotame (necropotame@gmail.com)
 #
-# This file is part of TeeUniverses.
+# This file is part of TeeUniverse.
 #
-# TeeUniverses is free software: you can redistribute it and/or  modify
+# TeeUniverse is free software: you can redistribute it and/or  modify
 # it under the terms of the GNU Affero General Public License, version 3,
 # as published by the Free Software Foundation.
 #
-# TeeUniverses is distributed in the hope that it will be useful,
+# TeeUniverse is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
+# along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
 #
 
 import sys, os
@@ -1297,19 +1297,19 @@ def generateHeader(asset):
 	print >>f, "/*"
 	print >>f, " * Copyright (C) 2016 necropotame (necropotame@gmail.com)"
 	print >>f, " * "
-	print >>f, " * This file is part of TeeUniverses."
+	print >>f, " * This file is part of TeeUniverse."
 	print >>f, " * "
-	print >>f, " * TeeUniverses is free software: you can redistribute it and/or  modify"
+	print >>f, " * TeeUniverse is free software: you can redistribute it and/or  modify"
 	print >>f, " * it under the terms of the GNU Affero General Public License, version 3,"
 	print >>f, " * as published by the Free Software Foundation."
 	print >>f, " *"
-	print >>f, " * TeeUniverses is distributed in the hope that it will be useful,"
+	print >>f, " * TeeUniverse is distributed in the hope that it will be useful,"
 	print >>f, " * but WITHOUT ANY WARRANTY; without even the implied warranty of"
 	print >>f, " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 	print >>f, " * GNU Affero General Public License for more details."
 	print >>f, " *"
 	print >>f, " * You should have received a copy of the GNU Affero General Public License"
-	print >>f, " * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>."
+	print >>f, " * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>."
 	print >>f, " */"
 	print >>f, ""
 	print >>f, "/*"
@@ -1380,19 +1380,19 @@ def generateImpl(asset):
 	print >>f, "/*"
 	print >>f, " * Copyright (C) 2016 necropotame (necropotame@gmail.com)"
 	print >>f, " * "
-	print >>f, " * This file is part of TeeUniverses."
+	print >>f, " * This file is part of TeeUniverse."
 	print >>f, " * "
-	print >>f, " * TeeUniverses is free software: you can redistribute it and/or  modify"
+	print >>f, " * TeeUniverse is free software: you can redistribute it and/or  modify"
 	print >>f, " * it under the terms of the GNU Affero General Public License, version 3,"
 	print >>f, " * as published by the Free Software Foundation."
 	print >>f, " *"
-	print >>f, " * TeeUniverses is distributed in the hope that it will be useful,"
+	print >>f, " * TeeUniverse is distributed in the hope that it will be useful,"
 	print >>f, " * but WITHOUT ANY WARRANTY; without even the implied warranty of"
 	print >>f, " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 	print >>f, " * GNU Affero General Public License for more details."
 	print >>f, " *"
 	print >>f, " * You should have received a copy of the GNU Affero General Public License"
-	print >>f, " * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>."
+	print >>f, " * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>."
 	print >>f, " */"
 	print >>f, ""
 	print >>f, "/*"
@@ -2046,19 +2046,19 @@ f = file("src/generated/assets/allassets.h", "w")
 print >>f, "/*"
 print >>f, " * Copyright (C) 2016 necropotame (necropotame@gmail.com)"
 print >>f, " * "
-print >>f, " * This file is part of TeeUniverses."
+print >>f, " * This file is part of TeeUniverse."
 print >>f, " * "
-print >>f, " * TeeUniverses is free software: you can redistribute it and/or  modify"
+print >>f, " * TeeUniverse is free software: you can redistribute it and/or  modify"
 print >>f, " * it under the terms of the GNU Affero General Public License, version 3,"
 print >>f, " * as published by the Free Software Foundation."
 print >>f, " *"
-print >>f, " * TeeUniverses is distributed in the hope that it will be useful,"
+print >>f, " * TeeUniverse is distributed in the hope that it will be useful,"
 print >>f, " * but WITHOUT ANY WARRANTY; without even the implied warranty of"
 print >>f, " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 print >>f, " * GNU Affero General Public License for more details."
 print >>f, " *"
 print >>f, " * You should have received a copy of the GNU Affero General Public License"
-print >>f, " * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>."
+print >>f, " * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>."
 print >>f, " */"
 print >>f, ""
 print >>f, "/*"
@@ -2086,19 +2086,19 @@ f = file("src/generated/assets/assetsmacro.h", "w")
 print >>f, "/*"
 print >>f, " * Copyright (C) 2016 necropotame (necropotame@gmail.com)"
 print >>f, " * "
-print >>f, " * This file is part of TeeUniverses."
+print >>f, " * This file is part of TeeUniverse."
 print >>f, " * "
-print >>f, " * TeeUniverses is free software: you can redistribute it and/or  modify"
+print >>f, " * TeeUniverse is free software: you can redistribute it and/or  modify"
 print >>f, " * it under the terms of the GNU Affero General Public License, version 3,"
 print >>f, " * as published by the Free Software Foundation."
 print >>f, " *"
-print >>f, " * TeeUniverses is distributed in the hope that it will be useful,"
+print >>f, " * TeeUniverse is distributed in the hope that it will be useful,"
 print >>f, " * but WITHOUT ANY WARRANTY; without even the implied warranty of"
 print >>f, " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
 print >>f, " * GNU Affero General Public License for more details."
 print >>f, " *"
 print >>f, " * You should have received a copy of the GNU Affero General Public License"
-print >>f, " * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>."
+print >>f, " * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>."
 print >>f, " */"
 print >>f, ""
 print >>f, "/*"

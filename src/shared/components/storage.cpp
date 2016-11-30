@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2016 necropotame (necropotame@gmail.com)
  * 
- * This file is part of TeeUniverses.
+ * This file is part of TeeUniverse.
  * 
- * TeeUniverses is free software: you can redistribute it and/or  modify
+ * TeeUniverse is free software: you can redistribute it and/or  modify
  * it under the terms of the GNU Affero General Public License, version 3,
  * as published by the Free Software Foundation.
  *
- * TeeUniverses is distributed in the hope that it will be useful,
+ * TeeUniverse is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with TeeUniverses.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -86,7 +86,7 @@ bool CStorage::InitConfig(int argc, const char** argv)
 	
 	// get userdir
 	if(m_SaveDir.empty())
-		fs_storage_path("TeeUniverses", m_SaveDir);
+		fs_storage_path("TeeUniverse", m_SaveDir);
 	
 	// get datadir
 	FindDatadir(argv[0]);
@@ -255,13 +255,13 @@ void CStorage::FindDatadir(const char *pArgv0)
 	// 4) check for all default locations
 	{
 		const char *aDirs[] = {
-			"/usr/share/teeuniverses",
-			"/usr/share/games/teeuniverses",
-			"/usr/local/share/teeuniverses",
-			"/usr/local/share/games/teeuniverses",
-			"/usr/pkg/share/teeuniverses",
-			"/usr/pkg/share/games/teeuniverses",
-			"/opt/teeuniverses"
+			"/usr/share/teeuniverse",
+			"/usr/share/games/teeuniverse",
+			"/usr/local/share/teeuniverse",
+			"/usr/local/share/games/teeuniverse",
+			"/usr/pkg/share/teeuniverse",
+			"/usr/pkg/share/games/teeuniverse",
+			"/opt/teeuniverse"
 		};
 		const int DirsCount = sizeof(aDirs) / sizeof(aDirs[0]);
 
