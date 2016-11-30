@@ -79,6 +79,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_GuiButtonStyle& Item)
 	{
 		CAsset::copy(Item);

@@ -242,6 +242,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_SkeletonSkin& Item)
 	{
 		CAsset::copy(Item);
@@ -331,6 +333,8 @@ public:
 		m_Sprite.increment();
 		return Id;
 	}
+	
+	inline int DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size()); }
 	

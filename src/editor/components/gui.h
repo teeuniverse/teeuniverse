@@ -151,6 +151,7 @@ public:
 	CAssetPath m_Path_Sprite_IconGrid;
 	CAssetPath m_Path_Sprite_IconFolderEdited;
 	CAssetPath m_Path_Sprite_IconFolderReadOnly;
+	CAssetPath m_Path_Sprite_IconErase;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

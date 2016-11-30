@@ -106,6 +106,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_Image();
 	void copy(const CAsset_Image& Item)
 	{

@@ -399,6 +399,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_MapLayerQuads();
 	void copy(const CAsset_MapLayerQuads& Item)
 	{
@@ -593,6 +595,8 @@ public:
 		m_Quad.increment();
 		return Id;
 	}
+	
+	inline int DeleteQuad(const CSubPath& SubPath) { m_Quad.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size()); }
 	

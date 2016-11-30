@@ -110,6 +110,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_GuiLabelStyle();
 	void copy(const CAsset_GuiLabelStyle& Item)
 	{

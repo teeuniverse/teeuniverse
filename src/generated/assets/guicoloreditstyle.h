@@ -88,6 +88,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_GuiColorEditStyle& Item)
 	{
 		CAsset::copy(Item);

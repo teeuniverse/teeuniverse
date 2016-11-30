@@ -283,6 +283,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_Skeleton& Item)
 	{
 		CAsset::copy(Item);
@@ -396,6 +398,10 @@ public:
 		m_Layer.increment();
 		return Id;
 	}
+	
+	inline int DeleteBone(const CSubPath& SubPath) { m_Bone.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size()); }
 	

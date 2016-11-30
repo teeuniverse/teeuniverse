@@ -157,6 +157,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_ZoneType& Item)
 	{
 		CAsset::copy(Item);
@@ -200,6 +202,8 @@ public:
 		m_Index.increment();
 		return Id;
 	}
+	
+	inline int DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size()); }
 	

@@ -111,4 +111,8 @@ int CAsset_GuiColorEditStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_GuiColorEditStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
 

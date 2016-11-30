@@ -141,4 +141,8 @@ int CAsset_GuiTabsStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_GuiTabsStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
 

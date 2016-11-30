@@ -336,4 +336,17 @@ int CAsset_Skeleton::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_Skeleton::DeleteSubItem(const CSubPath& SubPath)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_BONE:
+			return DeleteBone(SubPath);
+			break;
+		case TYPE_LAYER:
+			return DeleteLayer(SubPath);
+			break;
+	}
+}
+
 

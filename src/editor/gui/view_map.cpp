@@ -118,11 +118,15 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapEdit = new CCursorTool_MapEdit(this);
 	m_pToolbar->Add(m_pCursorTool_MapEdit);
 	
+	m_pCursorTool_MapEraser = new CCursorTool_MapEraser(this);
+	m_pToolbar->Add(m_pCursorTool_MapEraser);
+	
 	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
 	m_pToolbar->Add(m_pCursorTool_MapCrop);
 	
 	m_pCursorTool_MapStamp->UpdateToolbar();
 	m_pCursorTool_MapEdit->UpdateToolbar();
+	m_pCursorTool_MapEraser->UpdateToolbar();
 	m_pCursorTool_MapCrop->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);

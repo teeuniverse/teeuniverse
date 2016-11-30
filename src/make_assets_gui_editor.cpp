@@ -161,6 +161,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconFolderEdited", ImageEditorPath, 30, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconCrop", ImageEditorPath, 22, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconErase", ImageEditorPath, 23, 2, 1, 1);
 	
 	CREATE_SPRITE(PackageId, "gizmoVertexBg", ImageEditorPath, 0, 11, 1, 1);
 	CREATE_SPRITE(PackageId, "gizmoVertexFg", ImageEditorPath, 1, 11, 1, 1);

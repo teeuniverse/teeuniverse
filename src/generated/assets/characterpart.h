@@ -79,6 +79,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_CharacterPart& Item)
 	{
 		CAsset::copy(Item);

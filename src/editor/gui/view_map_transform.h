@@ -85,4 +85,14 @@ public:
 	virtual void OnMouseMove();
 };
 
+class CCursorTool_MapEraser : public CCursorTool_MapPicker
+{	
+public:
+	CCursorTool_MapEraser(CViewMap* pViewMap);
+	virtual void OnViewButtonClick(int Button);
+	virtual void RenderView();
+	virtual void Update(bool ParentEnabled);
+	virtual void OnMouseMove();
+};
+
 #endif

@@ -332,6 +332,8 @@ class AddInterface_Array(GetSetInterface):
 			var + ".increment();",
 			"return Id;"
 		]
+	def generateDelete(self, var):
+		return [ var + ".remove_index(SubPath.GetId());" ]
 	def generateValid(self, var):
 		return [ 
 			"return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size());"
@@ -345,6 +347,8 @@ class AddInterface_ArrayChild(GetSetInterface):
 		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + "[SubPath.GetId()].Add" + self.interface.name + "();" ]
+	def generateDelete(self, var):
+		return [ "return " + var + "[SubPath.GetId()].Delete" + self.interface.name + "(SubPath.PopId());" ]
 	def generateValid(self, var):
 		return [ "return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
 	
@@ -497,6 +501,8 @@ class AddInterface_Array2dChild(GetSetInterface):
 		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Add" + self.interface.name + "();" ]
+	def generateDelete(self, var):
+		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Delete" + self.interface.name + "(SubPath.DoublePopId());" ]
 	def generateValid(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId());" ]
 		
@@ -618,6 +624,8 @@ class AddInterface_Member(GetSetInterface):
 			self.name = m.name
 	def generateAdd(self, var):
 		return [ "return " + var + ".Add" + self.interface.name + "();" ]
+	def generateDelete(self, var):
+		return [ "return " + var + ".Delete" + self.interface.name + "(SubPath);" ]
 	def generateValid(self, var):
 		return [ "return " + var + ".IsValid" + self.interface.name + "();" ]
 		
@@ -719,6 +727,7 @@ class Member:
 			params = ""
 			if i.subpath:
 				params = "const CSubPath& SubPath"
+				
 			if len(i.generateAdd(self.memberName())) > 1:
 				res.append("inline int Add"+self.name+i.name+"("+params+")")
 				res.append("{")
@@ -727,6 +736,22 @@ class Member:
 				res.append("}")
 			else:
 				res.append("inline int Add"+self.name+i.name+"("+params+") { "+i.generateAdd(self.memberName())[0]+" }")
+			
+			res.append("")
+		return res
+	def generateDelete(self):
+		res = []
+		for i in self.t.addInterfaces():
+			
+			if len(i.generateDelete(self.memberName())) > 1:
+				res.append("inline int Delete"+self.name+i.name+"(const CSubPath& SubPath)")
+				res.append("{")
+				for l in i.generateDelete(self.memberName()):
+					res.append("	"+l)
+				res.append("}")
+			else:
+				res.append("inline int Delete"+self.name+i.name+"(const CSubPath& SubPath) { "+i.generateDelete(self.memberName())[0]+" }")
+				
 			res.append("")
 		return res
 	def generateValid(self):
@@ -1016,6 +1041,9 @@ class Class(Type):
 			self.addPublicFunc(Mem.generateAdd())
 		
 		for Mem in self.members:
+			self.addPublicFunc(Mem.generateDelete())
+		
+		for Mem in self.members:
 			self.addPublicFunc(Mem.generateValid())
 		
 		assetPathOperation = [
@@ -1202,6 +1230,33 @@ class ClassAsset(Class):
 		res.append("")
 		return res
 	
+	def generateDeleteImpl(self):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.addInterfaces():
+				counter = counter+1
+		
+		res = []
+		res.append("int "+self.fullType()+"::DeleteSubItem(const CSubPath& SubPath)")
+		res.append("{")
+		if counter > 0:
+			res.append("	switch(SubPath.GetType())")
+			res.append("	{")
+			
+			for Mem in self.members: 
+				for inter in Mem.addInterfaces():
+					res.append("		case TYPE_"+inter.enum+":")
+					if inter.subpath:
+						res.append("			Delete"+inter.name+"(SubPath);")
+						res.append("			break;")
+					else:
+						res.append("			return Delete"+inter.name+"(SubPath);")
+						res.append("			break;")
+			res.append("	}")
+		res.append("}")
+		res.append("")
+		return res
+	
 	def generateClassDefinition(self):
 		self.addPublicLines([
 			"static const int TypeId = "+str(self.typeid)+";",
@@ -1233,6 +1288,7 @@ class ClassAsset(Class):
 				counter = counter+1
 		
 		self.addPublicFunc(["int AddSubItem(int Type, const CSubPath& SubPath);", ""])
+		self.addPublicFunc(["int DeleteSubItem(const CSubPath& SubPath);", ""])
 		
 		return Class.generateClassDefinition(self)
 
@@ -1402,6 +1458,8 @@ def generateImpl(asset):
 	for l in asset.generateSetImpl("CSubPath"):
 		print >>f, l
 	for l in asset.generateAddImpl():
+		print >>f, l
+	for l in asset.generateDeleteImpl():
 		print >>f, l
 	print >>f, ""
 	

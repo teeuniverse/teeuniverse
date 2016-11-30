@@ -368,6 +368,8 @@ public:
 			return Id;
 		}
 		
+		inline int DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
@@ -532,6 +534,8 @@ public:
 			return Id;
 		}
 		
+		inline int DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
@@ -578,6 +582,8 @@ public:
 	}
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
+	
+	int DeleteSubItem(const CSubPath& SubPath);
 	
 	void copy(const CAsset_SkeletonAnimation& Item)
 	{
@@ -741,6 +747,18 @@ public:
 	}
 	
 	inline int AddLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].AddKeyFrame(); }
+	
+	inline int DeleteLocalBoneAnim(const CSubPath& SubPath) { m_LocalBoneAnim.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteLocalBoneAnimKeyFrame(const CSubPath& SubPath) { return m_LocalBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	
+	inline int DeleteParentBoneAnim(const CSubPath& SubPath) { m_ParentBoneAnim.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteParentBoneAnimKeyFrame(const CSubPath& SubPath) { return m_ParentBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	
+	inline int DeleteLayerAnimation(const CSubPath& SubPath) { m_LayerAnimation.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
 	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size()); }
 	

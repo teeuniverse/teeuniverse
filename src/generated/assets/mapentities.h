@@ -166,6 +166,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_MapEntities();
 	void copy(const CAsset_MapEntities& Item)
 	{
@@ -226,6 +228,8 @@ public:
 		m_Entity.increment();
 		return Id;
 	}
+	
+	inline int DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size()); }
 	

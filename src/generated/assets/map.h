@@ -183,6 +183,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_Map& Item)
 	{
 		CAsset::copy(Item);
@@ -280,6 +282,14 @@ public:
 		m_EntityLayer.increment();
 		return Id;
 	}
+	
+	inline int DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteFgGroup(const CSubPath& SubPath) { m_FgGroup.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteZoneLayer(const CSubPath& SubPath) { m_ZoneLayer.remove_index(SubPath.GetId()); }
+	
+	inline int DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size()); }
 	

@@ -53,6 +53,7 @@ protected:
 	CView::CCursorTool* m_pCursorTool_MapStamp;
 	CView::CCursorTool* m_pCursorTool_MapTransform;
 	CView::CCursorTool* m_pCursorTool_MapEdit;
+	CView::CCursorTool* m_pCursorTool_MapEraser;
 	CView::CCursorTool* m_pCursorTool_MapCrop;
 
 public:

@@ -351,7 +351,7 @@ public:
 	}
 
 	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
-	int AddSubItem_Hard(CAssetPath AssetPath, CSubPath SubPath, int Type);
+	int DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int Token = -1);
 	
 	template<typename ASSET>
 	CAssetPath FindAsset(int PackageId, const char* pAssetName) const

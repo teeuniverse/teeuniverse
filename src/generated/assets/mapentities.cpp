@@ -228,4 +228,14 @@ int CAsset_MapEntities::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_MapEntities::DeleteSubItem(const CSubPath& SubPath)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_ENTITY:
+			return DeleteEntity(SubPath);
+			break;
+	}
+}
+
 

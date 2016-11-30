@@ -152,6 +152,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_GuiRectStyle();
 	void copy(const CAsset_GuiRectStyle& Item)
 	{

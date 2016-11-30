@@ -96,6 +96,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_Sprite();
 	void copy(const CAsset_Sprite& Item)
 	{

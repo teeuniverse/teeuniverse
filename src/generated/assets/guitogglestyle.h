@@ -91,6 +91,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	CAsset_GuiToggleStyle();
 	void copy(const CAsset_GuiToggleStyle& Item)
 	{

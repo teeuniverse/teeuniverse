@@ -137,4 +137,8 @@ int CAsset_GuiBoxStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_GuiBoxStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
 

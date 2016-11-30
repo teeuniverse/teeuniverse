@@ -773,3 +773,88 @@ void CCursorTool_MapEdit::OnMouseMove()
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
+
+/* CURSORTOOL QUAD EDIT ***********************************************/
+
+CCursorTool_MapEraser::CCursorTool_MapEraser(CViewMap* pViewMap) :
+	CCursorTool_MapPicker(pViewMap, _GUI("Eraser"), pViewMap->AssetsEditor()->m_Path_Sprite_IconErase)
+{
+	
+}
+
+void CCursorTool_MapEraser::OnViewButtonClick(int Button)
+{
+	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
+		return;
+	
+	if(Button != KEY_MOUSE_1)
+		return;
+	
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
+	{
+		const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
+		if(!pMapLayer)
+			return;
+		
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		CSubPath QuadFound = PickQuad(CursorPos);
+			
+		if(!QuadFound.IsNull())
+		{
+			AssetsManager()->DeleteSubItem(AssetsEditor()->GetEditedAssetPath(), QuadFound);
+			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
+		}
+	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+	{
+		const CAsset_MapEntities* pMapLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+		if(!pMapLayer)
+			return;
+		
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		CSubPath EntitiyFound = PickEntity(CursorPos);
+			
+		if(!EntitiyFound.IsNull())
+		{
+			AssetsManager()->DeleteSubItem(AssetsEditor()->GetEditedAssetPath(), EntitiyFound);
+			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
+		}
+	}
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+}
+	
+void CCursorTool_MapEraser::RenderView()
+{
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
+		RenderPivots();
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+}
+	
+void CCursorTool_MapEraser::Update(bool ParentEnabled)
+{
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerQuads::TypeId:
+		case CAsset_MapEntities::TypeId:
+			Enable();
+			break;
+		default:
+			Disable();
+	}
+	
+	CCursorTool::Update(ParentEnabled);
+}
+
+void CCursorTool_MapEraser::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint(_GUI("Eraser Tool: Delete objects in the map."));
+	
+	CCursorTool_MapPicker::OnMouseMove();
+}

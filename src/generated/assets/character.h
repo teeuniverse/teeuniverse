@@ -161,6 +161,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int DeleteSubItem(const CSubPath& SubPath);
+	
 	void copy(const CAsset_Character& Item)
 	{
 		CAsset::copy(Item);
@@ -224,6 +226,8 @@ public:
 		m_Part.increment();
 		return Id;
 	}
+	
+	inline int DeletePart(const CSubPath& SubPath) { m_Part.remove_index(SubPath.GetId()); }
 	
 	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size()); }
 	
