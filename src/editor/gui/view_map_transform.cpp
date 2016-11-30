@@ -325,11 +325,14 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		
 		if(m_DragType == DRAGTYPE_TRANSLATION)
 		{
-			vec2 PivotScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
-			vec2 Diff = ViewMap()->MapRenderer()->ScreenPosToMapPos(PivotScreenPos + vec2(RelX, RelY)) - Position;
-			vec2 NewPivotPos = pMapLayer->GetQuadPivot(SelectedQuad) + Diff;
-			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
-			m_Transformed = true;
+			if(RelX != 0 || RelY != 0)
+			{
+				vec2 PivotScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
+				vec2 Diff = ViewMap()->MapRenderer()->ScreenPosToMapPos(PivotScreenPos + vec2(RelX, RelY)) - Position;
+				vec2 NewPivotPos = pMapLayer->GetQuadPivot(SelectedQuad) + Diff;
+				AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
+				m_Transformed = true;
+			}
 		}
 		else if(m_DragType == DRAGTYPE_GIZMO)
 		{
@@ -665,7 +668,9 @@ void CCursorTool_MapEdit::OnViewMouseMove()
 	else if(m_Vertex == CAsset_MapLayerQuads::VERTEX_PIVOT)
 	{
 		vec2 Diff = InvTransform*(CursorMapPos - Position);
-		vec2 NewPivot = Diff + pMapLayer->GetQuadPivot(SelectedQuad);
+		vec2 NewPivot = pMapLayer->GetQuadPivot(SelectedQuad) + CursorMapPos - Position;
+		
+		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivot, m_Token);
 		
 		for(int p=0; p<4; p++)
 		{
@@ -676,7 +681,6 @@ void CCursorTool_MapEdit::OnViewMouseMove()
 			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, Members[p], NewVertex, m_Token);
 		}
 		
-		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivot, m_Token);
 	}
 	
 	

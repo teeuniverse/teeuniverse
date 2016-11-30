@@ -160,13 +160,31 @@ protected:
 					Index = m_IndexSubPath.GetId();
 			}
 			
-			m_Tiles.resize(3, 2);
-			m_Tiles.get_clamp(0, 0).SetIndex(Index);
-			m_Tiles.get_clamp(1, 0).SetIndex(Index);
+			m_Tiles.resize(5, 4);
+			
+			m_Tiles.get_clamp(0, 0).SetIndex(0);
+			m_Tiles.get_clamp(1, 0).SetIndex(0);
 			m_Tiles.get_clamp(2, 0).SetIndex(0);
-			m_Tiles.get_clamp(0, 1).SetIndex(Index);
+			m_Tiles.get_clamp(3, 0).SetIndex(0);
+			m_Tiles.get_clamp(4, 0).SetIndex(0);
+			
+			m_Tiles.get_clamp(0, 1).SetIndex(0);
 			m_Tiles.get_clamp(1, 1).SetIndex(Index);
 			m_Tiles.get_clamp(2, 1).SetIndex(Index);
+			m_Tiles.get_clamp(3, 1).SetIndex(0);
+			m_Tiles.get_clamp(4, 1).SetIndex(0);
+			
+			m_Tiles.get_clamp(0, 2).SetIndex(0);
+			m_Tiles.get_clamp(1, 2).SetIndex(Index);
+			m_Tiles.get_clamp(2, 2).SetIndex(Index);
+			m_Tiles.get_clamp(3, 2).SetIndex(Index);
+			m_Tiles.get_clamp(4, 2).SetIndex(0);
+			
+			m_Tiles.get_clamp(0, 3).SetIndex(0);
+			m_Tiles.get_clamp(1, 3).SetIndex(0);
+			m_Tiles.get_clamp(2, 3).SetIndex(0);
+			m_Tiles.get_clamp(3, 3).SetIndex(0);
+			m_Tiles.get_clamp(4, 3).SetIndex(0);
 		}
 		
 		virtual void UpdateBoundingSize()
@@ -185,7 +203,7 @@ protected:
 			MapRenderer.SetCanvas(m_DrawRect, vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2));
 			MapRenderer.SetCamera(0.0f, 1.0f);
 			
-			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*1.5, -32.0f*1.0f), 1.0f, m_pAssetsEditor->m_Path_Image_ZoneTexture, false);
+			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*2.5f, -32.0f*2.0f), 1.0f, m_pAssetsEditor->m_Path_Image_ZoneTexture, true);
 			
 			Graphics()->ClipPop();
 		}
@@ -207,14 +225,15 @@ protected:
 			m_ZoneTypePath(ZoneTypePath),
 			m_IndexSubPath(IndexSubPath)
 		{
+			SetText("Empty");
+			
 			if(IndexSubPath.IsNotNull())
 			{
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
-				if(pZoneType)
+				if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath) && pZoneType->GetIndexUsed(m_IndexSubPath))
 					SetText(pZoneType->GetIndexDescription(m_IndexSubPath));
 			}
-			else
-				SetText("Empty");
+				
 			
 			SetButtonStyle(pAssetsEditor->m_Path_Button_PaletteIcon);
 			SetIconWidget(new CZoneIcon(pAssetsEditor, ZoneTypePath, m_IndexSubPath));
@@ -244,12 +263,15 @@ public:
 		if(!pZoneType)
 			return;
 		
-		if(!pZoneType->IsValidIndex(CAsset_ZoneType::SubPath_Index(0)))
+		if(!pZoneType->IsValidIndex(CAsset_ZoneType::SubPath_Index(0)) || !pZoneType->GetIndexUsed(CAsset_ZoneType::SubPath_Index(0)))
 			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, CSubPath::Null()));
 		
 		CAsset_ZoneType::CIteratorIndex Iter;
 		for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
-			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *Iter));
+		{
+			if(pZoneType->GetIndexUsed(*Iter))
+				pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *Iter));
+		}
 	}
 	
 	virtual void OnButtonClick(int Button)

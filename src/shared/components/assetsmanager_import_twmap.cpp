@@ -783,47 +783,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								}
 							}
 						}
-						
-						CAssetPath DamageZonePath;
-						CAsset_MapZoneTiles* pDamageZone = NewAsset_Hard<CAsset_MapZoneTiles>(&DamageZonePath, PackageId);
-						pDamageZone->SetName("Damage");
-						pDamageZone->SetZoneTypePath(m_Path_ZoneType_TWDamage);
-						pDamageZone->SetParentPath(MapPath);
-						
-						{
-							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pDamageZone->GetTileArray();
-							Data.resize(Width, Height);
-							
-							CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-							pMap->SetZoneLayer(ZoneLayer, DamageZonePath);
-						}			
-						
-						for(int j=0; j<Height; j++)
-						{
-							for(int i=0; i<Width; i++)
-							{
-								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								
-								switch(pTiles[j*Width+i].m_Index)
-								{
-									case 1:
-										pDamageZone->SetTileIndex(TilePath, 1);
-										break;
-									default:
-										pDamageZone->SetTileIndex(TilePath, 0);
-										break;
-								}
-								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								for(int s=0; s<Skip; s++)
-								{
-									pDamageZone->SetTileIndex(TilePath, 0);
-									i++;
-									
-									TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								}
-							}
-						}
 					}
 					else
 					{
