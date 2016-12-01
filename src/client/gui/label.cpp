@@ -33,7 +33,8 @@ CAbstractLabel::CAbstractLabel(CGui *pContext) :
 	m_Localize(false),
 	m_ClipText(true),
 	m_DragSelection(false),
-	m_SelectionEnabled(false)
+	m_SelectionEnabled(false),
+	m_TextShift(0)
 {
 	SetLabelStyle(Context()->GetLabelStyle());
 	m_Text.clear();
@@ -54,6 +55,7 @@ void CAbstractLabel::OnTextUpdated()
 		ApplyLocalization();
 	
 	m_TextCache.SetText(m_Text.buffer());
+	m_TextShift = 0;
 }
 
 void CAbstractLabel::ApplyLocalization()
@@ -323,12 +325,19 @@ void CAbstractLabel::UpdatePosition(const CRect& BoundingRect, const CRect& Visi
 	
 	if(m_pIconWidget)
 		m_pIconWidget->UpdatePosition(m_IconRect, m_VisibilityRect);
+	
+	m_ClipRect = m_DrawRect;
+	if(pLabelStyle)
+		m_ClipRect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetMargin()));
+		
+	m_SelectionRect = m_ClipRect;
+	if(pLabelStyle)
+		m_SelectionRect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetPadding()));
 }
 
 void CAbstractLabel::Render()
 {
 	CRect Rect = m_DrawRect;
-	CRect ClipRect = m_DrawRect;
 	vec4 FontColor = 1.0f;
 	
 	// render box
@@ -338,20 +347,17 @@ void CAbstractLabel::Render()
 		FontColor = pLabelStyle->GetTextColor();
 		
 		Rect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetMargin()));
-		ClipRect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetMargin()));
-		
 		AssetsRenderer()->DrawGuiRect(&Rect, pLabelStyle->GetRectPath());
-			
 		Rect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetPadding()));
 	}
 	
-	Graphics()->ClipPush(ClipRect.x, ClipRect.y, ClipRect.w, ClipRect.h);
+	Graphics()->ClipPush(m_ClipRect.x, m_ClipRect.y, m_ClipRect.w, m_ClipRect.h);
 	
 	// render text selection
 	if(m_SelectionEnabled && m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 &&m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 	{
 		gui::CRect Selection;
-		Selection.x = min(m_TextSelection0.m_Position.x, m_TextSelection1.m_Position.x);
+		Selection.x = GetTextPosition().x + min(m_TextSelection0.m_Position.x, m_TextSelection1.m_Position.x);
 		Selection.y = GetTextRect().y;
 		Selection.w = abs(m_TextSelection0.m_Position.x - m_TextSelection1.m_Position.x);
 		Selection.h = GetTextRect().h;
@@ -361,7 +367,7 @@ void CAbstractLabel::Render()
 	
 	// render text
 	if(GetText()[0])
-		TextRenderer()->DrawText(&m_TextCache, ivec2(m_TextRect.x, m_TextRect.y), FontColor);
+		TextRenderer()->DrawText(&m_TextCache, GetTextPosition(), FontColor);
 	
 	// render icon
 	if(m_pIconWidget)
@@ -381,10 +387,24 @@ void CAbstractLabel::Render()
 		Context()->DrawFocusRect(m_DrawRect);
 }
 
+void CAbstractLabel::TextShiftFromCursor(const ivec2& CursorPos)
+{
+	m_TextSelection1 = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), CursorPos);
+	int Pos = m_TextSelection1.m_Position.x + m_TextShift;
+	if(Pos > m_SelectionRect.w)
+	{
+		m_TextShift -= Pos - m_SelectionRect.w;
+	}
+	else if(Pos < 0)
+	{
+		m_TextShift -= Pos;
+	}
+}
+
 void CAbstractLabel::OnMouseMove()
 {
 	if(m_SelectionEnabled && m_DragSelection)
-		m_TextSelection1 = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
+		TextShiftFromCursor(Context()->GetMousePos());
 }
 
 void CAbstractLabel::OnButtonClick(int Button)
@@ -402,14 +422,18 @@ void CAbstractLabel::OnButtonClick(int Button)
 			m_TextSelection0.m_TextIter = -1;
 			m_TextSelection1.m_TextIter = -1;
 			m_DragSelection = false;
+			m_TextShift = 0;
 		}
 	}
 }
 
 void CAbstractLabel::OnButtonRelease(int Button)
 {
-	if(m_SelectionEnabled && Button == KEY_MOUSE_1)
-		m_DragSelection = false;
+	if(Button == KEY_MOUSE_1)
+	{
+		if(m_SelectionEnabled)
+			m_DragSelection = false;
+	}
 }
 
 void CAbstractLabel::SetText(const char* pText)

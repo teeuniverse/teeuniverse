@@ -785,8 +785,8 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	
 	CTextCursor Cursor;
 	Cursor.m_TextIter = 0;
-	Cursor.m_Position.x = TextPosition.x;
-	Cursor.m_Position.y = TextPosition.y;
+	Cursor.m_Position.x = 0;
+	Cursor.m_Position.y = 0;
 	
 	if(pTextCache->m_Quads.size() <= 0)
 		return Cursor;
@@ -805,13 +805,13 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	}
 	
 	int CharPos = pTextCache->m_Quads[NearestQuad].m_CharPos;
-	Cursor.m_Position.x = TextPosition.x + pTextCache->m_Quads[NearestQuad].m_AdvancePos.x;
+	Cursor.m_Position.x = pTextCache->m_Quads[NearestQuad].m_AdvancePos.x;
 	if(TestPos.x > pTextCache->m_Quads[NearestQuad].m_QuadPos.x + pTextCache->m_Quads[NearestQuad].m_Size.x/2.0f)
 	{
 		if(NearestQuad == pTextCache->m_Quads.size()-1)
 		{
 			CharPos++;
-			Cursor.m_Position.x = TextPosition.x + pTextCache->m_TextWidth;
+			Cursor.m_Position.x = pTextCache->m_TextWidth;
 		}
 		else
 		{
@@ -843,8 +843,8 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromTextIter(CTextCache* 
 	
 	CTextCursor Cursor;
 	Cursor.m_TextIter = TextIter;
-	Cursor.m_Position.x = TextPosition.x + pTextCache->m_TextWidth;
-	Cursor.m_Position.y = TextPosition.y;
+	Cursor.m_Position.x = pTextCache->m_TextWidth;
+	Cursor.m_Position.y = 0;
 	
 	//Find the position of the character in the string
 	int CharPos = 0;
@@ -862,7 +862,7 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromTextIter(CTextCache* 
 	{
 		if(pTextCache->m_Quads[i].m_CharPos == CharPos)
 		{
-			Cursor.m_Position.x = TextPosition.x + pTextCache->m_Quads[i].m_AdvancePos.x;
+			Cursor.m_Position.x = pTextCache->m_Quads[i].m_AdvancePos.x;
 			break;
 		}
 	}

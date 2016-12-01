@@ -49,7 +49,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 	
 	if(Event.m_Flags&CInput::FLAG_TEXT)
 	{
-		if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+		if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 		{
 			int StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
 			int EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
@@ -79,7 +79,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 			int StartCharPos = 0;
 			int EndCharPos = 0;
 			
-			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 			{
 				StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
 				EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
@@ -108,7 +108,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 			int StartCharPos = 0;
 			int EndCharPos = 0;
 			
-			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 			{
 				StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
 				EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
@@ -134,7 +134,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 		}
 		else if(Key == KEY_LEFT)
 		{
-			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 				CursorPos = ((m_TextSelection0.m_Position < m_TextSelection1.m_Position) ? m_TextSelection0.m_TextIter : m_TextSelection1.m_TextIter);
 			else if(CursorPos > 0)
 				CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
@@ -143,7 +143,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 		}
 		else if(Key == KEY_RIGHT)
 		{
-			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
 				CursorPos = ((m_TextSelection0.m_Position < m_TextSelection1.m_Position) ? m_TextSelection1.m_TextIter : m_TextSelection0.m_TextIter);
 			else if(CursorPos < Length)
 				CursorPos = str_utf8_forward(String.buffer(), CursorPos);
@@ -223,54 +223,68 @@ void CAbstractTextEdit::Render()
 {
 	CAbstractLabel::Render();
 	
+	float CursorHeight = GetTextRect().h;
+	
 	// render composing text
 	if(m_Editable && m_Composing)
 	{
 		int FontSize = GetFontSize();
 		vec4 FontColor = 1.0f;
 		
-		CRect ComposingRect = CRect(
-			GetTextRect().x + GetTextRect().w,
-			GetTextRect().y,
-			TextRenderer()->GetTextWidth(&m_ComposingTextCache),
-			GetTextRect().h
-		);
-		
 		const CAsset_GuiLabelStyle* pLabelStyle = AssetsManager()->GetAsset<CAsset_GuiLabelStyle>(Context()->GetComposeStyle());
 		if(pLabelStyle)
 		{
 			FontSize = Context()->ApplyGuiScale(pLabelStyle->GetFontSize());
 			FontColor = pLabelStyle->GetTextColor();
-			
-			CRect Rect = ComposingRect;
-			int Padding = Context()->ApplyGuiScale(pLabelStyle->GetPadding());
-			Rect.AddMargin(Padding);
-			ComposingRect.x += Padding;
-			
-			AssetsRenderer()->DrawGuiRect(&ComposingRect, pLabelStyle->GetRectPath());
 		}
+		
+		CRect ComposingRect = CRect(
+			0,
+			0,
+			TextRenderer()->GetTextWidth(&m_ComposingTextCache),
+			FontSize
+		);
+		
+		if(pLabelStyle)
+		{
+			ComposingRect.AddMargin(Context()->ApplyGuiScale(pLabelStyle->GetPadding()));
+			ComposingRect.AddMargin(Context()->ApplyGuiScale(pLabelStyle->GetMargin()));
+		}
+		
+		ComposingRect.x = GetTextPosition().x + m_TextCursor.m_Position.x - ComposingRect.w/2;
+		ComposingRect.y = GetTextPosition().y - ComposingRect.h;
+		
+		ivec2 ComposeTextPos;
+		ComposeTextPos.x = ComposingRect.x + ComposingRect.w/2 - TextRenderer()->GetTextWidth(&m_ComposingTextCache)/2;
+		ComposeTextPos.y = ComposingRect.y;
+		
+		if(pLabelStyle)
+		{
+			CRect Rect = ComposingRect;
+			Rect.RemoveMargin(Context()->ApplyGuiScale(pLabelStyle->GetMargin()));
+			AssetsRenderer()->DrawGuiRect(&Rect, pLabelStyle->GetRectPath());
+		}
+		
 		m_ComposingTextCache.SetFontSize(GetFontSize());
 		m_ComposingTextCache.SetBoxSize(ivec2(-1, ComposingRect.h));
-		TextRenderer()->DrawText(&m_ComposingTextCache, ivec2(ComposingRect.x, ComposingRect.y), FontColor);
+		TextRenderer()->DrawText(&m_ComposingTextCache, ivec2(ComposeTextPos.x, ComposeTextPos.y), FontColor);
 	}
 	
 	// render the cursor
-	if(m_Editable && m_TextCursor.m_TextIter >= 0 && (m_TextSelection0.m_TextIter != 0 || m_TextSelection1.m_TextIter != 0))
+	if(m_Editable && m_TextCursor.m_TextIter >= 0 && !(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter))
 	{
-		if((2*time_get()/time_freq()) % 2)
-		{
-			Graphics()->TextureClear();
-			Graphics()->LinesBegin();
-			Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-			
-			float x = m_TextCursor.m_Position.x + 0.5f;
-			float y0 = GetTextRect().y;
-			float y1 = GetTextRect().y + GetTextRect().h;
-			CGraphics::CLineItem Line(x, y0, x, y1);
-			Graphics()->LinesDraw(&Line, 1);
-			
-			Graphics()->LinesEnd();
-		}
+		Graphics()->TextureClear();
+		Graphics()->LinesBegin();
+		double Time = fmod((double)time_get()/(double)time_freq(), 1.0f);
+		Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.5f+cos(2.0f*pi*Time)/2.0f), true);		
+		
+		float x = GetTextPosition().x + m_TextCursor.m_Position.x + 0.5f;
+		float y0 = GetTextRect().y;
+		float y1 = GetTextRect().y + CursorHeight;
+		CGraphics::CLineItem Line(x, y0, x, y1);
+		Graphics()->LinesDraw(&Line, 1);
+		
+		Graphics()->LinesEnd();
 	}
 }
 
@@ -294,6 +308,9 @@ void CAbstractTextEdit::OnButtonClick(int Button)
 				Context()->StartFocus(this);
 			
 			m_TextCursor = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
+			
+			if(m_TextCursor.m_TextIter >= 0 && !(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter))
+				TextShiftFromCursor(ivec2(GetTextPosition().x + m_TextCursor.m_Position.x, GetTextPosition().y));
 		}
 		else
 			Context()->StopFocus(this);
@@ -317,6 +334,8 @@ void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
 		{
 			SaveFromTextBuffer();
 			m_Changes = false;
+			m_TextCursor.m_TextIter = -1;
+			m_TextShift = 0;
 		}
 	}
 	else if(m_TextCursor.m_TextIter >= 0)
@@ -337,6 +356,9 @@ void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
 			}
 			else
 				m_Changes = true;
+			
+			if(m_TextCursor.m_TextIter >= 0 && !(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter))
+				TextShiftFromCursor(ivec2(GetTextPosition().x + m_TextCursor.m_Position.x, GetTextPosition().y));
 		}
 		
 		m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), TextIter);
@@ -363,7 +385,7 @@ void CAbstractTextEdit::Clear()
 void CAbstractTextEdit::OnFocusStart()
 {
 	m_Localize = false;
-	Input()->StartTextEditing(GetTextRect().x, GetTextRect().y, GetTextRect().w, GetTextRect().h);
+	Input()->StartTextEditing(GetClipRect().x, GetClipRect().y, GetClipRect().w, GetClipRect().h);
 	m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
 }
 
@@ -375,6 +397,7 @@ void CAbstractTextEdit::OnFocusStop()
 		m_Changes = false;
 	}
 	
+	m_TextShift = 0;
 	m_TextCursor.m_TextIter = -1;
 	m_TextSelection0.m_TextIter = -1;
 	m_TextSelection1.m_TextIter = -1;

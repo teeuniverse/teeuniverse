@@ -39,6 +39,8 @@ private:
 	float m_IconScaling;
 	CRect m_IconRect;
 	CRect m_TextRect;
+	CRect m_ClipRect;
+	CRect m_SelectionRect;
 	bool m_ClipText;
 	
 protected:
@@ -51,10 +53,12 @@ protected:
 	bool m_DragSelection;
 	CTextRenderer::CTextCursor m_TextSelection0;
 	CTextRenderer::CTextCursor m_TextSelection1;
+	int m_TextShift;
 
 protected:
 	void OnTextUpdated();
 	void ApplyLocalization();
+	void TextShiftFromCursor(const ivec2& CursorPos);
 
 public:
 	CAbstractLabel(CGui *pContext);
@@ -78,7 +82,7 @@ public:
 	void SetLabelStyle(CAssetPath Path);
 	inline CAssetPath GetLabelStyle() const { return m_LabelStylePath; }
 	
-	inline ivec2 GetTextPosition() const { return ivec2(m_TextRect.x, m_TextRect.y); }
+	inline ivec2 GetTextPosition() const { return ivec2(m_TextRect.x + m_TextShift, m_TextRect.y); }
 	inline float GetFontSize() const { return m_FontSize; }
 	
 	void SetText(const char* pText);
@@ -86,6 +90,7 @@ public:
 	inline const char* GetText() const { return m_Text.buffer(); }
 	
 	inline const CRect& GetTextRect() const { return m_TextRect; }
+	inline const CRect& GetClipRect() const { return m_ClipRect; }
 	
 	inline void NoTextClipping() { m_ClipText = false; }
 	inline void EnableSelection() { m_SelectionEnabled = true; }
