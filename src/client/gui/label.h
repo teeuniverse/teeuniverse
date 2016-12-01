@@ -72,6 +72,7 @@ public:
 	virtual void OnMouseMove();
 	virtual void OnButtonClick(int Button);
 	virtual void OnButtonRelease(int Button);
+	virtual void OnInputEvent(const CInput::CEvent& Event);
 	
 	inline void SetIcon(CAssetPath IconPath) { m_IconPath = IconPath; }
 	inline CAssetPath GetIcon() const { return m_IconPath; }

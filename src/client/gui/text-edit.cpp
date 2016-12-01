@@ -160,6 +160,33 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 			CursorPos = Length;
 			ResetSelection = true;
 		}
+		else if(Key == KEY_V && Input()->KeyIsPressed(KEY_LCTRL))
+		{
+			const char* pClipboardText = Input()->GetClipboardText();
+			if(pClipboardText)
+			{
+				if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
+				{
+					int StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+					int EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+					int CharSize = EndCharPos-StartCharPos;
+					if(CharSize > 0)
+					{
+						for(int c=EndCharPos; String.buffer()[c]; c++)
+							String.buffer()[c-CharSize] = String.buffer()[c];
+						String.buffer()[Length-CharSize] = 0;
+					}
+				}
+				
+				String.insert_at(CursorPos, pClipboardText);
+				CursorPos += str_length(pClipboardText);
+				
+				Changes = true;
+				ResetSelection = true;
+				
+				Length = String.length();
+			}
+		}
 	}
 	
 	if(ResetSelection)
@@ -321,48 +348,50 @@ void CAbstractTextEdit::OnButtonClick(int Button)
 
 void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
 {
-	if(!m_Editable)
-		return;
-	
-	m_Composing = false;
-	if(!Context()->HasFocus(this))
-		return;
-	
-	if((Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER) && (Event.m_Flags & CInput::FLAG_RELEASE))
+	if(m_Editable)
 	{
-		if(m_Changes)
-		{
-			SaveFromTextBuffer();
-			m_Changes = false;
-			m_TextCursor.m_TextIter = -1;
-			m_TextShift = 0;
-		}
-	}
-	else if(m_TextCursor.m_TextIter >= 0)
-	{
-		int TextIter = m_TextCursor.m_TextIter;
-		
-		int Len = m_Text.length();
-		int NumChars = Len;
-		if(LineInput(Event, m_Text, TextIter))
-		{
-			m_Localize = false;
-			OnTextUpdated();
-			
-			if(m_SaveOnChange)
+		m_Composing = false;
+		if(Context()->HasFocus(this))
+		{		
+			if((Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER) && (Event.m_Flags & CInput::FLAG_RELEASE))
 			{
-				SaveFromTextBuffer();
-				m_Changes = false;
+				if(m_Changes)
+				{
+					SaveFromTextBuffer();
+					m_Changes = false;
+					m_TextCursor.m_TextIter = -1;
+					m_TextShift = 0;
+				}
 			}
-			else
-				m_Changes = true;
-			
-			if(m_TextCursor.m_TextIter >= 0 && !(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter))
-				TextShiftFromCursor(ivec2(GetTextPosition().x + m_TextCursor.m_Position.x, GetTextPosition().y));
+			else if(m_TextCursor.m_TextIter >= 0)
+			{
+				int TextIter = m_TextCursor.m_TextIter;
+				
+				int Len = m_Text.length();
+				int NumChars = Len;
+				if(LineInput(Event, m_Text, TextIter))
+				{
+					m_Localize = false;
+					OnTextUpdated();
+					
+					if(m_SaveOnChange)
+					{
+						SaveFromTextBuffer();
+						m_Changes = false;
+					}
+					else
+						m_Changes = true;
+					
+					if(m_TextCursor.m_TextIter >= 0 && !(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 && m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter))
+						TextShiftFromCursor(ivec2(GetTextPosition().x + m_TextCursor.m_Position.x, GetTextPosition().y));
+				}
+				
+				m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), TextIter);
+			}
 		}
-		
-		m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), TextIter);
 	}
+	
+	CAbstractLabel::OnInputEvent(Event);
 }
 
 void CAbstractTextEdit::RemoveChanges()

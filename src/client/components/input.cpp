@@ -377,4 +377,14 @@ void CInput::StopTextEditing()
 		m_TextEdited = false;
 }
 
+const char* CInput::GetClipboardText()
+{
+	return SDL_GetClipboardText();
+}
+
+void CInput::SetClipboardText(const char* pText)
+{
+	SDL_SetClipboardText(pText);
+}
+
 /* FOREIGN CODE END: TeeWorlds ****************************************/

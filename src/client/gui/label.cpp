@@ -473,6 +473,27 @@ void CAbstractLabel::SetLabelStyle(CAssetPath Path)
 	}
 }
 
+void CAbstractLabel::OnInputEvent(const CInput::CEvent& Event)
+{
+	if(m_SelectionEnabled && m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0 &&m_TextSelection0.m_TextIter != m_TextSelection1.m_TextIter)
+	{	
+		if(Event.m_Key == KEY_C && Input()->KeyIsPressed(KEY_LCTRL))
+		{
+			int Size = abs(m_TextSelection1.m_TextIter - m_TextSelection0.m_TextIter);
+			int Pos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+			int Length = m_Text.length();
+			
+			if(Size > 0 && Pos+Size <= Length && Pos >= 0)
+			{
+				dynamic_string Buffer;
+				Buffer.clear();
+				Buffer.append_num((const char*) m_Text.buffer()+Pos, Size);
+				Input()->SetClipboardText(Buffer.buffer());
+			}
+		}
+	}
+}
+
 /* LABEL **************************************************************/
 
 CLabel::CLabel(CGui* pContext, const char* pText, CAssetPath IconPath) :

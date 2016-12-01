@@ -158,6 +158,9 @@ public:
 	
 	const char *KeyName(int Key) const { return (Key >= 0 && Key < g_MaxKeys) ? g_aaKeyStrings[Key] : g_aaKeyStrings[0]; } //From old interface
 	int KeyID(const char* pKeyName) const;
+	
+	const char* GetClipboardText();
+	void SetClipboardText(const char* pText);
 };
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
