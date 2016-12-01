@@ -1393,6 +1393,7 @@ protected:
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
+		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CQuitButton(m_pAssetsEditor, pMenu));
