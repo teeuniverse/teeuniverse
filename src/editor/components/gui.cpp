@@ -1577,6 +1577,7 @@ void CGuiEditor::LoadAssets()
 	{
 		m_Path_Image_ZoneTexture = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "zoneTexture");
 		
+		m_Path_Rect_TextSelection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "textSelection");
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
 		m_Path_Rect_Focus = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "focus");
@@ -1690,6 +1691,7 @@ void CGuiEditor::LoadAssets()
 	m_PopupStyle = m_Path_Box_Popup;
 	m_ComposeStyle = m_Path_Label_Compose;
 	m_FocusStyle = m_Path_Rect_Focus;
+	m_TextSelectionStyle = m_Path_Rect_TextSelection;
 	
 	//~ PackageId = AssetsManager()->NewPackage("mypackage");
 	//~ AssetsManager()->SetPackageReadOnly(PackageId, false);

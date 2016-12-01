@@ -72,31 +72,33 @@ void CAbstractToggle::SetToggleStyle(CAssetPath StylePath)
 void CAbstractToggle::Update(bool ParentEnabled)
 {
 	RefreshLabelStyle();
+	
 	CAbstractLabel::Update(ParentEnabled);
 }
 
 void CAbstractToggle::OnButtonClick(int Button)
 {
-	if(Button != KEY_MOUSE_1)
-		return;
-	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
-		m_Clicked = true;
+	if(Button == KEY_MOUSE_1)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()))
+			m_Clicked = true;
+	}
+		
+	CAbstractLabel::OnButtonClick(Button);
 }
 
 void CAbstractToggle::OnButtonRelease(int Button)
 {
-	if(Button != KEY_MOUSE_1)
-		return;
-	
-	if(!m_Clicked)
-		return;
-	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
+	if(m_Clicked && Button == KEY_MOUSE_1)
 	{
-		m_Clicked = false;
-		SetValue(!GetValue());
+		if(m_DrawRect.IsInside(Context()->GetMousePos()))
+		{
+			m_Clicked = false;
+			SetValue(!GetValue());
+		}
 	}
+	
+	CAbstractLabel::OnButtonRelease(Button);
 }
 
 /* TOGGLE *************************************************************/

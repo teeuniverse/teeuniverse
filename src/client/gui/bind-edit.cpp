@@ -69,34 +69,36 @@ void CAbstractBindEdit::Update(bool ParentEnabled)
 	}
 	
 	RefreshLabelStyle();
+	
 	CAbstractLabel::Update(ParentEnabled);
 }
 
 void CAbstractBindEdit::OnButtonClick(int Button)
 {
-	if(Button != KEY_MOUSE_1)
-		return;
+	if(Button == KEY_MOUSE_1)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()))
+			m_Clicked = true;
+		else
+			Context()->StopFocus(this);
+	}
 	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
-		m_Clicked = true;
-	else
-		Context()->StopFocus(this);
+	CAbstractLabel::OnButtonClick(Button);
 }
 
 void CAbstractBindEdit::OnButtonRelease(int Button)
 {
-	if(Button != KEY_MOUSE_1)
-		return;
-	
-	if(!m_Clicked)
-		return;
-	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
+	if(m_Clicked && Button == KEY_MOUSE_1)
 	{
-		Context()->StartFocus(this);
-		m_Clicked = false;
-		m_CatchInput = true;
+		if(m_DrawRect.IsInside(Context()->GetMousePos()))
+		{
+			Context()->StartFocus(this);
+			m_Clicked = false;
+			m_CatchInput = true;
+		}
 	}
+	
+	CAbstractLabel::OnButtonRelease(Button);
 }
 
 void CAbstractBindEdit::OnMouseMove()
@@ -105,6 +107,8 @@ void CAbstractBindEdit::OnMouseMove()
 		m_MouseOver = true;
 	else
 		m_MouseOver = false;
+	
+	CAbstractLabel::OnMouseMove();
 }
 
 int CAbstractBindEdit::GetInputToBlock()

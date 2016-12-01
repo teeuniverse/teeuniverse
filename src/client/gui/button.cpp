@@ -63,33 +63,35 @@ void CAbstractButton::Update(bool ParentEnabled)
 		Context()->TryToGetFocus(this);
 	
 	RefreshLabelStyle();
+	
 	CAbstractLabel::Update(ParentEnabled);
 }
 
 void CAbstractButton::OnButtonClick(int Button)
 {
-	if(!m_Editable || Button != KEY_MOUSE_1)
-		return;
+	if(m_Editable && Button == KEY_MOUSE_1)
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_Clicked = true;
+		else
+			Context()->StopFocus(this);
+	}
 	
-	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		m_Clicked = true;
-	else
-		Context()->StopFocus(this);
+	CAbstractLabel::OnButtonClick(Button);
 }
 
 void CAbstractButton::OnButtonRelease(int Button)
 {
-	if(!m_Editable || Button != KEY_MOUSE_1)
-		return;
-	
-	if(!m_Clicked)
-		return;
-	
-	if(m_DrawRect.IsInside(Context()->GetMousePos()))
+	if(m_Editable && Button == KEY_MOUSE_1 && m_Clicked)
 	{
-		m_Clicked = false;
-		MouseClickAction();
+		if(m_DrawRect.IsInside(Context()->GetMousePos()))
+		{
+			m_Clicked = false;
+			MouseClickAction();
+		}
 	}
+	
+	CAbstractLabel::OnButtonRelease(Button);
 }
 
 void CAbstractButton::OnMouseMove()
@@ -98,6 +100,8 @@ void CAbstractButton::OnMouseMove()
 		m_MouseOver = true;
 	else
 		m_MouseOver = false;
+	
+	CAbstractLabel::OnMouseMove();
 }
 
 void CAbstractButton::OnInputEvent(const CInput::CEvent& Event)

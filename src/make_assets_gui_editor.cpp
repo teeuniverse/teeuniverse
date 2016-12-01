@@ -445,6 +445,20 @@ int main(int argc, const char **argv)
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
 	
+	//Text Selection
+	{
+		//Rect
+		CAssetPath RectPath;
+		{
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
+			pAsset->SetName("textSelection");
+			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_ROUNDCORNER);
+			pAsset->SetBackgroundColor(ColorLightHL);
+			pAsset->SetCornerRadius(3.0f);
+			pAsset->SetCornerFlags(CAsset_GuiRectStyle::CORNERFLAG_ALL);
+		}
+	}
+	
 	//Composing
 	{
 		//Rect

@@ -32,9 +32,9 @@ protected:
 	bool m_SaveOnChange;
 	CTextRenderer::CTextCache m_ComposingTextCache;
 	bool m_Composing;
-	CTextRenderer::CTextCursor m_TextCursor;
 	CAssetPath m_ButtonStylePath;
 	bool m_Editable;
+	CTextRenderer::CTextCursor m_TextCursor;
 
 protected:
 	virtual void SaveFromTextBuffer() = 0;
@@ -42,6 +42,8 @@ protected:
 
 	void RefreshLabelStyle();
 
+	bool LineInput(CInput::CEvent Event, dynamic_string& String, int& CursorPos);
+	
 public:
 	CAbstractTextEdit(class CGui *pConfig);
 	

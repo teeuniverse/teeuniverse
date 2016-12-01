@@ -25,59 +25,6 @@
 namespace gui
 {
 
-bool LineInput(CInput::CEvent Event, dynamic_string& String, int& CursorPos)
-{
-	bool Changes = false;
-	if(Event.m_Flags&CInput::FLAG_TEXT)
-	{
-		String.insert_at(CursorPos, Event.m_aText);
-		CursorPos += str_length(Event.m_aText);
-		Changes = true;
-	}
-	
-	int Length = String.length();
-	
-	if(Event.m_Flags&CInput::FLAG_PRESS)
-	{
-		int Key = Event.m_Key;
-		if(Key == KEY_BACKSPACE && CursorPos > 0)
-		{
-			int NextCharPos = CursorPos;
-			CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
-			int CharSize = NextCharPos-CursorPos;
-			if(CharSize > 0)
-			{
-				for(int c=NextCharPos; String.buffer()[c]; c++)
-					String.buffer()[c-CharSize] = String.buffer()[c];
-				String.buffer()[Length-CharSize] = 0;
-			}
-			Changes = true;
-		}
-		else if(Key == KEY_DELETE && CursorPos < Length)
-		{
-			int NextCharPos = str_utf8_forward(String.buffer(), CursorPos);
-			int CharSize = NextCharPos-CursorPos;
-			if(CharSize > 0)
-			{
-				for(int c=NextCharPos; String.buffer()[c]; c++)
-					String.buffer()[c-CharSize] = String.buffer()[c];
-				String.buffer()[Length-CharSize] = 0;
-			}
-			Changes = true;
-		}
-		else if(Key == KEY_LEFT && CursorPos > 0)
-			CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
-		else if(Key == KEY_RIGHT && CursorPos < Length)
-			CursorPos = str_utf8_forward(String.buffer(), CursorPos);
-		else if(Key == KEY_HOME)
-			CursorPos = 0;
-		else if(Key == KEY_END)
-			CursorPos = Length;
-	}
-	
-	return Changes;
-}
-
 /* ABSTRACT TEXT EDIT *************************************************/
 
 CAbstractTextEdit::CAbstractTextEdit(CGui* pContext) :
@@ -88,8 +35,141 @@ CAbstractTextEdit::CAbstractTextEdit(CGui* pContext) :
 	m_SaveOnChange(false),
 	m_Editable(true)
 {
-	m_TextCursor.m_TextIter = -1;
 	m_ButtonStylePath = Context()->GetTextEntryStyle();
+	EnableSelection();
+	m_TextCursor.m_TextIter = -1;
+}
+
+bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, int& CursorPos)
+{
+	bool Changes = false;
+	bool ResetSelection = false;
+	
+	int Length = String.length();
+	
+	if(Event.m_Flags&CInput::FLAG_TEXT)
+	{
+		if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+		{
+			int StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+			int EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+			int CharSize = EndCharPos-StartCharPos;
+			if(CharSize > 0)
+			{
+				for(int c=EndCharPos; String.buffer()[c]; c++)
+					String.buffer()[c-CharSize] = String.buffer()[c];
+				String.buffer()[Length-CharSize] = 0;
+			}
+		}
+		
+		String.insert_at(CursorPos, Event.m_aText);
+		CursorPos += str_length(Event.m_aText);
+		
+		Changes = true;
+		ResetSelection = true;
+		
+		Length = String.length();
+	}
+	
+	if(Event.m_Flags&CInput::FLAG_PRESS)
+	{
+		int Key = Event.m_Key;
+		if(Key == KEY_BACKSPACE)
+		{
+			int StartCharPos = 0;
+			int EndCharPos = 0;
+			
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			{
+				StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+				EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+			}
+			else if(CursorPos > 0)
+			{
+				StartCharPos = str_utf8_rewind(String.buffer(), CursorPos);
+				EndCharPos = CursorPos;
+			}
+			
+			int CharSize = EndCharPos-StartCharPos;
+			if(CharSize > 0)
+			{
+				for(int c=EndCharPos; String.buffer()[c]; c++)
+					String.buffer()[c-CharSize] = String.buffer()[c];
+				String.buffer()[Length-CharSize] = 0;
+			}
+			
+			CursorPos = StartCharPos;
+			
+			Changes = true;
+			ResetSelection = true;
+		}
+		else if(Key == KEY_DELETE)
+		{
+			int StartCharPos = 0;
+			int EndCharPos = 0;
+			
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+			{
+				StartCharPos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+				EndCharPos = max(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
+			}
+			else if(CursorPos < Length)
+			{
+				StartCharPos = CursorPos;
+				EndCharPos = str_utf8_forward(String.buffer(), CursorPos);
+			}
+			
+			int CharSize = EndCharPos-StartCharPos;
+			if(CharSize > 0)
+			{
+				for(int c=EndCharPos; String.buffer()[c]; c++)
+					String.buffer()[c-CharSize] = String.buffer()[c];
+				String.buffer()[Length-CharSize] = 0;
+			}
+			
+			CursorPos = StartCharPos;
+			
+			Changes = true;
+			ResetSelection = true;
+		}
+		else if(Key == KEY_LEFT)
+		{
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+				CursorPos = ((m_TextSelection0.m_Position < m_TextSelection1.m_Position) ? m_TextSelection0.m_TextIter : m_TextSelection1.m_TextIter);
+			else if(CursorPos > 0)
+				CursorPos = str_utf8_rewind(String.buffer(), CursorPos);
+				
+			ResetSelection = true;
+		}
+		else if(Key == KEY_RIGHT)
+		{
+			if(m_TextSelection0.m_TextIter >= 0 && m_TextSelection1.m_TextIter >= 0)
+				CursorPos = ((m_TextSelection0.m_Position < m_TextSelection1.m_Position) ? m_TextSelection1.m_TextIter : m_TextSelection0.m_TextIter);
+			else if(CursorPos < Length)
+				CursorPos = str_utf8_forward(String.buffer(), CursorPos);
+				
+			ResetSelection = true;
+		}
+		else if(Key == KEY_HOME)
+		{
+			CursorPos = 0;
+			ResetSelection = true;
+		}
+		else if(Key == KEY_END)
+		{
+			CursorPos = Length;
+			ResetSelection = true;
+		}
+	}
+	
+	if(ResetSelection)
+	{
+		m_TextSelection0.m_TextIter = -1;
+		m_TextSelection1.m_TextIter = -1;
+		m_DragSelection = false;
+	}
+	
+	return Changes;
 }
 
 void CAbstractTextEdit::RefreshLabelStyle()
@@ -130,9 +210,6 @@ void CAbstractTextEdit::Update(bool ParentEnabled)
 			}
 		}
 		
-		if(m_MouseOver && m_Editable)
-			Context()->SetCursor(this, CInput::CURSOR_TEXT);
-		
 		RefreshLabelStyle();
 		
 		if(!m_Changes)
@@ -146,6 +223,7 @@ void CAbstractTextEdit::Render()
 {
 	CAbstractLabel::Render();
 	
+	// render composing text
 	if(m_Editable && m_Composing)
 	{
 		int FontSize = GetFontSize();
@@ -177,8 +255,7 @@ void CAbstractTextEdit::Render()
 	}
 	
 	// render the cursor
-			// cursor position
-	if(m_Editable && m_TextCursor.m_TextIter >= 0)
+	if(m_Editable && m_TextCursor.m_TextIter >= 0 && (m_TextSelection0.m_TextIter != 0 || m_TextSelection1.m_TextIter != 0))
 	{
 		if((2*time_get()/time_freq()) % 2)
 		{
@@ -203,25 +280,26 @@ void CAbstractTextEdit::OnMouseMove()
 		m_MouseOver = true;
 	else
 		m_MouseOver = false;
+	
+	CAbstractLabel::OnMouseMove();
 }
 
 void CAbstractTextEdit::OnButtonClick(int Button)
 {
-	if(!m_Editable)
-		return;
-	
-	if(Button != KEY_MOUSE_1)
-		return;
-	
-	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+	if(m_Editable && Button == KEY_MOUSE_1)
 	{
-		m_TextCursor = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
-		
-		if(!Context()->HasFocus(this))
-			Context()->StartFocus(this);
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		{
+			if(!Context()->HasFocus(this))
+				Context()->StartFocus(this);
+			
+			m_TextCursor = TextRenderer()->GetTextCursorFromPosition(&m_TextCache, GetTextPosition(), Context()->GetMousePos());
+		}
+		else
+			Context()->StopFocus(this);
 	}
-	else
-		Context()->StopFocus(this);
+	
+	CAbstractLabel::OnButtonClick(Button);
 }
 
 void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
@@ -275,15 +353,18 @@ void CAbstractTextEdit::Clear()
 	m_Changes = true;
 	SetText("");
 	if(Context()->HasFocus(this))
+	{
 		m_TextCursor.m_TextIter = -1;
+		m_TextSelection0.m_TextIter = -1;
+		m_TextSelection1.m_TextIter = -1;
+	}
 }
 
 void CAbstractTextEdit::OnFocusStart()
 {
 	m_Localize = false;
 	Input()->StartTextEditing(GetTextRect().x, GetTextRect().y, GetTextRect().w, GetTextRect().h);
-	if(m_TextCursor.m_TextIter < 0)
-		m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
+	m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
 }
 
 void CAbstractTextEdit::OnFocusStop()
@@ -295,6 +376,9 @@ void CAbstractTextEdit::OnFocusStop()
 	}
 	
 	m_TextCursor.m_TextIter = -1;
+	m_TextSelection0.m_TextIter = -1;
+	m_TextSelection1.m_TextIter = -1;
+	m_DragSelection = false;
 	m_Composing = false;
 	m_ComposingTextCache.ResetRendering();
 	

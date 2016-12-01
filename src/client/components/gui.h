@@ -122,6 +122,7 @@ protected:
 	CAssetPath m_PopupStyle;
 	CAssetPath m_ComposeStyle;
 	CAssetPath m_FocusStyle;
+	CAssetPath m_TextSelectionStyle;
 	
 public:
 	CGui(CClientKernel* pKernel);
@@ -173,6 +174,7 @@ public:
 	inline CAssetPath GetPopupStyle() const { return m_PopupStyle; }
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
 	inline CAssetPath GetFocusStyle() const { return m_FocusStyle; }
+	inline CAssetPath GetTextSelectionStyle() const { return m_TextSelectionStyle; }
 	
 	void SetCursor(gui::CWidget* pWidget, int CursorType);
 	void ShowLoadingCursor();

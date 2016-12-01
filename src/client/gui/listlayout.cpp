@@ -592,8 +592,7 @@ void CVScrollLayout::OnButtonClick(int Button)
 	if(m_pScrollBar && m_ShowScrollBar)
 		m_pScrollBar->OnButtonClick(Button);
 	
-	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		CVListLayout::OnButtonClick(Button);
+	CVListLayout::OnButtonClick(Button);
 }
 
 void CVScrollLayout::OnButtonRelease(int Button)
@@ -601,8 +600,7 @@ void CVScrollLayout::OnButtonRelease(int Button)
 	if(m_pScrollBar && m_ShowScrollBar)
 		m_pScrollBar->OnButtonRelease(Button);
 		
-	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		CVListLayout::OnButtonRelease(Button);
+	CVListLayout::OnButtonRelease(Button);
 }
 
 void CVScrollLayout::OnInputEvent(const CInput::CEvent& Event)

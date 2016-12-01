@@ -62,6 +62,7 @@ public:
 public:
 	CAssetPath m_Path_Image_ZoneTexture;
 	
+	CAssetPath m_Path_Rect_TextSelection;
 	CAssetPath m_Path_Rect_Selection;
 	CAssetPath m_Path_Rect_Border;
 	CAssetPath m_Path_Rect_Focus;

@@ -40,12 +40,17 @@ private:
 	CRect m_IconRect;
 	CRect m_TextRect;
 	bool m_ClipText;
-
+	
 protected:
 	bool m_Localize;
 	CLocalizableString m_LString;
 	dynamic_string m_Text;
 	CTextRenderer::CTextCache m_TextCache;
+	
+	bool m_SelectionEnabled;
+	bool m_DragSelection;
+	CTextRenderer::CTextCursor m_TextSelection0;
+	CTextRenderer::CTextCursor m_TextSelection1;
 
 protected:
 	void OnTextUpdated();
@@ -59,6 +64,10 @@ public:
 	virtual void UpdateBoundingSize();
 	virtual void UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRect);
 	virtual void Render();
+	
+	virtual void OnMouseMove();
+	virtual void OnButtonClick(int Button);
+	virtual void OnButtonRelease(int Button);
 	
 	inline void SetIcon(CAssetPath IconPath) { m_IconPath = IconPath; }
 	inline CAssetPath GetIcon() const { return m_IconPath; }
@@ -79,6 +88,7 @@ public:
 	inline const CRect& GetTextRect() const { return m_TextRect; }
 	
 	inline void NoTextClipping() { m_ClipText = false; }
+	inline void EnableSelection() { m_SelectionEnabled = true; }
 	
 };
 
