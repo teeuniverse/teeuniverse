@@ -162,6 +162,14 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31, 1, 1, 1);
 	CREATE_SPRITE(PackageId, "iconCrop", ImageEditorPath, 22, 2, 1, 1);
 	CREATE_SPRITE(PackageId, "iconErase", ImageEditorPath, 23, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconPolygon", ImageEditorPath, 24, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconMoveVertex", ImageEditorPath, 25, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconDeleteVertex", ImageEditorPath, 26, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconAddVertex", ImageEditorPath, 27, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconWeightVertex", ImageEditorPath, 28, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconVertex", ImageEditorPath, 29, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconPencil", ImageEditorPath, 30, 2, 1, 1);
+	CREATE_SPRITE(PackageId, "iconLineStyle", ImageEditorPath, 31, 2, 1, 1);
 	
 	CREATE_SPRITE(PackageId, "gizmoVertexBg", ImageEditorPath, 0, 11, 1, 1);
 	CREATE_SPRITE(PackageId, "gizmoVertexFg", ImageEditorPath, 1, 11, 1, 1);
@@ -741,11 +749,11 @@ int main(int argc, const char **argv)
 	}
 	
 	//Asset Edit
+	CAssetPath AssetEditPath;
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
 		CAssetPath LabelRoPath;
-		CAssetPath EditPath;
 		
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
@@ -778,7 +786,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&AssetEditPath, PackageId);
 			pAsset->SetName("assetEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
@@ -867,6 +875,7 @@ int main(int argc, const char **argv)
 	}
 	
 	//Active List Item
+	CAssetPath ButtonActiveListItemPath;
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelRoPath;
@@ -889,7 +898,7 @@ int main(int argc, const char **argv)
 		}
 		
 		{
-			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
+			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonActiveListItemPath, PackageId);
 			pAsset->SetName("listItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
@@ -1006,6 +1015,31 @@ int main(int argc, const char **argv)
 			pAsset->SetSwitchIcon(true);
 			pAsset->SetIconTruePath(IconTruePath);
 			pAsset->SetIconFalsePath(IconFalsePath);
+		}
+	}
+	
+	//Menu
+	CAssetPath MenuBoxPath;
+	{
+		{
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&MenuBoxPath, PackageId);
+			pAsset->SetName("menu");
+			pAsset->SetRectPath(RectDialogPath);
+			pAsset->SetPadding(0);
+			pAsset->SetMargin(0);
+			pAsset->SetSpacing(0);
+		}
+	}
+	
+	//ComboBox
+	{
+		CAssetPath AssetPath;
+		{
+			CAsset_GuiComboBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiComboBoxStyle>(&AssetPath, PackageId);
+			pAsset->SetName("default");
+			pAsset->SetButtonPath(AssetEditPath);
+			pAsset->SetPopupPath(MenuBoxPath);
+			pAsset->SetEnumPath(ButtonActiveListItemPath);
 		}
 	}
 	
@@ -1369,20 +1403,6 @@ int main(int argc, const char **argv)
 			pAsset->SetLayoutPath(LayoutBoxPath);
 			pAsset->SetButtonListFill(true);
 			pAsset->SetButtonListText(true);
-		}
-	}
-	
-	//Menu
-	{
-		CAssetPath BoxPath;
-		
-		{
-			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&BoxPath, PackageId);
-			pAsset->SetName("menu");
-			pAsset->SetRectPath(RectDialogPath);
-			pAsset->SetPadding(0);
-			pAsset->SetMargin(0);
-			pAsset->SetSpacing(0);
 		}
 	}
 	

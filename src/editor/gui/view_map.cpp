@@ -21,6 +21,7 @@
 #include <editor/gui/view_map_stamp.h>
 #include <editor/gui/view_map_transform.h>
 #include <editor/gui/view_map_crop.h>
+#include <editor/gui/view_map_object.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
@@ -30,34 +31,38 @@
 
 /* VIEW MAP ***********************************************************/
 
-class CShowGridToggle : public gui::CToggle
+class CSimpleToggle : public gui::CToggle
 {
 protected:
-	CViewMap* m_pViewMap;
+	CGuiEditor* m_pAssetsEditor;
+	bool* m_pBoolean;
+	CLocalizableString m_LHint;
 	
 protected:
 	virtual bool GetValue()
 	{
-		return m_pViewMap->GetShowGrid();
+		return *m_pBoolean;
 	}
-	
+
 	virtual void SetValue(bool Value)
 	{
-		m_pViewMap->SetShowGrid(Value);
+		*m_pBoolean = Value;
 	}
 	
 public:
-	CShowGridToggle(CViewMap* pViewMap, CAssetPath IconPath) :
-		gui::CToggle(pViewMap->AssetsEditor(), IconPath),
-		m_pViewMap(pViewMap)
+	CSimpleToggle(CGuiEditor* pAssetsEditor, bool* pBoolean, CAssetPath IconPath, const CLocalizableString& LHint) :
+		gui::CToggle(pAssetsEditor, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pBoolean(pBoolean)
 	{
-		SetToggleStyle(m_pViewMap->AssetsEditor()->m_Path_Toggle_Toolbar);
+		SetToggleStyle(pAssetsEditor->m_Path_Toggle_Toolbar);
+		m_LHint.copy(LHint);
 	}
 
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pViewMap->AssetsEditor()->SetHint(_GUI("Show grid"));
+			m_pAssetsEditor->SetHint(m_LHint);
 		
 		gui::CToggle::OnMouseMove();
 	}
@@ -90,7 +95,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pViewMap->AssetsEditor()->SetHint(_GUI("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\""));
+			m_pViewMap->AssetsEditor()->SetHint(_LSTRING("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\""));
 		
 		gui::CHSlider::OnMouseMove();
 	}
@@ -106,7 +111,8 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
 	m_ZoneOpacity(0.5f),
-	m_ShowGrid(false)
+	m_ShowGrid(false),
+	m_ShowMeshes(false)
 {
 	
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
@@ -124,13 +130,26 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
 	m_pToolbar->Add(m_pCursorTool_MapCrop);
 	
+	m_pCursorTool_MapEditVertex = new CCursorTool_MapObjectEditVertex(this);
+	m_pToolbar->Add(m_pCursorTool_MapEditVertex);
+	
+	m_pCursorTool_MapAddVertex = new CCursorTool_MapObjectAddVertex(this);
+	m_pToolbar->Add(m_pCursorTool_MapAddVertex);
+	
+	m_pCursorTool_MapWeightVertex = new CCursorTool_MapObjectWeightVertex(this);
+	m_pToolbar->Add(m_pCursorTool_MapWeightVertex);
+	
 	m_pCursorTool_MapStamp->UpdateToolbar();
 	m_pCursorTool_MapEdit->UpdateToolbar();
 	m_pCursorTool_MapEraser->UpdateToolbar();
 	m_pCursorTool_MapCrop->UpdateToolbar();
+	m_pCursorTool_MapEditVertex->UpdateToolbar();
+	m_pCursorTool_MapAddVertex->UpdateToolbar();
+	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
-	m_pToolbar->Add(new CShowGridToggle(this, AssetsEditor()->m_Path_Sprite_IconGrid), false);
+	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconPolygon, _LSTRING("Show/hide meshes")), false);
+	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
 	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
@@ -158,6 +177,13 @@ CAssetPath CViewMap::GetMapGroupPath()
 		case CAsset_MapLayerQuads::TypeId:
 		{
 			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
+			break;
+		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
 			if(pLayer)
 				return pLayer->GetParentPath();
 			break;
@@ -216,6 +242,17 @@ CAssetPath CViewMap::GetMapPath()
 			}
 			break;
 		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+			{
+				const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pLayer->GetParentPath());
+				if(pGroup)
+					return pGroup->GetParentPath();
+			}
+			break;
+		}
 	}
 	
 	return CAssetPath::Null();
@@ -234,6 +271,9 @@ void CViewMap::Update(bool ParentEnabled)
 			case CAsset_MapZoneTiles::TypeId:
 			case CAsset_MapLayerQuads::TypeId:
 				SetCursorTool(m_pCursorTool_MapStamp);
+				break;
+			case CAsset_MapLayerObjects::TypeId:
+				SetCursorTool(m_pCursorTool_MapEditVertex);
 				break;
 			case CAsset_MapGroup::TypeId:
 				SetCursorTool(m_pCursorTool_MapTransform);
@@ -259,7 +299,7 @@ void CViewMap::RenderView()
 		Color.b = 1.0f - 2.0f*(m_ZoneOpacity-0.5f);
 	}
 	
-	MapRenderer()->RenderMap(MapPath, Color);
+	MapRenderer()->RenderMap(MapPath, Color, m_ShowMeshes);
 	
 	Color = 1.0f;
 	if(m_ZoneOpacity < 0.5f)

@@ -198,11 +198,27 @@ public:
 	inline const array< CAsset_Character::CPart, allocator_copy<CAsset_Character::CPart> >& GetPartArray() const { return m_Part; }
 	inline array< CAsset_Character::CPart, allocator_copy<CAsset_Character::CPart> >& GetPartArray() { return m_Part; }
 	
-	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const { return m_Part[SubPath.GetId()]; }
+	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+			return m_Part[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
-	inline const char* GetPartName(const CSubPath& SubPath) const { return m_Part[SubPath.GetId()].GetName(); }
+	inline const char* GetPartName(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+			return m_Part[SubPath.GetId()].GetName();
+		else return NULL;
+	}
 	
-	inline CAssetPath GetPartDefaultPath(const CSubPath& SubPath) const { return m_Part[SubPath.GetId()].GetDefaultPath(); }
+	inline CAssetPath GetPartDefaultPath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+			return m_Part[SubPath.GetId()].GetDefaultPath();
+		else return CAssetPath::Null();
+	}
 	
 	inline void SetIdlePath(const CAssetPath& Value) { m_IdlePath = Value; }
 	
@@ -214,11 +230,25 @@ public:
 	
 	inline void SetPartArraySize(int Value) { m_Part.resize(Value); }
 	
-	inline void SetPart(const CSubPath& SubPath, const CAsset_Character::CPart& Value) { m_Part[SubPath.GetId()].copy(Value); }
+	inline void SetPart(const CSubPath& SubPath, const CAsset_Character::CPart& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		{
+			m_Part[SubPath.GetId()].copy(Value);
+		}
+	}
 	
-	inline void SetPartName(const CSubPath& SubPath, const char* Value) { m_Part[SubPath.GetId()].SetName(Value); }
+	inline void SetPartName(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+			m_Part[SubPath.GetId()].SetName(Value);
+	}
 	
-	inline void SetPartDefaultPath(const CSubPath& SubPath, const CAssetPath& Value) { m_Part[SubPath.GetId()].SetDefaultPath(Value); }
+	inline void SetPartDefaultPath(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+			m_Part[SubPath.GetId()].SetDefaultPath(Value);
+	}
 	
 	inline int AddPart()
 	{

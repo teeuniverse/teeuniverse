@@ -651,37 +651,37 @@ void CGraphics::SetColor2(vec4 Color0, vec4 Color1, bool AlphaBlend)
 	}
 }
 
-void CGraphics::SetColor4(vec4 TopLeft, vec4 TopRight, vec4 BottomLeft, vec4 BottomRight, bool AlphaBlend)
+void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3, bool AlphaBlend)
 {
 	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
 	if(AlphaBlend)
 	{
 		CColorVertex Array[4] = {
-			CColorVertex(0, TopLeft.r*TopLeft.a, TopLeft.g*TopLeft.a, TopLeft.b*TopLeft.a, TopLeft.a),
-			CColorVertex(1, TopRight.r*TopRight.a, TopRight.g*TopRight.a, TopRight.b*TopRight.a, TopRight.a),
-			CColorVertex(2, BottomRight.r*BottomRight.a, BottomRight.g*BottomRight.a, BottomRight.b*BottomRight.a, BottomRight.a),
-			CColorVertex(3, BottomLeft.r*BottomLeft.a, BottomLeft.g*BottomLeft.a, BottomLeft.b*BottomLeft.a, BottomLeft.a)};
+			CColorVertex(0, C0.r*C0.a, C0.g*C0.a, C0.b*C0.a, C0.a),
+			CColorVertex(1, C1.r*C1.a, C1.g*C1.a, C1.b*C1.a, C1.a),
+			CColorVertex(2, C2.r*C2.a, C2.g*C2.a, C2.b*C2.a, C2.a),
+			CColorVertex(3, C3.r*C3.a, C3.g*C3.a, C3.b*C3.a, C3.a)};
 		SetColorVertex(Array, 4);
 	}
 	else
 	{
 		CColorVertex Array[4] = {
-			CColorVertex(0, TopLeft.r, TopLeft.g, TopLeft.b, TopLeft.a),
-			CColorVertex(1, TopRight.r, TopRight.g, TopRight.b, TopRight.a),
-			CColorVertex(2, BottomRight.r, BottomRight.g, BottomRight.b, BottomRight.a),
-			CColorVertex(3, BottomLeft.r, BottomLeft.g, BottomLeft.b, BottomLeft.a)};
+			CColorVertex(0, C0.r, C0.g, C0.b, C0.a),
+			CColorVertex(1, C1.r, C1.g, C1.b, C1.a),
+			CColorVertex(2, C2.r, C2.g, C2.b, C2.a),
+			CColorVertex(3, C3.r, C3.g, C3.b, C3.a)};
 		SetColorVertex(Array, 4);
 	}
 }
 
-void CGraphics::SetColor4(vec4 TopLeft, vec4 TopRight, vec4 BottomLeft, vec4 BottomRight)
+void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3)
 {
 	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
 	CColorVertex Array[4] = {
-		CColorVertex(0, TopLeft.r, TopLeft.g, TopLeft.b, TopLeft.a),
-		CColorVertex(1, TopRight.r, TopRight.g, TopRight.b, TopRight.a),
-		CColorVertex(2, BottomRight.r, BottomRight.g, BottomRight.b, BottomRight.a),
-		CColorVertex(3, BottomLeft.r, BottomLeft.g, BottomLeft.b, BottomLeft.a)};
+		CColorVertex(0, C0.r, C0.g, C0.b, C0.a),
+		CColorVertex(1, C1.r, C1.g, C1.b, C1.a),
+		CColorVertex(2, C2.r, C2.g, C2.b, C2.a),
+		CColorVertex(3, C3.r, C3.g, C3.b, C3.a)};
 	SetColorVertex(Array, 4);
 }
 

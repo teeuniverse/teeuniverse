@@ -178,23 +178,62 @@ public:
 	inline const array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> >& GetIndexArray() const { return m_Index; }
 	inline array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> >& GetIndexArray() { return m_Index; }
 	
-	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()]; }
+	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
-	inline bool GetIndexUsed(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetUsed(); }
+	inline bool GetIndexUsed(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetUsed();
+		else return false;
+	}
 	
-	inline const char* GetIndexDescription(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetDescription(); }
+	inline const char* GetIndexDescription(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetDescription();
+		else return NULL;
+	}
 	
-	inline vec4 GetIndexColor(const CSubPath& SubPath) const { return m_Index[SubPath.GetId()].GetColor(); }
+	inline vec4 GetIndexColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetColor();
+		else return 1.0f;
+	}
 	
 	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
 	
-	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value) { m_Index[SubPath.GetId()].copy(Value); }
+	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		{
+			m_Index[SubPath.GetId()].copy(Value);
+		}
+	}
 	
-	inline void SetIndexUsed(const CSubPath& SubPath, bool Value) { m_Index[SubPath.GetId()].SetUsed(Value); }
+	inline void SetIndexUsed(const CSubPath& SubPath, bool Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetUsed(Value);
+	}
 	
-	inline void SetIndexDescription(const CSubPath& SubPath, const char* Value) { m_Index[SubPath.GetId()].SetDescription(Value); }
+	inline void SetIndexDescription(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetDescription(Value);
+	}
 	
-	inline void SetIndexColor(const CSubPath& SubPath, vec4 Value) { m_Index[SubPath.GetId()].SetColor(Value); }
+	inline void SetIndexColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetColor(Value);
+	}
 	
 	inline int AddIndex()
 	{

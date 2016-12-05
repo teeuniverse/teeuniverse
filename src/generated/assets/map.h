@@ -210,7 +210,13 @@ public:
 	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetBgGroupArray() const { return m_BgGroup; }
 	inline array< CAssetPath, allocator_default<CAssetPath> >& GetBgGroupArray() { return m_BgGroup; }
 	
-	inline CAssetPath GetBgGroup(const CSubPath& SubPath) const { return m_BgGroup[SubPath.GetId()]; }
+	inline CAssetPath GetBgGroup(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size())
+			return m_BgGroup[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
 	inline int GetFgGroupArraySize() const { return m_FgGroup.size(); }
 	
@@ -219,7 +225,13 @@ public:
 	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetFgGroupArray() const { return m_FgGroup; }
 	inline array< CAssetPath, allocator_default<CAssetPath> >& GetFgGroupArray() { return m_FgGroup; }
 	
-	inline CAssetPath GetFgGroup(const CSubPath& SubPath) const { return m_FgGroup[SubPath.GetId()]; }
+	inline CAssetPath GetFgGroup(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size())
+			return m_FgGroup[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
 	inline int GetZoneLayerArraySize() const { return m_ZoneLayer.size(); }
 	
@@ -228,7 +240,13 @@ public:
 	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetZoneLayerArray() const { return m_ZoneLayer; }
 	inline array< CAssetPath, allocator_default<CAssetPath> >& GetZoneLayerArray() { return m_ZoneLayer; }
 	
-	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const { return m_ZoneLayer[SubPath.GetId()]; }
+	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size())
+			return m_ZoneLayer[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
 	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
 	
@@ -237,23 +255,53 @@ public:
 	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() const { return m_EntityLayer; }
 	inline array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() { return m_EntityLayer; }
 	
-	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const { return m_EntityLayer[SubPath.GetId()]; }
+	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size())
+			return m_EntityLayer[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
 	inline void SetBgGroupArraySize(int Value) { m_BgGroup.resize(Value); }
 	
-	inline void SetBgGroup(const CSubPath& SubPath, const CAssetPath& Value) { m_BgGroup[SubPath.GetId()] = Value; }
+	inline void SetBgGroup(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size())
+		{
+			m_BgGroup[SubPath.GetId()] = Value;
+		}
+	}
 	
 	inline void SetFgGroupArraySize(int Value) { m_FgGroup.resize(Value); }
 	
-	inline void SetFgGroup(const CSubPath& SubPath, const CAssetPath& Value) { m_FgGroup[SubPath.GetId()] = Value; }
+	inline void SetFgGroup(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size())
+		{
+			m_FgGroup[SubPath.GetId()] = Value;
+		}
+	}
 	
 	inline void SetZoneLayerArraySize(int Value) { m_ZoneLayer.resize(Value); }
 	
-	inline void SetZoneLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_ZoneLayer[SubPath.GetId()] = Value; }
+	inline void SetZoneLayer(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size())
+		{
+			m_ZoneLayer[SubPath.GetId()] = Value;
+		}
+	}
 	
 	inline void SetEntityLayerArraySize(int Value) { m_EntityLayer.resize(Value); }
 	
-	inline void SetEntityLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_EntityLayer[SubPath.GetId()] = Value; }
+	inline void SetEntityLayer(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size())
+		{
+			m_EntityLayer[SubPath.GetId()] = Value;
+		}
+	}
 	
 	inline int AddBgGroup()
 	{

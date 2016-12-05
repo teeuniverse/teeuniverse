@@ -364,7 +364,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pAssetsEditor->SetHint(_GUI("Flip vertically the current stamp selection"));
+			m_pAssetsEditor->SetHint(_LSTRING("Flip vertically the current stamp selection"));
 		
 		gui::CButton::OnMouseMove();
 	}
@@ -391,7 +391,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pAssetsEditor->SetHint(_GUI("Flip horizontally the current stamp selection"));
+			m_pAssetsEditor->SetHint(_LSTRING("Flip horizontally the current stamp selection"));
 		
 		gui::CButton::OnMouseMove();
 	}
@@ -418,7 +418,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pAssetsEditor->SetHint(_GUI("Rotate counter-clockwise the current stamp selection"));
+			m_pAssetsEditor->SetHint(_LSTRING("Rotate counter-clockwise the current stamp selection"));
 		
 		gui::CButton::OnMouseMove();
 	}
@@ -445,7 +445,7 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pAssetsEditor->SetHint(_GUI("Rotate clockwise the current stamp selection"));
+			m_pAssetsEditor->SetHint(_LSTRING("Rotate clockwise the current stamp selection"));
 		
 		gui::CButton::OnMouseMove();
 	}
@@ -454,7 +454,7 @@ public:
 /* CURSOR TOOL ********************************************************/
 
 CCursorTool_MapStamp::CCursorTool_MapStamp(CViewMap* pViewMap) :
-	CCursorTool(pViewMap, _GUI("Stamp"), pViewMap->AssetsEditor()->m_Path_Sprite_IconStamp),
+	CCursorTool(pViewMap, _LSTRING("Stamp"), pViewMap->AssetsEditor()->m_Path_Sprite_IconStamp),
 	m_pOptions(NULL)
 {
 	m_SelectionEnabled = false;
@@ -792,8 +792,8 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 				for(int i=MinX; i<MaxX; i++)
 				{
 					CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_FLAGS, m_TileSelection.get_clamp(i-TileX, j-TileY).GetFlags(), m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_FLAGS, m_TileSelection.get_clamp(i-TileX, j-TileY).GetFlags(), m_Token);
 				}
 			}
 		}
@@ -813,7 +813,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 				for(int i=MinX; i<MaxX; i++)
 				{
 					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-					AssetsManager()->SetAssetValue<uint32>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
 				}
 			}
 		}
@@ -1376,7 +1376,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 void CCursorTool_MapStamp::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_GUI("Stamp Tool: Create and copy objects. Use right click to open the palette."));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Stamp Tool: Create and copy objects. Use right click to open the palette."));
 	
 	CViewMap::CCursorTool::OnMouseMove();
 }

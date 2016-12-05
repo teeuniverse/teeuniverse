@@ -194,15 +194,41 @@ public:
 	inline const array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> >& GetEntityArray() const { return m_Entity; }
 	inline array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> >& GetEntityArray() { return m_Entity; }
 	
-	inline const CAsset_MapEntities::CEntity& GetEntity(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()]; }
+	inline const CAsset_MapEntities::CEntity& GetEntity(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			return m_Entity[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
-	inline CAssetPath GetEntityTypePath(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()].GetTypePath(); }
+	inline CAssetPath GetEntityTypePath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			return m_Entity[SubPath.GetId()].GetTypePath();
+		else return CAssetPath::Null();
+	}
 	
-	inline vec2 GetEntityPosition(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()].GetPosition(); }
+	inline vec2 GetEntityPosition(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			return m_Entity[SubPath.GetId()].GetPosition();
+		else return 0.0f;
+	}
 	
-	inline float GetEntityPositionX(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()].GetPositionX(); }
+	inline float GetEntityPositionX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			return m_Entity[SubPath.GetId()].GetPositionX();
+		else return 0.0f;
+	}
 	
-	inline float GetEntityPositionY(const CSubPath& SubPath) const { return m_Entity[SubPath.GetId()].GetPositionY(); }
+	inline float GetEntityPositionY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			return m_Entity[SubPath.GetId()].GetPositionY();
+		else return 0.0f;
+	}
 	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
@@ -210,15 +236,37 @@ public:
 	
 	inline void SetEntityArraySize(int Value) { m_Entity.resize(Value); }
 	
-	inline void SetEntity(const CSubPath& SubPath, const CAsset_MapEntities::CEntity& Value) { m_Entity[SubPath.GetId()].copy(Value); }
+	inline void SetEntity(const CSubPath& SubPath, const CAsset_MapEntities::CEntity& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+		{
+			m_Entity[SubPath.GetId()].copy(Value);
+		}
+	}
 	
-	inline void SetEntityTypePath(const CSubPath& SubPath, const CAssetPath& Value) { m_Entity[SubPath.GetId()].SetTypePath(Value); }
+	inline void SetEntityTypePath(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			m_Entity[SubPath.GetId()].SetTypePath(Value);
+	}
 	
-	inline void SetEntityPosition(const CSubPath& SubPath, vec2 Value) { m_Entity[SubPath.GetId()].SetPosition(Value); }
+	inline void SetEntityPosition(const CSubPath& SubPath, vec2 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			m_Entity[SubPath.GetId()].SetPosition(Value);
+	}
 	
-	inline void SetEntityPositionX(const CSubPath& SubPath, float Value) { m_Entity[SubPath.GetId()].SetPositionX(Value); }
+	inline void SetEntityPositionX(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			m_Entity[SubPath.GetId()].SetPositionX(Value);
+	}
 	
-	inline void SetEntityPositionY(const CSubPath& SubPath, float Value) { m_Entity[SubPath.GetId()].SetPositionY(Value); }
+	inline void SetEntityPositionY(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
+			m_Entity[SubPath.GetId()].SetPositionY(Value);
+	}
 	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	

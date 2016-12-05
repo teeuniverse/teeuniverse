@@ -156,7 +156,7 @@ void CCursorTool_MapPicker::RenderPivots()
 /* CURSORTOOL QUAD TRANSFORM ******************************************/
 
 CCursorTool_MapTransform::CCursorTool_MapTransform(CViewMap* pViewMap) :
-	CCursorTool_MapPicker(pViewMap, _GUI("Transform"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
+	CCursorTool_MapPicker(pViewMap, _LSTRING("Transform"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
 	m_Token(CAssetsHistory::NEW_TOKEN)
 {
 	
@@ -510,7 +510,7 @@ void CCursorTool_MapTransform::Update(bool ParentEnabled)
 void CCursorTool_MapTransform::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_GUI("Transform Tool: Move, rotate and scale objects"));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Transform Tool: Move, rotate and scale objects"));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
@@ -518,7 +518,7 @@ void CCursorTool_MapTransform::OnMouseMove()
 /* CURSORTOOL QUAD EDIT ***********************************************/
 
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
-	CCursorTool_MapPicker(pViewMap, _GUI("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconQuad),
+	CCursorTool_MapPicker(pViewMap, _LSTRING("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMoveVertex),
 	m_Token(CAssetsHistory::NEW_TOKEN),
 	m_Vertex(CAsset_MapLayerQuads::VERTEX_NONE)
 {
@@ -769,7 +769,7 @@ void CCursorTool_MapEdit::Update(bool ParentEnabled)
 void CCursorTool_MapEdit::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_GUI("Edit Tool: Change the shape of object by moving verticies."));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Edit Tool: Change the shape of object by moving verticies."));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
@@ -777,7 +777,7 @@ void CCursorTool_MapEdit::OnMouseMove()
 /* CURSORTOOL QUAD EDIT ***********************************************/
 
 CCursorTool_MapEraser::CCursorTool_MapEraser(CViewMap* pViewMap) :
-	CCursorTool_MapPicker(pViewMap, _GUI("Eraser"), pViewMap->AssetsEditor()->m_Path_Sprite_IconErase)
+	CCursorTool_MapPicker(pViewMap, _LSTRING("Eraser"), pViewMap->AssetsEditor()->m_Path_Sprite_IconErase)
 {
 	
 }
@@ -854,7 +854,7 @@ void CCursorTool_MapEraser::Update(bool ParentEnabled)
 void CCursorTool_MapEraser::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_GUI("Eraser Tool: Delete objects in the map."));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Eraser Tool: Delete objects in the map."));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }

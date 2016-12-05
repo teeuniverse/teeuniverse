@@ -95,32 +95,15 @@ public:
 	ASSET* NewAsset(class CAssetsManager* pAssetsManager, CAssetPath* pPath)
 	{
 		int Id = m_Assets.size();
-		m_Assets.increment();
+		CEntry& Entry = m_Assets.increment();
+		
+		Entry.m_Asset.copy(ASSET());
+		Entry.m_Asset.SetAssetsManager(pAssetsManager);
+		
 		pPath->SetType(ASSET::TypeId);
 		pPath->SetId(Id);
 		
-		m_Assets[Id].m_Asset.SetAssetsManager(pAssetsManager);
-		
-		return &m_Assets[Id].m_Asset;
-	}
-	
-	ASSET* NewAsset(class CAssetsManager* pAssetsManager, const CAssetPath& Path)
-	{
-		if(Path.GetType() != ASSET::TypeId)
-			return 0;
-		
-		int Id = Path.GetId();
-		if(Id < 0)
-			return 0;
-		
-		unsigned int OldSize = m_Assets.size();
-		unsigned int NewSize = max(OldSize, Path.GetId()+1);
-		m_Assets.resize(NewSize);
-		
-		for(int i=OldSize; i<NewSize; i++)
-			m_Assets[i].m_Asset.SetAssetsManager(pAssetsManager);
-		
-		return &m_Assets[Id].m_Asset;
+		return &Entry.m_Asset;
 	}
 	
 	void Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)

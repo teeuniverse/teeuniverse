@@ -695,7 +695,399 @@ void CMapRenderer::RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, i
 	Graphics()->LinesEnd();
 }
 
-void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
+enum
+{
+	VERTEXFLAG_BEZIER = 1,
+};
+
+struct CVertex
+{
+	vec4 m_Color;
+	vec2 m_Position;
+	vec2 m_LeftOrtho;
+	vec2 m_RightOrtho;
+	int m_Flags;
+	float m_LeftDist;
+	float m_RightDist;
+	float m_Weight;
+};
+
+class CLineTesselator
+{
+private:
+	array<CVertex> m_aVertexBuffer[2];
+	int m_CurrentBuffer;
+
+public:
+	CLineTesselator() :
+		m_CurrentBuffer(0)
+	{
+		
+	}
+	
+	inline array<CVertex>& GetCurrentVertices() { return m_aVertexBuffer[m_CurrentBuffer]; }
+	inline array<CVertex>& GetNextVertices() { return m_aVertexBuffer[(m_CurrentBuffer+1)%2]; }
+	
+	inline array<CVertex>& SwapBuffers()
+	{
+		m_CurrentBuffer = (m_CurrentBuffer+1)%2;
+		GetNextVertices().clear();
+	}
+
+	void AddVertex(vec2 Position, float Weight, vec4 Color, int Flags)
+	{
+		CVertex& Vertex = GetCurrentVertices().increment();
+		Vertex.m_Position = Position;
+		Vertex.m_Weight = Weight;
+		Vertex.m_Color = Color;
+		Vertex.m_Flags = Flags;
+	}
+	
+	void ComputeOrthogonalVertors(bool Closed, int Buffer=0)
+	{
+		int NumVertices = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2].size();
+		for(int i=0; i<NumVertices; i++)
+		{
+			vec2 Position = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i].m_Position;
+			vec2 DirLeft = 0.0f;
+			vec2 DirRight = 0.0f;
+			
+			if(i>0)
+			{
+				vec2 PositionPrev = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i-1].m_Position;
+				DirLeft = normalize(Position - PositionPrev);
+			}
+			else if(Closed && NumVertices >= 2)
+			{
+				vec2 PositionPrev = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][NumVertices-2].m_Position;
+				DirLeft = normalize(Position - PositionPrev);
+			}
+			
+			if(i+1<NumVertices)
+			{
+				vec2 PositionNext = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i+1].m_Position;
+				DirRight = normalize(PositionNext - Position);
+			}
+			else if(Closed && NumVertices >= 2)
+			{
+				vec2 PositionNext = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][1].m_Position;
+				DirRight = normalize(PositionNext - Position);
+			}
+			
+			vec2 Dir = normalize(DirLeft + DirRight);	
+			vec2 OrthoDir = ortho(Dir);
+			
+			float Length = 1.0f;
+			if(length(DirLeft) > 0.0f)
+				Length = 1.0f / dot(OrthoDir, ortho(DirLeft));
+			else if(length(DirRight))
+				Length = 1.0f / dot(OrthoDir, ortho(DirRight));
+			
+			m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i].m_LeftOrtho = OrthoDir * Length * m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i].m_Weight;
+			m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i].m_RightOrtho = m_aVertexBuffer[(m_CurrentBuffer+Buffer)%2][i].m_LeftOrtho;
+		}
+	}
+	
+	void ComputeBezierCurve()
+	{
+		if(GetCurrentVertices().size())
+		{
+			CVertex& Vertex = GetNextVertices().increment();
+			Vertex = GetCurrentVertices()[0];
+		}
+		int NumVertices = GetCurrentVertices().size();
+		for(int i=1; i<NumVertices; i++)
+		{
+			vec2 Position0 = GetCurrentVertices()[i-1].m_Position;			
+			vec2 Position1 = GetCurrentVertices()[i].m_Position;
+			float Length = distance(Position0, Position1);
+			
+			float Weight0 = GetCurrentVertices()[i-1].m_Weight;
+			float Weight1 = GetCurrentVertices()[i].m_Weight;
+			
+			vec4 Color0 = GetCurrentVertices()[i-1].m_Color;
+			vec4 Color1 = GetCurrentVertices()[i].m_Color;
+			
+			bool AutoSmooth0 = GetCurrentVertices()[i-1].m_Flags & VERTEXFLAG_BEZIER;
+			bool AutoSmooth1 = GetCurrentVertices()[i].m_Flags & VERTEXFLAG_BEZIER;
+			
+			if(AutoSmooth0 || AutoSmooth1)
+			{
+				vec2 BezierPoint0;
+				vec2 BezierPoint1;
+				
+				if(AutoSmooth0)
+					BezierPoint0 = Position0 - normalize(ortho(GetCurrentVertices()[i-1].m_RightOrtho)) * Length/3.0f;
+				else
+					BezierPoint0 = Position0 + (Position1 - Position0)/3.0f;
+				
+				if(AutoSmooth1)
+					BezierPoint1 = Position1 + normalize(ortho(GetCurrentVertices()[i].m_LeftOrtho)) * Length/3.0f;
+				else
+					BezierPoint1 = Position1 - (Position1 - Position0)/3.0f;
+				
+				int NbSegments = Length/32.0f;
+				for(int j=1; j<NbSegments; j++)
+				{
+					float Alpha = static_cast<float>(j)/NbSegments; 
+					vec2 Tmp0 = Position0 + (BezierPoint0 - Position0)*Alpha;
+					vec2 Tmp1 = BezierPoint0 + (BezierPoint1 - BezierPoint0)*Alpha;
+					vec2 Tmp2 = BezierPoint1 + (Position1 - BezierPoint1)*Alpha;
+					vec2 Tmp3 = Tmp0 + (Tmp1 - Tmp0)*Alpha;
+					vec2 Tmp4 = Tmp1 + (Tmp2 - Tmp1)*Alpha;
+					vec2 Point = Tmp3 + (Tmp4 - Tmp3)*Alpha;
+					
+					CVertex& Vertex = GetNextVertices().increment();
+					Vertex.m_Position = Point;
+					Vertex.m_Color = Color0 * (1.0f - Alpha) + Color1 * Alpha;
+					Vertex.m_Weight = Weight0 * (1.0f - Alpha) + Weight1 * Alpha;
+					Vertex.m_Flags = 0x0;
+				}
+			}
+			{
+				CVertex& Vertex = GetNextVertices().increment();
+				Vertex = GetCurrentVertices()[i];
+			}
+		}
+		SwapBuffers();
+	}
+};
+
+void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh)
+{
+	const CAsset_Material* pMaterial = AssetsManager()->GetAsset<CAsset_Material>(MaterialPath);
+	if(pMaterial)
+	{
+		CLineTesselator Tesselator;
+		
+		//Copy map vertices into the vertex buffer;
+		for(int i=0; i<Vertices.size(); i++)
+		{
+			int Flags = 0x0;
+			
+			if(Vertices[i].GetSmoothness() & CAsset_MapLayerObjects::SMOOTHNESS_AUTOMATIC)
+				Flags |= VERTEXFLAG_BEZIER;
+			
+			Tesselator.AddVertex(Vertices[i].GetPosition(), Vertices[i].GetWeight(), Vertices[i].GetColor(), Flags);
+		}
+		if(Closed && Vertices.size() > 0)
+		{
+			int Flags = 0x0;
+			
+			if(Vertices[0].GetSmoothness() & CAsset_MapLayerObjects::SMOOTHNESS_AUTOMATIC)
+				Flags |= VERTEXFLAG_BEZIER;
+			
+			Tesselator.AddVertex(Vertices[0].GetPosition(), Vertices[0].GetWeight(), Vertices[0].GetColor(), Flags);
+		}
+		
+		//Remove this step once Bezier points are stored!!
+		//Compute orthogonal vectors
+		Tesselator.ComputeOrthogonalVertors(Closed);
+		
+		//Apply bezier curves
+		//This is a test: the bezier curve is forced instead of being stored somewhere
+		Tesselator.ComputeBezierCurve();
+		
+		CAsset_Material::CIteratorLayer LayerIter;
+		for(LayerIter = pMaterial->BeginLayer(); LayerIter != pMaterial->EndLayer(); ++LayerIter)
+		{
+			const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pMaterial->GetLayerSpriteArray(*LayerIter);
+			
+			if(!Sprites.size())
+				continue;
+			
+			const CAsset_Material::CSprite& Sprite = Sprites[0];
+			
+			CAssetsRenderer::CSpriteInfo SpriteInfo;
+			AssetsRenderer()->GetSpriteInfo(pMaterial->GetLayerSpritePath(*LayerIter), SpriteInfo);
+			
+			//Cut segments to repeat the texture
+				//First step: compute the total length
+			float TotalLength = 0.0f;
+			for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
+			{
+				vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+				vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+				
+				float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight;
+				float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight;
+				
+				TotalLength += distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
+			}
+			float GlobalWeight = TotalLength/max((int)round(TotalLength), 1);
+			
+				//Second step: cut the path
+			float LengthIter = 0.0;
+			if(Tesselator.GetCurrentVertices().size())
+			{
+				CVertex& Vertex = Tesselator.GetNextVertices().increment();
+				Vertex = Tesselator.GetCurrentVertices()[0];
+				Vertex.m_LeftDist = 0.0f;
+				Vertex.m_RightDist = 0.0f;
+				Vertex.m_Flags = 0x0;
+			}
+			for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
+			{
+				vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+				vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+				
+				float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight * GlobalWeight;
+				float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight * GlobalWeight;
+				
+				vec4 Color0 = Tesselator.GetCurrentVertices()[i-1].m_Color;
+				vec4 Color1 = Tesselator.GetCurrentVertices()[i].m_Color;
+				
+				float Length = distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
+				float NextLengthIter = LengthIter + Length;
+				int NumSegments = ceil(NextLengthIter) - floor(LengthIter);
+				
+				for(int j=0; j<NumSegments; j++)
+				{
+					float Begin = fmod(LengthIter, 1.0);
+					float End = min(NextLengthIter - floor(LengthIter), 1.0);
+					
+					LengthIter += End - Begin;
+					float Alpha = (NextLengthIter - LengthIter)/Length;
+					
+					vec2 Pos = Position0 * Alpha + Position1 * (1.0f - Alpha);
+					
+					Tesselator.GetNextVertices()[Tesselator.GetNextVertices().size()-1].m_RightDist = Begin;
+					
+					CVertex& Vertex = Tesselator.GetNextVertices().increment();
+					Vertex.m_Position = Pos;
+					Vertex.m_Color = Color0 * Alpha + Color1 * (1.0f - Alpha);
+					Vertex.m_Weight = Weight0 * Alpha + Weight1 * (1.0f - Alpha);
+					Vertex.m_LeftDist = 0.0f;
+					Vertex.m_LeftDist = End;
+					Vertex.m_Flags = 0x0;
+				}
+				
+				LengthIter = NextLengthIter;
+			}
+			
+			Tesselator.ComputeOrthogonalVertors(Closed, 1);
+			
+			if(Closed && Tesselator.GetNextVertices().size())
+				Tesselator.GetNextVertices().increment() = Tesselator.GetNextVertices()[0];
+			
+			//Draw quads
+			int VerticalTesselation = 4;
+			AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
+			Graphics()->QuadsBegin();
+			for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+			{
+				vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
+				vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
+				vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
+				vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
+				vec4 Color0 = Tesselator.GetNextVertices()[i-1].m_Color;
+				vec4 Color1 = Tesselator.GetNextVertices()[i].m_Color;
+					
+				vec2 P00 = MapPosToScreenPos(Position0 + Ortho0);
+				vec2 P01 = MapPosToScreenPos(Position1 + Ortho1);
+				vec2 P10 = MapPosToScreenPos(Position0);
+				vec2 P11 = MapPosToScreenPos(Position1);
+				vec2 P20 = MapPosToScreenPos(Position0 - Ortho0);
+				vec2 P21 = MapPosToScreenPos(Position1 - Ortho1);
+				
+				float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
+				
+				Graphics()->SetColor4(Color0, Color1, Color0, Color1, true);
+				
+				for(int j=0; j<VerticalTesselation; j++)
+				{
+					float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
+					float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
+					float VMin = static_cast<float>(j)/VerticalTesselation;
+					float VMax = static_cast<float>(j+1)/VerticalTesselation;
+					
+					vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
+					vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
+					vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
+					vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+					
+					Graphics()->QuadsSetSubsetFree(
+						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMin,
+						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMin,
+						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMax,
+						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMax
+					);
+					CGraphics::CFreeformItem Freeform(P00, P01, P10, P11);
+					Graphics()->QuadsDrawFreeform(&Freeform, 1);
+				}
+			}
+			Graphics()->QuadsEnd();
+			
+			//Draw mesh
+			if(DrawMesh)
+			{
+				Graphics()->TextureClear();
+				Graphics()->LinesBegin();
+				Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.25f), true);
+				for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+				{
+					vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
+					vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
+					vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
+					vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
+					
+					for(int j=0; j<VerticalTesselation; j++)
+					{
+						float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
+						float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
+						
+						vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
+						vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
+						vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
+						vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+						
+						CGraphics::CLineItem aLines[] = {
+							CGraphics::CLineItem(P00.x, P00.y, P01.x, P01.y),
+							CGraphics::CLineItem(P10.x, P10.y, P11.x, P11.y),
+							CGraphics::CLineItem(P00.x, P00.y, P10.x, P10.y),
+							CGraphics::CLineItem(P01.x, P01.y, P11.x, P11.y),
+							CGraphics::CLineItem(P00.x, P00.y, P11.x, P11.y),
+						};
+						Graphics()->LinesDraw(aLines, sizeof(aLines)/sizeof(CGraphics::CLineItem));
+					}
+				}
+				Graphics()->LinesEnd();
+			}
+		}
+	}
+	else
+	{
+		Graphics()->TextureClear();
+		Graphics()->LinesBegin();
+		
+		for(int i=1; i<Vertices.size(); i++)
+		{
+			vec2 Position0 = MapPosToScreenPos(Vertices[i-1].GetPosition());			
+			vec2 Position1 = MapPosToScreenPos(Vertices[i].GetPosition());			
+			
+			CGraphics::CLineItem Line(Position0.x, Position0.y, Position1.x, Position1.y);
+			Graphics()->LinesDraw(&Line, 1);
+		}
+		
+		Graphics()->LinesEnd();
+	}
+}
+
+void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
+{
+	const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(LayerPath);
+	if(!pLayer)
+		return;
+	
+	CAsset_MapLayerObjects::CIteratorObject Iter;
+	for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
+	{
+		const CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(*Iter);
+		RenderLine(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
+	}
+}
+
+void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 {
 	const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(GroupPath);
 	if(!pGroup)
@@ -742,13 +1134,24 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color)
 			
 			RenderQuads(pLayer->GetQuadPtr(), pLayer->GetQuadArraySize(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), Color);
 		}
+		else if(LayerPath.GetType() == CAsset_MapLayerObjects::TypeId)
+		{
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(LayerPath);
+			if(!pLayer)
+				continue;
+			
+			if(!pLayer->GetVisibility())
+				continue;
+			
+			RenderObjects(LayerPath, vec2(0.0f, 0.0f), DrawMesh);
+		}
 	}
 	
 	if(pGroup->GetClipping())
 		Graphics()->ClipPop();
 }
 
-void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color)
+void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh)
 {
 	const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
 	if(!pMap)
@@ -758,14 +1161,14 @@ void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color)
 		CAsset_Map::CIteratorBgGroup Iter;
 		for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
 		{
-			RenderGroup(pMap->GetBgGroup(*Iter), Color);
+			RenderGroup(pMap->GetBgGroup(*Iter), Color, DrawMesh);
 		}
 	}
 	{
 		CAsset_Map::CIteratorFgGroup Iter;
 		for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
 		{
-			RenderGroup(pMap->GetFgGroup(*Iter), Color);
+			RenderGroup(pMap->GetFgGroup(*Iter), Color, DrawMesh);
 		}
 	}
 		

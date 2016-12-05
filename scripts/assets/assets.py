@@ -34,64 +34,83 @@ class GetSetInterface:
 		self.noset = 0
 		
 class GetSetInterface_Simple(GetSetInterface):
-	def __init__(self, suffix, returnType, getSetType, paramType):
+	def __init__(self, suffix, returnType, getSetType, paramType, defaultValue):
 		GetSetInterface.__init__(self, suffix)
 		self.getSetType = getSetType
 		self.returnType = returnType
 		self.paramType = paramType
+		self.defaultValue = defaultValue
 	def generateSet(self, var, value):
 		return [var + " = " + value + ";"]
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		return ["return " + var + ";"]
 		
-class GetSetInterface_SimpleRef(GetSetInterface_Simple):
+class GetSetInterface_SimpleRef(GetSetInterface):
 	def __init__(self, suffix, returnType, paramType):
-		GetSetInterface_Simple.__init__(self, suffix, returnType, returnType, paramType)
+		GetSetInterface.__init__(self, suffix)
+		self.getSetType = returnType
+		self.returnType = returnType
+		self.paramType = paramType
 		self.getbyref = 1
 		self.noset = 1
+		self.defaultValue = ""
+	def generateSet(self, var, value):
+		return [var + " = " + value + ";"]
+	def generateGet(self, var, defaultValue):
+		return ["return " + var + ";"]
 		
-class GetSetInterface_SimpleGet(GetSetInterface_Simple):
+class GetSetInterface_SimpleGet(GetSetInterface):
 	def __init__(self, suffix, returnType, paramType):
-		GetSetInterface_Simple.__init__(self, suffix, returnType, returnType, paramType)
+		GetSetInterface.__init__(self, suffix)
+		self.getSetType = returnType
+		self.returnType = returnType
+		self.paramType = paramType
 		self.noset = 1
+	def generateSet(self, var, value):
+		return [var + " = " + value + ";"]
+	def generateGet(self, var, defaultValue):
+		return ["return " + var + ";"]
 
 class GetSetInterface_Struct(GetSetInterface):
-	def __init__(self, suffix, returnType, paramType, getMem, setMem):
+	def __init__(self, suffix, returnType, paramType, getMem, setMem, defaultValue):
 		GetSetInterface.__init__(self, suffix)
 		self.getSetType = returnType
 		self.returnType = returnType
 		self.paramType = paramType
 		self.getMem = getMem
 		self.setMem = setMem
+		self.defaultValue = defaultValue
 	def generateSet(self, var, value):
 		return [ var + "." + self.setMem + " = " + value + ";" ]
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "." + self.getMem + ";" ]
 
 class GetSetInterface_Func(GetSetInterface):
-	def __init__(self, suffix, returnType, paramType, getFunc, setFunc):
+	def __init__(self, suffix, returnType, paramType, getFunc, setFunc, defaultValue):
 		GetSetInterface.__init__(self, suffix)
 		self.getSetType = returnType
 		self.returnType = returnType
 		self.paramType = paramType
 		self.setFunc = setFunc
 		self.getFunc = getFunc
+		self.defaultValue = defaultValue
 	def generateSet(self, var, value):
 		return [ var + "." + self.setFunc + "(" + value + ");" ]
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "." + self.getFunc + "();" ]
 
 class GetSetInterface_GetFunc(GetSetInterface):
-	def __init__(self, suffix, returnType, getFunc):
+	def __init__(self, suffix, returnType, getFunc, defaultValue):
 		GetSetInterface.__init__(self, suffix)
 		self.getSetType = returnType
 		self.returnType = returnType
 		self.paramType = returnType
 		self.getFunc = getFunc
+		self.defaultValue = defaultValue
 		self.noset = 1
 	def generateSet(self, var, value):
 		return []
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "." + self.getFunc + "();" ]
 
 class Type:
@@ -101,8 +120,6 @@ class Type:
 		return self.tname
 	def headers(self):
 		return []
-	def getSetInterfaces(self):
-		return [GetSetInterface_Simple("", self.tname, self.tname, self.tname)]
 	def addInterfaces(self):
 		return []
 	def allocator(self):
@@ -146,6 +163,8 @@ class TypeUInt8(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt8(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt8(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, "int", self.tname, "0") ]
 
 class TypeUInt16(Type):
 	def __init__(self):
@@ -158,6 +177,8 @@ class TypeUInt16(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt16(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt16(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, "int", self.tname, "0") ]
 
 class TypeUInt32(Type):
 	def __init__(self):
@@ -170,6 +191,8 @@ class TypeUInt32(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt32(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt32(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, "uint32", self.tname, self.tname, "0") ]
 
 class TypeInt32(Type):
 	def __init__(self):
@@ -180,6 +203,8 @@ class TypeInt32(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteInt32(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadInt32(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0") ]
 
 class TypeBool(Type):
 	def __init__(self):
@@ -190,6 +215,8 @@ class TypeBool(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteBool(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadBool(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "false") ]
 
 class TypeFloat(Type):
 	def __init__(self):
@@ -200,6 +227,8 @@ class TypeFloat(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteFloat(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadFloat(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0.0f") ]
 
 class TypeVec2(Type):
 	def __init__(self):
@@ -208,9 +237,9 @@ class TypeVec2(Type):
 		return ["shared/math/vector.h"]
 	def getSetInterfaces(self):
 		return [
-			GetSetInterface_Simple("", self.tname, self.tname, self.tname),
-			GetSetInterface_Struct("X", "float", "float", "x", "x"),
-			GetSetInterface_Struct("Y", "float", "float", "y", "y")
+			GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0.0f"),
+			GetSetInterface_Struct("X", "float", "float", "x", "x", "0.0f"),
+			GetSetInterface_Struct("Y", "float", "float", "y", "y", "0.0f")
 		]
 	def tuaType(self):
 		return "CTuaVec2"
@@ -236,6 +265,8 @@ class TypeColor(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteColor(" + varSys + ");"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadColor(" + varTua + ");"]
+	def getSetInterfaces(self):
+		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "1.0f") ]
 
 class TypeAssetPath(Type):
 	def __init__(self):
@@ -243,9 +274,7 @@ class TypeAssetPath(Type):
 	def headers(self):
 		return ["shared/assets/assetpath.h"]
 	def getSetInterfaces(self):
-		return [
-			GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&")
-		]
+		return [ GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&", "CAssetPath::Null()") ]
 	def tuaType(self):
 		return "CAssetPath::CTuaType"
 	def generateWrite(self, varSys, varTua):
@@ -261,9 +290,7 @@ class TypeSubPath(Type):
 	def headers(self):
 		return ["shared/assets/assetpath.h"]
 	def getSetInterfaces(self):
-		return [
-			GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&")
-		]
+		return [ GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&", "CSubPath::Null()") ]
 	def tuaType(self):
 		return "CSubPath::CTuaType"
 	def generateWrite(self, varSys, varTua):
@@ -281,7 +308,7 @@ class TypeString(Type):
 		return "copy"
 	def getSetInterfaces(self):
 		return [
-			GetSetInterface_Func("", "const char*", "const char*", "buffer", "copy")
+			GetSetInterface_Func("", "const char*", "const char*", "buffer", "copy", "NULL")
 		]
 	def tuaType(self):
 		return "tua_stringid"
@@ -299,27 +326,43 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 		self.getSetType = interface.getSetType
 		self.returnType = interface.returnType
 		self.paramType = interface.paramType
+		self.defaultValue = interface.defaultValue
 		self.depth = interface.depth + 1
 		self.enum = interface.enum
 		self.name = interface.name
 		self.getbyref = interface.getbyref
 		self.noset = interface.noset
 	def generateSet(self, var, value):
+		res = []
 		if self.interface.name:
+			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
 			if self.interface.subpath > 0:
-				return [ var + "[SubPath.GetId()].Set" + self.interface.name + "(SubPath.PopId(), " + value + ");" ]
+				res.append("	" + var + "[SubPath.GetId()].Set" + self.interface.name + "(SubPath.PopId(), " + value + ");")
 			else:
-				return [ var + "[SubPath.GetId()].Set" + self.interface.name + "(" + value + ");" ]
+				res.append("	" + var + "[SubPath.GetId()].Set" + self.interface.name + "(" + value + ");")
 		else:
-			return self.t.generateCopy(var + "[SubPath.GetId()]", value)
-	def generateGet(self, var, value):
+			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
+			res.append("{")
+			for l in self.t.generateCopy(var + "[SubPath.GetId()]", value):
+				res.append("	" + l)
+			res.append("}")
+		return res
+	def generateGet(self, var, defaultValue):
+		res = []
 		if self.interface.name:
+			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
 			if self.interface.subpath > 0:
-				return [ "return " + var + "[SubPath.GetId()].Get" + self.interface.name + "(SubPath.PopId());" ]
+				res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "(SubPath.PopId());")
 			else:
-				return [ "return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();" ]
+				res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
+			if defaultValue:
+				res.append("else return " + defaultValue + ";")
 		else:
-			return [ "return " + var + "[SubPath.GetId()];" ]
+			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
+			res.append("	return " + var + "[SubPath.GetId()];")
+			res.append("else")
+			res.append("	dbg_msg(\"Asset\", \"Try to access to an inexistant subitem\");")
+		return res
 			
 class AddInterface_Array(GetSetInterface):
 	def __init__(self):
@@ -364,8 +407,8 @@ class TypeArray(Type):
 		return "copy"
 	def getSetInterfaces(self):
 		res = [
-			GetSetInterface_Func("ArraySize", "int", "int", "size", "resize"),
-			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr"),
+			GetSetInterface_Func("ArraySize", "int", "int", "size", "resize", "0"),
+			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr", "NULL"),
 			GetSetInterface_SimpleRef("Array", self.tname, self.tname)
 		]
 		for inter in self.t.getSetInterfaces():
@@ -471,6 +514,7 @@ class GetSetInterface_Array2dChild(GetSetInterface):
 		self.getSetType = interface.getSetType
 		self.returnType = interface.returnType
 		self.paramType = interface.paramType
+		self.defaultValue = interface.defaultValue
 		self.depth = interface.depth + 1
 		self.enum = interface.enum
 		self.name = interface.name
@@ -484,7 +528,7 @@ class GetSetInterface_Array2dChild(GetSetInterface):
 				return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Set" + self.interface.name + "(" + value + ");" ]
 		else:
 			return [ var + ".set_clamp(SubPath.GetId(), SubPath.GetId2(), " + value + ");" ]
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		if self.interface.name:
 			if self.interface.subpath > 0:
 				return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Get" + self.interface.name + "(SubPath.DoublePopId());" ]
@@ -508,7 +552,7 @@ class AddInterface_Array2dChild(GetSetInterface):
 		
 class GetSetInterface_Array2dDim(GetSetInterface_Func):
 	def __init__(self, suffix, returnType, paramType, getFunc, setFunc):
-		GetSetInterface_Func.__init__(self, suffix, returnType, paramType, getFunc, setFunc)
+		GetSetInterface_Func.__init__(self, suffix, returnType, paramType, getFunc, setFunc, "0")
 	def generateSet(self, var, value):
 		return [ var + "." + self.setFunc + "(max(" + value + ", 1));" ]
 		
@@ -526,7 +570,7 @@ class TypeArray2d(Type):
 		res = [
 			GetSetInterface_Array2dDim("Width", "int", "int", "get_width", "resize_width"),
 			GetSetInterface_Array2dDim("Height", "int", "int", "get_height", "resize_height"),
-			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr"),
+			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr", "NULL"),
 			GetSetInterface_SimpleRef("Array", self.tname, self.tname)
 		]
 		for inter in self.t.getSetInterfaces():
@@ -601,6 +645,7 @@ class GetSetInterface_Member(GetSetInterface):
 		self.getSetType = interface.getSetType
 		self.returnType = interface.returnType
 		self.paramType = interface.paramType
+		self.defaultValue = interface.defaultValue
 		self.depth = interface.depth
 		self.subpath = interface.subpath
 		self.noset = interface.noset
@@ -678,29 +723,29 @@ class Member:
 				params = "const CSubPath& SubPath"
 				
 			if i.getbyref:
-				if len(i.generateGet(self.memberName(), "Value")) > 1:
+				if len(i.generateGet(self.memberName(), i.defaultValue)) > 1:
 					res.append("inline const "+i.returnType+"& Get"+self.name+i.name+"("+params+") const")
 					res.append("{")
-					for l in i.generateGet(self.memberName(), "Value"):
+					for l in i.generateGet(self.memberName(), i.defaultValue):
 						res.append("	"+l)
 					res.append("}")
 					res.append("inline "+i.returnType+"& Get"+self.name+i.name+"("+params+")")
 					res.append("{")
-					for l in i.generateGet(self.memberName(), "Value"):
+					for l in i.generateGet(self.memberName(), i.defaultValue):
 						res.append("	"+l)
 					res.append("}")
 				else:
-					res.append("inline const "+i.returnType+"& Get"+self.name+i.name+"("+params+") const { "+i.generateGet(self.memberName(), "Value")[0]+" }")
-					res.append("inline "+i.returnType+"& Get"+self.name+i.name+"("+params+") { "+i.generateGet(self.memberName(), "Value")[0]+" }")
+					res.append("inline const "+i.returnType+"& Get"+self.name+i.name+"("+params+") const { "+i.generateGet(self.memberName(), i.defaultValue)[0]+" }")
+					res.append("inline "+i.returnType+"& Get"+self.name+i.name+"("+params+") { "+i.generateGet(self.memberName(), i.defaultValue)[0]+" }")
 			else:
-				if len(i.generateGet(self.memberName(), "Value")) > 1:
+				if len(i.generateGet(self.memberName(), i.defaultValue)) > 1:
 					res.append("inline "+i.returnType+" Get"+self.name+i.name+"("+params+") const")
 					res.append("{")
-					for l in i.generateGet(self.memberName(), "Value"):
+					for l in i.generateGet(self.memberName(), i.defaultValue):
 						res.append("	"+l)
 					res.append("}")
 				else:
-					res.append("inline "+i.returnType+" Get"+self.name+i.name+"("+params+") const { "+i.generateGet(self.memberName(), "Value")[0]+" }")	
+					res.append("inline "+i.returnType+" Get"+self.name+i.name+"("+params+") const { "+i.generateGet(self.memberName(), i.defaultValue)[0]+" }")	
 			
 			res.append("")
 		return res
@@ -801,11 +846,12 @@ class GetSetInterface_Class(GetSetInterface):
 		self.getSetType = "const "+t.fullType()+"&"
 		self.returnType = "const "+t.fullType()+"&"
 		self.paramType = "const "+t.fullType()+"&"
+		self.defaultValue = ""
 		self.subpath = 1
 		self.t = t
 	def generateSet(self, var, value):
 		return self.t.generateCopy(var + "[SubPath.GetId()]", value)
-	def generateGet(self, var, value):
+	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "[SubPath.GetId()];" ]
 
 class Class(Type):
@@ -821,6 +867,7 @@ class Class(Type):
 		self.inheritance = None
 		self.parent = None
 		self.externalheaders = []
+		
 	def fullType(self):
 		tname = self.tname
 		p = self.parent
@@ -828,7 +875,6 @@ class Class(Type):
 			tname = p.tname + "::" + tname
 			p = p.parent
 		return tname
-	
 	def addHeader(self, h):
 		self.externalheaders.append(h)
 	def headers(self):
@@ -2039,6 +2085,65 @@ weapon.addMember("SkinPath", TypeAssetPath())
 weapon.addMember("AttackAnimationPath", TypeAssetPath())
 
 assetsList.append(weapon)
+
+# MAP LAYER OBJECTS ####################################################
+mapLayerObjects_vertex = Class("Vertex")
+mapLayerObjects_vertex.addMember("Position", TypeVec2(), "0.0f")
+mapLayerObjects_vertex.addMember("Weight", TypeFloat(), "1.0f")
+mapLayerObjects_vertex.addMember("Color", TypeColor(), "1.0f")
+mapLayerObjects_vertex.addMember("Smoothness", TypeInt32(), "SMOOTHNESS_AUTOMATIC")
+
+mapLayerObjects_object = Class("Object")
+mapLayerObjects_object.addMember("Position", TypeVec2(), "0.0f")
+mapLayerObjects_object.addMember("Size", TypeVec2(), "1.0f")
+mapLayerObjects_object.addMember("Angle", TypeFloat(), "0.0f")
+mapLayerObjects_object.addMember("StylePath", TypeAssetPath())
+mapLayerObjects_object.addMember("Vertex", TypeArray(mapLayerObjects_vertex))
+mapLayerObjects_object.addMember("ClosedPath", TypeBool(), "false")
+
+mapLayerObjects = ClassAsset("MapLayerObjects", len(assetsList))
+mapLayerObjects.setInheritance(mainAsset)
+mapLayerObjects.addClass(mapLayerObjects_vertex)
+mapLayerObjects.addClass(mapLayerObjects_object)
+mapLayerObjects.addMember("ParentPath", TypeAssetPath())
+mapLayerObjects.addMember("Object", TypeArray(mapLayerObjects_object))
+mapLayerObjects.addMember("Visibility", TypeBool(), "true")
+mapLayerObjects.addPublicLines([
+	"enum",
+	"{",
+	"	SMOOTHNESS_NONE = 0,",
+	"	SMOOTHNESS_AUTOMATIC,",
+	"};",
+	""
+])
+
+assetsList.append(mapLayerObjects)
+
+# LINE STYLE ###########################################################
+material_sprite = Class("Sprite")
+material_sprite.addMember("Path", TypeAssetPath())
+material_sprite.addMember("Size", TypeVec2(), "1.0f")
+material_sprite.addMember("Color", TypeColor(), "1.0f")
+
+material_layer = Class("Layer")
+material_layer.addMember("Sprite", TypeArray(material_sprite))
+
+material = ClassAsset("Material", len(assetsList))
+material.setInheritance(mainAsset)
+material.addClass(material_sprite)
+material.addClass(material_layer)
+material.addMember("Layer", TypeArray(material_layer))
+
+assetsList.append(material)
+
+# GUI TABS STYLE #######################################################
+guiComboBoxStyle = ClassAsset("GuiComboBoxStyle", len(assetsList))
+guiComboBoxStyle.setInheritance(mainAsset)
+guiComboBoxStyle.addMember("ButtonPath", TypeAssetPath())
+guiComboBoxStyle.addMember("PopupPath", TypeAssetPath())
+guiComboBoxStyle.addMember("EnumPath", TypeAssetPath())
+
+assetsList.append(guiComboBoxStyle)
 
 #########################################
 

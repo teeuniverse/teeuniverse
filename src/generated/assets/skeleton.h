@@ -314,29 +314,90 @@ public:
 	inline const array< CAsset_Skeleton::CBone, allocator_copy<CAsset_Skeleton::CBone> >& GetBoneArray() const { return m_Bone; }
 	inline array< CAsset_Skeleton::CBone, allocator_copy<CAsset_Skeleton::CBone> >& GetBoneArray() { return m_Bone; }
 	
-	inline const CAsset_Skeleton::CBone& GetBone(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()]; }
+	inline const CAsset_Skeleton::CBone& GetBone(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
-	inline float GetBoneLength(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetLength(); }
+	inline float GetBoneLength(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetLength();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneAnchor(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetAnchor(); }
+	inline float GetBoneAnchor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetAnchor();
+		else return 0.0f;
+	}
 	
-	inline vec2 GetBoneTranslation(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetTranslation(); }
+	inline vec2 GetBoneTranslation(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetTranslation();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneTranslationX(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetTranslationX(); }
+	inline float GetBoneTranslationX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetTranslationX();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneTranslationY(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetTranslationY(); }
+	inline float GetBoneTranslationY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetTranslationY();
+		else return 0.0f;
+	}
 	
-	inline vec2 GetBoneScale(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetScale(); }
+	inline vec2 GetBoneScale(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetScale();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneScaleX(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetScaleX(); }
+	inline float GetBoneScaleX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetScaleX();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneScaleY(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetScaleY(); }
+	inline float GetBoneScaleY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetScaleY();
+		else return 0.0f;
+	}
 	
-	inline float GetBoneAngle(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetAngle(); }
+	inline float GetBoneAngle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetAngle();
+		else return 0.0f;
+	}
 	
-	inline const char* GetBoneName(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetName(); }
+	inline const char* GetBoneName(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetName();
+		else return NULL;
+	}
 	
-	inline vec4 GetBoneColor(const CSubPath& SubPath) const { return m_Bone[SubPath.GetId()].GetColor(); }
+	inline vec4 GetBoneColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetColor();
+		else return 1.0f;
+	}
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
@@ -345,9 +406,20 @@ public:
 	inline const array< CAsset_Skeleton::CLayer, allocator_copy<CAsset_Skeleton::CLayer> >& GetLayerArray() const { return m_Layer; }
 	inline array< CAsset_Skeleton::CLayer, allocator_copy<CAsset_Skeleton::CLayer> >& GetLayerArray() { return m_Layer; }
 	
-	inline const CAsset_Skeleton::CLayer& GetLayer(const CSubPath& SubPath) const { return m_Layer[SubPath.GetId()]; }
+	inline const CAsset_Skeleton::CLayer& GetLayer(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
-	inline const char* GetLayerName(const CSubPath& SubPath) const { return m_Layer[SubPath.GetId()].GetName(); }
+	inline const char* GetLayerName(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetName();
+		else return NULL;
+	}
 	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
@@ -355,35 +427,95 @@ public:
 	
 	inline void SetBoneArraySize(int Value) { m_Bone.resize(Value); }
 	
-	inline void SetBone(const CSubPath& SubPath, const CAsset_Skeleton::CBone& Value) { m_Bone[SubPath.GetId()].copy(Value); }
+	inline void SetBone(const CSubPath& SubPath, const CAsset_Skeleton::CBone& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+		{
+			m_Bone[SubPath.GetId()].copy(Value);
+		}
+	}
 	
-	inline void SetBoneLength(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetLength(Value); }
+	inline void SetBoneLength(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetLength(Value);
+	}
 	
-	inline void SetBoneAnchor(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetAnchor(Value); }
+	inline void SetBoneAnchor(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetAnchor(Value);
+	}
 	
-	inline void SetBoneTranslation(const CSubPath& SubPath, vec2 Value) { m_Bone[SubPath.GetId()].SetTranslation(Value); }
+	inline void SetBoneTranslation(const CSubPath& SubPath, vec2 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetTranslation(Value);
+	}
 	
-	inline void SetBoneTranslationX(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetTranslationX(Value); }
+	inline void SetBoneTranslationX(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetTranslationX(Value);
+	}
 	
-	inline void SetBoneTranslationY(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetTranslationY(Value); }
+	inline void SetBoneTranslationY(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetTranslationY(Value);
+	}
 	
-	inline void SetBoneScale(const CSubPath& SubPath, vec2 Value) { m_Bone[SubPath.GetId()].SetScale(Value); }
+	inline void SetBoneScale(const CSubPath& SubPath, vec2 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetScale(Value);
+	}
 	
-	inline void SetBoneScaleX(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetScaleX(Value); }
+	inline void SetBoneScaleX(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetScaleX(Value);
+	}
 	
-	inline void SetBoneScaleY(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetScaleY(Value); }
+	inline void SetBoneScaleY(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetScaleY(Value);
+	}
 	
-	inline void SetBoneAngle(const CSubPath& SubPath, float Value) { m_Bone[SubPath.GetId()].SetAngle(Value); }
+	inline void SetBoneAngle(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetAngle(Value);
+	}
 	
-	inline void SetBoneName(const CSubPath& SubPath, const char* Value) { m_Bone[SubPath.GetId()].SetName(Value); }
+	inline void SetBoneName(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetName(Value);
+	}
 	
-	inline void SetBoneColor(const CSubPath& SubPath, vec4 Value) { m_Bone[SubPath.GetId()].SetColor(Value); }
+	inline void SetBoneColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetColor(Value);
+	}
 	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
-	inline void SetLayer(const CSubPath& SubPath, const CAsset_Skeleton::CLayer& Value) { m_Layer[SubPath.GetId()].copy(Value); }
+	inline void SetLayer(const CSubPath& SubPath, const CAsset_Skeleton::CLayer& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		{
+			m_Layer[SubPath.GetId()].copy(Value);
+		}
+	}
 	
-	inline void SetLayerName(const CSubPath& SubPath, const char* Value) { m_Layer[SubPath.GetId()].SetName(Value); }
+	inline void SetLayerName(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetName(Value);
+	}
 	
 	inline int AddBone()
 	{

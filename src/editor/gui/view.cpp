@@ -189,6 +189,7 @@ void CViewManager::Update(bool ParentEnabled)
 			break;
 		case CAsset_Map::TypeId:
 		case CAsset_MapGroup::TypeId:
+		case CAsset_MapLayerObjects::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:

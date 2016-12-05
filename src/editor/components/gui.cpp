@@ -190,42 +190,42 @@ PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int 
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 	Add(pLayout);
 	
-	pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Package Properties")), false);
+	pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Package Properties")), false);
 	pLayout->Add(new gui::CFiller(Context()), true);
 	
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _GUI("Name")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Name")), true);
 		pHList->Add(new CPackageNameEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _GUI("Version")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Version")), true);
 		pHList->Add(new CPackageVersionEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _GUI("Author")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Author")), true);
 		pHList->Add(new CPackageAuthorEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _GUI("Credits")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Credits")), true);
 		pHList->Add(new CPackageCreditsEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _GUI("License")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("License")), true);
 		pHList->Add(new CPackageLicenseEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	
@@ -249,7 +249,7 @@ CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& 
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 	Add(pLayout);
 	
-	pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Error")), false);
+	pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Error")), false);
 	
 	gui::CLabel* pMessage = new gui::CLabel(Context(), LString);
 	pMessage->SetLabelStyle(m_pAssetsEditor->m_Path_Label_DialogMessage);
@@ -372,7 +372,7 @@ protected:
 		
 	public:
 		COpen(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _GUI("Open")),
+			gui::CButton(pPopup->Context(), _LSTRING("Open")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -405,7 +405,7 @@ protected:
 		
 	public:
 		CSave(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _GUI("Save")),
+			gui::CButton(pPopup->Context(), _LSTRING("Save")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -425,7 +425,7 @@ protected:
 		
 	public:
 		CCancel(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _GUI("Cancel")),
+			gui::CButton(pPopup->Context(), _LSTRING("Cancel")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
@@ -458,33 +458,33 @@ public:
 		{
 			case FORMAT_IMAGE:
 				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export Image")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export Image")), false);
 				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import Image")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import Image")), false);
 				break;
 			case FORMAT_MAP_TW:
 				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export TeeWorlds Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export TeeWorlds Map")), false);
 				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import TeeWorlds Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import TeeWorlds Map")), false);
 				break;
 			case FORMAT_MAP_INFCLASS:
 				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export InfClass Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export InfClass Map")), false);
 				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import InfClass Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import InfClass Map")), false);
 				break;
 			case FORMAT_MAP_OPENFNG:
 				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Export OpenFNG Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export OpenFNG Map")), false);
 				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Import OpenFNG Map")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import OpenFNG Map")), false);
 				break;
 			default:
 				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Save Package")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Save Package")), false);
 				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _GUI("Open Package")), false);
+					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Open Package")), false);
 				break;
 		}
 		
@@ -492,7 +492,7 @@ public:
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pLayout->Add(pHList, false);
 			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _GUI("Directory"));
+			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory"));
 			pLabel->NoTextClipping();
 			pHList->Add(pLabel, false);
 			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
@@ -511,20 +511,20 @@ public:
 			{
 				Buffer.clear();
 				Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
-				pPlaces->Add(new CItem_Directory(this, _GUI("My packages"), Buffer.buffer()), false);			
+				pPlaces->Add(new CItem_Directory(this, _LSTRING("My packages"), Buffer.buffer()), false);			
 			}
 			pPlaces->AddSeparator();
 			{
 				Buffer.clear();
 				fs_storage_path("teeworlds", Buffer);
 				Buffer.append("/maps");
-				pPlaces->Add(new CItem_Directory(this, _GUI("TeeWorlds Maps"), Buffer.buffer()), false);
+				pPlaces->Add(new CItem_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer()), false);
 			}
 			{
 				Buffer.clear();
 				fs_storage_path("teeworlds", Buffer);
 				Buffer.append("/downloadedmaps");
-				pPlaces->Add(new CItem_Directory(this, _GUI("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
+				pPlaces->Add(new CItem_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
 			}
 			pPlaces->AddSeparator();
 			for(int i=0; i<Storage()->GetNumPaths(); i++)
@@ -549,7 +549,7 @@ public:
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pLayout->Add(pHList, false);
 			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _GUI("Filename"));
+			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Filename"));
 			pLabel->NoTextClipping();
 			pHList->Add(pLabel, false);
 			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Filename), true);
@@ -694,7 +694,7 @@ public:
 			{
 				Buffer.clear();
 				Buffer.append_at_num(0, m_Directory.buffer(), i+1);
-				m_pFilelist->Add(new CItem_Directory(this, _GUI("Parent Directory"), Buffer.buffer()), false);
+				m_pFilelist->Add(new CItem_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer()), false);
 			}
 		}
 		for(int i=0; i<Directories.size(); i++)
@@ -748,7 +748,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW))
 				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
 				}
 				break;
 			}
@@ -760,7 +760,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_INFCLASS))
 				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
 				}
 				break;
 			}
@@ -772,7 +772,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_OPENFNG))
 				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be saved")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
 				}
 				break;
 			}
@@ -780,7 +780,7 @@ public:
 			{
 				if(!AssetsManager()->Save_AssetsFile(m_Filename.buffer(), CStorage::TYPE_SAVE, m_pAssetsEditor->GetEditedPackageId()))
 				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The package can't be saved")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
 				}
 				break;
 			}
@@ -813,7 +813,7 @@ public:
 					-1, -1
 				);
 				if(ImagePath.IsNull())
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The image can't be loaded")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The image can't be loaded")));
 				else
 				{
 					m_pAssetsEditor->SetEditedAsset(ImagePath, CSubPath::Null());
@@ -830,7 +830,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_TW);
 				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
 				else
 				{
 					m_pAssetsEditor->SetEditedPackage(PackageId);
@@ -852,7 +852,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_INFCLASS);
 				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
 				else
 				{
 					m_pAssetsEditor->SetEditedPackage(PackageId);
@@ -874,7 +874,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".map");
 				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_OPENFNG);
 				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The map can't be imported")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
 				else
 				{
 					m_pAssetsEditor->SetEditedPackage(PackageId);
@@ -896,7 +896,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, ".tup");
 				int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
 				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _GUI("The package can't be loaded")));
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded")));
 				else
 				{
 					m_pAssetsEditor->SetEditedPackage(PackageId);
@@ -983,7 +983,7 @@ protected:
 
 public:
 	CNewPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("New Package")),
+		gui::CButton(pAssetsEditor, _LSTRING("New Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1007,7 +1007,7 @@ protected:
 
 public:
 	COpenPackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("Open Package")),
+		gui::CButton(pAssetsEditor, _LSTRING("Open Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1040,16 +1040,16 @@ public:
 		switch(m_Format)
 		{
 			case COpenSavePackageDialog::FORMAT_IMAGE:
-				SetText(_GUI("Import Image"));
+				SetText(_LSTRING("Import Image"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
-				SetText(_GUI("Import TeeWorlds Map"));
+				SetText(_LSTRING("Import TeeWorlds Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
-				SetText(_GUI("Import InfClass Map"));
+				SetText(_LSTRING("Import InfClass Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText(_GUI("Import OpenFNG Map"));
+				SetText(_LSTRING("Import OpenFNG Map"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -1094,13 +1094,13 @@ public:
 		switch(m_Format)
 		{
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
-				SetText(_GUI("Export TeeWorlds Map"));
+				SetText(_LSTRING("Export TeeWorlds Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
-				SetText(_GUI("Export InfClass Map"));
+				SetText(_LSTRING("Export InfClass Map"));
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText(_GUI("Export OpenFNG Map"));
+				SetText(_LSTRING("Export OpenFNG Map"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -1123,7 +1123,7 @@ protected:
 
 public:
 	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("Save Package")),
+		gui::CButton(pAssetsEditor, _LSTRING("Save Package")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1147,7 +1147,7 @@ protected:
 
 public:
 	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("Save Package As...")),
+		gui::CButton(pAssetsEditor, _LSTRING("Save Package As...")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1171,7 +1171,7 @@ protected:
 
 public:
 	CQuitButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("Quit")),
+		gui::CButton(pAssetsEditor, _LSTRING("Quit")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1196,7 +1196,7 @@ protected:
 
 public:
 	CUndoButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _GUI("Undo")),
+		gui::CButton(pAssetsEditor, _LSTRING("Undo")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1306,6 +1306,15 @@ protected:
 				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);
 				break;
 			}
+			case CAsset_Material::TypeId:
+			{
+				int Tokken = AssetsManager()->GenerateToken();
+				CAsset_Material* pMaterial = AssetsManager()->NewAsset<CAsset_Material>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				if(!pMaterial)
+					break;
+				AssetsManager()->TryChangeAssetName(AssetPath, "material", Tokken);
+				break;
+			}
 		}
 		
 		m_pAssetsEditor->SetEditedAsset(AssetPath, CSubPath::Null());
@@ -1328,6 +1337,9 @@ public:
 		{
 			case CAsset_Map::TypeId:
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconMap);
+				break;
+			case CAsset_Material::TypeId:
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLineStyle);
 				break;
 		}
 	}
@@ -1366,7 +1378,7 @@ protected:
 	
 public:
 	CToggleFullscreen(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CToggle(pAssetsEditor, _GUI("Fullscreen")),
+		gui::CToggle(pAssetsEditor, _LSTRING("Fullscreen")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1403,7 +1415,7 @@ protected:
 
 public:
 	CFileButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, _GUI("File")),
+		gui::CButton(pAssetsEditor, _LSTRING("File")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -1423,15 +1435,17 @@ protected:
 		
 		pMenu->List()->Add(new CUndoButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _LSTRING("New Map")));
+		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _GUI("New Map")));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Material::TypeId, _LSTRING("New Material")));
 		
 		m_pAssetsEditor->DisplayPopup(pMenu);
 	}
 
 public:
 	CEditButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, _GUI("Edit")),
+		gui::CButton(pAssetsEditor, _LSTRING("Edit")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -1456,7 +1470,7 @@ protected:
 
 public:
 	CViewButton(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, _GUI("View")),
+		gui::CButton(pAssetsEditor, _LSTRING("View")),
 		m_pAssetsEditor(pAssetsEditor)
 	{
 		NoTextClipping();
@@ -1611,6 +1625,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Toggle_Toolbar = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "toolbar");
 		m_Path_Toggle_Visibility = AssetsManager()->FindAsset<CAsset_GuiToggleStyle>(PackageId, "listVisibility");
 		
+		m_Path_ComboBox_Default = AssetsManager()->FindAsset<CAsset_GuiComboBoxStyle>(PackageId, "default");
+		
 		m_Path_IntEdit_Default = AssetsManager()->FindAsset<CAsset_GuiIntEditStyle>(PackageId, "default");
 		m_Path_ColorEdit_Default = AssetsManager()->FindAsset<CAsset_GuiColorEditStyle>(PackageId, "default");
 		
@@ -1669,6 +1685,15 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconRotateCCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotateCCW");
 		m_Path_Sprite_IconGrid = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGrid");
 		m_Path_Sprite_IconErase = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconErase");
+		m_Path_Sprite_IconPolygon = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPolygon");
+		m_Path_Sprite_IconMoveVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMoveVertex");
+		m_Path_Sprite_IconDeleteVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDeleteVertex");
+		m_Path_Sprite_IconAddVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconAddVertex");
+		m_Path_Sprite_IconWeightVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconWeightVertex");
+		m_Path_Sprite_IconVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertex");
+		m_Path_Sprite_IconPencil = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPencil");
+		m_Path_Sprite_IconLineStyle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineStyle");
+		m_Path_Sprite_IconLayer = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLayer");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
@@ -1693,6 +1718,7 @@ void CGuiEditor::LoadAssets()
 	m_ComposeStyle = m_Path_Label_Compose;
 	m_FocusStyle = m_Path_Rect_Focus;
 	m_TextSelectionStyle = m_Path_Rect_TextSelection;
+	m_ComboBoxStyle = m_Path_ComboBox_Default;
 	
 	//~ PackageId = AssetsManager()->NewPackage("mypackage");
 	//~ AssetsManager()->SetPackageReadOnly(PackageId, false);
@@ -1748,6 +1774,9 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 			case CAsset_MapLayerTiles::TypeId:
 				IconPath = m_Path_Sprite_IconTiles;
 				break;
+			case CAsset_MapLayerObjects::TypeId:
+				IconPath = m_Path_Sprite_IconPolygon;
+				break;
 			case CAsset_MapLayerQuads::TypeId:
 				IconPath = m_Path_Sprite_IconQuad;
 				break;
@@ -1762,6 +1791,9 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 				break;
 			case CAsset_EntityType::TypeId:
 				IconPath = m_Path_Sprite_IconEntityType;
+				break;
+			case CAsset_Material::TypeId:
+				IconPath = m_Path_Sprite_IconLineStyle;
 				break;
 			case CAsset_GuiRectStyle::TypeId:
 				IconPath = m_Path_Sprite_IconGuiRect;

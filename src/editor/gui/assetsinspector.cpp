@@ -24,9 +24,61 @@
 #include <client/gui/float-edit.h>
 #include <client/gui/color-edit.h>
 #include <client/gui/toggle.h>
+#include <client/gui/combobox.h>
 #include <client/gui/popup.h>
 #include <client/gui/expand.h>
 #include <shared/components/localization.h>
+
+/* COMBOBOX ***********************************************************/
+	
+class CMemberComboBox : public gui::CComboBox
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	
+	virtual int GetValue() const
+	{
+		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			0
+		);
+	}
+	
+	virtual void SetValue(int Value)
+	{
+		m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			Value
+		);
+	}
+	
+public:
+	CMemberComboBox(CGuiEditor* pAssetsEditor, int Member) :
+		gui::CComboBox(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CComboBox::Update(ParentEnabled);
+	}
+};
 
 class CSubItemEditor : public gui::CVListLayout
 {
@@ -97,6 +149,60 @@ public:
 	}
 };
 
+class CSubItemList : public gui::CVScrollLayout
+{
+protected:
+	CAssetPath m_AssetPath;
+	CGuiEditor* m_pAssetsEditor;
+	int m_AssetVersion;
+	bool m_UpdateNeeded;
+	int m_AssetType;
+	CAssetPath m_IconPath;
+	
+protected:
+	virtual void GenerateList() = 0;
+	
+public:
+	CSubItemList(CGuiEditor* pAssetsEditor, int AssetType) :
+		gui::CVScrollLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_AssetType(AssetType),
+		m_AssetVersion(-1),
+		m_UpdateNeeded(true)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == m_AssetType)
+			{
+				CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+				
+				if(
+					m_AssetPath != m_pAssetsEditor->GetEditedAssetPath() ||
+					(pState && pState->m_NumUpdates != m_AssetVersion)
+				)
+				{
+					m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+					m_AssetVersion = pState->m_NumUpdates;
+					m_UpdateNeeded = true;
+				}
+			}
+			
+			if(m_UpdateNeeded)
+			{
+				GenerateList();				
+				m_UpdateNeeded = false;
+			}
+		}
+		
+		gui::CVScrollLayout::Update(ParentEnabled);
+	}
+};
+
 /* ASSETS INSPECTOR ***************************************************/
 
 CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
@@ -123,12 +229,14 @@ CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
 	m_pTabs[TAB_MAPGROUP_ASSET] = CreateTab_MapGroup_Asset();
 	m_pTabs[TAB_MAPLAYERTILES_ASSET] = CreateTab_MapLayerTiles_Asset();
 	m_pTabs[TAB_MAPLAYERQUADS_ASSET] = CreateTab_MapLayerQuads_Asset();
+	m_pTabs[TAB_MAPLAYEROBJECTS_ASSET] = CreateTab_MapLayerObjects_Asset();
 	m_pTabs[TAB_MAPZONETILES_ASSET] = CreateTab_MapZoneTiles_Asset();
 	m_pTabs[TAB_MAPENTITIES_ASSET] = CreateTab_MapEntities_Asset();
 	m_pTabs[TAB_ZONETYPE_ASSET] = CreateTab_ZoneType_Asset();
 	m_pTabs[TAB_ENTITYTYPE_ASSET] = CreateTab_EntityType_Asset();
 	m_pTabs[TAB_IMAGE_ASSET] = CreateTab_Image_Asset();
 	m_pTabs[TAB_SPRITE_ASSET] = CreateTab_Sprite_Asset();
+	m_pTabs[TAB_MATERIAL_ASSET] = CreateTab_Material_Asset();
 }
 
 void CAssetsInspector::Update(bool ParentEnabled)
@@ -188,6 +296,9 @@ void CAssetsInspector::Update(bool ParentEnabled)
 			case CAsset_MapLayerQuads::TypeId:
 				m_pTabs[TAB_MAPLAYERQUADS_ASSET]->Enable();
 				break;
+			case CAsset_MapLayerObjects::TypeId:
+				m_pTabs[TAB_MAPLAYEROBJECTS_ASSET]->Enable();
+				break;
 			case CAsset_MapZoneTiles::TypeId:
 				m_pTabs[TAB_MAPZONETILES_ASSET]->Enable();
 				break;
@@ -202,6 +313,9 @@ void CAssetsInspector::Update(bool ParentEnabled)
 				break;
 			case CAsset_Sprite::TypeId:
 				m_pTabs[TAB_SPRITE_ASSET]->Enable();
+				break;
+			case CAsset_Material::TypeId:
+				m_pTabs[TAB_MATERIAL_ASSET]->Enable();
 				break;
 			default:
 				m_pTabs[TAB_GENERIC_ASSET]->Enable();
@@ -223,7 +337,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Generic_Asset()
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	
 	pTab->Disable();
-	AddTab(pTab, _GUI("Asset"), AssetsEditor()->m_Path_Sprite_IconAsset);
+	AddTab(pTab, _LSTRING("Asset"), AssetsEditor()->m_Path_Sprite_IconAsset);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -284,19 +398,19 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Image"), AssetsEditor()->m_Path_Sprite_IconImage);
+	AddTab(pTab, _LSTRING("Image"), AssetsEditor()->m_Path_Sprite_IconImage);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_WIDTH, _GUI("Width"));
-	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_HEIGHT, _GUI("Height"));
-	AddField_Integer(pTab, CAsset_Image::TEXELSIZE, _GUI("Texel size"));
-	AddField_Integer(pTab, CAsset_Image::GRIDWIDTH, _GUI("Grid width"));
-	AddField_Integer(pTab, CAsset_Image::GRIDHEIGHT, _GUI("Grid height"));
-	AddField_Integer(pTab, CAsset_Image::GRIDSPACING, _GUI("Grid spacing"));
+	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_WIDTH, _LSTRING("Width"));
+	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_HEIGHT, _LSTRING("Height"));
+	AddField_Integer(pTab, CAsset_Image::TEXELSIZE, _LSTRING("Texel size"));
+	AddField_Integer(pTab, CAsset_Image::GRIDWIDTH, _LSTRING("Grid width"));
+	AddField_Integer(pTab, CAsset_Image::GRIDHEIGHT, _LSTRING("Grid height"));
+	AddField_Integer(pTab, CAsset_Image::GRIDSPACING, _LSTRING("Grid spacing"));
 	
 	CImageTilingToggle* pWidget = new CImageTilingToggle(m_pAssetsEditor);
-	AddField(pTab, pWidget, _GUI("Compatible with tiles"));
+	AddField(pTab, pWidget, _LSTRING("Compatible with tiles"));
 	
 	return pTab;
 }
@@ -307,15 +421,15 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Sprite_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Sprite"), AssetsEditor()->m_Path_Sprite_IconSprite);
+	AddTab(pTab, _LSTRING("Sprite"), AssetsEditor()->m_Path_Sprite_IconSprite);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_Sprite::IMAGEPATH, CAsset_Image::TypeId, _GUI("Image"));
-	AddField_Integer(pTab, CAsset_Sprite::X, _GUI("X"));
-	AddField_Integer(pTab, CAsset_Sprite::Y, _GUI("Y"));
-	AddField_Integer(pTab, CAsset_Sprite::WIDTH, _GUI("Width"));
-	AddField_Integer(pTab, CAsset_Sprite::HEIGHT, _GUI("Height"));
+	AddField_Asset(pTab, CAsset_Sprite::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	AddField_Integer(pTab, CAsset_Sprite::X, _LSTRING("X"));
+	AddField_Integer(pTab, CAsset_Sprite::Y, _LSTRING("Y"));
+	AddField_Integer(pTab, CAsset_Sprite::WIDTH, _LSTRING("Width"));
+	AddField_Integer(pTab, CAsset_Sprite::HEIGHT, _LSTRING("Height"));
 	
 	return pTab;
 }
@@ -324,7 +438,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Map_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map"), AssetsEditor()->m_Path_Sprite_IconMap);
+	AddTab(pTab, _LSTRING("Map"), AssetsEditor()->m_Path_Sprite_IconMap);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -335,16 +449,16 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapGroup_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map Group"), AssetsEditor()->m_Path_Sprite_IconFolder);
+	AddTab(pTab, _LSTRING("Map Group"), AssetsEditor()->m_Path_Sprite_IconFolder);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Vec2(pTab, CAsset_MapGroup::POSITION_X, CAsset_MapGroup::POSITION_Y, _GUI("Position"));	
-	AddField_Vec2(pTab, CAsset_MapGroup::HARDPARALLAX_X, CAsset_MapGroup::HARDPARALLAX_Y, _GUI("Parallax"));	
+	AddField_Vec2(pTab, CAsset_MapGroup::POSITION_X, CAsset_MapGroup::POSITION_Y, _LSTRING("Position"));	
+	AddField_Vec2(pTab, CAsset_MapGroup::HARDPARALLAX_X, CAsset_MapGroup::HARDPARALLAX_Y, _LSTRING("Parallax"));	
 	pTab->AddSeparator();
-	AddField_Bool(pTab, CAsset_MapGroup::CLIPPING, _GUI("Clipping"));	
-	AddField_Vec2(pTab, CAsset_MapGroup::CLIPPOSITION_X, CAsset_MapGroup::CLIPPOSITION_Y, _GUI("Clip Position"));	
-	AddField_Vec2(pTab, CAsset_MapGroup::CLIPSIZE_X, CAsset_MapGroup::CLIPSIZE_Y, _GUI("Clip Size"));
+	AddField_Bool(pTab, CAsset_MapGroup::CLIPPING, _LSTRING("Clipping"));	
+	AddField_Vec2(pTab, CAsset_MapGroup::CLIPPOSITION_X, CAsset_MapGroup::CLIPPOSITION_Y, _LSTRING("Clip Position"));	
+	AddField_Vec2(pTab, CAsset_MapGroup::CLIPSIZE_X, CAsset_MapGroup::CLIPSIZE_Y, _LSTRING("Clip Size"));
 	
 	return pTab;
 }
@@ -353,14 +467,14 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map Layer Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
+	AddTab(pTab, _LSTRING("Map Layer Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
 	
 	AddField_AssetProperties(pTab);
 		
-	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _GUI("Width"));	
-	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _GUI("Height"));	
-	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _GUI("Image"));
-	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _GUI("Color"));	
+	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _LSTRING("Width"));	
+	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _LSTRING("Height"));	
+	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));	
 	
 	return pTab;
 }
@@ -429,15 +543,139 @@ public:
 	}
 };
 
-class CSubItemList_MapLayerQuads : public gui::CVScrollLayout
+class CSubItemList_MapLayerQuads_Quad : public CSubItemList
+{
+protected:
+	virtual void GenerateList()
+	{
+		Clear();
+		const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pLayer)
+		{
+			CLocalizableString LString(_("Quad {int:Id}"));
+			
+			CAsset_MapLayerQuads::CIteratorQuad Iter;
+			int Counter = 1;
+			for(Iter = pLayer->BeginQuad(); Iter != pLayer->EndQuad(); ++Iter)
+			{
+				LString.ClearParameters();
+				LString.AddInteger("Id", Counter);
+				Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconQuad), false);
+				Counter++;
+			}
+		}
+	}
+
+public:
+	CSubItemList_MapLayerQuads_Quad(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, CAsset_MapLayerQuads::TypeId)
+	{ }	
+};
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Map Layer Quads"), AssetsEditor()->m_Path_Sprite_IconQuad);
+	
+	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_MapLayerQuads::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	AddField_Integer_NoEdit(pTab, CAsset_MapLayerQuads::QUAD_ARRAYSIZE, _LSTRING("Number of quads"));
+	
+	pTab->Add(new CSubItemList_MapLayerQuads_Quad(AssetsEditor()), true);
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_Quad(AssetsEditor());
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_PIVOT_X, CAsset_MapLayerQuads::QUAD_PIVOT_Y, _LSTRING("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _LSTRING("Size"));
+		AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _LSTRING("Angle"));
+		AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _LSTRING("Animation"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX0);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX0_X, CAsset_MapLayerQuads::QUAD_VERTEX0_Y, _LSTRING("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV0_X, CAsset_MapLayerQuads::QUAD_UV0_Y, _LSTRING("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR0, _LSTRING("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX1);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX1_X, CAsset_MapLayerQuads::QUAD_VERTEX1_Y, _LSTRING("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV1_X, CAsset_MapLayerQuads::QUAD_UV1_Y, _LSTRING("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR1, _LSTRING("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX2);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX2_X, CAsset_MapLayerQuads::QUAD_VERTEX2_Y, _LSTRING("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV2_X, CAsset_MapLayerQuads::QUAD_UV2_Y, _LSTRING("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR2, _LSTRING("Color"));
+	}
+	
+	{
+		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX3);
+		pTab->Add(pQuadEditor);
+		
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX3_X, CAsset_MapLayerQuads::QUAD_VERTEX3_Y, _LSTRING("Position"));
+		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV3_X, CAsset_MapLayerQuads::QUAD_UV3_Y, _LSTRING("Texture"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR3, _LSTRING("Color"));
+	}
+	
+	return pTab;
+}
+
+/* MAP LAYER OBJECTS **************************************************/
+
+class CSubItemList_MapLayerObjects_Object : public CSubItemList
+{
+protected:
+	virtual void GenerateList()
+	{
+		Clear();
+		const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pLayer)
+		{
+			CLocalizableString LString(_("Object {int:Id}"));
+			
+			CAsset_MapLayerObjects::CIteratorObject Iter;
+			int Counter = 1;
+			for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
+			{
+				LString.ClearParameters();
+				LString.AddInteger("Id", Counter);
+				Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconPolygon), false);
+				Counter++;
+			}
+		}
+	}
+
+public:
+	CSubItemList_MapLayerObjects_Object(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, CAsset_MapLayerObjects::TypeId)
+	{ }	
+};
+
+class CSubItemList_MapLayerObjects_Vertex : public gui::CVScrollLayout
 {
 protected:
 	CAssetPath m_AssetPath;
+	int m_ObjectId;
+	int m_AssetVersion;
 	CGuiEditor* m_pAssetsEditor;
 	bool m_UpdateNeeded;
 	
 public:
-	CSubItemList_MapLayerQuads(CGuiEditor* pAssetsEditor) :
+	CSubItemList_MapLayerObjects_Vertex(CGuiEditor* pAssetsEditor) :
 		gui::CVScrollLayout(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
 		m_UpdateNeeded(true)
@@ -449,31 +687,71 @@ public:
 	{
 		if(ParentEnabled && IsEnabled())
 		{
-			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId && m_AssetPath != m_pAssetsEditor->GetEditedAssetPath())
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
 			{
-				m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
-				m_UpdateNeeded = true;
+				if(
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerObjects::TYPE_OBJECT ||
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX
+				)
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(m_ObjectId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_ObjectId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}
+				else
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_ObjectId = -1;
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}	
 			}
 			
-			if(m_UpdateNeeded)
+			CSubPath ObjectPath = CAsset_MapLayerObjects::SubPath_Object(m_ObjectId);
+			
+			if(m_ObjectId >= 0)
+			{
+				const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+				if(pLayer && pLayer->IsValidObject(ObjectPath))
+				{
+					if(m_UpdateNeeded)
+					{
+						Clear();
+						char aBuf[128];
+							
+						const CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(ObjectPath);
+						
+						for(int i=0; i<Object.GetVertexArraySize(); i++)
+						{
+							str_format(aBuf, sizeof(aBuf), "Vertex %d", i+1);
+							CSubPath VertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
+							Add(new CSubItem(m_pAssetsEditor, VertexPath, aBuf, m_pAssetsEditor->m_Path_Sprite_IconVertex), false);
+						}
+						
+						m_UpdateNeeded = false;
+					}
+				}
+			}
+			else if(m_UpdateNeeded)
 			{
 				Clear();
-				char aBuf[128];
-					
-				const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(m_pAssetsEditor->GetEditedAssetPath());
-				if(pLayer)
-				{
-					CAsset_MapLayerQuads::CIteratorQuad Iter;
-					int Counter = 1;
-					for(Iter = pLayer->BeginQuad(); Iter != pLayer->EndQuad(); ++Iter)
-					{
-						str_format(aBuf, sizeof(aBuf), "Quad %d", Counter);
-						Add(new CSubItem(m_pAssetsEditor, *Iter, aBuf, m_pAssetsEditor->m_Path_Sprite_IconQuad), false);
-						Counter++;
-					}
-					
-					m_UpdateNeeded = false;
-				}
+				m_UpdateNeeded = false;
 			}
 		}
 		
@@ -481,63 +759,38 @@ public:
 	}
 };
 
-gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
+gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map Layer Quads"), AssetsEditor()->m_Path_Sprite_IconQuad);
+	AddTab(pTab, _LSTRING("Map Layer Objects"), AssetsEditor()->m_Path_Sprite_IconPolygon);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_MapLayerQuads::IMAGEPATH, CAsset_Image::TypeId, _GUI("Image"));
-	AddField_Integer_NoEdit(pTab, CAsset_MapLayerQuads::QUAD_ARRAYSIZE, _GUI("Number of quads"));
+	pTab->Add(new CSubItemList_MapLayerObjects_Object(AssetsEditor()), true);
+	pTab->Add(new CSubItemList_MapLayerObjects_Vertex(AssetsEditor()), true);
 	
-	pTab->Add(new CSubItemList_MapLayerQuads(AssetsEditor()), true);
+	gui::CVListLayout* pObjectEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerObjects::TYPE_OBJECT);
+	pTab->Add(pObjectEditor, false);
 	
-	{
-		gui::CVListLayout* pQuadEditor = new CSubItemEditor_Quad(AssetsEditor());
-		pTab->Add(pQuadEditor);
-		
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_PIVOT_X, CAsset_MapLayerQuads::QUAD_PIVOT_Y, _GUI("Position"));
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _GUI("Size"));
-		AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _GUI("Angle"));
-		AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _GUI("Animation"));
-	}
+	AddField_Asset(pObjectEditor, CAsset_MapLayerObjects::OBJECT_STYLEPATH, CAsset_Material::TypeId, _LSTRING("Style"));	
+	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_POSITION_X, CAsset_MapLayerObjects::OBJECT_POSITION_Y, _LSTRING("Position"));	
+	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SIZE_X, CAsset_MapLayerObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
+	AddField_Angle(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANGLE, _LSTRING("Angle"));
+	AddField_Bool(pObjectEditor, CAsset_MapLayerObjects::OBJECT_CLOSEDPATH, _LSTRING("Closed"));
 	
-	{
-		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX0);
-		pTab->Add(pQuadEditor);
-		
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX0_X, CAsset_MapLayerQuads::QUAD_VERTEX0_Y, _GUI("Position"));
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV0_X, CAsset_MapLayerQuads::QUAD_UV0_Y, _GUI("Texture"));
-		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR0, _GUI("Color"));
-	}
+	gui::CVListLayout* pVertexEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX);
+	pTab->Add(pVertexEditor, false);
+	
+	AddField_Vec2(pVertexEditor, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION_X, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION_Y, _LSTRING("Position"));	
+	AddField_Color(pVertexEditor, CAsset_MapLayerObjects::OBJECT_VERTEX_COLOR, _LSTRING("Color"));
+	AddField_Float(pVertexEditor, CAsset_MapLayerObjects::OBJECT_VERTEX_WEIGHT, _LSTRING("Weight"));
 	
 	{
-		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX1);
-		pTab->Add(pQuadEditor);
-		
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX1_X, CAsset_MapLayerQuads::QUAD_VERTEX1_Y, _GUI("Position"));
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV1_X, CAsset_MapLayerQuads::QUAD_UV1_Y, _GUI("Texture"));
-		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR1, _GUI("Color"));
-	}
-	
-	{
-		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX2);
-		pTab->Add(pQuadEditor);
-		
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX2_X, CAsset_MapLayerQuads::QUAD_VERTEX2_Y, _GUI("Position"));
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV2_X, CAsset_MapLayerQuads::QUAD_UV2_Y, _GUI("Texture"));
-		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR2, _GUI("Color"));
-	}
-	
-	{
-		gui::CVListLayout* pQuadEditor = new CSubItemEditor_QuadVertex(AssetsEditor(), CAsset_MapLayerQuads::VERTEX3);
-		pTab->Add(pQuadEditor);
-		
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_VERTEX3_X, CAsset_MapLayerQuads::QUAD_VERTEX3_Y, _GUI("Position"));
-		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_UV3_X, CAsset_MapLayerQuads::QUAD_UV3_Y, _GUI("Texture"));
-		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR3, _GUI("Color"));
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerObjects::OBJECT_VERTEX_SMOOTHNESS);
+		pComboBox->Add(_LSTRING("None"));
+		pComboBox->Add(_LSTRING("Automatic"));
+		AddField(pVertexEditor, pComboBox, _LSTRING("Smoothness"));
 	}
 	
 	return pTab;
@@ -549,84 +802,63 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map Zone Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
+	AddTab(pTab, _LSTRING("Map Zone Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
 	
 	AddField_AssetProperties(pTab);
 		
-	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_WIDTH, _GUI("Width"));	
-	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_HEIGHT, _GUI("Height"));
-	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, _GUI("Zone type"));
+	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_WIDTH, _LSTRING("Width"));	
+	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_HEIGHT, _LSTRING("Height"));
+	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, _LSTRING("Zone type"));
 	
 	return pTab;
 }
 
 /* MAP ENTITIES *******************************************************/
 
-class CSubItemList_MapEntities : public gui::CVScrollLayout
+class CSubItemList_MapEntities_Entity : public CSubItemList
 {
 protected:
 	CAssetPath m_AssetPath;
 	CGuiEditor* m_pAssetsEditor;
 	bool m_UpdateNeeded;
 	
-public:
-	CSubItemList_MapEntities(CGuiEditor* pAssetsEditor) :
-		gui::CVScrollLayout(pAssetsEditor),
-		m_pAssetsEditor(pAssetsEditor),
-		m_UpdateNeeded(true)
+protected:
+	virtual void GenerateList()
 	{
-		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
-	}
-	
-	virtual void Update(bool ParentEnabled)
-	{
-		if(ParentEnabled && IsEnabled())
+		Clear();
+		const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pEntities)
 		{
-			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId && m_AssetPath != m_pAssetsEditor->GetEditedAssetPath())
+			CAsset_MapEntities::CIteratorEntity Iter;
+			for(Iter = pEntities->BeginEntity(); Iter != pEntities->EndEntity(); ++Iter)
 			{
-				m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
-				m_UpdateNeeded = true;
+				CAssetPath TypePath = pEntities->GetEntityTypePath(*Iter);
+				const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
+				if(pEntityType)
+					Add(new CSubItem(m_pAssetsEditor, *Iter, pEntityType->GetName(), m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
+				else
+					Add(new CSubItem(m_pAssetsEditor, *Iter, _LSTRING("Unknown entity"), m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
 			}
 			
-			if(m_UpdateNeeded)
-			{
-				Clear();
-				char aBuf[128];
-					
-				const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(m_pAssetsEditor->GetEditedAssetPath());
-				if(pEntities)
-				{
-					CAsset_MapEntities::CIteratorEntity Iter;
-					int Counter = 1;
-					for(Iter = pEntities->BeginEntity(); Iter != pEntities->EndEntity(); ++Iter)
-					{
-						CAssetPath TypePath = pEntities->GetEntityTypePath(*Iter);
-						const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
-						if(pEntityType)
-							Add(new CSubItem(m_pAssetsEditor, *Iter, pEntityType->GetName(), m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
-						else
-							Add(new CSubItem(m_pAssetsEditor, *Iter, _GUI("Unknown entity"), m_pAssetsEditor->m_Path_Sprite_IconEntities), false);
-						Counter++;
-					}
-					
-					m_UpdateNeeded = false;
-				}
-			}
+			m_UpdateNeeded = false;
 		}
-		
-		gui::CVScrollLayout::Update(ParentEnabled);
 	}
+
+public:
+	CSubItemList_MapEntities_Entity(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, CAsset_MapEntities::TypeId)
+	{ }
 };
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_MapEntities_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Map Entities"), AssetsEditor()->m_Path_Sprite_IconEntities);
+	AddTab(pTab, _LSTRING("Map Entities"), AssetsEditor()->m_Path_Sprite_IconEntities);
 	
 	AddField_AssetProperties(pTab);
 	
-	pTab->Add(new CSubItemList_MapEntities(AssetsEditor()), true);
+	pTab->Add(new CSubItemList_MapEntities_Entity(AssetsEditor()), true);
 	
 	return pTab;
 }
@@ -686,7 +918,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Zone Type"), AssetsEditor()->m_Path_Sprite_IconZoneType);
+	AddTab(pTab, _LSTRING("Zone Type"), AssetsEditor()->m_Path_Sprite_IconZoneType);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -695,9 +927,9 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	gui::CVListLayout* pEditor = new CSubItemEditor(AssetsEditor(), CAsset_ZoneType::TYPE_INDEX);
 	pTab->Add(pEditor);
 	
-	AddField_Bool(pEditor, CAsset_ZoneType::INDEX_USED, _GUI("Is used"));
-	AddField_Text(pEditor, CAsset_ZoneType::INDEX_DESCRIPTION, _GUI("Description"));
-	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _GUI("Color"));
+	AddField_Bool(pEditor, CAsset_ZoneType::INDEX_USED, _LSTRING("Is used"));
+	AddField_Text(pEditor, CAsset_ZoneType::INDEX_DESCRIPTION, _LSTRING("Description"));
+	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _LSTRING("Color"));
 	
 	return pTab;
 }
@@ -708,21 +940,154 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_EntityType_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Entity Type"), AssetsEditor()->m_Path_Sprite_IconEntityType);
+	AddTab(pTab, _LSTRING("Entity Type"), AssetsEditor()->m_Path_Sprite_IconEntityType);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_EntityType::GIZMOPATH, CAsset_Sprite::TypeId, _GUI("Gizmo"));	
-	AddField_Float(pTab, CAsset_EntityType::COLLISIONRADIUS, _GUI("Collision Radius"));	
+	AddField_Asset(pTab, CAsset_EntityType::GIZMOPATH, CAsset_Sprite::TypeId, _LSTRING("Gizmo"));	
+	AddField_Float(pTab, CAsset_EntityType::COLLISIONRADIUS, _LSTRING("Collision Radius"));	
 	
 	return pTab;
 }
+
+/* MATERIAL ***********************************************************/
+
+class CNewSubItemButton_Material_Layer : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	int m_Type;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath, m_Type, Token);
+		CSubPath SubPath = CAsset_Material::SubPath_Layer(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_Material_Layer(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, LString, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Type(Type),
+		m_SubPath(SubPath)
+	{
+		
+	}
+};
+
+class CNewSubItemButton_Material_Sprite : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		const CAsset_Material* pMaterial = AssetsManager()->GetAsset<CAsset_Material>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pMaterial && pMaterial->IsValidLayer(m_pAssetsEditor->GetEditedSubPath()))
+		{
+			int Token = AssetsManager()->GenerateToken();
+			int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_Material::TYPE_LAYER_SPRITE, Token);
+			CSubPath SubPath = CAsset_Material::SubPath_LayerSprite(m_pAssetsEditor->GetEditedSubPath().GetId(), Id);
+			
+			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+		}
+	}
+
+public:
+	CNewSubItemButton_Material_Sprite(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
+class CSubItemList_Material_Layer : public CSubItemList
+{
+protected:
+	virtual void GenerateList()
+	{
+		Clear();
+		const CAsset_Material* pLayer = AssetsManager()->GetAsset<CAsset_Material>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pLayer)
+		{
+			CLocalizableString LString_Layer(_("Layer {int:Id}"));
+			CLocalizableString LString_Sprite(_("Sprite {int:Id}"));
+			
+			CAsset_Material::CIteratorLayer LayerIter;
+			int LayerCounter = 1;
+			for(LayerIter = pLayer->BeginLayer(); LayerIter != pLayer->EndLayer(); ++LayerIter)
+			{
+				gui::CExpand* pExpand = new gui::CExpand(Context());
+				Add(pExpand, false);
+				
+				LString_Layer.ClearParameters();
+				LString_Layer.AddInteger("Id", LayerCounter);
+				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *LayerIter, LString_Layer, m_pAssetsEditor->m_Path_Sprite_IconLayer));
+				LayerCounter++;
+				
+				const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& SpriteArray = pLayer->GetLayerSpriteArray(*LayerIter);
+				for(int i=0; i<SpriteArray.size(); i++)
+				{
+					CSubPath SpriteSubPath = CAsset_Material::SubPath_LayerSprite((*LayerIter).GetId(), i);
+					LString_Sprite.ClearParameters();
+					LString_Sprite.AddInteger("Id", i+1);
+					pExpand->Add(new CSubItem(m_pAssetsEditor, SpriteSubPath, LString_Sprite, m_pAssetsEditor->m_Path_Sprite_IconSprite));
+				}
+			}
+		}
+	}
+
+public:
+	CSubItemList_Material_Layer(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, CAsset_Material::TypeId)
+	{ }	
+};
+
+class 
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Material"), AssetsEditor()->m_Path_Sprite_IconLineStyle);
+	
+	AddField_AssetProperties(pTab);
+	
+	pTab->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LAYER, CSubPath::Null(), _LSTRING("New Layer"), AssetsEditor()->m_Path_Sprite_IconLayer), false);
+	pTab->Add(new CSubItemList_Material_Layer(AssetsEditor()), true);
+	
+	gui::CVListLayout* pLayerEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER);
+	pTab->Add(pLayerEditor, false);
+	
+	AddField(pLayerEditor, new CNewSubItemButton_Material_Sprite(AssetsEditor()));
+	
+	gui::CVListLayout* pSpriteEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER_SPRITE);
+	pTab->Add(pSpriteEditor, false);	
+	
+	AddField_Asset(pSpriteEditor, CAsset_Material::LAYER_SPRITE_PATH, CAsset_Sprite::TypeId, _LSTRING("Sprite"));
+	AddField_Vec2(pSpriteEditor, CAsset_Material::LAYER_SPRITE_SIZE_X, CAsset_Material::LAYER_SPRITE_SIZE_Y, _LSTRING("Size"));
+	AddField_Color(pSpriteEditor, CAsset_Material::LAYER_SPRITE_COLOR, _LSTRING("Color"));
+	
+	return pTab;
+}
+
+/* GUI RECT STYLE *****************************************************/
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiRectStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Rectangle Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiRect);
+	AddTab(pTab, _LSTRING("Rectangle Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiRect);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -733,7 +1098,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiLineStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Line Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiLine);
+	AddTab(pTab, _LSTRING("Line Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiLine);
 	
 	//~ AddField_Asset(pTab, CAsset_GuiLineStyle::RECTPATH, CAsset_GuiRectStyle::TypeId, "Rectangle");
 	
@@ -746,16 +1111,16 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiBoxStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Box Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiBox);
+	AddTab(pTab, _LSTRING("Box Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiBox);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_GuiBoxStyle::RECTPATH, CAsset_GuiRectStyle::TypeId, _GUI("Rectangle"));
-	AddField_Integer(pTab, CAsset_GuiBoxStyle::MINWIDTH, _GUI("Width"));
-	AddField_Integer(pTab, CAsset_GuiBoxStyle::MINHEIGHT, _GUI("Height"));
-	AddField_Integer(pTab, CAsset_GuiBoxStyle::MARGIN, _GUI("Margin"));
-	AddField_Integer(pTab, CAsset_GuiBoxStyle::PADDING, _GUI("Padding"));
-	AddField_Integer(pTab, CAsset_GuiBoxStyle::SPACING, _GUI("Spacing"));
+	AddField_Asset(pTab, CAsset_GuiBoxStyle::RECTPATH, CAsset_GuiRectStyle::TypeId, _LSTRING("Rectangle"));
+	AddField_Integer(pTab, CAsset_GuiBoxStyle::MINWIDTH, _LSTRING("Width"));
+	AddField_Integer(pTab, CAsset_GuiBoxStyle::MINHEIGHT, _LSTRING("Height"));
+	AddField_Integer(pTab, CAsset_GuiBoxStyle::MARGIN, _LSTRING("Margin"));
+	AddField_Integer(pTab, CAsset_GuiBoxStyle::PADDING, _LSTRING("Padding"));
+	AddField_Integer(pTab, CAsset_GuiBoxStyle::SPACING, _LSTRING("Spacing"));
 	
 	return pTab;
 }
@@ -764,17 +1129,17 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiLabelStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Label Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiLabel);
+	AddTab(pTab, _LSTRING("Label Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiLabel);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_GuiLabelStyle::RECTPATH, CAsset_GuiRectStyle::TypeId, _GUI("Rectangle"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::MINWIDTH, _GUI("Width"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::MINHEIGHT, _GUI("Height"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::MARGIN, _GUI("Margin"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::PADDING, _GUI("Padding"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::SPACING, _GUI("Spacing"));
-	AddField_Integer(pTab, CAsset_GuiLabelStyle::FONTSIZE, _GUI("Font Size"));
+	AddField_Asset(pTab, CAsset_GuiLabelStyle::RECTPATH, CAsset_GuiRectStyle::TypeId, _LSTRING("Rectangle"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::MINWIDTH, _LSTRING("Width"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::MINHEIGHT, _LSTRING("Height"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::MARGIN, _LSTRING("Margin"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::PADDING, _LSTRING("Padding"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::SPACING, _LSTRING("Spacing"));
+	AddField_Integer(pTab, CAsset_GuiLabelStyle::FONTSIZE, _LSTRING("Font Size"));
 	
 	return pTab;
 }
@@ -783,13 +1148,13 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiButtonStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Button Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiButton);
+	AddTab(pTab, _LSTRING("Button Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiButton);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_GuiButtonStyle::IDLESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Idle Style"));
-	AddField_Asset(pTab, CAsset_GuiButtonStyle::MOUSEOVERSTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Mouseover Style"));
-	AddField_Asset(pTab, CAsset_GuiButtonStyle::READONLYSTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Read Only Style"));
+	AddField_Asset(pTab, CAsset_GuiButtonStyle::IDLESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Idle Style"));
+	AddField_Asset(pTab, CAsset_GuiButtonStyle::MOUSEOVERSTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Mouseover Style"));
+	AddField_Asset(pTab, CAsset_GuiButtonStyle::READONLYSTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Read Only Style"));
 	
 	return pTab;
 }
@@ -798,12 +1163,12 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiIntEditStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Integer Edit Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiIntEdit);
+	AddTab(pTab, _LSTRING("Integer Edit Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiIntEdit);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_GuiIntEditStyle::INCREASEBUTTONSTYLEPATH, CAsset_GuiButtonStyle::TypeId, _GUI("Increase Button"));
-	AddField_Asset(pTab, CAsset_GuiIntEditStyle::DECREASEBUTTONSTYLEPATH, CAsset_GuiButtonStyle::TypeId, _GUI("Decrease Button"));
+	AddField_Asset(pTab, CAsset_GuiIntEditStyle::INCREASEBUTTONSTYLEPATH, CAsset_GuiButtonStyle::TypeId, _LSTRING("Increase Button"));
+	AddField_Asset(pTab, CAsset_GuiIntEditStyle::DECREASEBUTTONSTYLEPATH, CAsset_GuiButtonStyle::TypeId, _LSTRING("Decrease Button"));
 	
 	return pTab;
 }
@@ -812,14 +1177,14 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiToggleStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Toggle Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiToggle);
+	AddTab(pTab, _LSTRING("Toggle Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiToggle);
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_GuiToggleStyle::IDLETRUESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Idle Style (true)"));
-	AddField_Asset(pTab, CAsset_GuiToggleStyle::MOUSEOVERTRUESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Mouseover Style (true)"));
-	AddField_Asset(pTab, CAsset_GuiToggleStyle::IDLEFALSESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Idle Style (false)"));
-	AddField_Asset(pTab, CAsset_GuiToggleStyle::MOUSEOVERFALSESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _GUI("Mouseover Style (false)"));
+	AddField_Asset(pTab, CAsset_GuiToggleStyle::IDLETRUESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Idle Style (true)"));
+	AddField_Asset(pTab, CAsset_GuiToggleStyle::MOUSEOVERTRUESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Mouseover Style (true)"));
+	AddField_Asset(pTab, CAsset_GuiToggleStyle::IDLEFALSESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Idle Style (false)"));
+	AddField_Asset(pTab, CAsset_GuiToggleStyle::MOUSEOVERFALSESTYLEPATH, CAsset_GuiLabelStyle::TypeId, _LSTRING("Mouseover Style (false)"));
 	
 	return pTab;
 }
@@ -828,7 +1193,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiSliderStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Slider Style"), AssetsEditor()->m_Path_Sprite_IconGuiSlider);
+	AddTab(pTab, _LSTRING("Slider Style"), AssetsEditor()->m_Path_Sprite_IconGuiSlider);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -839,7 +1204,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiScrollbarStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Scrollbar Style"), AssetsEditor()->m_Path_Sprite_IconGuiScrollbar);
+	AddTab(pTab, _LSTRING("Scrollbar Style"), AssetsEditor()->m_Path_Sprite_IconGuiScrollbar);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -850,7 +1215,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiTabsStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _GUI("Tabs Style"), AssetsEditor()->m_Path_Sprite_IconGuiTabs);
+	AddTab(pTab, _LSTRING("Tabs Style"), AssetsEditor()->m_Path_Sprite_IconGuiTabs);
 	
 	AddField_AssetProperties(pTab);
 	
@@ -875,7 +1240,7 @@ void CAssetsInspector::AddField(gui::CVListLayout* pList, gui::CWidget* pWidget)
 
 void CAssetsInspector::AddField_AssetProperties(gui::CVScrollLayout* pTab)
 {
-	AddField_Text(pTab, CAsset::NAME, _GUI("Name"));
+	AddField_Text(pTab, CAsset::NAME, _LSTRING("Name"));
 	
 	pTab->AddSeparator();
 }
@@ -1264,7 +1629,7 @@ public:
 				if(m_AssetPath.IsNull())
 				{
 					SetIcon(m_pPopup->m_pAssetsEditor->m_Path_Sprite_IconNone);
-					SetText(_GUI("None"));
+					SetText(_LSTRING("None"));
 				}
 				else
 				{
@@ -1409,7 +1774,7 @@ public:
 			if(Value.IsNull())
 			{
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconNone);
-				SetText(_GUI("None"));
+				SetText(_LSTRING("None"));
 			}
 			else
 			{

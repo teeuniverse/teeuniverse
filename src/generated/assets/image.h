@@ -176,8 +176,6 @@ public:
 
 template<> int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, int Value);
-template<> uint32 CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
-template<> bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
 template<> bool CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 

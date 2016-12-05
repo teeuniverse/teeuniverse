@@ -59,5 +59,8 @@
 #include <generated/assets/skeletonskin.h>
 #include <generated/assets/sprite.h>
 #include <generated/assets/weapon.h>
+#include <generated/assets/maplayerobjects.h>
+#include <generated/assets/material.h>
+#include <generated/assets/guicomboboxstyle.h>
 
 #endif

@@ -230,8 +230,6 @@ public:
 
 template<> int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int Value);
-template<> uint32 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
-template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
 template<> bool CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> vec4 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;

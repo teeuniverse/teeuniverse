@@ -29,9 +29,6 @@
 
 #include <stdarg.h>
 
-#define _(TEXT) (TEXT)
-
-
 class CLocalizableString
 {
 public:
@@ -138,8 +135,15 @@ public:
 		Param.m_Float.m_Value = Value;
 		Param.m_Type = TYPE_FLOAT;
 	}
+	
+	inline void ClearParameters()
+	{
+		m_Parameters.clear();
+	}
 };
 
+#define _(TEXT) (TEXT)
+#define _LSTRING(TEXT) (CLocalizableString(TEXT))
 
 class CLocalization : public CSharedKernel::CComponent
 {

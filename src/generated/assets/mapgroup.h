@@ -171,7 +171,13 @@ public:
 	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetLayerArray() const { return m_Layer; }
 	inline array< CAssetPath, allocator_default<CAssetPath> >& GetLayerArray() { return m_Layer; }
 	
-	inline CAssetPath GetLayer(const CSubPath& SubPath) const { return m_Layer[SubPath.GetId()]; }
+	inline CAssetPath GetLayer(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()];
+		else
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+	}
 	
 	inline vec2 GetPosition() const { return m_Position; }
 	
@@ -205,7 +211,13 @@ public:
 	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
-	inline void SetLayer(const CSubPath& SubPath, const CAssetPath& Value) { m_Layer[SubPath.GetId()] = Value; }
+	inline void SetLayer(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		{
+			m_Layer[SubPath.GetId()] = Value;
+		}
+	}
 	
 	inline void SetPosition(vec2 Value) { m_Position = Value; }
 	

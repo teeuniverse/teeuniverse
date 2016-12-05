@@ -562,11 +562,11 @@ public:
 	};
 	void SetColorVertex(const CColorVertex *pArray, int Num);
 	void SetColor(float r, float g, float b, float a);
-	void SetColor4(vec4 TopLeft, vec4 TopRight, vec4 BottomLeft, vec4 BottomRight);
+	void SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3);
 	
 	void SetColor(vec4 rgba, bool AlphaBlend);
 	void SetColor2(vec4 Color0, vec4 Color1, bool AlphaBlend);
-	void SetColor4(vec4 TopLeft, vec4 TopRight, vec4 BottomLeft, vec4 BottomRight, bool AlphaBlend);
+	void SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3, bool AlphaBlend);
 
 	struct CFreeformItem
 	{
@@ -574,6 +574,8 @@ public:
 		CFreeformItem() {}
 		CFreeformItem(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3)
 			: m_X0(x0), m_Y0(y0), m_X1(x1), m_Y1(y1), m_X2(x2), m_Y2(y2), m_X3(x3), m_Y3(y3) {}
+		CFreeformItem(vec2 v0, vec2 v1, vec2 v2, vec2 v3)
+			: m_X0(v0.x), m_Y0(v0.y), m_X1(v1.x), m_Y1(v1.y), m_X2(v2.x), m_Y2(v2.y), m_X3(v3.x), m_Y3(v3.y) {}
 	};
 	void QuadsSetSubset(float TlU, float TlV, float BrU, float BrV, int TextureIndex = -1);
 	void QuadsSetSubsetFree(

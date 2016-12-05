@@ -51,7 +51,7 @@ protected:
 
 	public:
 		CCloseButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CButton(pAssetsEditor, _GUI("Close"), pAssetsEditor->m_Path_Sprite_IconDelete),
+			gui::CButton(pAssetsEditor, _LSTRING("Close"), pAssetsEditor->m_Path_Sprite_IconDelete),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
@@ -76,7 +76,7 @@ protected:
 
 	public:
 		CPropertiesButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CButton(pAssetsEditor, _GUI("Properties"), pAssetsEditor->m_Path_Sprite_IconSystem),
+			gui::CButton(pAssetsEditor, _LSTRING("Properties"), pAssetsEditor->m_Path_Sprite_IconSystem),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
@@ -109,7 +109,7 @@ protected:
 
 	public:
 		CRealOnlyToggle(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, int PackageId) :
-			gui::CToggle(pAssetsEditor, _GUI("Read-Only")),
+			gui::CToggle(pAssetsEditor, _LSTRING("Read-Only")),
 			m_pAssetsEditor(pAssetsEditor),
 			m_pContextMenu(pContextMenu),
 			m_PackageId(PackageId)
@@ -333,7 +333,7 @@ protected:
 
 	public:
 		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
 		{ }
 	};
 	
@@ -367,7 +367,7 @@ protected:
 
 	public:
 		CAddSpriteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite)
 		{ }
 	};
 	
@@ -405,7 +405,7 @@ protected:
 
 	public:
 		CAddZoneLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Zone Layer"), pAssetsEditor->m_Path_Sprite_IconZoneTiles)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Zone Layer"), pAssetsEditor->m_Path_Sprite_IconZoneTiles)
 		{ }
 	};
 	
@@ -441,7 +441,7 @@ protected:
 
 	public:
 		CAddEntityLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Entities"), pAssetsEditor->m_Path_Sprite_IconEntities)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Entities"), pAssetsEditor->m_Path_Sprite_IconEntities)
 		{ }
 	};
 	
@@ -477,7 +477,7 @@ protected:
 
 	public:
 		CAddBgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Background Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Background Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -514,7 +514,7 @@ protected:
 
 	public:
 		CAddFgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Foreground Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Foreground Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
@@ -754,7 +754,7 @@ protected:
 
 	public:
 		CAddTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Tile Layer"), pAssetsEditor->m_Path_Sprite_IconTiles)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Tile Layer"), pAssetsEditor->m_Path_Sprite_IconTiles)
 		{ }
 	};
 	
@@ -790,7 +790,43 @@ protected:
 
 	public:
 		CAddQuadLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _GUI("Add Quad Layer"), pAssetsEditor->m_Path_Sprite_IconQuad)
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Quad Layer"), pAssetsEditor->m_Path_Sprite_IconQuad)
+		{ }
+	};
+	
+	class CAddObjectLayerButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			CAssetPath LayerPath;
+			int Token = AssetsManager()->GenerateToken();
+			
+			const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+			if(pMapGroup)
+			{
+				CAsset_MapLayerObjects* pLayer = AssetsManager()->NewAsset<CAsset_MapLayerObjects>(&LayerPath, m_AssetPath.GetPackageId(), Token);
+				if(pLayer)
+				{
+					AssetsManager()->TryChangeAssetName(LayerPath, "objects", Token);
+					pLayer->SetParentPath(m_AssetPath);
+					
+					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token);
+					if(Id >= 0)
+					{
+						CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(Id);
+						AssetsManager()->SetAssetValue<CAssetPath>(m_AssetPath, SubPath, CAsset_MapGroup::LAYER, LayerPath, Token);
+					}
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddObjectLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Object Layer"), pAssetsEditor->m_Path_Sprite_IconPolygon)
 		{ }
 	};
 	
@@ -895,6 +931,9 @@ public:
 			case CAsset_MapLayerQuads::TypeId:
 				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapLayerQuads::VISIBILITY), false);
 				break;
+			case CAsset_MapLayerObjects::TypeId:
+				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapLayerObjects::VISIBILITY), false);
+				break;
 			case CAsset_MapZoneTiles::TypeId:
 				Add(new CVisibilityButton(m_pAssetsEditor, AssetPath, CAsset_MapZoneTiles::VISIBILITY), false);
 				break;
@@ -929,33 +968,40 @@ public:
 				{
 					pMenu->List()->Add(new CAddTileLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->Add(new CAddQuadLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddObjectLayerButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->AddSeparator();
-					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
-					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapZoneTiles::TypeId)
 				{
-					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
-					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapEntities::TypeId)
 				{
-					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
-					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)
 				{
-					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
-					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapLayerQuads::TypeId)
 				{
-					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
-					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _GUI("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+				}
+				else if(m_AssetPath.GetType() == CAsset_MapLayerObjects::TypeId)
+				{
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerObjects>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
+					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerObjects>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 				}
 				
@@ -1241,10 +1287,10 @@ public:
 		gui::CExpand* pBgExpand = new gui::CExpand(Context());
 		gui::CExpand* pFgExpand = new gui::CExpand(Context());
 		
-		pZoneExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Zones"), m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pEntityExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Entities"), m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pBgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Background Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
-		pFgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Foreground Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pZoneExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Zones"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pEntityExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Entities"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pBgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Background Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+		pFgExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Foreground Layers"), m_pAssetsEditor->m_Path_Sprite_IconNone));
 		
 		Add(pZoneExpand);
 		Add(pEntityExpand);
@@ -1329,8 +1375,8 @@ void CPackagesTree::Refresh()
 	gui::CExpand* pWriteExpand = new gui::CExpand(Context());
 	gui::CExpand* pReadExpand = new gui::CExpand(Context());
 	
-	pWriteExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Edited Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
-	pReadExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _GUI("Read-Only Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+	pWriteExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Edited Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
+	pReadExpand->SetTitle(new CInactiveText(m_pAssetsEditor, _LSTRING("Read-Only Packages"), m_pAssetsEditor->m_Path_Sprite_IconNone));
 	
 	Add(pWriteExpand);
 	Add(pReadExpand);
@@ -1428,10 +1474,12 @@ void CAssetsTree::Refresh()
 	REFRESH_ASSET_LIST(CAsset_MapGroup)
 	REFRESH_ASSET_LIST(CAsset_MapLayerTiles)
 	REFRESH_ASSET_LIST(CAsset_MapLayerQuads)
+	REFRESH_ASSET_LIST(CAsset_MapLayerObjects)
 	REFRESH_ASSET_LIST(CAsset_MapZoneTiles)
 	REFRESH_ASSET_LIST(CAsset_MapEntities)
 	REFRESH_ASSET_LIST(CAsset_ZoneType)
 	REFRESH_ASSET_LIST(CAsset_EntityType)
+	REFRESH_ASSET_LIST(CAsset_Material)
 	
 	//Skeletons
 	//	SkeletonAnimations

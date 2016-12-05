@@ -122,10 +122,13 @@ void CPopup::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRe
 	else
 	{
 		m_DrawRect.x = m_CreatorRect.x;
-		m_DrawRect.y = m_CreatorRect.y + m_CreatorRect.h;
-		
 		m_DrawRect.w = Width;
 		m_DrawRect.h = Height;
+		
+		if(m_CreatorRect.y + m_CreatorRect.h + Height > BoundingRect.h)
+			m_DrawRect.y = m_CreatorRect.y - Height;
+		else
+			m_DrawRect.y = m_CreatorRect.y + m_CreatorRect.h;
 	}
 	
 	m_VisibilityRect = m_DrawRect.Intersection(VisibilityRect);

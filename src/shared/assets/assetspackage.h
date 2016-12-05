@@ -24,10 +24,12 @@
 
 struct CAssetState
 {
+	int m_NumUpdates;
 	bool m_ListedInEditor;
 	
 	CAssetState()
 	{
+		m_NumUpdates = 0;
 		m_ListedInEditor = false;
 	};
 };
@@ -147,12 +149,6 @@ public:
 	ASSET* NewAsset(class CAssetsManager* pAssetsManager, CAssetPath* pPath)
 	{
 		return GetList<ASSET>().NewAsset(pAssetsManager, pPath);
-	}
-	
-	template<typename ASSET>
-	ASSET* NewAsset(class CAssetsManager* pAssetsManager, const CAssetPath& Path)
-	{
-		return GetList<ASSET>().NewAsset(pAssetsManager, Path);
 	}
 	
 	template<typename ASSET>

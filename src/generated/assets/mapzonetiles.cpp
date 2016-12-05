@@ -107,6 +107,8 @@ int CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, int De
 			return GetTileWidth();
 		case TILE_HEIGHT:
 			return GetTileHeight();
+		case TILE_INDEX:
+			return GetTileIndex(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -122,31 +124,11 @@ bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, int V
 		case TILE_HEIGHT:
 			SetTileHeight(Value);
 			return true;
-	}
-	return CAsset::SetValue<int>(ValueType, SubPath, Value);
-}
-
-template<>
-uint32 CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const
-{
-	switch(ValueType)
-	{
-		case TILE_INDEX:
-			return GetTileIndex(SubPath);
-	}
-	return CAsset::GetValue<uint32>(ValueType, SubPath, DefaultValue);
-}
-
-template<>
-bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value)
-{
-	switch(ValueType)
-	{
 		case TILE_INDEX:
 			SetTileIndex(SubPath, Value);
 			return true;
 	}
-	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
+	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
 
 template<>

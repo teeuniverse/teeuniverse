@@ -47,6 +47,7 @@ protected:
 	bool m_CameraDraged;
 	float m_ZoneOpacity;
 	bool m_ShowGrid;
+	bool m_ShowMeshes;
 	
 	class CMapRenderer* m_pMapRenderer;
 	
@@ -55,6 +56,9 @@ protected:
 	CView::CCursorTool* m_pCursorTool_MapEdit;
 	CView::CCursorTool* m_pCursorTool_MapEraser;
 	CView::CCursorTool* m_pCursorTool_MapCrop;
+	CView::CCursorTool* m_pCursorTool_MapAddVertex;
+	CView::CCursorTool* m_pCursorTool_MapEditVertex;
+	CView::CCursorTool* m_pCursorTool_MapWeightVertex;
 
 public:
 	CViewMap(CGuiEditor* pAssetsEditor);
@@ -72,9 +76,6 @@ public:
 	
 	inline float GetZoneOpacity() const { return m_ZoneOpacity; }
 	inline void SetZoneOpacity(float Value) { m_ZoneOpacity = Value; }
-	
-	inline bool GetShowGrid() const { return m_ShowGrid; }
-	inline void SetShowGrid(bool Value) { m_ShowGrid = Value; }
 };
 
 #endif

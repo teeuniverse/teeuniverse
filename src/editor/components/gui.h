@@ -95,6 +95,8 @@ public:
 	CAssetPath m_Path_Toggle_Toolbar;
 	CAssetPath m_Path_Toggle_Visibility;
 	
+	CAssetPath m_Path_ComboBox_Default;
+	
 	CAssetPath m_Path_IntEdit_Default;
 	CAssetPath m_Path_ColorEdit_Default;
 	
@@ -153,6 +155,15 @@ public:
 	CAssetPath m_Path_Sprite_IconFolderEdited;
 	CAssetPath m_Path_Sprite_IconFolderReadOnly;
 	CAssetPath m_Path_Sprite_IconErase;
+	CAssetPath m_Path_Sprite_IconPolygon;
+	CAssetPath m_Path_Sprite_IconMoveVertex;
+	CAssetPath m_Path_Sprite_IconDeleteVertex;
+	CAssetPath m_Path_Sprite_IconAddVertex;
+	CAssetPath m_Path_Sprite_IconWeightVertex;
+	CAssetPath m_Path_Sprite_IconVertex;
+	CAssetPath m_Path_Sprite_IconPencil;
+	CAssetPath m_Path_Sprite_IconLineStyle;
+	CAssetPath m_Path_Sprite_IconLayer;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
@@ -212,7 +223,7 @@ protected:
 		
 	public:
 		CClose(CDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _GUI("Close")),
+			gui::CButton(pPopup->Context(), _LSTRING("Close")),
 			m_pPopup(pPopup)
 		{
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);

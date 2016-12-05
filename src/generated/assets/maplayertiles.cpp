@@ -113,6 +113,10 @@ int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int D
 			return GetTileWidth();
 		case TILE_HEIGHT:
 			return GetTileHeight();
+		case TILE_INDEX:
+			return GetTileIndex(SubPath);
+		case TILE_FLAGS:
+			return GetTileFlags(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -128,28 +132,6 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int 
 		case TILE_HEIGHT:
 			SetTileHeight(Value);
 			return true;
-	}
-	return CAsset::SetValue<int>(ValueType, SubPath, Value);
-}
-
-template<>
-uint32 CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const
-{
-	switch(ValueType)
-	{
-		case TILE_INDEX:
-			return GetTileIndex(SubPath);
-		case TILE_FLAGS:
-			return GetTileFlags(SubPath);
-	}
-	return CAsset::GetValue<uint32>(ValueType, SubPath, DefaultValue);
-}
-
-template<>
-bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value)
-{
-	switch(ValueType)
-	{
 		case TILE_INDEX:
 			SetTileIndex(SubPath, Value);
 			return true;
@@ -157,7 +139,7 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, uint
 			SetTileFlags(SubPath, Value);
 			return true;
 	}
-	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
+	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
 
 template<>

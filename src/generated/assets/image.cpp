@@ -97,6 +97,8 @@ int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultVa
 			return GetDataWidth();
 		case DATA_HEIGHT:
 			return GetDataHeight();
+		case DATA:
+			return GetData(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -124,31 +126,11 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 		case DATA_HEIGHT:
 			SetDataHeight(Value);
 			return true;
-	}
-	return CAsset::SetValue<int>(ValueType, SubPath, Value);
-}
-
-template<>
-uint32 CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const
-{
-	switch(ValueType)
-	{
-		case DATA:
-			return GetData(SubPath);
-	}
-	return CAsset::GetValue<uint32>(ValueType, SubPath, DefaultValue);
-}
-
-template<>
-bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value)
-{
-	switch(ValueType)
-	{
 		case DATA:
 			SetData(SubPath, Value);
 			return true;
 	}
-	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
+	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
 
 template<>

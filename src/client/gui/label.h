@@ -24,8 +24,6 @@
 #include <client/components/textrenderer.h>
 #include <shared/components/localization.h>
 
-#define _GUI(TEXT) (CLocalizableString(TEXT))
-
 namespace gui
 {
 

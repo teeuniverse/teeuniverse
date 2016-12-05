@@ -249,8 +249,11 @@ public:
 		{
 			ASSET* pNewAsset = m_pPackages[PackageId]->NewAsset<ASSET>(this, pAssetPath);
 			if(pNewAsset)
+			{
 				pAssetPath->SetPackageId(PackageId);
-			m_pPackages[PackageId]->SetEdited(true);
+				m_pPackages[PackageId]->SetEdited(true);
+			}
+			
 			return pNewAsset;
 		}
 		else

@@ -67,9 +67,11 @@ public:
 	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat);
 	void RenderQuads(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads, vec2 Pos, CAssetPath ImagePath, vec4 Color);
 	void RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads);
+	void RenderLine(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh = false);
+	void RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh = false);
 	
-	void RenderGroup(CAssetPath GroupPath, vec4 Color);
-	void RenderMap(CAssetPath MapPath, vec4 Color);
+	void RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh = false);
+	void RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh = false);
 	
 	void RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, vec4 Color);
 };
