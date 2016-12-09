@@ -206,6 +206,8 @@ void CAbstractTextEdit::RefreshLabelStyle()
 	{
 		if(!m_Editable)
 			SetLabelStyle(pButtonStyle->GetReadOnlyStylePath());
+		else if(Context()->HasFocus(this))
+			SetLabelStyle(pButtonStyle->GetFocusStylePath());
 		else if(m_MouseOver)
 			SetLabelStyle(pButtonStyle->GetMouseOverStylePath());
 		else

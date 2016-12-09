@@ -1595,7 +1595,6 @@ void CGuiEditor::LoadAssets()
 		m_Path_Rect_TextSelection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "textSelection");
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
-		m_Path_Rect_Focus = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "focus");
 		
 		m_Path_Box_Popup = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "popup");
 		m_Path_Box_View = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "view");
@@ -1716,7 +1715,6 @@ void CGuiEditor::LoadAssets()
 	m_TabsStyle = m_Path_Tabs_Default;
 	m_PopupStyle = m_Path_Box_Popup;
 	m_ComposeStyle = m_Path_Label_Compose;
-	m_FocusStyle = m_Path_Rect_Focus;
 	m_TextSelectionStyle = m_Path_Rect_TextSelection;
 	m_ComboBoxStyle = m_Path_ComboBox_Default;
 	

@@ -382,9 +382,6 @@ void CAbstractLabel::Render()
 	}
 	
 	Graphics()->ClipPop();
-	
-	if(Context()->HasFocus(this))
-		Context()->DrawFocusRect(m_DrawRect);
 }
 
 void CAbstractLabel::TextShiftFromCursor(const ivec2& CursorPos)

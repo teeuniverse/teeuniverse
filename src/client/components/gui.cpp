@@ -379,13 +379,6 @@ void CGui::OnLocalizationModified()
 	m_LocalizationUpdated = true;
 }
 
-void CGui::DrawFocusRect(gui::CRect Rect)
-{
-	Rect.AddMargin(2);
-	
-	AssetsRenderer()->DrawGuiRect(&Rect, GetFocusStyle());
-}
-
 void CGui::StartFocus(gui::CWidget* pWidget)
 {
 	if(pWidget == m_pFocusedWidget)

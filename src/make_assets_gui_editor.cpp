@@ -66,6 +66,8 @@ int main(int argc, const char **argv)
 	
 	vec4 ColorLightBG = vec4(83.0f/255.0f, 83.0f/255.0f, 83.0f/255.0f, 1.0f);
 	vec4 ColorLightHL = vec4(108.0f/255.0f, 108.0f/255.0f, 108.0f/255.0f, 1.0f);
+	vec4 ColorFocus = vec4(0.0f, 172.0f/255.0f, 1.0f, 45.0f/255.0f);
+	vec4 ColorFocusHL = vec4(0.0f, 172.0f/255.0f, 1.0f, 83.0f/255.0f);
 	
 	//Images
 	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "datasrc/images/gui_editor.png", CStorage::TYPE_ALL, 32, 16);
@@ -181,10 +183,12 @@ int main(int argc, const char **argv)
 	CAssetPath RectStampPath;
 	CAssetPath RectSelectionPath;
 	CAssetPath RectDialogPath;
-	CAssetPath RectFocusPath;
 	CAssetPath RectButtonPath;
 	CAssetPath RectButtonMoPath;
+	CAssetPath RectButtonFocusPath;
 	CAssetPath RectEditPath;
+	CAssetPath RectEditMoPath;
+	CAssetPath RectEditFocusPath;
 	{
 		CAssetPath SpriteTL;
 		CAssetPath SpriteT;
@@ -259,46 +263,14 @@ int main(int argc, const char **argv)
 		CAssetPath SpriteB;
 		CAssetPath SpriteBR;
 		
-		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxFocusTL", ImageBoxesPath, 12, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxFocusT" , ImageBoxesPath, 13, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxFocusTR", ImageBoxesPath, 14, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxFocusL" , ImageBoxesPath, 12, 1, 1, 1);
-		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxFocusR" , ImageBoxesPath, 14, 1, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxFocusBL", ImageBoxesPath, 12, 2, 1, 1);
-		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxFocusB" , ImageBoxesPath, 13, 2, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxFocusBR", ImageBoxesPath, 14, 2, 1, 1);
-	
-		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectFocusPath, PackageId);
-		pAsset->SetName("focus");
-		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_IMAGE);
-		pAsset->SetImageTLPath(SpriteTL);
-		pAsset->SetImageTPath(SpriteT);
-		pAsset->SetImageTRPath(SpriteTR);
-		pAsset->SetImageLPath(SpriteL);
-		pAsset->SetImageRPath(SpriteR);
-		pAsset->SetImageBLPath(SpriteBL);
-		pAsset->SetImageBPath(SpriteB);
-		pAsset->SetImageBRPath(SpriteBR);
-		pAsset->SetImagePadding(1.0f);
-	}
-	{
-		CAssetPath SpriteTL;
-		CAssetPath SpriteT;
-		CAssetPath SpriteTR;
-		CAssetPath SpriteL;
-		CAssetPath SpriteR;
-		CAssetPath SpriteBL;
-		CAssetPath SpriteB;
-		CAssetPath SpriteBR;
-		
-		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxDialogTL", ImageBoxesPath, 0, 6, 1, 1);
-		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxDialogT" , ImageBoxesPath, 1, 6, 1, 1);
-		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxDialogTR", ImageBoxesPath, 2, 6, 1, 1);
-		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxDialogL" , ImageBoxesPath, 0, 7, 1, 1);
-		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxDialogR" , ImageBoxesPath, 2, 7, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxDialogBL", ImageBoxesPath, 0, 8, 1, 1);
-		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxDialogB" , ImageBoxesPath, 1, 8, 1, 1);
-		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxDialogBR", ImageBoxesPath, 2, 8, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxDialogTL", ImageBoxesPath, 12, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxDialogT" , ImageBoxesPath, 13, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxDialogTR", ImageBoxesPath, 14, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxDialogL" , ImageBoxesPath, 12, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxDialogR" , ImageBoxesPath, 14, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxDialogBL", ImageBoxesPath, 12, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxDialogB" , ImageBoxesPath, 13, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxDialogBR", ImageBoxesPath, 14, 2, 1, 1);
 	
 		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectDialogPath, PackageId);
 		pAsset->SetName("dialog");
@@ -390,6 +362,39 @@ int main(int argc, const char **argv)
 		CAssetPath SpriteB;
 		CAssetPath SpriteBR;
 		
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxButtonFocusTL", ImageBoxesPath, 3, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxButtonFocusT" , ImageBoxesPath, 4, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxButtonFocusTR", ImageBoxesPath, 5, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxButtonFocusL" , ImageBoxesPath, 3, 7, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxButtonFocusR" , ImageBoxesPath, 5, 7, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxButtonFocusBL", ImageBoxesPath, 3, 8, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxButtonFocusB" , ImageBoxesPath, 4, 8, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxButtonFocusBR", ImageBoxesPath, 5, 8, 1, 1);
+	
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectButtonFocusPath, PackageId);
+		pAsset->SetName("buttonFocus");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetBackgroundColor(ColorLightHL);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+		pAsset->SetImagePadding(6.0f);
+	}
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
+		
 		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxEditTL", ImageBoxesPath, 0, 0, 1, 1);
 		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxEditT" , ImageBoxesPath, 1, 0, 1, 1);
 		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxEditTR", ImageBoxesPath, 2, 0, 1, 1);
@@ -413,13 +418,93 @@ int main(int argc, const char **argv)
 		pAsset->SetImageBRPath(SpriteBR);
 		pAsset->SetImagePadding(6.0f);
 	}
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
+		
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxEditMoTL", ImageBoxesPath, 3, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxEditMoT" , ImageBoxesPath, 4, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxEditMoTR", ImageBoxesPath, 5, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxEditMoL" , ImageBoxesPath, 3, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxEditMoR" , ImageBoxesPath, 5, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxEditMoBL", ImageBoxesPath, 3, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxEditMoB" , ImageBoxesPath, 4, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxEditMoBR", ImageBoxesPath, 5, 2, 1, 1);
 	
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectEditMoPath, PackageId);
+		pAsset->SetName("editMo");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetBackgroundColor(ColorDarkBG);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+		pAsset->SetImagePadding(6.0f);
+	}
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
+		
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxEditFocusTL", ImageBoxesPath, 0, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxEditFocusT" , ImageBoxesPath, 1, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxEditFocusTR", ImageBoxesPath, 2, 6, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxEditFocusL" , ImageBoxesPath, 0, 7, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxEditFocusR" , ImageBoxesPath, 2, 7, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxEditFocusBL", ImageBoxesPath, 0, 8, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxEditFocusB" , ImageBoxesPath, 1, 8, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxEditFocusBR", ImageBoxesPath, 2, 8, 1, 1);
+	
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectEditFocusPath, PackageId);
+		pAsset->SetName("editFocus");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetBackgroundColor(ColorDarkBG);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+		pAsset->SetImagePadding(6.0f);
+	}
+	
+	CAssetPath RectListItemFocusPath;
 	CAssetPath RectListItemHlPath;
+	CAssetPath RectListItemHlFocusPath;
+	{
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectListItemFocusPath, PackageId);
+		pAsset->SetName("listItemFocus");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
+		pAsset->SetBackgroundColor(ColorFocus);
+	}
 	{
 		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectListItemHlPath, PackageId);
 		pAsset->SetName("listItemHl");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 		pAsset->SetBackgroundColor(ColorLightHL);
+	}
+	{
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectListItemHlFocusPath, PackageId);
+		pAsset->SetName("listItemHlFocus");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
+		pAsset->SetBackgroundColor(ColorFocusHL);
 	}
 	
 	//Text
@@ -497,6 +582,7 @@ int main(int argc, const char **argv)
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
 		CAssetPath LabelRoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath ButtonPath;
 		
 		{
@@ -531,6 +617,17 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("editorButtonFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
@@ -538,6 +635,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 	}
 	
@@ -547,6 +645,7 @@ int main(int argc, const char **argv)
 		CAssetPath LabelMoPath;
 		CAssetPath LabelHlPath;
 		CAssetPath LabelRoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath ButtonPath;
 		CAssetPath ButtonHlPath;
 		CAssetPath TogglePath;
@@ -593,6 +692,17 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("cursorToolFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
@@ -600,6 +710,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonHlPath, PackageId);
@@ -607,6 +718,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelHlPath);
 			pAsset->SetMouseOverStylePath(LabelHlPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 		
 		{
@@ -624,6 +736,7 @@ int main(int argc, const char **argv)
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
 		CAssetPath LabelRoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath ButtonPath;
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
@@ -663,6 +776,19 @@ int main(int argc, const char **argv)
 			pAsset->SetMinWidth(150);
 			pAsset->SetMinHeight(20);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("dialogButtonFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetMinWidth(150);
+			pAsset->SetMinHeight(20);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
@@ -670,12 +796,15 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 	}
 	
 	//Text Edit
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath EditPath;
 		
@@ -683,6 +812,28 @@ int main(int argc, const char **argv)
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("textEditIdle");
 			pAsset->SetRectPath(RectEditPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetMinHeight(16);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
+			pAsset->SetName("textEditMo");
+			pAsset->SetRectPath(RectEditMoPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetMinHeight(16);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("textEditFocus");
+			pAsset->SetRectPath(RectEditFocusPath);
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
 			pAsset->SetSpacing(4);
@@ -705,7 +856,8 @@ int main(int argc, const char **argv)
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
 			pAsset->SetName("textEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
-			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		
@@ -714,6 +866,8 @@ int main(int argc, const char **argv)
 	//Numeric Edit
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath EditPath;
 		
@@ -729,8 +883,30 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 		}
 		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
+			pAsset->SetName("numericEditMo");
+			pAsset->SetRectPath(RectEditMoPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("numericEditFocus");
+			pAsset->SetRectPath(RectEditFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+		}
+		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
-			pAsset->SetName("numericEditRO");
+			pAsset->SetName("numericEditRo");
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
 			pAsset->SetSpacing(4);
@@ -743,7 +919,8 @@ int main(int argc, const char **argv)
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&EditPath, PackageId);
 			pAsset->SetName("numericEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
-			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
@@ -753,6 +930,7 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		
 		{
@@ -767,8 +945,18 @@ int main(int argc, const char **argv)
 		}
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelMoPath, PackageId);
-			pAsset->SetName("assetEditMO");
+			pAsset->SetName("assetEditMo");
 			pAsset->SetRectPath(RectButtonMoPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("assetEditFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
 			pAsset->SetMargin(2);
 			pAsset->SetPadding(2);
 			pAsset->SetSpacing(4);
@@ -790,6 +978,7 @@ int main(int argc, const char **argv)
 			pAsset->SetName("assetEdit");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
@@ -798,9 +987,11 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIncrIdlePath;
 		CAssetPath LabelIncrMoPath;
+		CAssetPath LabelIncrFocusPath;
 		CAssetPath ButtonIncrPath;
 		CAssetPath LabelDecrIdlePath;
 		CAssetPath LabelDecrMoPath;
+		CAssetPath LabelDecrFocusPath;
 		CAssetPath ButtonDecrPath;
 		
 		{
@@ -827,12 +1018,25 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 			pAsset->SetIconPath(IconIncreasePath);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIncrFocusPath, PackageId);
+			pAsset->SetName("intEditIncrFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconIncreasePath);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonIncrPath, PackageId);
 			pAsset->SetName("intEditIncr");
 			pAsset->SetIdleStylePath(LabelIncrIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIncrMoPath);
+			pAsset->SetFocusStylePath(LabelIncrFocusPath);
 		}
 		
 		{
@@ -859,12 +1063,25 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 			pAsset->SetIconPath(IconDecreasePath);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelDecrFocusPath, PackageId);
+			pAsset->SetName("intEditDecrFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
+			pAsset->SetIconPath(IconDecreasePath);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonDecrPath, PackageId);
 			pAsset->SetName("intEditDecr");
 			pAsset->SetIdleStylePath(LabelDecrIdlePath);
 			pAsset->SetMouseOverStylePath(LabelDecrMoPath);
+			pAsset->SetFocusStylePath(LabelDecrFocusPath);
 		}
 		
 		CAssetPath AssetPath;
@@ -878,6 +1095,7 @@ int main(int argc, const char **argv)
 	CAssetPath ButtonActiveListItemPath;
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath TogglePath;
@@ -885,6 +1103,14 @@ int main(int argc, const char **argv)
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("listItemIdle");
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("listItemFocus");
+			pAsset->SetRectPath(RectListItemFocusPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
@@ -902,6 +1128,7 @@ int main(int argc, const char **argv)
 			pAsset->SetName("listItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		
@@ -921,6 +1148,7 @@ int main(int argc, const char **argv)
 	//Active List Item HL
 	{
 		CAssetPath LabelIdlePath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		
@@ -928,6 +1156,14 @@ int main(int argc, const char **argv)
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);
 			pAsset->SetName("listItemHL");
 			pAsset->SetRectPath(RectListItemHlPath);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("listItemHLFocus");
+			pAsset->SetRectPath(RectListItemHlFocusPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
@@ -946,6 +1182,7 @@ int main(int argc, const char **argv)
 			pAsset->SetName("listItemHL");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelIdlePath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 	}
@@ -966,6 +1203,7 @@ int main(int argc, const char **argv)
 		CAssetPath IconTruePath;
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath TogglePath;
@@ -986,6 +1224,14 @@ int main(int argc, const char **argv)
 			pAsset->SetTextColor(1.0f);
 		}
 		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("menuItemFocus");
+			pAsset->SetRectPath(RectListItemFocusPath);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelRoPath, PackageId);
 			pAsset->SetName("menuItemRo");
 			pAsset->SetPadding(4);
@@ -998,6 +1244,7 @@ int main(int argc, const char **argv)
 			pAsset->SetName("menuItem");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
 		}
 		CAssetPath AssetPath;
@@ -1158,6 +1405,7 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath ButtonPath;
 		
 		{
@@ -1181,10 +1429,21 @@ int main(int argc, const char **argv)
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER);
 		}
 		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("paletteIconFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetMargin(4);
+			pAsset->SetTextColor(1.0f);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER);
+		}
+		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
 			pAsset->SetName("paletteIcon");
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 	}
 	
@@ -1230,6 +1489,7 @@ int main(int argc, const char **argv)
 		CAssetPath SpriteWheelIconPath;
 		CAssetPath LabelIdlePath;
 		CAssetPath LabelMoPath;
+		CAssetPath LabelFocusPath;
 		CAssetPath LabelRoPath;
 		CAssetPath ButtonPath;
 		CAssetPath ColorEditPath;
@@ -1274,6 +1534,18 @@ int main(int argc, const char **argv)
 			pAsset->SetMinHeight(16);
 			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER_EXTENDED);
 		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelFocusPath, PackageId);
+			pAsset->SetName("colorEditButtonFocus");
+			pAsset->SetRectPath(RectButtonFocusPath);
+			pAsset->SetMargin(2);
+			pAsset->SetPadding(2);
+			pAsset->SetSpacing(4);
+			pAsset->SetFontSize(12);
+			pAsset->SetTextColor(vec4(0.8f, 0.8f, 0.8f, 1.0f));
+			pAsset->SetMinHeight(16);
+			pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_BELOW_CENTER_EXTENDED);
+		}
 		
 		{
 			CAsset_GuiButtonStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiButtonStyle>(&ButtonPath, PackageId);
@@ -1281,6 +1553,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(LabelIdlePath);
 			pAsset->SetMouseOverStylePath(LabelMoPath);
 			pAsset->SetReadOnlyStylePath(LabelRoPath);
+			pAsset->SetFocusStylePath(LabelFocusPath);
 		}
 		
 		{
@@ -1299,11 +1572,15 @@ int main(int argc, const char **argv)
 	{
 		CAssetPath TabsPath;
 		CAssetPath ActiveRectPath;
+		CAssetPath ActiveRectFocusPath;
 		CAssetPath ActiveButtonPath;
 		CAssetPath ActiveLabelIdlePath;
+		CAssetPath ActiveLabelFocusPath;
 		CAssetPath InactiveRectPath;
+		CAssetPath InactiveRectFocusPath;
 		CAssetPath InactiveButtonPath;
 		CAssetPath InactiveLabelIdlePath;
+		CAssetPath InactiveLabelFocusPath;
 		CAssetPath LayoutRectPath;
 		CAssetPath LayoutBoxPath;
 		CAssetPath ContentRectPath;
@@ -1316,11 +1593,24 @@ int main(int argc, const char **argv)
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 			pAsset->SetBackgroundColor(ColorDarkBG);
 		}
-		
+		{
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&InactiveRectFocusPath, PackageId);
+			pAsset->SetName("tabsInactiveRectFocus");
+			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
+			pAsset->SetBackgroundColor(ColorFocus);
+		}
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&InactiveLabelIdlePath, PackageId);
 			pAsset->SetName("tabsInactiveLabel");
 			pAsset->SetRectPath(InactiveRectPath);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&InactiveLabelFocusPath, PackageId);
+			pAsset->SetName("tabsInactiveLabelFocus");
+			pAsset->SetRectPath(InactiveRectFocusPath);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
 			pAsset->SetTextColor(1.0f);
@@ -1332,6 +1622,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(InactiveLabelIdlePath);
 			pAsset->SetMouseOverStylePath(InactiveLabelIdlePath);
 			pAsset->SetReadOnlyStylePath(InactiveLabelIdlePath);
+			pAsset->SetFocusStylePath(InactiveLabelFocusPath);
 		}
 		
 		{
@@ -1340,11 +1631,26 @@ int main(int argc, const char **argv)
 			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
 			pAsset->SetBackgroundColor(ColorLightBG);
 		}
+		{
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&ActiveRectFocusPath, PackageId);
+			pAsset->SetName("tabsActiveRectFocus");
+			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND);
+			pAsset->SetBackgroundColor(ColorFocusHL);
+		}
 		
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&ActiveLabelIdlePath, PackageId);
 			pAsset->SetName("tabsActiveLabel");
 			pAsset->SetRectPath(ActiveRectPath);
+			pAsset->SetMargin(1);
+			pAsset->SetPadding(4);
+			pAsset->SetSpacing(4);
+			pAsset->SetTextColor(1.0f);
+		}
+		{
+			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&ActiveLabelFocusPath, PackageId);
+			pAsset->SetName("tabsActiveLabelFocus");
+			pAsset->SetRectPath(ActiveRectFocusPath);
 			pAsset->SetMargin(1);
 			pAsset->SetPadding(4);
 			pAsset->SetSpacing(4);
@@ -1357,6 +1663,7 @@ int main(int argc, const char **argv)
 			pAsset->SetIdleStylePath(ActiveLabelIdlePath);
 			pAsset->SetMouseOverStylePath(ActiveLabelIdlePath);
 			pAsset->SetReadOnlyStylePath(ActiveLabelIdlePath);
+			pAsset->SetFocusStylePath(ActiveLabelFocusPath);
 		}
 		
 		{

@@ -1557,6 +1557,7 @@ guiButtonStyle.setInheritance(mainAsset)
 guiButtonStyle.addMember("IdleStylePath", TypeAssetPath())
 guiButtonStyle.addMember("MouseOverStylePath", TypeAssetPath())
 guiButtonStyle.addMember("ReadOnlyStylePath", TypeAssetPath())
+guiButtonStyle.addMember("FocusStylePath", TypeAssetPath())
 
 assetsList.append(guiButtonStyle)
 

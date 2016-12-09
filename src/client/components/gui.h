@@ -121,7 +121,6 @@ protected:
 	CAssetPath m_TabsStyle;
 	CAssetPath m_PopupStyle;
 	CAssetPath m_ComposeStyle;
-	CAssetPath m_FocusStyle;
 	CAssetPath m_TextSelectionStyle;
 	CAssetPath m_ComboBoxStyle;
 	
@@ -154,7 +153,6 @@ public:
 	void StartFocus(gui::CWidget* pWidget);
 	void StopFocus(gui::CWidget* pWidget);
 	void TryToGetFocus(gui::CWidget* pWidget);
-	void DrawFocusRect(gui::CRect Rect);
 	
 	//Input
 	const ivec2& GetMousePos() { return m_MousePos; }
@@ -174,7 +172,6 @@ public:
 	inline CAssetPath GetTabsStyle() const { return m_TabsStyle; }
 	inline CAssetPath GetPopupStyle() const { return m_PopupStyle; }
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
-	inline CAssetPath GetFocusStyle() const { return m_FocusStyle; }
 	inline CAssetPath GetTextSelectionStyle() const { return m_TextSelectionStyle; }
 	inline CAssetPath GetComboBoxStyle() const { return m_ComboBoxStyle; }
 	
