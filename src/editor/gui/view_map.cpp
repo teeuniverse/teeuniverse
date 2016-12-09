@@ -430,7 +430,7 @@ void CViewMap::OnButtonClick(int Button)
 		{
 			m_CameraZoom /= 1.1f;
 		}
-		else if(Button == KEY_MOUSE_3)
+		else if(Button == KEY_MOUSE_3 || (Button == KEY_MOUSE_1 && Input()->KeyIsPressed(KEY_LCTRL)))
 		{
 			m_CameraDraged = true;
 			return;
@@ -442,7 +442,7 @@ void CViewMap::OnButtonClick(int Button)
 
 void CViewMap::OnButtonRelease(int Button)
 {
-	if(Button == KEY_MOUSE_3)
+	if(m_CameraDraged && (Button == KEY_MOUSE_1 || Button == KEY_MOUSE_3))
 	{
 		m_CameraDraged = false;
 	}
