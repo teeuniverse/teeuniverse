@@ -53,6 +53,7 @@ public:
 			virtual void OnViewMouseMove() {};
 			virtual void OnViewButtonClick(int Button) {};
 			virtual void OnViewButtonRelease(int Button) {};
+			virtual void OnViewInputEvent(const CInput::CEvent& Event) {};
 		
 			class CGuiEditor* AssetsEditor() { return m_pView->AssetsEditor(); }
 		};
@@ -75,6 +76,7 @@ public:
 		virtual void OnMouseMove();
 		virtual void OnButtonClick(int Button);
 		virtual void OnButtonRelease(int Button);
+		virtual void OnInputEvent(const CInput::CEvent& Event);
 		
 		void SetCursorTool(CCursorTool* pCursorTool);
 		CCursorTool* GetCursorTool() const { return m_pCursorTool; }

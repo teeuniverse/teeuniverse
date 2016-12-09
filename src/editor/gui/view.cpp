@@ -155,6 +155,13 @@ void CViewManager::CView::OnMouseMove()
 	m_pToolbar->OnMouseMove();
 }
 
+void CViewManager::CView::OnInputEvent(const CInput::CEvent& Event)
+{
+	if(m_pCursorTool && m_pCursorTool->IsEnabled())
+		m_pCursorTool->OnViewInputEvent(Event);
+		
+	m_pToolbar->OnInputEvent(Event);
+}
 
 /* VIEW MANAGER *******************************************************/
 

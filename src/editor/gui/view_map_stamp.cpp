@@ -1373,6 +1373,18 @@ void CCursorTool_MapStamp::RotateCWSelection()
 	}
 }
 
+void CCursorTool_MapStamp::OnViewInputEvent(const CInput::CEvent& Event)
+{
+	if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_N)
+		VFlipSelection();
+	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_M)
+		HFlipSelection();
+	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_R)
+		RotateCCWSelection();
+	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_T)
+		RotateCWSelection();
+}
+
 void CCursorTool_MapStamp::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
