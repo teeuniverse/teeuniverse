@@ -1596,6 +1596,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
 		
+		m_Path_Line_Separator = AssetsManager()->FindAsset<CAsset_GuiLineStyle>(PackageId, "separator");
+		
 		m_Path_Box_Popup = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "popup");
 		m_Path_Box_View = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "view");
 		m_Path_Box_Panel = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panel");
@@ -1717,6 +1719,7 @@ void CGuiEditor::LoadAssets()
 	m_ComposeStyle = m_Path_Label_Compose;
 	m_TextSelectionStyle = m_Path_Rect_TextSelection;
 	m_ComboBoxStyle = m_Path_ComboBox_Default;
+	m_SeparatorStyle = m_Path_Line_Separator;
 	
 	//~ PackageId = AssetsManager()->NewPackage("mypackage");
 	//~ AssetsManager()->SetPackageReadOnly(PackageId, false);

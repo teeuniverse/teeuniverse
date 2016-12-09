@@ -1290,6 +1290,22 @@ int main(int argc, const char **argv)
 		}
 	}
 	
+	//Separator
+	{
+		CAssetPath SpritePath;
+		CAssetPath ScrollbarPath;
+		
+		CREATE_SPRITE_PATH(SpritePath, PackageId, "separator", ImageBoxesPath, 7, 15, 1, 1);
+		
+		{
+			CAsset_GuiLineStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLineStyle>(&ScrollbarPath, PackageId);
+			pAsset->SetName("separator");
+			pAsset->SetFlags(CAsset_GuiLineStyle::FLAG_BORDER | CAsset_GuiLineStyle::FLAG_IMAGE);
+			pAsset->SetBorderColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			pAsset->SetImageMPath(SpritePath);
+		}
+	}
+	
 	//Scrollbar
 	CAssetPath RailPath;
 	{

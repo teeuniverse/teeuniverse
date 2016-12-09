@@ -149,15 +149,13 @@ void CHListLayout::CSeparator::UpdateBoundingSize()
 
 void CHListLayout::CSeparator::Render()
 {
-	Graphics()->TextureClear();
-	Graphics()->LinesBegin();
-	Graphics()->SetColor(1.0f, 1.0f, 0.5f, 1.0f);
-	
-	float x = m_DrawRect.x + m_DrawRect.w/2;
-	CGraphics::CLineItem Line(x+0.5f, m_DrawRect.y, x+0.5f, m_DrawRect.y + m_DrawRect.h);
-	Graphics()->LinesDraw(&Line, 1);
-	
-	Graphics()->LinesEnd();
+	const CAsset_GuiLineStyle* pLineStyle = AssetsManager()->GetAsset<CAsset_GuiLineStyle>(Context()->GetSeparatorStyle());
+	if(pLineStyle)
+	{
+		ivec2 Pos0(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y);
+		ivec2 Pos1(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h);
+		AssetsRenderer()->DrawGuiLine(Pos0, Pos1, Context()->GetSeparatorStyle());
+	}
 }
 
 	//List
@@ -296,15 +294,13 @@ void CVListLayout::CSeparator::UpdateBoundingSize()
 
 void CVListLayout::CSeparator::Render()
 {
-	Graphics()->TextureClear();
-	Graphics()->LinesBegin();
-	Graphics()->SetColor(1.0f, 1.0f, 0.5f, 1.0f);
-	
-	float y = m_DrawRect.y + m_DrawRect.h * 0.7;
-	CGraphics::CLineItem Line(m_DrawRect.x, y+0.5f, m_DrawRect.x + m_DrawRect.w, y+0.5f);
-	Graphics()->LinesDraw(&Line, 1);
-	
-	Graphics()->LinesEnd();
+	const CAsset_GuiLineStyle* pLineStyle = AssetsManager()->GetAsset<CAsset_GuiLineStyle>(Context()->GetSeparatorStyle());
+	if(pLineStyle)
+	{
+		ivec2 Pos0(m_DrawRect.x, m_DrawRect.y + m_DrawRect.h/2);
+		ivec2 Pos1(m_DrawRect.x + m_DrawRect.w, m_DrawRect.y + m_DrawRect.h/2);
+		AssetsRenderer()->DrawGuiLine(Pos0, Pos1, Context()->GetSeparatorStyle());
+	}
 }
 
 	//List

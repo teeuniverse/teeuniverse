@@ -66,6 +66,8 @@ public:
 	CAssetPath m_Path_Rect_Selection;
 	CAssetPath m_Path_Rect_Border;
 	
+	CAssetPath m_Path_Line_Separator;
+	
 	CAssetPath m_Path_Box_Popup;
 	CAssetPath m_Path_Box_View;
 	CAssetPath m_Path_Box_Panel;

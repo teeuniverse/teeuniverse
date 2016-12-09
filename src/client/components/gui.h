@@ -123,6 +123,7 @@ protected:
 	CAssetPath m_ComposeStyle;
 	CAssetPath m_TextSelectionStyle;
 	CAssetPath m_ComboBoxStyle;
+	CAssetPath m_SeparatorStyle;
 	
 public:
 	CGui(CClientKernel* pKernel);
@@ -174,6 +175,7 @@ public:
 	inline CAssetPath GetComposeStyle() const { return m_ComposeStyle; }
 	inline CAssetPath GetTextSelectionStyle() const { return m_TextSelectionStyle; }
 	inline CAssetPath GetComboBoxStyle() const { return m_ComboBoxStyle; }
+	inline CAssetPath GetSeparatorStyle() const { return m_SeparatorStyle; }
 	
 	void SetCursor(gui::CWidget* pWidget, int CursorType);
 	void ShowLoadingCursor();
