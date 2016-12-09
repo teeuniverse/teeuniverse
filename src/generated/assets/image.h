@@ -38,10 +38,6 @@
 
 class CAsset_Image : public CAsset
 {
-private:
-	CTextureHandle m_Texture;
-	
-
 public:
 	static const int TypeId = 13;
 	
@@ -65,6 +61,8 @@ public:
 		DATA_PTR,
 		DATA_ARRAY,
 		DATA,
+		TEXTURE_ID,
+		TEXTURE,
 	};
 	
 	class CTuaType : public CAsset::CTuaType
@@ -88,10 +86,10 @@ private:
 	int m_TexelSize;
 	bool m_TilingEnabled;
 	array2d< uint8, allocator_default<uint8> > m_Data;
+	CTextureHandle m_Texture;
 
 public:
-	inline CTextureHandle GetTexture() const { return m_Texture; }
-	inline void SetTexture(CTextureHandle Texture) { m_Texture = Texture; }vec4 GetColor(int x, int y) const;vec4 Sample(vec2 UV) const;
+	vec4 GetColor(int x, int y) const;vec4 Sample(vec2 UV) const;
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{
@@ -118,6 +116,7 @@ public:
 		m_TexelSize = Item.m_TexelSize;
 		m_TilingEnabled = Item.m_TilingEnabled;
 		m_Data.copy(Item.m_Data);
+		m_Texture = Item.m_Texture;
 	}
 	
 	void transfert(CAsset_Image& Item)
@@ -129,6 +128,7 @@ public:
 		m_TexelSize = Item.m_TexelSize;
 		m_TilingEnabled = Item.m_TilingEnabled;
 		m_Data.transfert(Item.m_Data);
+		m_Texture = Item.m_Texture;
 	}
 	
 	inline int GetGridWidth() const { return m_GridWidth; }
@@ -152,6 +152,10 @@ public:
 	
 	inline uint8 GetData(const CSubPath& SubPath) const { return m_Data.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
+	inline CTextureHandle GetTexture() const { return m_Texture; }
+	
+	inline int GetTextureId() const { return m_Texture.Id(); }
+	
 	inline void SetGridWidth(int Value) { m_GridWidth = Value; }
 	
 	inline void SetGridHeight(int Value) { m_GridHeight = Value; }
@@ -167,6 +171,10 @@ public:
 	inline void SetDataHeight(int Value) { m_Data.resize_height(max(Value, 1)); }
 	
 	inline void SetData(const CSubPath& SubPath, uint8 Value) { m_Data.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
+	
+	inline void SetTexture(CTextureHandle Value) { m_Texture = Value; }
+	
+	inline void SetTextureId(int Value) { m_Texture.SetId(Value); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

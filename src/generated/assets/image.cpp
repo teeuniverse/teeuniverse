@@ -99,6 +99,8 @@ int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultVa
 			return GetDataHeight();
 		case DATA:
 			return GetData(SubPath);
+		case TEXTURE_ID:
+			return GetTextureId();
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -128,6 +130,9 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 			return true;
 		case DATA:
 			SetData(SubPath, Value);
+			return true;
+		case TEXTURE_ID:
+			SetTextureId(Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);

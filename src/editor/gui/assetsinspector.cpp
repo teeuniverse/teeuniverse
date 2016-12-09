@@ -404,6 +404,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 	
 	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_WIDTH, _LSTRING("Width"));
 	AddField_Integer_NoEdit(pTab, CAsset_Image::DATA_HEIGHT, _LSTRING("Height"));
+	//AddField_Integer_NoEdit(pTab, CAsset_Image::TEXTURE_ID, _LSTRING("Texture Id"));
 	AddField_Integer(pTab, CAsset_Image::TEXELSIZE, _LSTRING("Texel size"));
 	AddField_Integer(pTab, CAsset_Image::GRIDWIDTH, _LSTRING("Grid width"));
 	AddField_Integer(pTab, CAsset_Image::GRIDHEIGHT, _LSTRING("Grid height"));

@@ -141,7 +141,10 @@ class Type:
 	def tuaType(self):
 		return ""
 	def generateTuaDeclaration(self, var):
-		return [ self.tuaType() + " " + var + ";" ]
+		if self.tuaType():
+			return [ self.tuaType() + " " + var + ";" ]
+		else:
+			return []
 	def numSubPathId(self):
 		return 0
 	def generateIterators(self, name, var):
@@ -316,6 +319,17 @@ class TypeString(Type):
 		return [varTua + " = pLoadingContext->ArchiveFile()->AddString(" + varSys + ".buffer());"]
 	def generateRead(self, varSys, varTua):
 		return [varSys + ".copy(pLoadingContext->ArchiveFile()->GetString(" + varTua + "));"]
+
+class TypeTextureHandle(Type):
+	def __init__(self):
+		Type.__init__(self, "CTextureHandle")
+	def tuaType(self):
+		return ""
+	def getSetInterfaces(self):
+		return [
+			GetSetInterface_Simple("", self.tname, self.tname, self.tname, "CTextureHandle()"),
+			GetSetInterface_Func("Id", "int", "int", "Id", "SetId", "-1")
+		]
 		
 class GetSetInterface_ArrayChild(GetSetInterface):
 	def __init__(self, suffix, interface, t):
@@ -698,9 +712,15 @@ class Member:
 	def generateStorage(self, var):
 		return self.t.generateStorage(self.memberName())
 	def generateWrite(self):
-		return self.t.generateWrite("SysType."+self.memberName(), "TuaType."+self.memberName())
+		if self.t.tuaType():
+			return self.t.generateWrite("SysType."+self.memberName(), "TuaType."+self.memberName())
+		else:
+			return []
 	def generateRead(self):
-		return self.t.generateRead("SysType."+self.memberName(), "TuaType."+self.memberName())
+		if self.t.tuaType():
+			return self.t.generateRead("SysType."+self.memberName(), "TuaType."+self.memberName())
+		else:
+			return []
 	def generateAssetPathOp(self, operation):
 		return self.t.generateAssetPathOp(self.memberName(), operation)
 		
@@ -1741,14 +1761,9 @@ image.addMember("GridSpacing", TypeInt32(), "0")
 image.addMember("TexelSize", TypeInt32(), "1024")
 image.addMember("TilingEnabled", TypeBool(), "false")
 image.addMember("Data", TypeArray2d(TypeUInt8()))
+image.addMember("Texture", TypeTextureHandle())
 image.addHeader("shared/graphics.h")
-image.addPrivateLines([
-	"CTextureHandle m_Texture;",
-	""
-])
 image.addPublicFunc([
-	"inline CTextureHandle GetTexture() const { return m_Texture; }",
-	"inline void SetTexture(CTextureHandle Texture) { m_Texture = Texture; }"
 	"vec4 GetColor(int x, int y) const;"
 	"vec4 Sample(vec2 UV) const;"
 ])
