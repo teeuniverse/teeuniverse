@@ -36,14 +36,7 @@
 #include <shared/system/memory.h>
 #include <shared/tl/threading.h>
 
-#if defined(CONF_FAMILY_WINDOWS)
-PFNGLTEXIMAGE3DPROC glTexImage3DInternal;
-
-GLAPI void GLAPIENTRY glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
-{
-	glTexImage3DInternal(target, level, internalFormat, width, height, depth, border, format, type, pixels);
-}
-#endif
+PFNGLTEXIMAGE3DPROC glTexImage3D_Dyn;
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
@@ -439,7 +432,7 @@ void CCommandProcessorFragment_OpenGL::Cmd_Texture_Create(const CCommandBuffer::
 
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage3D(GL_TEXTURE_3D, 0, StoreOglformat, Width, Height, Depth, 0, Oglformat, GL_UNSIGNED_BYTE, pTexData);
+		glTexImage3D_Dyn(GL_TEXTURE_3D, 0, StoreOglformat, Width, Height, Depth, 0, Oglformat, GL_UNSIGNED_BYTE, pTexData);
 
 		m_aTextures[pCommand->m_Slot].m_MemSize += Width*Height*pCommand->m_PixelSize;
 	}	
@@ -767,14 +760,12 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 		return -1;
 	}
 	
-#if defined(CONF_FAMILY_WINDOWS)
-	glTexImage3DInternal = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-	if(glTexImage3DInternal == 0)
+	glTexImage3D_Dyn = (PFNGLTEXIMAGE3DPROC) SDL_GL_GetProcAddress("glTexImage3D");
+	if(!glTexImage3D_Dyn)
 	{
 		dbg_msg("gfx", "glTexImage3D not supported");
 		return -1;
 	}
-#endif
 
 	SDL_GL_SetSwapInterval(Flags&INITFLAG_VSYNC ? 1 : 0);
 
