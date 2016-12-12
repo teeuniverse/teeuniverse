@@ -22,7 +22,7 @@
 #include <shared/math/math.h>
 #include <shared/components/storage.h>
 
-#include <external/zlib/zlib.h>
+#include <zlib.h>
 
 CArchiveFile::CArchiveFile()
 {

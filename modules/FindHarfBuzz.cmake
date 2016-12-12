@@ -34,12 +34,15 @@ include(FindPkgConfig)
 
 pkg_check_modules(PC_HARFBUZZ harfbuzz>=0.9.7)
 
-find_path(HARFBUZZ_INCLUDE_DIRS NAMES hb.h
+find_path(HARFBUZZ_INCLUDE_DIRS NAMES harfbuzz/hb.h
     HINTS ${PC_HARFBUZZ_INCLUDE_DIRS} ${PC_HARFBUZZ_INCLUDEDIR}
+	PATH_SUFFIXES include
 )
 
-find_library(HARFBUZZ_LIBRARIES NAMES harfbuzz
+find_library(HARFBUZZ_LIBRARIES
+	NAMES harfbuzz
     HINTS ${PC_HARFBUZZ_LIBRARY_DIRS} ${PC_HARFBUZZ_LIBDIR}
+	PATH_SUFFIXES lib64 lib lib/x64 lib/x86
 )
 
 # HarfBuzz 0.9.18 split ICU support into a separate harfbuzz-icu library.

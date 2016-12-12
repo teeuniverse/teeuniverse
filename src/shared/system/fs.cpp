@@ -209,8 +209,8 @@ public:
 	
 	virtual const char* get_filename()
 	{
-		pIter->m_Path.buffer()[m_PathLength] = 0;
-		pIter->m_Path.append(m_FindData.cFileName);
+		m_Path.buffer()[m_PathLength] = 0;
+		m_Path.append((const char*) m_FindData.cFileName);
 		return m_Path.buffer();
 	}
 };

@@ -37,17 +37,6 @@
 #include <shared/tl/threading.h>
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
- 
-//~ #include <base/detect.h>
-
-#if defined(CONF_FAMILY_WINDOWS)
-	PFNGLTEXIMAGE3DPROC glTexImage3DInternal;
-
-	GLAPI void GLAPIENTRY glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
-	{
-		glTexImage3DInternal(target, level, internalFormat, width, height, depth, border, format, type, pixels);
-	}
-#endif
 
 // ------------ CGraphicsBackend_SDL
 
@@ -768,15 +757,6 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 		dbg_msg("gfx", "unable to create OpenGL context: %s", SDL_GetError());
 		return -1;
 	}
-
-	#if defined(CONF_FAMILY_WINDOWS)
-		glTexImage3DInternal = (PFNGLTEXIMAGE3DPROC) wglGetProcAddress("glTexImage3D");
-		if(glTexImage3DInternal == 0)
-		{
-			dbg_msg("gfx", "glTexImage3D not supported");
-			return -1;
-		}
-	#endif
 
 	SDL_GL_SetSwapInterval(Flags&INITFLAG_VSYNC ? 1 : 0);
 

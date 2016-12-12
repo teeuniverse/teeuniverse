@@ -37,7 +37,7 @@
 #include <shared/math/math.h>
 #include <shared/components/storage.h>
 
-#include <zlib.h>
+#include <external/zlib/zlib.h>
 
 namespace tw07
 {

@@ -576,7 +576,7 @@ void CTextRenderer::UpdateTextCache_HarfBuzz(array<CHarfbuzzGlyph>* pGlyphChain,
 	hb_buffer_set_script(m_pHBBuffer, HB_SCRIPT_ARABIC);
 	hb_buffer_set_language(m_pHBBuffer, hb_language_from_string("ar", 2));
 	
-	hb_buffer_add_utf16(m_pHBBuffer, pTextUTF16, Length, Start, Length);
+	hb_buffer_add_utf16(m_pHBBuffer, (const uint16*) pTextUTF16, Length, Start, Length);
 	hb_shape(m_Fonts[FontId]->m_pHBFont, m_pHBBuffer, 0, 0);
 	
 	unsigned int GlyphCount;

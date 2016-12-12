@@ -21,7 +21,7 @@
 #include <shared/components/cli.h>
 #include <client/loading_tools.h>
 
-#include <external/json-parser/json.h>
+#include <json-parser/json.h>
 #include <shared/components/storage.h>
 
 /* COUNTRYFLAGS *******************************************************/
@@ -106,7 +106,7 @@ bool CCountryFlags::Init()
 				{
 					char aBuf[64];
 
-					int CountryCode = (long)rStart[i]["numeric"];
+					int CountryCode = (int) rStart[i]["numeric"];
 					
 					// add entry
 					CCountryFlag CountryFlag;
@@ -153,7 +153,7 @@ bool CCountryFlags::Init()
 					m_Flags.add_unsorted(CountryFlag);
 		
 					// add alias for compatibility
-					int Alias = (long)rStart[i]["numericAlias"];
+					int Alias = (int) rStart[i]["numericAlias"];
 					if(Alias > 0)
 					{
 						m_CodeAliases.add_by_copy(Alias);

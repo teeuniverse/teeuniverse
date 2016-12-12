@@ -39,9 +39,10 @@
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
+#include <cstdio>
+
 #if defined(CONF_FAMILY_UNIX)
 	#include <cstdarg>
-	#include <cstdio>
 	
 	#define VSNPRINTF vsnprintf
 	

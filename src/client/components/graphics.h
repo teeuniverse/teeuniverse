@@ -39,7 +39,7 @@
 #include <shared/math/vector.h>
 #include <shared/graphics.h>
 #include <client/kernel.h>
-#include <external/pnglite/pnglite.h>
+#include <pnglite/pnglite.h>
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 

@@ -21,7 +21,7 @@
 
 #include <shared/kernel.h>
 #include <shared/components/assetsmanager.h>
-#include <external/pnglite/pnglite.h>
+#include <pnglite/pnglite.h>
 
 CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int StorageType, int GridWidth, int GridHeight, bool TilingEnabled = false, int GridSpacing = 0);
 

@@ -40,21 +40,6 @@
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
-
-//~ #include <base/detect.h>
-//~ #include <base/math.h>
-//~ #include <base/tl/threading.h>
-
-//~ #include <base/system.h>
-//~ #include <engine/external/pnglite/pnglite.h>
-
-//~ #include <engine/shared/config.h>
-//~ #include <engine/shared/storage.h>
-//~ #include <engine/keys.h>
-//~ #include <engine/console.h>
-
-//~ #include <math.h> // cosf, sinf
-
 #include "graphics.h"
 
 static CVideoMode g_aFakeModes[] = {

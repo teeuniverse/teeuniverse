@@ -18,7 +18,7 @@
 
 #include "localization.h"
 
-#include <external/json-parser/json.h>
+#include <json-parser/json.h>
 #include <shared/components/storage.h>
 #include <shared/components/cli.h>
 

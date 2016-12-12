@@ -162,7 +162,7 @@ if(${ICU_PUBLIC_VAR_NS}_INCLUDE_DIR)
     elseif(EXISTS "${${ICU_PUBLIC_VAR_NS}_INCLUDE_DIR}/utypes.h") # ICU 1.3
         file(READ "${${ICU_PUBLIC_VAR_NS}_INCLUDE_DIR}/utypes.h" ${ICU_PRIVATE_VAR_NS}_VERSION_HEADER_CONTENTS)
     else()
-        message(FATAL_ERROR "ICU version header not found")
+        message(FATAL_ERROR "ICU version header not found" "${${ICU_PUBLIC_VAR_NS}_INCLUDE_DIR}")
     endif()
 
     if(${ICU_PRIVATE_VAR_NS}_VERSION_HEADER_CONTENTS MATCHES ".*# *define *ICU_VERSION *\"([0-9]+)\".*") # ICU 1.3
@@ -204,6 +204,7 @@ if(MSVC)
 endif(MSVC)
 foreach(${ICU_PRIVATE_VAR_NS}_COMPONENT ${${ICU_PUBLIC_VAR_NS}_FIND_COMPONENTS})
     string(TOUPPER "${${ICU_PRIVATE_VAR_NS}_COMPONENT}" ${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT)
+    
     if(MSVC)
         set(${ICU_PRIVATE_VAR_NS}_POSSIBLE_RELEASE_NAMES )
         set(${ICU_PRIVATE_VAR_NS}_POSSIBLE_DEBUG_NAMES )
@@ -236,6 +237,8 @@ foreach(${ICU_PRIVATE_VAR_NS}_COMPONENT ${${ICU_PUBLIC_VAR_NS}_FIND_COMPONENTS})
             PATHS ${${ICU_PRIVATE_VAR_NS}_HINTS}
             DOC "Library for ICU ${${ICU_PRIVATE_VAR_NS}_COMPONENT} component"
         )
+        
+		message(STATUS "${${ICU_PRIVATE_VAR_NS}_COMPONENTS_${${ICU_PRIVATE_VAR_NS}_COMPONENT}}")
 
         if(${ICU_PUBLIC_VAR_NS}_${${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT}_LIBRARY)
             set("${ICU_PUBLIC_VAR_NS}_${${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT}_FOUND" TRUE)
