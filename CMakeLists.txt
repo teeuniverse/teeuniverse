@@ -30,7 +30,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 find_package(SDL2)
 find_package(OpenGL)
 find_package(Freetype)
-find_package(HarfBuzz)
+if(NOT(WITHOUT_HARFBUZZ))
+	find_package(HarfBuzz)
+endif()
 find_package(ICU COMPONENTS i18n)
 
 ########################################################################
@@ -63,6 +65,7 @@ if(FREETYPE_FOUND)
 	include_directories(${FREETYPE_INCLUDE_DIRS})
 endif()
 if(HARFBUZZ_FOUND)
+	add_definitions(-DHARFBUZZ_ENABLED)
 	include_directories(${HARFBUZZ_INCLUDE_DIRS})
 endif()
 if(ICU_FOUND)
@@ -82,14 +85,21 @@ function(show_dependency_status name varFound error)
 	endif()
 endfunction()
 
-show_dependency_status("ICU" "${ICU_FOUND}" "needed by server, client, editor, tools")
-show_dependency_status("SDL" "${SDL2_FOUND}" "needed by: client, editor")
-show_dependency_status("OpenGL" "${OPENGL_FOUND}" "needed by: client, editor")
-show_dependency_status("FreeType" "${FREETYPE_FOUND}" "needed by: client, editor")
-show_dependency_status("Harfbuzz" "${HARFBUZZ_FOUND}" "needed by: client, editor")
+show_dependency_status("ICU" "${ICU_FOUND}" "required by server, client, editor, tools")
+show_dependency_status("SDL" "${SDL2_FOUND}" "required by: client, editor")
+show_dependency_status("OpenGL" "${OPENGL_FOUND}" "required by: client, editor")
+show_dependency_status("FreeType" "${FREETYPE_FOUND}" "required by: client, editor")
+show_dependency_status("Harfbuzz" "${HARFBUZZ_FOUND}" "used by: client, editor")
 
 if(NOT(ICU_FOUND))
 	message(FATAL_ERROR "You must install ICU to compile TeeUniverse")
+endif()
+
+if(NOT(HARFBUZZ_FOUND))
+	message(STATUS " ! Warning: Without Harfbuzz, the text rendering")
+	message(STATUS "            quality is reduced. In particular,")
+	message(STATUS "            arabic and farsi can't be displayed")
+	message(STATUS "            correctly.")
 endif()
 
 message(STATUS ${name} "Target status:")
@@ -136,7 +146,7 @@ install(DIRECTORY "data/assets" DESTINATION "share/teeuniverse")
 # CLIENT
 ########################################################################
 
-if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND AND HARFBUZZ_FOUND)
+if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 
 	# Sources
 	file(GLOB teeuniverse_client_src
@@ -152,8 +162,11 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND AND HARFBUZZ_FOUND)
 		${SDL2_LIBRARY}
 		${OPENGL_LIBRARIES}
 		${FREETYPE_LIBRARIES}
-		${HARFBUZZ_LIBRARIES}
 	)
+	
+	if(HARFBUZZ_FOUND)
+		set(teeuniverse_client_libraries ${teeuniverse_client_libraries} ${HARFBUZZ_LIBRARIES})
+	endif()
 
 	# Build
 	add_library(teeuniverse_client ${teeuniverse_client_src})

@@ -34,7 +34,9 @@
 #include <unicode/unistr.h> //To convert utf8 to utf16
 
 //HarfBuff to shape the text (arabic, ...)
+#ifdef HARFBUZZ_ENABLED
 #include <harfbuzz/hb.h>
+#endif
 	
 class CTextRenderer : public CClientKernel::CComponent
 {
@@ -44,7 +46,10 @@ protected:
 	public:
 		dynamic_string m_Filename;
 		FT_Face m_FtFace;
+		
+#ifdef HARFBUZZ_ENABLED
 		hb_font_t* m_pHBFont;
+#endif
 		
 		~CFont();
 	};
@@ -72,7 +77,7 @@ protected:
 		inline bool operator<(const CGlyphId& GlyphId) const { return ((m_FontId == GlyphId.m_FontId) ? (m_GlyphCode < GlyphId.m_GlyphCode) : (m_FontId < GlyphId.m_FontId)); }
 	};
 	
-	struct CHarfbuzzGlyph
+	struct CShaperGlyph
 	{
 		CGlyphId m_GlyphId;
 		int m_CharPos;
@@ -190,9 +195,9 @@ private:
 	CGlyph* FindGlyph(CGlyphCache* pCache, CGlyphId GlyphId);
 	CGlyph* GetGlyph(CGlyphCache* pCache, CGlyphId GlyphId);
 	
-	void UpdateTextCache_HarfBuzz(array<CHarfbuzzGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId);
-	void UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL);
-	void UpdateTextCache_BiDi(array<CHarfbuzzGlyph>* pGlyphChain, const char* pText);
+	void UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId);
+	void UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL);
+	void UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const char* pText);
 
 public:
 	CTextRenderer(CClientKernel* pKernel);

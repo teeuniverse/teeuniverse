@@ -22,15 +22,21 @@
 
 #include <unicode/schriter.h> //Character iterator to iterate over utf16 string
 #include <unicode/ubidi.h> //To apply BiDi algorithm
+
+#ifdef HARFBUZZ_ENABLED
 #include <harfbuzz/hb-icu.h> //To tell HarfBuuf to use ICU
 #include <harfbuzz/hb-ft.h> //To apply text shaping
+#endif
 
 /* FONT ***************************************************************/
 
 CTextRenderer::CFont::~CFont()
 {
 	FT_Done_Face(m_FtFace);
+	
+#ifdef HARFBUZZ_ENABLED
 	hb_font_destroy(m_pHBFont);
+#endif
 }
 
 /* GLYPH CACHE ********************************************************/
@@ -455,8 +461,10 @@ bool CTextRenderer::LoadFont(const char* pFilename)
 		return false;
 	}
 	
+#ifdef HARFBUZZ_ENABLED
 	pFont->m_pHBFont = hb_ft_font_create(pFont->m_FtFace, 0);
-	
+#endif
+
 	m_Fonts.add_by_copy(pFont);
 	
 	return true;
@@ -567,7 +575,8 @@ CTextRenderer::CGlyph* CTextRenderer::GetGlyph(CGlyphCache* pCache, CGlyphId Gly
 	return pGlyph;
 }
 
-void CTextRenderer::UpdateTextCache_HarfBuzz(array<CHarfbuzzGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
+#ifdef HARFBUZZ_ENABLED
+void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
 {
 	//Use harfbuzz to shape the text (arabic, tamil, ...)
 	hb_buffer_t* m_pHBBuffer = hb_buffer_create();
@@ -585,15 +594,26 @@ void CTextRenderer::UpdateTextCache_HarfBuzz(array<CHarfbuzzGlyph>* pGlyphChain,
 
 	for(int i=0; i<GlyphCount; i++)
 	{
-		CHarfbuzzGlyph& Glyph = pGlyphChain->increment();
+		CShaperGlyph& Glyph = pGlyphChain->increment();
 		Glyph.m_GlyphId = CGlyphId(FontId, GlyphInfo[i].codepoint);
 		Glyph.m_CharPos = GlyphInfo[i].cluster;
 	}
 		
 	hb_buffer_destroy(m_pHBBuffer);
 }
+#else
+void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
+{
+	for(int i=Start; i<Length; i++)
+	{
+		CShaperGlyph& Glyph = pGlyphChain->increment();
+		Glyph.m_GlyphId = CGlyphId(FontId, FT_Get_Char_Index(m_Fonts[FontId]->m_FtFace, pTextUTF16[i]));
+		Glyph.m_CharPos = i;
+	}
+}
+#endif
 
-void CTextRenderer::UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL)
+void CTextRenderer::UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL)
 {
 	int FontId = 0;
 	
@@ -615,7 +635,7 @@ void CTextRenderer::UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, con
 		{
 			if(SubLength > Increment)
 			{
-				UpdateTextCache_HarfBuzz(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
+				UpdateTextCache_Shaper(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
 				
 				SubStart = Start + Index - Increment;
 				SubLength = 0;
@@ -645,7 +665,7 @@ void CTextRenderer::UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, con
 			//If no glyph has been found, use the "noglyph" symbol of the main font
 			if(SubLength > Increment)
 			{
-				UpdateTextCache_HarfBuzz(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
+				UpdateTextCache_Shaper(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
 				
 				SubStart = Start + Index - Increment;
 				SubLength = 0;
@@ -657,10 +677,10 @@ void CTextRenderer::UpdateTextCache_Font(array<CHarfbuzzGlyph>* pGlyphChain, con
 	}
 	
 	if(SubLength > 0)
-		UpdateTextCache_HarfBuzz(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
+		UpdateTextCache_Shaper(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
 }
 
-void CTextRenderer::UpdateTextCache_BiDi(array<CHarfbuzzGlyph>* pGlyphChain, const char* pText)
+void CTextRenderer::UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const char* pText)
 {
 	//Use ICU for bidirectional text
 	//note: bidirectional texts appear for example when a latin username is displayed in a arabic text
@@ -741,7 +761,7 @@ void CTextRenderer::UpdateTextCache(CTextCache* pTextCache)
 		return;
 	
 	float RelativeSize = pTextCache->m_FontSize / pGlyphCache->m_FontSize;
-	array<CHarfbuzzGlyph> GlyphChain;
+	array<CShaperGlyph> GlyphChain;
 	
 	//The text is separated in 3 levels:
 		//Level 1: the complete string the the ICU will process (UpdateTextCache_BiDi)
