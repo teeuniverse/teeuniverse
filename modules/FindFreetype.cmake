@@ -80,8 +80,6 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
   PATH_SUFFIXES include/freetype2 include/freetype include
 )
 
-message(STATUS "${FREETYPE_INCLUDE_DIR_freetype2}")
-
 find_library(FREETYPE_LIBRARY
   NAMES freetype libfreetype freetype219
   HINTS
