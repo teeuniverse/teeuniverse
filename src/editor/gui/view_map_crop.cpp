@@ -305,8 +305,8 @@ void CCursorTool_MapCrop::Update(bool ParentEnabled)
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
 		case CAsset_MapGroup::TypeId:
-		case CAsset_MapLayerTiles::TypeId:
-		case CAsset_MapZoneTiles::TypeId:
+		//~ case CAsset_MapLayerTiles::TypeId:
+		//~ case CAsset_MapZoneTiles::TypeId:
 			Enable();
 			break;
 		default:
