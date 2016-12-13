@@ -165,6 +165,7 @@ int main(int argc, const char **argv)
 	CREATE_SPRITE(PackageId, "iconVertex", ImageEditorPath, 29*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineStyle", ImageEditorPath, 31*2, 2*2, 2, 2);
 	
+	CREATE_SPRITE(PackageId, "iconSpriteCreator", ImageEditorPath, 46, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconBigVFlip", ImageEditorPath, 49, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconBigHFlip", ImageEditorPath, 52, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconBigRotateCW", ImageEditorPath, 55, 26, 3, 3);

@@ -108,13 +108,16 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_CameraDraged(false),
 	m_pMapRenderer(NULL),
 	m_pCursorTool_MapStamp(NULL),
-	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
+	m_pCursorTool_MapEraser(NULL),
+	m_pCursorTool_MapCrop(NULL),
+	m_pCursorTool_MapEditVertex(NULL),
+	m_pCursorTool_MapAddVertex(NULL),
+	m_pCursorTool_MapWeightVertex(NULL),
 	m_ZoneOpacity(0.5f),
 	m_ShowGrid(false),
 	m_ShowMeshes(false)
 {
-	
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
 	m_pToolbar->Add(m_pCursorTool_MapStamp);
 	

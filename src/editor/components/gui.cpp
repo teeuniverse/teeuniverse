@@ -1700,6 +1700,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconBigHFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigHFlip");
 		m_Path_Sprite_IconBigRotateCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigRotateCW");
 		m_Path_Sprite_IconBigRotateCCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigRotateCCW");
+		m_Path_Sprite_IconSpriteCreator = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSpriteCreator");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");

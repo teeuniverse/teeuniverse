@@ -25,8 +25,27 @@
 
 class CViewImage : public CViewManager::CView
 {
+public:
+	class CCursorTool : public CViewManager::CView::CCursorTool
+	{
+	protected:
+		CViewImage* m_pViewImage;
+
+	public:
+		CCursorTool(CViewImage* pViewImage, const CLocalizableString& LString, CAssetPath IconPath) :
+			CViewManager::CView::CCursorTool(pViewImage, LString, IconPath),
+			m_pViewImage(pViewImage)
+		{
+			
+		}
+		
+		inline CViewImage* ViewImage() { return m_pViewImage; }
+	};
+	
 protected:
 	CImagePicker* m_pImageWidget;
+	
+	CView::CCursorTool* m_pCursorTool_SpriteCreator;
 	
 public:
 	CViewImage(CGuiEditor* pAssetsEditor);
@@ -35,6 +54,9 @@ public:
 	virtual void UpdateBoundingSize();
 	virtual void UpdatePosition(const gui::CRect& BoundingRect, const gui::CRect& VisibilityRect);
 	virtual void Update(bool ParentEnabled);
+	virtual void OnButtonClick(int Button);
+	virtual void OnButtonRelease(int Button);
+	virtual void OnMouseMove();
 };
 
 #endif
