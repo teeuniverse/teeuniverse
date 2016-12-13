@@ -34,6 +34,8 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+#include <shared/math/vector.h>
+#include <shared/assets/assetpath.h>
 
 class CAsset_Material : public CAsset
 {
@@ -65,6 +67,8 @@ public:
 		LAYER_SPRITE_SIZE_Y,
 		LAYER_SPRITE_COLOR,
 		LAYER,
+		TEXTUREPATH,
+		TEXTURECOLOR,
 	};
 	
 	class CIteratorLayer
@@ -287,6 +291,8 @@ public:
 	{
 	public:
 		CTuaArray m_Layer;
+		CAssetPath::CTuaType m_TexturePath;
+		tua_uint32 m_TextureColor;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType& TuaType);
 	};
@@ -294,6 +300,8 @@ public:
 
 private:
 	array< CAsset_Material::CLayer, allocator_copy<CAsset_Material::CLayer> > m_Layer;
+	CAssetPath m_TexturePath;
+	vec4 m_TextureColor;
 
 public:
 	template<typename T>
@@ -316,12 +324,16 @@ public:
 	{
 		CAsset::copy(Item);
 		m_Layer.copy(Item.m_Layer);
+		m_TexturePath = Item.m_TexturePath;
+		m_TextureColor = Item.m_TextureColor;
 	}
 	
 	void transfert(CAsset_Material& Item)
 	{
 		CAsset::transfert(Item);
 		m_Layer.transfert(Item.m_Layer);
+		m_TexturePath = Item.m_TexturePath;
+		m_TextureColor = Item.m_TextureColor;
 	}
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
@@ -405,6 +417,10 @@ public:
 		else return 1.0f;
 	}
 	
+	inline CAssetPath GetTexturePath() const { return m_TexturePath; }
+	
+	inline vec4 GetTextureColor() const { return m_TextureColor; }
+	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAsset_Material::CLayer& Value)
@@ -457,6 +473,10 @@ public:
 			m_Layer[SubPath.GetId()].SetSpriteColor(SubPath.PopId(), Value);
 	}
 	
+	inline void SetTexturePath(const CAssetPath& Value) { m_TexturePath = Value; }
+	
+	inline void SetTextureColor(vec4 Value) { m_TextureColor = Value; }
+	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
@@ -480,6 +500,7 @@ public:
 		{
 			m_Layer[i].AssetPathOperation(Operation);
 		}
+		Operation.Apply(m_TexturePath);
 	}
 	
 };

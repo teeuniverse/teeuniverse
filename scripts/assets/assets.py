@@ -2149,10 +2149,12 @@ material.setInheritance(mainAsset)
 material.addClass(material_sprite)
 material.addClass(material_layer)
 material.addMember("Layer", TypeArray(material_layer))
+material.addMember("TexturePath", TypeAssetPath())
+material.addMember("TextureColor", TypeColor())
 
 assetsList.append(material)
 
-# GUI TABS STYLE #######################################################
+# GUI COMBO BOX STYLE ##################################################
 guiComboBoxStyle = ClassAsset("GuiComboBoxStyle", len(assetsList))
 guiComboBoxStyle.setInheritance(mainAsset)
 guiComboBoxStyle.addMember("ButtonPath", TypeAssetPath())

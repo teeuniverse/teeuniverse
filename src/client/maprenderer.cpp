@@ -788,7 +788,7 @@ public:
 		}
 	}
 	
-	void ComputeBezierCurve()
+	void ComputeBezierCurve(float SegmentLength = 32.0f)
 	{
 		if(GetCurrentVertices().size())
 		{
@@ -826,7 +826,7 @@ public:
 				else
 					BezierPoint1 = Position1 - (Position1 - Position0)/3.0f;
 				
-				int NbSegments = Length/32.0f;
+				int NbSegments = Length/SegmentLength;
 				for(int j=1; j<NbSegments; j++)
 				{
 					float Alpha = static_cast<float>(j)/NbSegments; 
@@ -852,6 +852,93 @@ public:
 		SwapBuffers();
 	}
 };
+
+void CMapRenderer::RenderPolygon(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh)
+{
+	const CAsset_Material* pMaterial = AssetsManager()->GetAsset<CAsset_Material>(MaterialPath);
+	if(pMaterial)
+	{
+		CLineTesselator Tesselator;
+
+		vec2 TextureScale = 1.0f;
+		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pMaterial->GetTexturePath());
+		if(pImage)
+		{
+			TextureScale.x = pImage->GetDataWidth() * pImage->GetTexelSize()/1024.0f;
+			TextureScale.y = pImage->GetDataHeight() * pImage->GetTexelSize()/1024.0f;
+		}
+		
+		//Copy map vertices into the vertex buffer;
+		for(int i=0; i<Vertices.size(); i++)
+		{
+			int Flags = 0x0;
+			
+			if(Vertices[i].GetSmoothness() & CAsset_MapLayerObjects::SMOOTHNESS_AUTOMATIC)
+				Flags |= VERTEXFLAG_BEZIER;
+			
+			Tesselator.AddVertex(Vertices[i].GetPosition(), Vertices[i].GetWeight(), Vertices[i].GetColor(), Flags);
+		}
+		if(Closed && Vertices.size() > 0)
+		{
+			int Flags = 0x0;
+			
+			if(Vertices[0].GetSmoothness() & CAsset_MapLayerObjects::SMOOTHNESS_AUTOMATIC)
+				Flags |= VERTEXFLAG_BEZIER;
+			
+			Tesselator.AddVertex(Vertices[0].GetPosition(), Vertices[0].GetWeight(), Vertices[0].GetColor(), Flags);
+		}
+		
+		//Remove this step once Bezier points are stored!!
+		//Compute orthogonal vectors
+		Tesselator.ComputeOrthogonalVertors(Closed);
+		
+		//Apply bezier curves
+		//This is a test: the bezier curve is forced instead of being stored somewhere
+		Tesselator.ComputeBezierCurve(64.0f);
+		
+		//We assume here that the polygon is convex
+		//The appropiate solution would be to decompose it first
+		if(Tesselator.GetCurrentVertices().size() > 2)
+		{
+			if(pImage)
+				AssetsRenderer()->TextureSet(pMaterial->GetTexturePath());
+			else
+				Graphics()->TextureClear();
+			
+			Graphics()->QuadsBegin();
+			Graphics()->SetColor(pMaterial->GetTextureColor(), true);
+			
+			vec2 Barycenter = 0.0f;
+			for(int i=0; i<Tesselator.GetCurrentVertices().size(); i++)
+				Barycenter += Tesselator.GetCurrentVertices()[i].m_Position;
+			Barycenter /= Tesselator.GetCurrentVertices().size();
+			
+			for(int i=0; i<Tesselator.GetCurrentVertices().size(); i++)
+			{
+				int i2 = (i+1)%Tesselator.GetCurrentVertices().size();
+				
+				vec2 Position0 = Tesselator.GetCurrentVertices()[i].m_Position;			
+				vec2 Position1 = Tesselator.GetCurrentVertices()[i2].m_Position;
+				
+				vec2 P00 = MapPosToScreenPos(Position0);
+				vec2 P01 = MapPosToScreenPos(Position1);
+				vec2 P10 = MapPosToScreenPos(Barycenter);
+				vec2 P11 = P10;
+				
+				Graphics()->QuadsSetSubsetFree(
+					Position0.x / TextureScale.x, Position0.y / TextureScale.y,
+					Position1.x / TextureScale.x, Position1.y / TextureScale.y,
+					Barycenter.x / TextureScale.x, Barycenter.y / TextureScale.y,
+					Barycenter.x / TextureScale.x, Barycenter.y / TextureScale.y
+				);
+				CGraphics::CFreeformItem Freeform(P00, P01, P10, P11);
+				Graphics()->QuadsDrawFreeform(&Freeform, 1);
+			}
+			
+			Graphics()->QuadsEnd();
+		}
+	}
+}
 
 void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh)
 {
@@ -886,7 +973,7 @@ void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allo
 		
 		//Apply bezier curves
 		//This is a test: the bezier curve is forced instead of being stored somewhere
-		Tesselator.ComputeBezierCurve();
+		Tesselator.ComputeBezierCurve(32.0f);
 		
 		CAsset_Material::CIteratorLayer LayerIter;
 		for(LayerIter = pMaterial->BeginLayer(); LayerIter != pMaterial->EndLayer(); ++LayerIter)
@@ -1083,6 +1170,10 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 	for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
 	{
 		const CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(*Iter);
+		
+		if(Object.GetClosedPath())
+			RenderPolygon(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
+		
 		RenderLine(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
 	}
 }

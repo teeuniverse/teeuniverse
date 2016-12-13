@@ -464,6 +464,25 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapGroup_Asset()
 	return pTab;
 }
 
+class CMapLayerTilesButton_VFlip : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+	virtual void MouseClickAction()
+	{
+		
+	}
+	
+public:
+	CMapLayerTilesButton_VFlip(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Horizontal Mirror"), pAssetsEditor->m_Path_Sprite_IconVFlip),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -471,11 +490,15 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	AddTab(pTab, _LSTRING("Map Layer Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
 	
 	AddField_AssetProperties(pTab);
-		
+	
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _LSTRING("Width"));	
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _LSTRING("Height"));	
 	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
 	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));	
+	
+	pTab->AddSeparator();
+	
+	AddField(pTab, new CMapLayerTilesButton_VFlip(AssetsEditor()));
 	
 	return pTab;
 }
@@ -1063,6 +1086,9 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	AddTab(pTab, _LSTRING("Material"), AssetsEditor()->m_Path_Sprite_IconLineStyle);
 	
 	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_Material::TEXTUREPATH, CAsset_Image::TypeId, _LSTRING("Texture"));
+	AddField_Color(pTab, CAsset_Material::TEXTURECOLOR, _LSTRING("Texture Color"));
 	
 	pTab->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LAYER, CSubPath::Null(), _LSTRING("New Layer"), AssetsEditor()->m_Path_Sprite_IconLayer), false);
 	pTab->Add(new CSubItemList_Material_Layer(AssetsEditor()), true);

@@ -76,6 +76,8 @@ void CAsset_Material::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 		}
 	}
 	
+	pLoadingContext->ReadAssetPath(TuaType.m_TexturePath, SysType.m_TexturePath);
+	SysType.m_TextureColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextureColor);
 }
 
 void CAsset_Material::CSprite::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType& TuaType)
@@ -114,6 +116,8 @@ void CAsset_Material::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, c
 		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CLayer::CTuaType)*SysType.m_Layer.size());
 		delete[] pData;
 	}
+	pLoadingContext->WriteAssetPath(SysType.m_TexturePath, TuaType.m_TexturePath);
+	TuaType.m_TextureColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextureColor);
 }
 
 template<>
@@ -202,6 +206,8 @@ vec4 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec4 Defa
 	{
 		case LAYER_SPRITE_COLOR:
 			return GetLayerSpriteColor(SubPath);
+		case TEXTURECOLOR:
+			return GetTextureColor();
 	}
 	return CAsset::GetValue<vec4>(ValueType, SubPath, DefaultValue);
 }
@@ -214,6 +220,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, vec4 Valu
 		case LAYER_SPRITE_COLOR:
 			SetLayerSpriteColor(SubPath, Value);
 			return true;
+		case TEXTURECOLOR:
+			SetTextureColor(Value);
+			return true;
 	}
 	return CAsset::SetValue<vec4>(ValueType, SubPath, Value);
 }
@@ -225,6 +234,8 @@ CAssetPath CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, CAs
 	{
 		case LAYER_SPRITE_PATH:
 			return GetLayerSpritePath(SubPath);
+		case TEXTUREPATH:
+			return GetTexturePath();
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -236,6 +247,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, CAssetPat
 	{
 		case LAYER_SPRITE_PATH:
 			SetLayerSpritePath(SubPath, Value);
+			return true;
+		case TEXTUREPATH:
+			SetTexturePath(Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
