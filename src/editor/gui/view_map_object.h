@@ -25,9 +25,11 @@ class CCursorTool_MapObjectAddVertex : public CViewMap::CCursorTool
 {
 protected:
 	CSubPath m_CurrentObject;
+	CAssetPath m_CurrentAssetPath;
 	
 public:
 	CCursorTool_MapObjectAddVertex(CViewMap* pViewMap);
+	virtual void Reset();
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

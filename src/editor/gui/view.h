@@ -37,6 +37,7 @@ public:
 		
 		protected:	
 			virtual void MouseClickAction();
+			virtual void Reset() {};
 		
 		public:
 			CCursorTool(CView* pView, const CLocalizableString& LString, CAssetPath IconPath);
@@ -45,7 +46,7 @@ public:
 			
 			virtual void Update(bool ParentEnabled);
 			
-			inline void OnUse(bool Used) { m_OnUse = Used; }
+			inline void OnUse(bool Used);
 			inline bool IsUsed() { return m_OnUse; }
 			
 			virtual void UpdateView() {};

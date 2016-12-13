@@ -51,6 +51,12 @@ void CViewManager::CView::CCursorTool::Update(bool ParentEnabled)
 	gui::CButton::Update(ParentEnabled);
 }
 
+void CViewManager::CView::CCursorTool::OnUse(bool Used)
+{
+	m_OnUse = Used;
+	Reset();
+}
+
 /* VIEW ***************************************************************/
 
 CViewManager::CView::CView(CGuiEditor* pAssetsEditor) :

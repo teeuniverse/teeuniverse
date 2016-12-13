@@ -31,6 +31,12 @@ CCursorTool_MapObjectAddVertex::CCursorTool_MapObjectAddVertex(CViewMap* pViewMa
 	
 }
 
+void CCursorTool_MapObjectAddVertex::Reset()
+{
+	m_CurrentObject = CSubPath::Null();
+	m_CurrentAssetPath = CAssetPath::Null();
+}
+
 void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
 {
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
@@ -52,6 +58,7 @@ void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
 	if(m_CurrentObject.IsNull())
 	{
 		m_CurrentObject = CAsset_MapLayerObjects::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapLayerObjects::TYPE_OBJECT, Token));			
+		m_CurrentAssetPath = AssetsEditor()->GetEditedAssetPath();
 		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject);
 	}
 	
@@ -72,6 +79,7 @@ void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
 		if(ClosePath)
 		{
 			m_CurrentObject = CSubPath::Null();
+			m_CurrentAssetPath = CAssetPath::Null(); 
 		}
 		else
 		{
@@ -153,6 +161,9 @@ void CCursorTool_MapObjectAddVertex::Update(bool ParentEnabled)
 			Disable();
 	}
 	
+	if(m_CurrentAssetPath != AssetsEditor()->GetEditedAssetPath())
+		Reset();
+	
 	CCursorTool::Update(ParentEnabled);
 }
 
@@ -167,7 +178,10 @@ void CCursorTool_MapObjectAddVertex::OnMouseMove()
 void CCursorTool_MapObjectAddVertex::OnInputEvent(const CInput::CEvent& Event)
 {
 	if(Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER)
+	{
 		m_CurrentObject = CSubPath::Null();
+		m_CurrentAssetPath = CAssetPath::Null();
+	}
 	
 	CViewMap::CCursorTool::OnInputEvent(Event);
 }
