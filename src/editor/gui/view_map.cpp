@@ -148,7 +148,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CExpand(Context()), true);
-	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconPolygon, _LSTRING("Show/hide meshes")), false);
+	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
 	

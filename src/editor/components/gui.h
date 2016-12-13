@@ -165,6 +165,11 @@ public:
 	CAssetPath m_Path_Sprite_IconPencil;
 	CAssetPath m_Path_Sprite_IconLineStyle;
 	CAssetPath m_Path_Sprite_IconLayer;
+	CAssetPath m_Path_Sprite_IconBigMesh;
+	CAssetPath m_Path_Sprite_IconBigHFlip;
+	CAssetPath m_Path_Sprite_IconBigVFlip;
+	CAssetPath m_Path_Sprite_IconBigRotateCW;
+	CAssetPath m_Path_Sprite_IconBigRotateCCW;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

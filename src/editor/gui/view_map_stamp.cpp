@@ -354,7 +354,7 @@ protected:
 
 public:
 	CVFlipButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
-		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconVFlip),
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconBigVFlip),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pCursorTool(pCursorTool)
 	{
@@ -381,7 +381,7 @@ protected:
 
 public:
 	CHFlipButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
-		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconHFlip),
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconBigHFlip),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pCursorTool(pCursorTool)
 	{
@@ -408,7 +408,7 @@ protected:
 
 public:
 	CRotateCCWButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
-		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconRotateCCW),
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconBigRotateCCW),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pCursorTool(pCursorTool)
 	{
@@ -435,7 +435,7 @@ protected:
 
 public:
 	CRotateCWButton(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
-		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconRotateCW),
+		gui::CButton(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconBigRotateCW),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pCursorTool(pCursorTool)
 	{
@@ -465,6 +465,11 @@ void CCursorTool_MapStamp::UpdateToolbar()
 {
 	m_pOptions = new gui::CHListLayout(Context());
 	m_pOptions->AddSeparator();
+	{
+		gui::CLabel* pLabel = new gui::CLabel(AssetsEditor(), _LSTRING("Actions:"));
+		pLabel->NoTextClipping();
+		m_pOptions->Add(pLabel, false);
+	}
 	m_pOptions->Add(new CRotateCCWButton(AssetsEditor(), this), false);
 	m_pOptions->Add(new CRotateCWButton(AssetsEditor(), this), false);
 	m_pOptions->Add(new CVFlipButton(AssetsEditor(), this), false);
