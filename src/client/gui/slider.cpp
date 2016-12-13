@@ -56,7 +56,7 @@ void CAbstractSlider::OnButtonRelease(int Button)
 	m_Clicked = false;
 }
 
-/* H SCROLLBAR *************************************************/
+/* H SLIDER ***********************************************************/
 
 CHSlider::CHSlider(CGui* pContext, int Min, int Max) :
 	CAbstractSlider(pContext, Min, Max)
@@ -85,7 +85,7 @@ void CHSlider::UpdatePosition(const CRect& BoundingRect, const CRect& Visibility
 			int Height = Context()->GetGuiScale()*pSprite->GetPixelHeight();
 			m_CursorRect = CRect(
 				m_ClipRect.x + PosX - Width/2,
-				m_ClipRect.y - Height/2,
+				m_ClipRect.y + m_ClipRect.h/2 - Height/2,
 				Width, 
 				Height
 			);
@@ -113,7 +113,7 @@ void CHSlider::Render()
 		
 		const CAsset_Sprite* pSprite = AssetsManager()->GetAsset<CAsset_Sprite>(pSliderStyle->GetCursorPath());
 		if(pSprite)
-		{	
+		{
 			AssetsRenderer()->DrawSprite(
 				pSliderStyle->GetCursorPath(),
 				vec2(m_CursorRect.x + m_CursorRect.w/2, m_CursorRect.y + m_CursorRect.h/2),
@@ -125,20 +125,20 @@ void CHSlider::Render()
 
 void CHSlider::OnButtonClick(int Button)
 {
-	if(m_ClipRect.IsInside(Context()->GetMousePos()))
+	if(Button == KEY_MOUSE_1)
+	{
+		if(m_CursorRect.IsInside(Context()->GetMousePos()))
+		{
+			m_Clicked = true;
+			m_ClickShift = Context()->GetMousePos().x - (m_CursorRect.x + m_CursorRect.w/2);
+		}
+	}
+	else if(m_ClipRect.IsInside(Context()->GetMousePos()))
 	{
 		if(Button == KEY_MOUSE_WHEEL_UP)
 			SetValue(clamp(GetValue()+1, m_Min, m_Max));
 		else if(Button == KEY_MOUSE_WHEEL_DOWN)
 			SetValue(clamp(GetValue()-1, m_Min, m_Max));
-	}
-	else if(m_CursorRect.IsInside(Context()->GetMousePos()))
-	{
-		if(Button == KEY_MOUSE_1)
-		{
-			m_Clicked = true;
-			m_ClickShift = Context()->GetMousePos().x - (m_CursorRect.x + m_CursorRect.w/2);
-		}
 	}
 }
 
