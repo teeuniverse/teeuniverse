@@ -2135,7 +2135,7 @@ mapLayerObjects.addPublicLines([
 
 assetsList.append(mapLayerObjects)
 
-# LINE STYLE ###########################################################
+# MATERIAL #############################################################
 material_sprite = Class("Sprite")
 material_sprite.addMember("Path", TypeAssetPath())
 material_sprite.addMember("Size", TypeVec2(), "1.0f")

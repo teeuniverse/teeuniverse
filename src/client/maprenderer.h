@@ -69,6 +69,7 @@ public:
 	void RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads);
 	void RenderPolygon(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh = false);
 	void RenderLine(const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices, vec2 Pos, const matrix2x2& Transform, CAssetPath MaterialPath, bool Closed, bool DrawMesh = false);
+	void RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh);
 	void RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh = false);
 	
 	void RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh = false);

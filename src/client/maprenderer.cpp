@@ -1160,6 +1160,14 @@ void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allo
 	}
 }
 
+void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh)
+{
+	if(Object.GetClosedPath())
+		RenderPolygon(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
+	
+	RenderLine(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
+}
+
 void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 {
 	const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(LayerPath);
@@ -1168,14 +1176,7 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 	
 	CAsset_MapLayerObjects::CIteratorObject Iter;
 	for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
-	{
-		const CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(*Iter);
-		
-		if(Object.GetClosedPath())
-			RenderPolygon(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
-		
-		RenderLine(Object.GetVertexArray(), Pos, matrix2x2::identity(), Object.GetStylePath(), Object.GetClosedPath(), DrawMesh);
-	}
+		RenderObject(pLayer->GetObject(*Iter), Pos, DrawMesh);
 }
 
 void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)

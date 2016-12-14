@@ -20,6 +20,7 @@
 #include <editor/gui/view_image.h>
 #include <editor/gui/view_sprite.h>
 #include <editor/gui/view_map.h>
+#include <editor/gui/view_material.h>
 #include <editor/gui/view_gui.h>
 #include <editor/components/gui.h>
 #include <shared/components/assetsmanager.h>
@@ -180,12 +181,18 @@ CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 	m_pViewImage = new CViewImage(AssetsEditor());
 	m_pViewSprite = new CViewSprite(AssetsEditor());
 	m_pViewMap = new CViewMap(AssetsEditor());
+	m_pViewMaterial = new CViewMaterial(AssetsEditor());
 	m_pViewGui = new CViewGui(AssetsEditor());
 }
 
 void CViewManager::Destroy()
 {
 	m_pViewImage->Destroy();
+	m_pViewImage->Destroy();
+	m_pViewSprite->Destroy();
+	m_pViewMap->Destroy();
+	m_pViewMaterial->Destroy();
+	m_pViewGui->Destroy();
 	
 	gui::CWidget::Destroy();
 }
@@ -208,6 +215,9 @@ void CViewManager::Update(bool ParentEnabled)
 		case CAsset_MapZoneTiles::TypeId:
 		case CAsset_MapEntities::TypeId:
 			m_pCurrentView = m_pViewMap;
+			break;
+		case CAsset_Material::TypeId:
+			m_pCurrentView = m_pViewMaterial;
 			break;
 		case CAsset_GuiRectStyle::TypeId:
 		case CAsset_GuiLineStyle::TypeId:

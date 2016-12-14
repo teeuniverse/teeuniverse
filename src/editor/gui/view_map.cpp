@@ -27,7 +27,7 @@
 #include <client/components/assetsrenderer.h>
 #include <client/gui/slider.h>
 #include <client/gui/toggle.h>
-#include <client/gui/expand.h>
+#include <client/gui/filler.h>
 
 /* VIEW MAP ***********************************************************/
 
@@ -150,7 +150,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapAddVertex->UpdateToolbar();
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
-	m_pToolbar->Add(new gui::CExpand(Context()), true);
+	m_pToolbar->Add(new gui::CFiller(Context()), true);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
