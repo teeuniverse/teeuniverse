@@ -394,6 +394,9 @@ public:
 		return false;
 	}
 	
+	void MapLayerTiles_HFlip(const CAssetPath& AssetPath, int Token);
+	void MapLayerTiles_VFlip(const CAssetPath& AssetPath, int Token);
+	
 	void EnableAssetsHistory();
 	void Undo();
 	int GenerateToken();

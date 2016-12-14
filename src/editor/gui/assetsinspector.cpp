@@ -464,6 +464,24 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapGroup_Asset()
 	return pTab;
 }
 
+class CMapLayerTilesButton_HFlip : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		AssetsManager()->MapLayerTiles_HFlip(m_pAssetsEditor->GetEditedAssetPath(), Token);
+	}
+	
+public:
+	CMapLayerTilesButton_HFlip(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Vertical Mirror"), pAssetsEditor->m_Path_Sprite_IconHFlip),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+};
+
 class CMapLayerTilesButton_VFlip : public gui::CButton
 {
 protected:
@@ -471,16 +489,15 @@ protected:
 	
 	virtual void MouseClickAction()
 	{
-		
+		int Token = AssetsManager()->GenerateToken();
+		AssetsManager()->MapLayerTiles_VFlip(m_pAssetsEditor->GetEditedAssetPath(), Token);
 	}
 	
 public:
 	CMapLayerTilesButton_VFlip(CGuiEditor* pAssetsEditor) :
 		gui::CButton(pAssetsEditor, _LSTRING("Horizontal Mirror"), pAssetsEditor->m_Path_Sprite_IconVFlip),
 		m_pAssetsEditor(pAssetsEditor)
-	{
-		
-	}
+	{ }
 };
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
@@ -498,7 +515,12 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	
 	pTab->AddSeparator();
 	
-	AddField(pTab, new CMapLayerTilesButton_VFlip(AssetsEditor()));
+	{
+		gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+		pTab->Add(pLayout, false);
+		pLayout->Add(new CMapLayerTilesButton_HFlip(AssetsEditor()), true);
+		pLayout->Add(new CMapLayerTilesButton_VFlip(AssetsEditor()), true);
+	}
 	
 	return pTab;
 }

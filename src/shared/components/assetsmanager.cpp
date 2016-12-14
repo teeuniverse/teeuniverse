@@ -824,6 +824,52 @@ void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
 	if(m_pHistory)
 		m_pHistory->Flush();
 }
+	
+void CAssetsManager::MapLayerTiles_HFlip(const CAssetPath& AssetPath, int Token)
+{
+	const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetPath);
+	if(!pLayer)
+		return;
+	
+	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > Tiles;
+	Tiles.copy(pLayer->GetTileArray());
+	
+	for(int j=0; j<Tiles.get_height(); j++)
+	{
+		for(int i=0; i<Tiles.get_width(); i++)
+		{
+			const CAsset_MapLayerTiles::CTile& Tile = Tiles.get_clamp(i, j);
+			int Flags = Tile.GetFlags() ^ CAsset_MapLayerTiles::TILEFLAG_HFLIP;
+			
+			CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, Tiles.get_height()-j-1);
+			AssetsManager()->SetAssetValue<int>(AssetPath, TilePath, CAsset_MapLayerTiles::TILE_INDEX, Tile.GetIndex(), Token);
+			AssetsManager()->SetAssetValue<int>(AssetPath, TilePath, CAsset_MapLayerTiles::TILE_FLAGS, Flags, Token);
+		}
+	}
+}
+
+void CAssetsManager::MapLayerTiles_VFlip(const CAssetPath& AssetPath, int Token)
+{
+	const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetPath);
+	if(!pLayer)
+		return;
+	
+	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > Tiles;
+	Tiles.copy(pLayer->GetTileArray());
+	
+	for(int j=0; j<Tiles.get_height(); j++)
+	{
+		for(int i=0; i<Tiles.get_width(); i++)
+		{
+			const CAsset_MapLayerTiles::CTile& Tile = Tiles.get_clamp(i, j);
+			int Flags = Tile.GetFlags() ^ CAsset_MapLayerTiles::TILEFLAG_VFLIP;
+			
+			CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(Tiles.get_width()-i-1, j);
+			AssetsManager()->SetAssetValue<int>(AssetPath, TilePath, CAsset_MapLayerTiles::TILE_INDEX, Tile.GetIndex(), Token);
+			AssetsManager()->SetAssetValue<int>(AssetPath, TilePath, CAsset_MapLayerTiles::TILE_FLAGS, Flags, Token);
+		}
+	}
+}
 
 CAssetState* CAssetsManager::GetAssetState(CAssetPath Path)
 {
