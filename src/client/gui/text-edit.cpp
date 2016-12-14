@@ -56,9 +56,14 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 			int CharSize = EndCharPos-StartCharPos;
 			if(CharSize > 0)
 			{
-				for(int c=EndCharPos; String.buffer()[c]; c++)
-					String.buffer()[c-CharSize] = String.buffer()[c];
+				for(int c=StartCharPos; String.buffer()[c]; c++)
+					String.buffer()[c] = String.buffer()[c+CharSize];
 				String.buffer()[Length-CharSize] = 0;
+				
+				if(CursorPos > EndCharPos)
+					CursorPos -= CharSize;
+				else if(CursorPos > StartCharPos)
+					CursorPos = StartCharPos;
 			}
 		}
 		
