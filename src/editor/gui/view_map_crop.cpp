@@ -33,6 +33,9 @@ CCursorTool_MapCrop::CCursorTool_MapCrop(CViewMap* pViewMap) :
 
 void CCursorTool_MapCrop::OnViewButtonClick(int Button)
 {
+	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
+		return;
+	
 	vec2 CropMin;
 	vec2 CropSize;
 	

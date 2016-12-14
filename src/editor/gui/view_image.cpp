@@ -123,7 +123,7 @@ void CViewImage::RenderView()
 
 void CViewImage::OnButtonClick(int Button)
 {
-	if(m_pImageWidget)
+	if(m_pImageWidget && m_ViewRect.IsInside(Context()->GetMousePos()))
 		m_pImageWidget->OnButtonClick(Button);
 	
 	CViewManager::CView::OnButtonClick(Button);

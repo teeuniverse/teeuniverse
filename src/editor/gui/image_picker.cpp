@@ -88,7 +88,7 @@ void CImagePicker::OnButtonClick(int Button)
 
 void CImagePicker::OnButtonRelease(int Button)
 {
-	if(Button != KEY_MOUSE_1)
+	if(Button != KEY_MOUSE_1 || !m_DragSelection)
 		return;
 	
 	m_DragSelection = false;
