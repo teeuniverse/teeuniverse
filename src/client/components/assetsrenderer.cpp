@@ -40,22 +40,16 @@ bool CAssetsRenderer::GetSpriteInfo(CAssetPath SpritePath, CSpriteInfo& Info)
 	if(!pSprite)
 		return false;
 	
-	int ImageWidth = 1;
-	int ImageHeight = 1;
-	int GridWidth = 1;
-	int GridHeight = 1;
-	float TexelSize = 1.0f;
-	
 	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pSprite->GetImagePath());
-	if(pImage)
-	{
-		ImageWidth = pImage->GetDataWidth();
-		ImageHeight = pImage->GetDataHeight();
-		GridWidth = pImage->GetGridWidth();
-		GridHeight = pImage->GetGridHeight();
-		TexelSize = static_cast<float>(pImage->GetTexelSize())/1024.0f;
-		Info.m_ImagePath = pSprite->GetImagePath();
-	}
+	if(!pImage)
+		return false;
+	
+	int ImageWidth = pImage->GetDataWidth();
+	int ImageHeight = pImage->GetDataHeight();
+	int GridWidth = pImage->GetGridWidth();
+	int GridHeight = pImage->GetGridHeight();
+	float TexelSize = static_cast<float>(pImage->GetTexelSize())/1024.0f;
+	Info.m_ImagePath = pSprite->GetImagePath();
 	
 	float texStepX = 1.0f/GridWidth;
 	float texStepY = 1.0f/GridHeight;

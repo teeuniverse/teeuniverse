@@ -1119,13 +1119,33 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	pTab->Add(pLayerEditor, false);
 	
 	AddField(pLayerEditor, new CNewSubItemButton_Material_Sprite(AssetsEditor()));
+	AddField_Float(pLayerEditor, CAsset_Material::LAYER_SPACING, _LSTRING("Spacing"));
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_REPEATTYPE);
+		pComboBox->Add(_LSTRING("Static"));
+		pComboBox->Add(_LSTRING("Stretched"));
+		AddField(pLayerEditor, pComboBox, _LSTRING("Type of repetition"));
+	}
 	
 	gui::CVListLayout* pSpriteEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER_SPRITE);
 	pTab->Add(pSpriteEditor, false);	
 	
 	AddField_Asset(pSpriteEditor, CAsset_Material::LAYER_SPRITE_PATH, CAsset_Sprite::TypeId, _LSTRING("Sprite"));
+	AddField_Vec2(pSpriteEditor, CAsset_Material::LAYER_SPRITE_POSITION_X, CAsset_Material::LAYER_SPRITE_POSITION_Y, _LSTRING("Position"));
 	AddField_Vec2(pSpriteEditor, CAsset_Material::LAYER_SPRITE_SIZE_X, CAsset_Material::LAYER_SPRITE_SIZE_Y, _LSTRING("Size"));
 	AddField_Color(pSpriteEditor, CAsset_Material::LAYER_SPRITE_COLOR, _LSTRING("Color"));
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_SPRITE_ALIGNMENT);
+		pComboBox->Add(_LSTRING("Line"));
+		pComboBox->Add(_LSTRING("World"));
+		AddField(pSpriteEditor, pComboBox, _LSTRING("Alignment"));
+	}
+	
+	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_VFLIP, _LSTRING("Horizontal Flip"));
+	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_HFLIP, _LSTRING("Vertical Flip"));
+	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION, _LSTRING("Rotation of 90°"));
 	
 	return pTab;
 }
@@ -1477,6 +1497,67 @@ void CAssetsInspector::AddField_Bool(gui::CVListLayout* pList, int Member, const
 	CMemberBoolEdit* pWidget = new CMemberBoolEdit(
 		m_pAssetsEditor,
 		Member
+	);
+	
+	AddField(pList, pWidget, Text);
+}
+
+/* FLAG EDIT **********************************************************/
+	
+class CMemberFlagEdit : public gui::CAbstractToggle
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	int m_Mask;
+	
+	virtual bool GetValue()
+	{
+		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			0
+		) & m_Mask;
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		int Flags = m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			0
+		);
+		
+		if(Value)
+			Flags |= m_Mask;
+		else
+			Flags &= ~m_Mask;
+		
+		m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetEditedSubPath(),
+			m_Member,
+			Flags
+		);
+	}
+	
+public:
+	CMemberFlagEdit(CGuiEditor* pAssetsEditor, int Member, int Mask) :
+		gui::CAbstractToggle(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member),
+		m_Mask(Mask)
+	{ }
+};
+
+void CAssetsInspector::AddField_Flag(gui::CVListLayout* pList, int Member, int Mask, const CLocalizableString& Text)
+{
+	CMemberFlagEdit* pWidget = new CMemberFlagEdit(
+		m_pAssetsEditor,
+		Member,
+		Mask
 	);
 	
 	AddField(pList, pWidget, Text);

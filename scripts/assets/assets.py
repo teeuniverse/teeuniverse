@@ -2140,9 +2140,14 @@ material_sprite = Class("Sprite")
 material_sprite.addMember("Path", TypeAssetPath())
 material_sprite.addMember("Size", TypeVec2(), "1.0f")
 material_sprite.addMember("Color", TypeColor(), "1.0f")
+material_sprite.addMember("Flags", TypeInt32(), "0x0")
+material_sprite.addMember("Position", TypeVec2(), "0.0f")
+material_sprite.addMember("Alignment", TypeInt32(), "SPRITEALIGN_LINE")
 
 material_layer = Class("Layer")
 material_layer.addMember("Sprite", TypeArray(material_sprite))
+material_layer.addMember("RepeatType", TypeInt32(), "REPEATTYPE_STATIC")
+material_layer.addMember("Spacing", TypeFloat(), "0.0f")
 
 material = ClassAsset("Material", len(assetsList))
 material.setInheritance(mainAsset)
@@ -2151,6 +2156,21 @@ material.addClass(material_layer)
 material.addMember("Layer", TypeArray(material_layer))
 material.addMember("TexturePath", TypeAssetPath())
 material.addMember("TextureColor", TypeColor())
+material.addPublicLines([
+	"enum",
+	"{",
+	"	SPRITEFLAG_VFLIP = 1,",
+	"	SPRITEFLAG_HFLIP = 2,",
+	"	SPRITEFLAG_ROTATION = 4,",
+	"",
+	"	SPRITEALIGN_LINE = 0,",
+	"	SPRITEALIGN_WORLD,",
+	"",
+	"	REPEATTYPE_STATIC = 0,",
+	"	REPEATTYPE_STRETCH,",
+	"};",
+	""
+])
 
 assetsList.append(material)
 

@@ -40,6 +40,19 @@
 class CAsset_Material : public CAsset
 {
 public:
+	enum
+	{
+		SPRITEFLAG_VFLIP = 1,
+		SPRITEFLAG_HFLIP = 2,
+		SPRITEFLAG_ROTATION = 4,
+	
+		SPRITEALIGN_LINE = 0,
+		SPRITEALIGN_WORLD,
+	
+		REPEATTYPE_STATIC = 0,
+		REPEATTYPE_STRETCH,
+	};
+	
 	static const int TypeId = 28;
 	
 	enum
@@ -66,6 +79,13 @@ public:
 		LAYER_SPRITE_SIZE_X,
 		LAYER_SPRITE_SIZE_Y,
 		LAYER_SPRITE_COLOR,
+		LAYER_SPRITE_FLAGS,
+		LAYER_SPRITE_POSITION,
+		LAYER_SPRITE_POSITION_X,
+		LAYER_SPRITE_POSITION_Y,
+		LAYER_SPRITE_ALIGNMENT,
+		LAYER_REPEATTYPE,
+		LAYER_SPACING,
 		LAYER,
 		TEXTUREPATH,
 		TEXTURECOLOR,
@@ -99,6 +119,9 @@ public:
 			CAssetPath::CTuaType m_Path;
 			CTuaVec2 m_Size;
 			tua_uint32 m_Color;
+			tua_int32 m_Flags;
+			CTuaVec2 m_Position;
+			tua_int32 m_Alignment;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CSprite& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType& TuaType);
 		};
@@ -108,6 +131,9 @@ public:
 		CAssetPath m_Path;
 		vec2 m_Size;
 		vec4 m_Color;
+		int m_Flags;
+		vec2 m_Position;
+		int m_Alignment;
 	
 	public:
 		CSprite();
@@ -116,6 +142,9 @@ public:
 			m_Path = Item.m_Path;
 			m_Size = Item.m_Size;
 			m_Color = Item.m_Color;
+			m_Flags = Item.m_Flags;
+			m_Position = Item.m_Position;
+			m_Alignment = Item.m_Alignment;
 		}
 		
 		void transfert(CAsset_Material::CSprite& Item)
@@ -123,6 +152,9 @@ public:
 			m_Path = Item.m_Path;
 			m_Size = Item.m_Size;
 			m_Color = Item.m_Color;
+			m_Flags = Item.m_Flags;
+			m_Position = Item.m_Position;
+			m_Alignment = Item.m_Alignment;
 		}
 		
 		inline CAssetPath GetPath() const { return m_Path; }
@@ -135,6 +167,16 @@ public:
 		
 		inline vec4 GetColor() const { return m_Color; }
 		
+		inline int GetFlags() const { return m_Flags; }
+		
+		inline vec2 GetPosition() const { return m_Position; }
+		
+		inline float GetPositionX() const { return m_Position.x; }
+		
+		inline float GetPositionY() const { return m_Position.y; }
+		
+		inline int GetAlignment() const { return m_Alignment; }
+		
 		inline void SetPath(const CAssetPath& Value) { m_Path = Value; }
 		
 		inline void SetSize(vec2 Value) { m_Size = Value; }
@@ -144,6 +186,16 @@ public:
 		inline void SetSizeY(float Value) { m_Size.y = Value; }
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
+		
+		inline void SetFlags(int Value) { m_Flags = Value; }
+		
+		inline void SetPosition(vec2 Value) { m_Position = Value; }
+		
+		inline void SetPositionX(float Value) { m_Position.x = Value; }
+		
+		inline void SetPositionY(float Value) { m_Position.y = Value; }
+		
+		inline void SetAlignment(int Value) { m_Alignment = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -158,6 +210,8 @@ public:
 		{
 		public:
 			CTuaArray m_Sprite;
+			tua_int32 m_RepeatType;
+			tua_float m_Spacing;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CLayer& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType& TuaType);
 		};
@@ -165,16 +219,23 @@ public:
 	
 	private:
 		array< CSprite, allocator_copy<CSprite> > m_Sprite;
+		int m_RepeatType;
+		float m_Spacing;
 	
 	public:
+		CLayer();
 		void copy(const CAsset_Material::CLayer& Item)
 		{
 			m_Sprite.copy(Item.m_Sprite);
+			m_RepeatType = Item.m_RepeatType;
+			m_Spacing = Item.m_Spacing;
 		}
 		
 		void transfert(CAsset_Material::CLayer& Item)
 		{
 			m_Sprite.transfert(Item.m_Sprite);
+			m_RepeatType = Item.m_RepeatType;
+			m_Spacing = Item.m_Spacing;
 		}
 		
 		inline int GetSpriteArraySize() const { return m_Sprite.size(); }
@@ -227,6 +288,45 @@ public:
 			else return 1.0f;
 		}
 		
+		inline int GetSpriteFlags(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetFlags();
+			else return 0;
+		}
+		
+		inline vec2 GetSpritePosition(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetPosition();
+			else return 0.0f;
+		}
+		
+		inline float GetSpritePositionX(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetPositionX();
+			else return 0.0f;
+		}
+		
+		inline float GetSpritePositionY(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetPositionY();
+			else return 0.0f;
+		}
+		
+		inline int GetSpriteAlignment(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetAlignment();
+			else return 0;
+		}
+		
+		inline int GetRepeatType() const { return m_RepeatType; }
+		
+		inline float GetSpacing() const { return m_Spacing; }
+		
 		inline void SetSpriteArraySize(int Value) { m_Sprite.resize(Value); }
 		
 		inline void SetSprite(const CSubPath& SubPath, const CAsset_Material::CSprite& Value)
@@ -266,6 +366,40 @@ public:
 			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetColor(Value);
 		}
+		
+		inline void SetSpriteFlags(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetFlags(Value);
+		}
+		
+		inline void SetSpritePosition(const CSubPath& SubPath, vec2 Value)
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetPosition(Value);
+		}
+		
+		inline void SetSpritePositionX(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetPositionX(Value);
+		}
+		
+		inline void SetSpritePositionY(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetPositionY(Value);
+		}
+		
+		inline void SetSpriteAlignment(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetAlignment(Value);
+		}
+		
+		inline void SetRepeatType(int Value) { m_RepeatType = Value; }
+		
+		inline void SetSpacing(float Value) { m_Spacing = Value; }
 		
 		inline int AddSprite()
 		{
@@ -417,6 +551,55 @@ public:
 		else return 1.0f;
 	}
 	
+	inline int GetLayerSpriteFlags(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpriteFlags(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline vec2 GetLayerSpritePosition(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpritePosition(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetLayerSpritePositionX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpritePositionX(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetLayerSpritePositionY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpritePositionY(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline int GetLayerSpriteAlignment(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpriteAlignment(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int GetLayerRepeatType(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetRepeatType();
+		else return 0;
+	}
+	
+	inline float GetLayerSpacing(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpacing();
+		else return 0.0f;
+	}
+	
 	inline CAssetPath GetTexturePath() const { return m_TexturePath; }
 	
 	inline vec4 GetTextureColor() const { return m_TextureColor; }
@@ -471,6 +654,48 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteColor(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpriteFlags(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpriteFlags(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpritePosition(const CSubPath& SubPath, vec2 Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpritePosition(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpritePositionX(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpritePositionX(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpritePositionY(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpritePositionY(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpriteAlignment(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpriteAlignment(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerRepeatType(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetRepeatType(Value);
+	}
+	
+	inline void SetLayerSpacing(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpacing(Value);
 	}
 	
 	inline void SetTexturePath(const CAssetPath& Value) { m_TexturePath = Value; }

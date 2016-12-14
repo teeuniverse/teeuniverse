@@ -1256,8 +1256,8 @@ int main(int argc, const char **argv)
 		}
 		CAssetPath AssetPath;
 		
-		CREATE_SPRITE_PATH(IconFalsePath, PackageId, "iconCheckboxFalse", ImageEditorPath, 30, 0, 1, 1)
-		CREATE_SPRITE_PATH(IconTruePath, PackageId, "iconCheckboxTrue", ImageEditorPath, 31, 0, 1, 1)
+		CREATE_SPRITE_PATH(IconFalsePath, PackageId, "iconCheckboxFalse", ImageEditorPath, 30*2, 0, 2, 2)
+		CREATE_SPRITE_PATH(IconTruePath, PackageId, "iconCheckboxTrue", ImageEditorPath, 31*2, 0, 2, 2)
 		
 		{
 			CAsset_GuiToggleStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiToggleStyle>(&TogglePath, PackageId);
@@ -1517,10 +1517,10 @@ int main(int argc, const char **argv)
 		CAssetPath ButtonPath;
 		CAssetPath ColorEditPath;
 		
-		CREATE_SPRITE_PATH(SpriteRGBIconPath, PackageId, "iconRGB", ImageEditorPath, 5, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteHSVIconPath, PackageId, "iconHSV", ImageEditorPath, 6, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteSquareIconPath, PackageId, "iconColorSquare", ImageEditorPath, 7, 0, 1, 1);
-		CREATE_SPRITE_PATH(SpriteWheelIconPath, PackageId, "iconColorWheel", ImageEditorPath, 8, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteRGBIconPath, PackageId, "iconRGB", ImageEditorPath, 5*2, 0*2, 2, 2);
+		CREATE_SPRITE_PATH(SpriteHSVIconPath, PackageId, "iconHSV", ImageEditorPath, 6*2, 0*2, 2, 2);
+		CREATE_SPRITE_PATH(SpriteSquareIconPath, PackageId, "iconColorSquare", ImageEditorPath, 7*2, 0*2, 2, 2);
+		CREATE_SPRITE_PATH(SpriteWheelIconPath, PackageId, "iconColorWheel", ImageEditorPath, 8*2, 0*2, 2, 2);
 		
 		{
 			CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&LabelIdlePath, PackageId);

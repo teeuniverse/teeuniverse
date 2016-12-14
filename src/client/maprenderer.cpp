@@ -983,150 +983,59 @@ void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allo
 			if(!Sprites.size())
 				continue;
 			
-			const CAsset_Material::CSprite& Sprite = Sprites[0];
-			
-			CAssetsRenderer::CSpriteInfo SpriteInfo;
-			AssetsRenderer()->GetSpriteInfo(pMaterial->GetLayerSpritePath(*LayerIter), SpriteInfo);
-			
-			//Cut segments to repeat the texture
-				//First step: compute the total length
-			float TotalLength = 0.0f;
-			for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
-			{
-				vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
-				vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
-				
-				float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight;
-				float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight;
-				
-				TotalLength += distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
-			}
-			float GlobalWeight = TotalLength/max((int)round(TotalLength), 1);
-			
-				//Second step: cut the path
-			float LengthIter = 0.0;
-			if(Tesselator.GetCurrentVertices().size())
-			{
-				CVertex& Vertex = Tesselator.GetNextVertices().increment();
-				Vertex = Tesselator.GetCurrentVertices()[0];
-				Vertex.m_LeftDist = 0.0f;
-				Vertex.m_RightDist = 0.0f;
-				Vertex.m_Flags = 0x0;
-			}
-			for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
-			{
-				vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
-				vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
-				
-				float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight * GlobalWeight;
-				float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight * GlobalWeight;
-				
-				vec4 Color0 = Tesselator.GetCurrentVertices()[i-1].m_Color;
-				vec4 Color1 = Tesselator.GetCurrentVertices()[i].m_Color;
-				
-				float Length = distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
-				float NextLengthIter = LengthIter + Length;
-				int NumSegments = ceil(NextLengthIter) - floor(LengthIter);
-				
-				for(int j=0; j<NumSegments; j++)
-				{
-					float Begin = fmod(LengthIter, 1.0);
-					float End = min(NextLengthIter - floor(LengthIter), 1.0);
-					
-					LengthIter += End - Begin;
-					float Alpha = (NextLengthIter - LengthIter)/Length;
-					
-					vec2 Pos = Position0 * Alpha + Position1 * (1.0f - Alpha);
-					
-					Tesselator.GetNextVertices()[Tesselator.GetNextVertices().size()-1].m_RightDist = Begin;
-					
-					CVertex& Vertex = Tesselator.GetNextVertices().increment();
-					Vertex.m_Position = Pos;
-					Vertex.m_Color = Color0 * Alpha + Color1 * (1.0f - Alpha);
-					Vertex.m_Weight = Weight0 * Alpha + Weight1 * (1.0f - Alpha);
-					Vertex.m_LeftDist = 0.0f;
-					Vertex.m_LeftDist = End;
-					Vertex.m_Flags = 0x0;
-				}
-				
-				LengthIter = NextLengthIter;
-			}
-			
 			Tesselator.ComputeOrthogonalVertors(Closed, 1);
 			
-			if(Closed && Tesselator.GetNextVertices().size())
-				Tesselator.GetNextVertices().increment() = Tesselator.GetNextVertices()[0];
+			float Spacing = pMaterial->GetLayerSpacing(*LayerIter);
+			CAssetsRenderer::CSpriteInfo SpriteInfo;
 			
-			//Draw quads
-			int VerticalTesselation = 4;
-			AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
-			Graphics()->QuadsBegin();
-			for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+			CAssetPath SpritePath = pMaterial->GetLayerSpritePath(*LayerIter);
+			const CAsset_Material::CSprite* pSprite = &Sprites[0];
+			if(!AssetsRenderer()->GetSpriteInfo(SpritePath, SpriteInfo))
 			{
-				vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
-				vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
-				vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
-				vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
-				vec4 Color0 = Tesselator.GetNextVertices()[i-1].m_Color;
-				vec4 Color1 = Tesselator.GetNextVertices()[i].m_Color;
-					
-				vec2 P00 = MapPosToScreenPos(Position0 + Ortho0);
-				vec2 P01 = MapPosToScreenPos(Position1 + Ortho1);
-				vec2 P10 = MapPosToScreenPos(Position0);
-				vec2 P11 = MapPosToScreenPos(Position1);
-				vec2 P20 = MapPosToScreenPos(Position0 - Ortho0);
-				vec2 P21 = MapPosToScreenPos(Position1 - Ortho1);
+				if(Closed && Tesselator.GetCurrentVertices().size())
+					Tesselator.GetCurrentVertices().increment() = Tesselator.GetCurrentVertices()[0];
 				
-				float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
-				
-				Graphics()->SetColor4(Color0, Color1, Color0, Color1, true);
-				
-				for(int j=0; j<VerticalTesselation; j++)
+				//Draw quads
+				Graphics()->TextureClear();
+				Graphics()->QuadsBegin();
+				for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
 				{
-					float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
-					float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
-					float VMin = static_cast<float>(j)/VerticalTesselation;
-					float VMax = static_cast<float>(j+1)/VerticalTesselation;
+					vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+					vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+					vec2 Ortho0 = Tesselator.GetCurrentVertices()[i-1].m_RightOrtho * pSprite->GetSize().y/2.0f;
+					vec2 Ortho1 = Tesselator.GetCurrentVertices()[i].m_LeftOrtho * pSprite->GetSize().y/2.0f;
+					vec4 Color0 = Tesselator.GetCurrentVertices()[i-1].m_Color * pSprite->GetColor();
+					vec4 Color1 = Tesselator.GetCurrentVertices()[i].m_Color * pSprite->GetColor();
 					
-					vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
-					vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
-					vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
-					vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+					vec2 P00 = MapPosToScreenPos(Position0 + Ortho0);
+					vec2 P01 = MapPosToScreenPos(Position1 + Ortho1);
+					vec2 P10 = MapPosToScreenPos(Position0 - Ortho0);
+					vec2 P11 = MapPosToScreenPos(Position1 - Ortho1);
 					
-					Graphics()->QuadsSetSubsetFree(
-						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMin,
-						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMin,
-						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMax,
-						SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + (SpriteInfo.m_VMax - SpriteInfo.m_VMin) * VMax
-					);
+					Graphics()->SetColor4(Color0, Color1, Color0, Color1, true);
+					
 					CGraphics::CFreeformItem Freeform(P00, P01, P10, P11);
 					Graphics()->QuadsDrawFreeform(&Freeform, 1);
 				}
-			}
-			Graphics()->QuadsEnd();
-			
-			//Draw mesh
-			if(DrawMesh)
-			{
-				Graphics()->TextureClear();
-				Graphics()->LinesBegin();
-				Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.25f), true);
-				for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+				Graphics()->QuadsEnd();
+				
+				//Draw mesh
+				if(DrawMesh)
 				{
-					vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
-					vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
-					vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
-					vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
-					
-					for(int j=0; j<VerticalTesselation; j++)
+					Graphics()->TextureClear();
+					Graphics()->LinesBegin();
+					Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.25f), true);
+					for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
 					{
-						float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
-						float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
+						vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+						vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+						vec2 Ortho0 = Tesselator.GetCurrentVertices()[i-1].m_RightOrtho * pSprite->GetSize().y/2.0f;
+						vec2 Ortho1 = Tesselator.GetCurrentVertices()[i].m_LeftOrtho * pSprite->GetSize().y/2.0f;
 						
-						vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
-						vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
-						vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
-						vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+						vec2 P00 = MapPosToScreenPos(Position0 + Ortho0);
+						vec2 P01 = MapPosToScreenPos(Position1 + Ortho1);
+						vec2 P10 = MapPosToScreenPos(Position0 - Ortho0);
+						vec2 P11 = MapPosToScreenPos(Position1 - Ortho1);
 						
 						CGraphics::CLineItem aLines[] = {
 							CGraphics::CLineItem(P00.x, P00.y, P01.x, P01.y),
@@ -1137,8 +1046,282 @@ void CMapRenderer::RenderLine(const array< CAsset_MapLayerObjects::CVertex, allo
 						};
 						Graphics()->LinesDraw(aLines, sizeof(aLines)/sizeof(CGraphics::CLineItem));
 					}
+					Graphics()->LinesEnd();
 				}
-				Graphics()->LinesEnd();
+			}
+			else
+			{
+				float Tmp;
+				if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_VFLIP)
+				{
+					Tmp = SpriteInfo.m_UMin;
+					SpriteInfo.m_UMin = SpriteInfo.m_UMax;
+					SpriteInfo.m_UMax = Tmp;
+				}
+				if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_HFLIP)
+				{
+					Tmp = SpriteInfo.m_VMin;
+					SpriteInfo.m_VMin = SpriteInfo.m_VMax;
+					SpriteInfo.m_VMax = Tmp;
+				}
+				if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+				{
+					Tmp = SpriteInfo.m_Width;
+					SpriteInfo.m_Width = SpriteInfo.m_Height;
+					SpriteInfo.m_Height = Tmp;
+				}
+				
+				SpriteInfo.m_Width *= pSprite->GetSize().x;
+				SpriteInfo.m_Height *= pSprite->GetSize().y;
+				
+				//Here we have the final path and information about the sprite.
+				//The last step is to draw them
+				int RepeatType = pMaterial->GetLayerRepeatType(*LayerIter);
+				if(RepeatType == CAsset_Material::REPEATTYPE_STATIC)
+				{
+					float SegmentLength = SpriteInfo.m_Width + Spacing;
+					
+					AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
+					Graphics()->QuadsBegin();
+					float LengthIter = 0.0;
+					for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
+					{
+						vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+						vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+						
+						vec2 Dir0 = normalize(Tesselator.GetCurrentVertices()[i-1].m_RightOrtho);
+						vec2 Dir1 = normalize(Tesselator.GetCurrentVertices()[i].m_LeftOrtho);
+						vec2 OrthoLength0 = length(Tesselator.GetCurrentVertices()[i-1].m_RightOrtho);
+						vec2 OrthoLength1 = length(Tesselator.GetCurrentVertices()[i].m_LeftOrtho);
+						
+						vec4 Color0 = Tesselator.GetCurrentVertices()[i-1].m_Color * pSprite->GetColor();
+						vec4 Color1 = Tesselator.GetCurrentVertices()[i].m_Color * pSprite->GetColor();
+						
+						float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight;
+						float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight;
+						
+						float Length = distance(Position0, Position1)/(SegmentLength * (Weight0 + Weight1)/2.0f);
+						float NextLengthIter = LengthIter + Length;
+						
+						int NumSegments = ceil(NextLengthIter) - ceil(LengthIter);
+						
+						for(int j=0; j<NumSegments; j++)
+						{
+							float Begin = fmod(LengthIter, 1.0);
+							float End = min(NextLengthIter - floor(LengthIter), 1.0);
+							
+							LengthIter += End - Begin;
+							float Alpha = (NextLengthIter - LengthIter)/Length;
+							
+							vec2 Pos = Position0 * Alpha + Position1 * (1.0f - Alpha);
+							vec4 SpriteColor = Color0 * Alpha + Color1 * (1.0f - Alpha);
+							
+							//Add position shift
+							vec2 DirX = vec2(-1.0f, 0.0f);
+							vec2 DirY = vec2(0.0f, -1.0f);
+							if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_LINE)
+							{
+								DirY = normalize(Dir0 * Alpha + Dir1 * (1.0f - Alpha)) * (OrthoLength0 * Alpha + OrthoLength1 * (1.0f - Alpha));
+								DirX = -ortho(DirY);
+							}
+							Pos += DirY * pSprite->GetPosition().x;
+							Pos += DirY * pSprite->GetPosition().y;
+							
+							//Draw the sprite
+							vec2 P00 = MapPosToScreenPos(Pos + DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+							vec2 P01 = MapPosToScreenPos(Pos - DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+							vec2 P10 = MapPosToScreenPos(Pos + DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
+							vec2 P11 = MapPosToScreenPos(Pos - DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
+							
+							Graphics()->SetColor(SpriteColor, true);
+							
+							if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+							{
+								Graphics()->QuadsSetSubsetFree(
+									SpriteInfo.m_UMin, SpriteInfo.m_VMin,
+									SpriteInfo.m_UMin, SpriteInfo.m_VMax,
+									SpriteInfo.m_UMax, SpriteInfo.m_VMin,
+									SpriteInfo.m_UMax, SpriteInfo.m_VMax
+								);
+							}
+							else
+							{
+								Graphics()->QuadsSetSubsetFree(
+									SpriteInfo.m_UMin, SpriteInfo.m_VMin,
+									SpriteInfo.m_UMax, SpriteInfo.m_VMin,
+									SpriteInfo.m_UMin, SpriteInfo.m_VMax,
+									SpriteInfo.m_UMax, SpriteInfo.m_VMax
+								);
+							}
+							CGraphics::CFreeformItem Freeform(P00, P01, P10, P11);
+							Graphics()->QuadsDrawFreeform(&Freeform, 1);
+						}
+						
+						LengthIter = NextLengthIter;
+					}
+					Graphics()->QuadsEnd();
+				}
+				else if(RepeatType == CAsset_Material::REPEATTYPE_STRETCH)
+				{
+					//Cut segments to repeat the texture
+						//First step: compute the total length
+					float TotalLength = 0.0f;
+					for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
+					{
+						vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+						vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+						
+						float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight;
+						float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight;
+						
+						TotalLength += distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
+					}
+					float GlobalWeight = TotalLength/max((int)round(TotalLength), 1);
+					
+						//Second step: cut the path
+					float LengthIter = 0.0;
+					if(Tesselator.GetCurrentVertices().size())
+					{
+						CVertex& Vertex = Tesselator.GetNextVertices().increment();
+						Vertex = Tesselator.GetCurrentVertices()[0];
+						Vertex.m_LeftDist = 0.0f;
+						Vertex.m_RightDist = 0.0f;
+						Vertex.m_Flags = 0x0;
+					}
+					for(int i=1; i<Tesselator.GetCurrentVertices().size(); i++)
+					{
+						vec2 Position0 = Tesselator.GetCurrentVertices()[i-1].m_Position;			
+						vec2 Position1 = Tesselator.GetCurrentVertices()[i].m_Position;
+						
+						float Weight0 = Tesselator.GetCurrentVertices()[i-1].m_Weight * GlobalWeight;
+						float Weight1 = Tesselator.GetCurrentVertices()[i].m_Weight * GlobalWeight;
+						
+						vec4 Color0 = Tesselator.GetCurrentVertices()[i-1].m_Color;
+						vec4 Color1 = Tesselator.GetCurrentVertices()[i].m_Color;
+						
+						float Length = distance(Position0, Position1)/(SpriteInfo.m_Width * (Weight0 + Weight1)/2.0f);
+						float NextLengthIter = LengthIter + Length;
+						int NumSegments = ceil(NextLengthIter) - floor(LengthIter);
+						
+						for(int j=0; j<NumSegments; j++)
+						{
+							float Begin = fmod(LengthIter, 1.0);
+							float End = min(NextLengthIter - floor(LengthIter), 1.0);
+							
+							LengthIter += End - Begin;
+							float Alpha = (NextLengthIter - LengthIter)/Length;
+							
+							vec2 Pos = Position0 * Alpha + Position1 * (1.0f - Alpha);
+							
+							Tesselator.GetNextVertices()[Tesselator.GetNextVertices().size()-1].m_RightDist = Begin;
+							
+							CVertex& Vertex = Tesselator.GetNextVertices().increment();
+							Vertex.m_Position = Pos;
+							Vertex.m_Color = Color0 * Alpha + Color1 * (1.0f - Alpha);
+							Vertex.m_Weight = Weight0 * Alpha + Weight1 * (1.0f - Alpha);
+							Vertex.m_LeftDist = 0.0f;
+							Vertex.m_LeftDist = End;
+							Vertex.m_Flags = 0x0;
+						}
+						
+						LengthIter = NextLengthIter;
+					}
+					
+					Tesselator.ComputeOrthogonalVertors(Closed, 1);
+					
+					if(Closed && Tesselator.GetNextVertices().size())
+						Tesselator.GetNextVertices().increment() = Tesselator.GetNextVertices()[0];
+					
+					//Draw quads
+					int VerticalTesselation = 4;
+					AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
+					Graphics()->QuadsBegin();
+					for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+					{
+						vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
+						vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
+						vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
+						vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
+						vec4 Color0 = Tesselator.GetNextVertices()[i-1].m_Color * pSprite->GetColor();
+						vec4 Color1 = Tesselator.GetNextVertices()[i].m_Color * pSprite->GetColor();
+						
+						float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
+						float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
+						
+						Graphics()->SetColor4(Color0, Color1, Color0, Color1, true);
+						
+						for(int j=0; j<VerticalTesselation; j++)
+						{
+							float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
+							float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
+							float VMin = static_cast<float>(j)/VerticalTesselation;
+							float VMax = static_cast<float>(j+1)/VerticalTesselation;
+							
+							vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
+							vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
+							vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
+							vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+							
+							if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+							{
+								Graphics()->QuadsSetSubsetFree(
+									SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * Tesselator.GetNextVertices()[i-1].m_RightDist,
+									SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * Tesselator.GetNextVertices()[i].m_LeftDist,
+									SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * Tesselator.GetNextVertices()[i-1].m_RightDist,
+									SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * Tesselator.GetNextVertices()[i].m_LeftDist
+								);
+							}
+							else
+							{
+								Graphics()->QuadsSetSubsetFree(
+									SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + VSize * VMin,
+									SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + VSize * VMin,
+									SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i-1].m_RightDist, SpriteInfo.m_VMin + VSize * VMax,
+									SpriteInfo.m_UMin + USize * Tesselator.GetNextVertices()[i].m_LeftDist, SpriteInfo.m_VMin + VSize * VMax
+								);
+							}
+							CGraphics::CFreeformItem Freeform(P00, P01, P10, P11);
+							Graphics()->QuadsDrawFreeform(&Freeform, 1);
+						}
+					}
+					Graphics()->QuadsEnd();
+					
+					//Draw mesh
+					if(DrawMesh)
+					{
+						Graphics()->TextureClear();
+						Graphics()->LinesBegin();
+						Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.25f), true);
+						for(int i=1; i<Tesselator.GetNextVertices().size(); i++)
+						{
+							vec2 Position0 = Tesselator.GetNextVertices()[i-1].m_Position;			
+							vec2 Position1 = Tesselator.GetNextVertices()[i].m_Position;
+							vec2 Ortho0 = Tesselator.GetNextVertices()[i-1].m_RightOrtho * SpriteInfo.m_Height/2.0f;
+							vec2 Ortho1 = Tesselator.GetNextVertices()[i].m_LeftOrtho * SpriteInfo.m_Height/2.0f;
+							
+							for(int j=0; j<VerticalTesselation; j++)
+							{
+								float StepMin = -(2.0f * static_cast<float>(j)/VerticalTesselation - 1.0f);
+								float StepMax = -(2.0f * static_cast<float>(j+1)/VerticalTesselation - 1.0f);
+								
+								vec2 P00 = MapPosToScreenPos(Position0 + Ortho0 * StepMin);
+								vec2 P01 = MapPosToScreenPos(Position1 + Ortho1 * StepMin);
+								vec2 P10 = MapPosToScreenPos(Position0 + Ortho0 * StepMax);
+								vec2 P11 = MapPosToScreenPos(Position1 + Ortho1 * StepMax);
+								
+								CGraphics::CLineItem aLines[] = {
+									CGraphics::CLineItem(P00.x, P00.y, P01.x, P01.y),
+									CGraphics::CLineItem(P10.x, P10.y, P11.x, P11.y),
+									CGraphics::CLineItem(P00.x, P00.y, P10.x, P10.y),
+									CGraphics::CLineItem(P01.x, P01.y, P11.x, P11.y),
+									CGraphics::CLineItem(P00.x, P00.y, P11.x, P11.y),
+								};
+								Graphics()->LinesDraw(aLines, sizeof(aLines)/sizeof(CGraphics::CLineItem));
+							}
+						}
+						Graphics()->LinesEnd();
+					}
+				}
 			}
 		}
 	}
