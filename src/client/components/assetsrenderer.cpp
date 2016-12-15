@@ -36,6 +36,14 @@ void CAssetsRenderer::TextureSet(CAssetPath AssetPath)
 
 bool CAssetsRenderer::GetSpriteInfo(CAssetPath SpritePath, CSpriteInfo& Info)
 {
+	Info.m_UMin = 0.0f;
+	Info.m_UMax = 1.0f;
+	Info.m_VMin = 0.0f;
+	Info.m_VMax = 1.0f;
+	Info.m_Width = 1;
+	Info.m_Height = 1;
+	Info.m_ImagePath = CAssetPath::Null();
+	
 	const CAsset_Sprite* pSprite = AssetsManager()->GetAsset<CAsset_Sprite>(SpritePath);
 	if(!pSprite)
 		return false;
