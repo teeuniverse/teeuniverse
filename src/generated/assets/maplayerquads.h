@@ -385,6 +385,7 @@ private:
 public:
 	void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
 	void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;
+	void GenerateQuads() const;
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

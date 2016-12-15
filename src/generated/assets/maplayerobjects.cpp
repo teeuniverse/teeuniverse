@@ -38,7 +38,7 @@ CAsset_MapLayerObjects::CVertex::CVertex()
 	m_Position = 0.0f;
 	m_Weight = 1.0f;
 	m_Color = 1.0f;
-	m_Smoothness = SMOOTHNESS_AUTOMATIC;
+	m_Smoothness = CBezierVertex::TYPE_AUTOSMOOTH;
 }
 
 CAsset_MapLayerObjects::CObject::CObject()

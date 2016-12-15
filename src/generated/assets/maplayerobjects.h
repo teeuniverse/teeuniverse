@@ -34,17 +34,12 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+#include <shared/geometry/linetesselation.h>
 #include <shared/assets/assetpath.h>
 
 class CAsset_MapLayerObjects : public CAsset
 {
 public:
-	enum
-	{
-		SMOOTHNESS_NONE = 0,
-		SMOOTHNESS_AUTOMATIC,
-	};
-	
 	static const int TypeId = 27;
 	
 	enum

@@ -130,6 +130,8 @@ file(GLOB teeuniverse_shared_src
     "${PROJECT_SOURCE_DIR}/src/shared/tl/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/assets/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/shared/math/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/shared/geometry/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/tw07/shared/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/generated/assets/*.cpp"
 )

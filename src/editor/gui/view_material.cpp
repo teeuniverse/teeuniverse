@@ -104,7 +104,7 @@ void CViewMaterial::RenderView()
 		Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 		Vertex.SetColor(1.0f);
 		Vertex.SetWeight(1.0f);
-		Vertex.SetSmoothness(CAsset_MapLayerObjects::SMOOTHNESS_NONE);
+		Vertex.SetSmoothness(CBezierVertex::TYPE_CORNER);
 	}
 	
 	MapRenderer()->RenderObject(Object, 0.0f, m_ShowMeshes);

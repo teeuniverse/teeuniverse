@@ -2107,7 +2107,7 @@ mapLayerObjects_vertex = Class("Vertex")
 mapLayerObjects_vertex.addMember("Position", TypeVec2(), "0.0f")
 mapLayerObjects_vertex.addMember("Weight", TypeFloat(), "1.0f")
 mapLayerObjects_vertex.addMember("Color", TypeColor(), "1.0f")
-mapLayerObjects_vertex.addMember("Smoothness", TypeInt32(), "SMOOTHNESS_AUTOMATIC")
+mapLayerObjects_vertex.addMember("Smoothness", TypeInt32(), "CBezierVertex::TYPE_AUTOSMOOTH")
 
 mapLayerObjects_object = Class("Object")
 mapLayerObjects_object.addMember("Position", TypeVec2(), "0.0f")
@@ -2116,22 +2116,18 @@ mapLayerObjects_object.addMember("Angle", TypeFloat(), "0.0f")
 mapLayerObjects_object.addMember("StylePath", TypeAssetPath())
 mapLayerObjects_object.addMember("Vertex", TypeArray(mapLayerObjects_vertex))
 mapLayerObjects_object.addMember("ClosedPath", TypeBool(), "false")
+mapLayerQuads.addPublicFunc([
+	"void GenerateQuads() const;",
+])
 
 mapLayerObjects = ClassAsset("MapLayerObjects", len(assetsList))
+mapLayerObjects.addHeader("shared/geometry/linetesselation.h")
 mapLayerObjects.setInheritance(mainAsset)
 mapLayerObjects.addClass(mapLayerObjects_vertex)
 mapLayerObjects.addClass(mapLayerObjects_object)
 mapLayerObjects.addMember("ParentPath", TypeAssetPath())
 mapLayerObjects.addMember("Object", TypeArray(mapLayerObjects_object))
 mapLayerObjects.addMember("Visibility", TypeBool(), "true")
-mapLayerObjects.addPublicLines([
-	"enum",
-	"{",
-	"	SMOOTHNESS_NONE = 0,",
-	"	SMOOTHNESS_AUTOMATIC,",
-	"};",
-	""
-])
 
 assetsList.append(mapLayerObjects)
 
