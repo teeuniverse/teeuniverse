@@ -24,7 +24,7 @@
 TEST_BEGIN
 
 CSharedKernel* pKernel = new CSharedKernel();
-TEST(pKernel->Init(argc, argv))
+TEST(pKernel->Init(argc, (const char**) argv))
 
 TEST(str_comp(pKernel->Localization()->Localize(NULL, "__something not translated"), "__something not translated") == 0);
 TEST(str_comp(pKernel->Localization()->Localize("xx_XX", "__something not translated"), "__something not translated") == 0);

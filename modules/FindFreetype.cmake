@@ -81,7 +81,7 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
 )
 
 find_library(FREETYPE_LIBRARY
-  NAMES freetype libfreetype freetype219
+  NAMES freetype libfreetype freetype219 freetype6
   HINTS
     ENV FREETYPE_DIR
     ${_PC_FREETYPE_LIBRARY_DIRS}
@@ -94,6 +94,7 @@ find_library(FREETYPE_LIBRARY
     ENV GTKMM_BASEPATH
     [HKEY_CURRENT_USER\\SOFTWARE\\gtkmm\\2.4;Path]
     [HKEY_LOCAL_MACHINE\\SOFTWARE\\gtkmm\\2.4;Path]
+	${CMAKE_SOURCE_DIR}
 )
 
 # set the user variables

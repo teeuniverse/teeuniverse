@@ -282,10 +282,9 @@ function(make_assets progname)
 		make_assets_${progname}
 		teeuniverse_tools
 	)
-	if(NOT(WIN32))
-		add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "data/assets")
-		add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --save-dir "data" --save-dir-noinit)
-	endif()
+	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "data/assets")
+	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --save-dir "data" --save-dir-noinit)
+
 endfunction()
 
 make_assets(gui_editor)

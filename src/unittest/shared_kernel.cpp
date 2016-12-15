@@ -35,7 +35,7 @@ public:
 TEST_BEGIN
 
 CSharedKernel* pKernel = new CSharedKernel();
-TEST(pKernel->Init(argc, argv))
+TEST(pKernel->Init(argc, (const char**) argv))
 
 COutputTest Output;
 

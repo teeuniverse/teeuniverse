@@ -22,10 +22,10 @@
 
 #include <cstdlib>
 
-int main(int argc, const char **argv)
+int main(int argc, char* argv[])
 {
 	CKernel* pKernel = new CKernel();
-	if(!pKernel->Init(argc, argv))
+	if(!pKernel->Init(argc, (const char**) argv))
 	{
 		dbg_msg("Kernel", "unable to initialize server kernel");
 		exit(EXIT_FAILURE);

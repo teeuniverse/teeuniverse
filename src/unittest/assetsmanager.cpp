@@ -27,7 +27,7 @@ TEST_BEGIN
 dynamic_string Dir;
 
 CSharedKernel* pKernel = new CSharedKernel();
-TEST(pKernel->Init(argc, argv))
+TEST(pKernel->Init(argc, (const char**) argv))
 
 {
 	int PackageId = pKernel->AssetsManager()->NewPackage("unittestpkg");

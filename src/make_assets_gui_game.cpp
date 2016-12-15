@@ -625,10 +625,10 @@ void Make_GuiTabsStyle(CSharedKernel* pKernel)
 	}
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char* argv[])
 {
 	CSharedKernel* pKernel = new CSharedKernel();
-	if(!pKernel->Init(argc, argv))
+	if(!pKernel->Init(argc, (const char**) argv))
 	{
 		dbg_msg("Kernel", "unable to initialize shared kernel");
 		exit(EXIT_FAILURE);

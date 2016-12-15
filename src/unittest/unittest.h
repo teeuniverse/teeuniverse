@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#define TEST_BEGIN int main(int argc, const char **argv) \
+#define TEST_BEGIN int main(int argc, char* argv[]) \
 { \
 	int __TestCounter = 0; \
 	int __ErrorCounter = 0;

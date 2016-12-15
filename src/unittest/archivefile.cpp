@@ -27,7 +27,7 @@ TEST_BEGIN
 dynamic_string Dir;
 
 CSharedKernel* pKernel = new CSharedKernel();
-TEST(pKernel->Init(argc, argv))
+TEST(pKernel->Init(argc, (const char**) argv))
 
 pKernel->Storage()->GetCompletePath(CStorage::TYPE_SAVE, "__unittestdir__", Dir);
 TEST(fs_makedir(Dir.buffer()))

@@ -83,8 +83,8 @@ macro(_icu_declare_component _NAME)
 endmacro(_icu_declare_component)
 
 _icu_declare_component(data icudata)
-_icu_declare_component(uc   icuuc)         # Common and Data libraries
-_icu_declare_component(i18n icui18n icuin) # Internationalization library
+_icu_declare_component(uc   icuuc icuuc52 icuuc53 icuuc54 icuuc55 icuuc56 icuuc57 icuuc58 icuuc59)         # Common and Data libraries
+_icu_declare_component(i18n icui18n icuin icuin52 icuin53 icuin54 icuin55 icuin56 icuin57 icuin58 icuin59) # Internationalization library
 _icu_declare_component(io   icuio ustdio)  # Stream and I/O Library
 _icu_declare_component(le   icule)         # Layout library
 _icu_declare_component(lx   iculx)         # Paragraph Layout library
@@ -139,8 +139,10 @@ if(PKG_CONFIG_FOUND)
         endif(${PC_ICU_PRIVATE_VAR_NS}_FOUND)
     endforeach(${ICU_PRIVATE_VAR_NS}_COMPONENT)
 endif(PKG_CONFIG_FOUND)
-# list(APPEND ${ICU_PRIVATE_VAR_NS}_HINTS ENV ICU_ROOT_DIR)
-# message("${ICU_PRIVATE_VAR_NS}_HINTS = ${${ICU_PRIVATE_VAR_NS}_HINTS}")
+
+if(WIN32)
+	list(APPEND ${ICU_PRIVATE_VAR_NS}_HINTS ${CMAKE_SOURCE_DIR})
+endif()
 
 # Includes
 find_path(
@@ -219,12 +221,14 @@ foreach(${ICU_PRIVATE_VAR_NS}_COMPONENT ${${ICU_PUBLIC_VAR_NS}_FIND_COMPONENTS})
             ${ICU_PUBLIC_VAR_NS}_${${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT}_LIBRARY_RELEASE
             NAMES ${${ICU_PRIVATE_VAR_NS}_POSSIBLE_RELEASE_NAMES}
             HINTS ${${ICU_PRIVATE_VAR_NS}_HINTS}
+			PATH_SUFFIXES "lib"
             DOC "Release library for ICU ${${ICU_PRIVATE_VAR_NS}_COMPONENT} component"
         )
         find_library(
             ${ICU_PUBLIC_VAR_NS}_${${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT}_LIBRARY_DEBUG
             NAMES ${${ICU_PRIVATE_VAR_NS}_POSSIBLE_DEBUG_NAMES}
             HINTS ${${ICU_PRIVATE_VAR_NS}_HINTS}
+			PATH_SUFFIXES "lib"
             DOC "Debug library for ICU ${${ICU_PRIVATE_VAR_NS}_COMPONENT} component"
         )
 
@@ -235,6 +239,7 @@ foreach(${ICU_PRIVATE_VAR_NS}_COMPONENT ${${ICU_PUBLIC_VAR_NS}_FIND_COMPONENTS})
             ${ICU_PUBLIC_VAR_NS}_${${ICU_PRIVATE_VAR_NS}_UPPER_COMPONENT}_LIBRARY
             NAMES ${${ICU_PRIVATE_VAR_NS}_COMPONENTS_${${ICU_PRIVATE_VAR_NS}_COMPONENT}}
             PATHS ${${ICU_PRIVATE_VAR_NS}_HINTS}
+			PATH_SUFFIXES "lib"
             DOC "Library for ICU ${${ICU_PRIVATE_VAR_NS}_COMPONENT} component"
         )
 

@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <SDL.h>
 
-int main(int argc, const char **argv)
+int main(int argc, char* argv[])
 {
 	//Init SDL
 	{
@@ -37,7 +37,7 @@ int main(int argc, const char **argv)
 	}
 	
 	CGameKernel* pKernel = new CGameKernel();
-	if(!pKernel->Init(argc, argv))
+	if(!pKernel->Init(argc, (const char**) argv))
 	{
 		dbg_msg("Kernel", "unable to initialize client kernel");
 		exit(EXIT_FAILURE);
