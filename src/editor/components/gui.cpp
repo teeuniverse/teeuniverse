@@ -1598,7 +1598,6 @@ void CGuiEditor::LoadAssets()
 		
 		m_Path_Line_Separator = AssetsManager()->FindAsset<CAsset_GuiLineStyle>(PackageId, "separator");
 		
-		m_Path_Box_Popup = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "popup");
 		m_Path_Box_View = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "view");
 		m_Path_Box_Panel = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panel");
 		m_Path_Box_Menu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "menu");
@@ -1648,7 +1647,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconImage = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconImage");
 		m_Path_Sprite_IconSprite = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSprite");
 		m_Path_Sprite_IconSkeleton = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSkeleton");
-		m_Path_Sprite_IconSkeletonSkin = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSkeletonSki");
+		m_Path_Sprite_IconSkeletonSkin = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSkeletonSkin");
 		m_Path_Sprite_IconSkeletonAnimation = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSkeletonAnimation");
 		m_Path_Sprite_IconCharacter = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCharacter");
 		m_Path_Sprite_IconCharacterPart = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCharacterPart");
@@ -1665,7 +1664,6 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconGuiLabel = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiLabel");
 		m_Path_Sprite_IconGuiButton = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiButton");
 		m_Path_Sprite_IconGuiToggle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiToggle");
-		m_Path_Sprite_IconGuiIntEdit = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiIntEdit");
 		m_Path_Sprite_IconGuiSlider = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiSlider");
 		m_Path_Sprite_IconGuiScrollbar = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiScrollbar");
 		m_Path_Sprite_IconGuiTabs = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiTabs");
@@ -1723,7 +1721,7 @@ void CGuiEditor::LoadAssets()
 	m_ScrollbarStyle = m_Path_Scrollbar_Default;
 	m_SliderStyle = m_Path_Slider_Default;
 	m_TabsStyle = m_Path_Tabs_Default;
-	m_PopupStyle = m_Path_Box_Popup;
+	m_PopupStyle = m_Path_Box_Menu;
 	m_ComposeStyle = m_Path_Label_Compose;
 	m_TextSelectionStyle = m_Path_Rect_TextSelection;
 	m_ComboBoxStyle = m_Path_ComboBox_Default;
@@ -1814,7 +1812,7 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 				IconPath = m_Path_Sprite_IconGuiBox;
 				break;
 			case CAsset_GuiIntEditStyle::TypeId:
-				IconPath = m_Path_Sprite_IconGuiIntEdit;
+				IconPath = m_Path_Sprite_IconGuiButton;
 				break;
 			case CAsset_GuiLabelStyle::TypeId:
 				IconPath = m_Path_Sprite_IconGuiLabel;

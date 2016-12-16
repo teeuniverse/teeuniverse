@@ -147,10 +147,10 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconGuiScrollbar", ImageEditorPath, 15*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconGuiTabs", ImageEditorPath, 16*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconSystem", ImageEditorPath, 17*2, 2*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconButton", ImageEditorPath, 18*2, 2*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconLabel", ImageEditorPath, 19*2, 2*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconToggle", ImageEditorPath, 20*2, 2*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconSlider", ImageEditorPath, 21*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconGuiButton", ImageEditorPath, 18*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconGuiLabel", ImageEditorPath, 19*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconGuiToggle", ImageEditorPath, 20*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconGuiSlider", ImageEditorPath, 21*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconKeyFrameMove", ImageEditorPath, 23*2, 1*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconKeyFrameAdd", ImageEditorPath, 24*2, 1*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconKeyFrameDelete", ImageEditorPath, 25*2, 1*2, 2, 2);

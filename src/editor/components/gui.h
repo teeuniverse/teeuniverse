@@ -68,7 +68,6 @@ public:
 	
 	CAssetPath m_Path_Line_Separator;
 	
-	CAssetPath m_Path_Box_Popup;
 	CAssetPath m_Path_Box_View;
 	CAssetPath m_Path_Box_Panel;
 	CAssetPath m_Path_Box_Menu;
@@ -133,7 +132,6 @@ public:
 	CAssetPath m_Path_Sprite_IconGuiLabel;
 	CAssetPath m_Path_Sprite_IconGuiButton;
 	CAssetPath m_Path_Sprite_IconGuiToggle;
-	CAssetPath m_Path_Sprite_IconGuiIntEdit;
 	CAssetPath m_Path_Sprite_IconGuiSlider;
 	CAssetPath m_Path_Sprite_IconGuiScrollbar;
 	CAssetPath m_Path_Sprite_IconGuiTabs;

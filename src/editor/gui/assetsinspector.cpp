@@ -1313,7 +1313,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiIntEditStyle_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _LSTRING("Integer Edit Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiIntEdit);
+	AddTab(pTab, _LSTRING("Integer Edit Style (GUI)"), AssetsEditor()->m_Path_Sprite_IconGuiButton);
 	
 	AddField_AssetProperties(pTab);
 	
