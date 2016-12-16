@@ -1482,12 +1482,10 @@ public:
 
 CGuiEditor::CMainWidget::CMainWidget(CGuiEditor* pAssetsEditor) :
 	gui::CVListLayout(pAssetsEditor),
-	m_pAssetsEditor(pAssetsEditor),
-	m_pToolbar(NULL)
+	m_pAssetsEditor(pAssetsEditor)
 {
 	//Toolbar
-	m_pToolbar = CreateToolbar();
-	Add(m_pToolbar, false);
+	Add(CreateToolbar(), false);
 	
 	//Panel
 	gui::CHPanelLayout* pPanel = new gui::CHPanelLayout(pAssetsEditor);
@@ -1502,6 +1500,9 @@ CGuiEditor::CMainWidget::CMainWidget(CGuiEditor* pAssetsEditor) :
 	pPanel->Add(pVPanel, -1);
 	
 	pPanel->Add(new CAssetsInspector(pAssetsEditor), 280);
+	
+	//Toolbar
+	Add(CreateStatusbar(), false);
 }
 
 void CGuiEditor::CMainWidget::Render()
@@ -1554,14 +1555,26 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateToolbar()
 	pMenuBar->Add(new CFileButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CEditButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CViewButton(m_pAssetsEditor), false);
-	pMenuBar->Add(new gui::CFiller(Context()), true);
+	
+	return pMenuBar;
+}
+
+gui::CWidget* CGuiEditor::CMainWidget::CreateStatusbar()
+{
+	gui::CHListLayout* pStatusBar = new gui::CHListLayout(Context());
+	pStatusBar->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Statusbar);
+	
+	m_pAssetsEditor->m_pCoordinatesLabel = new gui::CLabel(Context(), "");
+	m_pAssetsEditor->m_pCoordinatesLabel->NoTextClipping();
+	pStatusBar->Add(m_pAssetsEditor->m_pCoordinatesLabel, false);
+	
+	pStatusBar->Add(new gui::CFiller(Context()), true);
 	
 	m_pAssetsEditor->m_pHintLabel = new gui::CLabel(Context(), "");
 	m_pAssetsEditor->m_pHintLabel->NoTextClipping();
+	pStatusBar->Add(m_pAssetsEditor->m_pHintLabel, false);
 	
-	pMenuBar->Add(m_pAssetsEditor->m_pHintLabel, false);
-	
-	return pMenuBar;
+	return pStatusBar;
 }
 
 
@@ -1573,7 +1586,8 @@ CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	m_EditedSubPath(CSubPath::Null()),
 	m_pAssetsTree(NULL),
 	m_pPackagesTree(NULL),
-	m_pHintLabel(NULL)
+	m_pHintLabel(NULL),
+	m_pCoordinatesLabel(NULL)
 {
 	SetName("GuiEditor");
 }
@@ -1603,6 +1617,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Box_Menu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "menu");
 		m_Path_Box_Dialog = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "dialog");
 		m_Path_Box_SubList = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "subList");
+		m_Path_Box_Statusbar = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "statusbar");
 		
 		m_Path_Label_Text = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "text");
 		m_Path_Label_Header = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "header");
@@ -1876,4 +1891,9 @@ void CGuiEditor::RefreshAssetsTree()
 void CGuiEditor::SetHint(const CLocalizableString& LString)
 {
 	m_pHintLabel->SetText(LString);
+}
+
+void CGuiEditor::SetCoordinates(const CLocalizableString& LString)
+{
+	m_pCoordinatesLabel->SetText(LString);
 }

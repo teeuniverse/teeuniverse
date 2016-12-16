@@ -455,6 +455,18 @@ void CViewMap::OnButtonRelease(int Button)
 
 void CViewMap::OnMouseMove()
 {
+	ivec2 MousePos = Context()->GetMousePos();
+	
+	if(m_VisibilityRect.IsInside(MousePos))
+	{
+		vec2 MapPos = MapRenderer()->ScreenPosToMapPos(vec2(MousePos.x, MousePos.y));
+		
+		CLocalizableString LString(_("Map position: ({float:XCoord}   {float:YCoord})"));
+		LString.AddFloat("XCoord", MapPos.x);
+		LString.AddFloat("YCoord", MapPos.y);
+		AssetsEditor()->SetCoordinates(LString);
+	}
+	
 	if(m_CameraDraged)
 	{
 		ivec2 MouseRelPos = Context()->GetMouseRelPos();

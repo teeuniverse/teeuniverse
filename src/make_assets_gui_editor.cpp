@@ -1286,6 +1286,29 @@ int main(int argc, char* argv[])
 		}
 	}
 	
+	//Statusbar
+	{
+		CAssetPath RectPath;
+		CAssetPath StatusBoxPath;
+		
+		{
+			CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
+			pAsset->SetName("statusbar");
+			pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_BORDER);
+			pAsset->SetBackgroundColor(ColorDarkBG);
+			pAsset->SetBorderColor(ColorBorder);
+			pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
+		}
+		
+		{
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&StatusBoxPath, PackageId);
+			pAsset->SetName("statusbar");
+			pAsset->SetRectPath(RectPath);
+			pAsset->SetPadding(2);
+			pAsset->SetMargin(0);
+		}
+	}
+	
 	//ComboBox
 	{
 		CAssetPath AssetPath;

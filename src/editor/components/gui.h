@@ -33,11 +33,10 @@ public:
 	{
 	protected:
 		CGuiEditor* m_pAssetsEditor;
-		
-		gui::CWidget* m_pToolbar;
 	
 	protected:
 		gui::CWidget* CreateToolbar();
+		gui::CWidget* CreateStatusbar();
 	
 	public:
 		CMainWidget(CGuiEditor* pAssetsEditor);
@@ -58,6 +57,7 @@ public:
 	class CAssetsTree* m_pAssetsTree;
 	class CPackagesTree* m_pPackagesTree;
 	gui::CLabel* m_pHintLabel;
+	gui::CLabel* m_pCoordinatesLabel;
 	
 public:
 	CAssetPath m_Path_Image_ZoneTexture;
@@ -73,6 +73,7 @@ public:
 	CAssetPath m_Path_Box_Menu;
 	CAssetPath m_Path_Box_Dialog;
 	CAssetPath m_Path_Box_SubList;
+	CAssetPath m_Path_Box_Statusbar;
 	
 	CAssetPath m_Path_Label_Text;
 	CAssetPath m_Path_Label_Header;
@@ -199,6 +200,7 @@ public:
 	void RefreshAssetsTree();
 	
 	void SetHint(const CLocalizableString& LString);
+	void SetCoordinates(const CLocalizableString& LString);
 	
 	inline CEditorKernel* EditorKernel() { return m_pEditorKernel; }
 	inline const CEditorKernel* EditorKernel() const { return m_pEditorKernel; }
