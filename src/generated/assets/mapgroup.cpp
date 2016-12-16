@@ -282,12 +282,22 @@ int CAsset_MapGroup::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_MapGroup::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_MapGroup::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_LAYER:
-			return DeleteLayer(SubPath);
+			DeleteLayer(SubPath);
+			break;
+	}
+}
+
+void CAsset_MapGroup::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_LAYER:
+			RelMoveLayer(SubPath, RelMove);
 			break;
 	}
 }

@@ -218,21 +218,40 @@ int CAsset_Map::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_Map::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_Map::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_BGGROUP:
-			return DeleteBgGroup(SubPath);
+			DeleteBgGroup(SubPath);
 			break;
 		case TYPE_FGGROUP:
-			return DeleteFgGroup(SubPath);
+			DeleteFgGroup(SubPath);
 			break;
 		case TYPE_ZONELAYER:
-			return DeleteZoneLayer(SubPath);
+			DeleteZoneLayer(SubPath);
 			break;
 		case TYPE_ENTITYLAYER:
-			return DeleteEntityLayer(SubPath);
+			DeleteEntityLayer(SubPath);
+			break;
+	}
+}
+
+void CAsset_Map::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_BGGROUP:
+			RelMoveBgGroup(SubPath, RelMove);
+			break;
+		case TYPE_FGGROUP:
+			RelMoveFgGroup(SubPath, RelMove);
+			break;
+		case TYPE_ZONELAYER:
+			RelMoveZoneLayer(SubPath, RelMove);
+			break;
+		case TYPE_ENTITYLAYER:
+			RelMoveEntityLayer(SubPath, RelMove);
 			break;
 	}
 }

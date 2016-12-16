@@ -112,11 +112,72 @@ public:
 class CSubItem : public gui::CButton
 {
 protected:
+	class CDeleteButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CContextMenu* m_pContextMenu;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			AssetsManager()->DeleteSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath());
+			m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), CSubPath::Null());
+			
+			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+			
+			m_pContextMenu->Close();
+		}
+		
+	public:
+		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu) :
+			gui::CButton(pAssetsEditor, _LSTRING("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		}
+	};
+	
+	class CRelMoveButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CContextMenu* m_pContextMenu;
+		int m_ArraySizeMember;
+		int m_Shift;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			AssetsManager()->RelMoveSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), m_Shift);
+			
+			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+			
+			m_pContextMenu->Close();
+		}
+		
+	public:
+		CRelMoveButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CLocalizableString& LString, CAssetPath Iconpath, int Shift) :
+			gui::CButton(pAssetsEditor, LString, Iconpath),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu),
+			m_Shift(Shift)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		}
+	};
+	
+protected:
 	CGuiEditor* m_pAssetsEditor;
 	CSubPath m_SubPath;
 	
 protected:
-	virtual void MouseClickAction()
+	virtual void MouseClickAction() { Action(); }
+	
+	void Action()
 	{
 		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
 	}
@@ -146,6 +207,27 @@ public:
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
 		
 		gui::CButton::Update(ParentEnabled);
+	}
+	
+	virtual void OnButtonClick(int Button)
+	{
+		if(Button == KEY_MOUSE_2 && m_DrawRect.IsInside(Context()->GetMousePos()))
+		{
+			CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
+			
+			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move to the back"), m_pAssetsEditor->m_Path_Sprite_IconMoveBack, -99999999), false);
+			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move backard"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1), false);
+			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1), false);
+			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move to the front"), m_pAssetsEditor->m_Path_Sprite_IconMoveFront, 99999999), false);
+			pMenu->List()->AddSeparator();
+			pMenu->List()->Add(new CDeleteButton(m_pAssetsEditor, pMenu));
+			
+			m_pAssetsEditor->DisplayPopup(pMenu);
+			Action();
+			return;
+		}
+		
+		gui::CButton::OnButtonClick(Button);
 	}
 };
 
@@ -865,7 +947,6 @@ class CSubItemList_MapEntities_Entity : public CSubItemList
 {
 protected:
 	CAssetPath m_AssetPath;
-	CGuiEditor* m_pAssetsEditor;
 	bool m_UpdateNeeded;
 	
 protected:

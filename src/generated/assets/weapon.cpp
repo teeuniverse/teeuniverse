@@ -97,7 +97,11 @@ int CAsset_Weapon::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_Weapon::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_Weapon::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_Weapon::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

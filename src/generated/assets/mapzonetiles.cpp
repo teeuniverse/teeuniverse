@@ -187,7 +187,11 @@ int CAsset_MapZoneTiles::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_MapZoneTiles::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_MapZoneTiles::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_MapZoneTiles::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

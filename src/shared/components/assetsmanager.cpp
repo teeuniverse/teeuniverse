@@ -723,6 +723,32 @@ int CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int To
 	
 	#undef MACRO_ASSETTYPE
 }
+
+int CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int RelMove, int Token)
+{
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return false;
+		
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
+	
+	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
+	{\
+		CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
+		if(pAsset)\
+		{\
+			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
+			pAsset->RelMoveSubItem(SubPath, RelMove);\
+		}\
+	}
+	
+	switch(AssetPath.GetType())
+	{
+		#include <generated/assets/assetsmacro.h>
+	}
+	
+	#undef MACRO_ASSETTYPE
+}
 	
 CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId, int Token)
 {

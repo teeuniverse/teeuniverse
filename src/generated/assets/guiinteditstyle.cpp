@@ -83,7 +83,11 @@ int CAsset_GuiIntEditStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_GuiIntEditStyle::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_GuiIntEditStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_GuiIntEditStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

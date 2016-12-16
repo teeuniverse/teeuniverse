@@ -152,7 +152,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerTiles();
 	void copy(const CAsset_MapLayerTiles& Item)

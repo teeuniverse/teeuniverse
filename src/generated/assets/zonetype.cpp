@@ -188,12 +188,22 @@ int CAsset_ZoneType::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_ZoneType::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_ZoneType::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_INDEX:
-			return DeleteIndex(SubPath);
+			DeleteIndex(SubPath);
+			break;
+	}
+}
+
+void CAsset_ZoneType::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_INDEX:
+			RelMoveIndex(SubPath, RelMove);
 			break;
 	}
 }

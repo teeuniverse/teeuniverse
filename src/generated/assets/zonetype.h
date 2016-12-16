@@ -157,7 +157,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_ZoneType& Item)
 	{
@@ -242,7 +244,9 @@ public:
 		return Id;
 	}
 	
-	inline int DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
+	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
+	
+	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { m_Index.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size()); }
 	

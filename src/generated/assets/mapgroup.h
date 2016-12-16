@@ -133,7 +133,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapGroup();
 	void copy(const CAsset_MapGroup& Item)
@@ -254,7 +256,9 @@ public:
 		return Id;
 	}
 	
-	inline int DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size()); }
 	

@@ -420,27 +420,52 @@ int CAsset_SkeletonAnimation::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_SkeletonAnimation::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_SkeletonAnimation::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_LOCALBONEANIM:
-			return DeleteLocalBoneAnim(SubPath);
+			DeleteLocalBoneAnim(SubPath);
 			break;
 		case TYPE_LOCALBONEANIM_KEYFRAME:
 			DeleteLocalBoneAnimKeyFrame(SubPath);
 			break;
 		case TYPE_PARENTBONEANIM:
-			return DeleteParentBoneAnim(SubPath);
+			DeleteParentBoneAnim(SubPath);
 			break;
 		case TYPE_PARENTBONEANIM_KEYFRAME:
 			DeleteParentBoneAnimKeyFrame(SubPath);
 			break;
 		case TYPE_LAYERANIMATION:
-			return DeleteLayerAnimation(SubPath);
+			DeleteLayerAnimation(SubPath);
 			break;
 		case TYPE_LAYERANIMATION_KEYFRAME:
 			DeleteLayerAnimationKeyFrame(SubPath);
+			break;
+	}
+}
+
+void CAsset_SkeletonAnimation::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_LOCALBONEANIM:
+			RelMoveLocalBoneAnim(SubPath, RelMove);
+			break;
+		case TYPE_LOCALBONEANIM_KEYFRAME:
+			RelMoveLocalBoneAnimKeyFrame(SubPath, RelMove);
+			break;
+		case TYPE_PARENTBONEANIM:
+			RelMoveParentBoneAnim(SubPath, RelMove);
+			break;
+		case TYPE_PARENTBONEANIM_KEYFRAME:
+			RelMoveParentBoneAnimKeyFrame(SubPath, RelMove);
+			break;
+		case TYPE_LAYERANIMATION:
+			RelMoveLayerAnimation(SubPath, RelMove);
+			break;
+		case TYPE_LAYERANIMATION_KEYFRAME:
+			RelMoveLayerAnimationKeyFrame(SubPath, RelMove);
 			break;
 	}
 }

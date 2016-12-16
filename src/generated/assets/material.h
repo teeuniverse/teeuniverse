@@ -408,7 +408,9 @@ public:
 			return Id;
 		}
 		
-		inline int DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
+		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
+		
+		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size()); }
 		
@@ -452,7 +454,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_Material& Item)
 	{
@@ -711,9 +715,13 @@ public:
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
 	
-	inline int DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].DeleteSprite(SubPath.PopId()); }
+	inline void DeleteLayerSprite(const CSubPath& SubPath) { m_Layer[SubPath.GetId()].DeleteSprite(SubPath.PopId()); }
+	
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
 	
 	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size()); }
 	

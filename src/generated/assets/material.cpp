@@ -323,15 +323,28 @@ int CAsset_Material::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_Material::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_Material::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_LAYER:
-			return DeleteLayer(SubPath);
+			DeleteLayer(SubPath);
 			break;
 		case TYPE_LAYER_SPRITE:
 			DeleteLayerSprite(SubPath);
+			break;
+	}
+}
+
+void CAsset_Material::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_LAYER:
+			RelMoveLayer(SubPath, RelMove);
+			break;
+		case TYPE_LAYER_SPRITE:
+			RelMoveLayerSprite(SubPath, RelMove);
 			break;
 	}
 }

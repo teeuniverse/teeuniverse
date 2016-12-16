@@ -389,7 +389,9 @@ public:
 			return Id;
 		}
 		
-		inline int DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		
+		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size()); }
 		
@@ -576,7 +578,9 @@ public:
 			return Id;
 		}
 		
-		inline int DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
+		
+		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size()); }
 		
@@ -625,7 +629,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_SkeletonAnimation& Item)
 	{
@@ -997,17 +1003,29 @@ public:
 	
 	inline int AddLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].AddKeyFrame(); }
 	
-	inline int DeleteLocalBoneAnim(const CSubPath& SubPath) { m_LocalBoneAnim.remove_index(SubPath.GetId()); }
+	inline void DeleteLocalBoneAnim(const CSubPath& SubPath) { m_LocalBoneAnim.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteLocalBoneAnimKeyFrame(const CSubPath& SubPath) { return m_LocalBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	inline void DeleteLocalBoneAnimKeyFrame(const CSubPath& SubPath) { m_LocalBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
-	inline int DeleteParentBoneAnim(const CSubPath& SubPath) { m_ParentBoneAnim.remove_index(SubPath.GetId()); }
+	inline void DeleteParentBoneAnim(const CSubPath& SubPath) { m_ParentBoneAnim.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteParentBoneAnimKeyFrame(const CSubPath& SubPath) { return m_ParentBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	inline void DeleteParentBoneAnimKeyFrame(const CSubPath& SubPath) { m_ParentBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
-	inline int DeleteLayerAnimation(const CSubPath& SubPath) { m_LayerAnimation.remove_index(SubPath.GetId()); }
+	inline void DeleteLayerAnimation(const CSubPath& SubPath) { m_LayerAnimation.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	inline void DeleteLayerAnimationKeyFrame(const CSubPath& SubPath) { m_LayerAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	
+	inline void RelMoveLocalBoneAnim(const CSubPath& SubPath, int RelMove) { m_LocalBoneAnim.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLocalBoneAnimKeyFrame(const CSubPath& SubPath, int RelMove) { m_LocalBoneAnim[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
+	
+	inline void RelMoveParentBoneAnim(const CSubPath& SubPath, int RelMove) { m_ParentBoneAnim.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveParentBoneAnimKeyFrame(const CSubPath& SubPath, int RelMove) { m_ParentBoneAnim[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
+	
+	inline void RelMoveLayerAnimation(const CSubPath& SubPath, int RelMove) { m_LayerAnimation.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLayerAnimationKeyFrame(const CSubPath& SubPath, int RelMove) { m_LayerAnimation[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
 	
 	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size()); }
 	

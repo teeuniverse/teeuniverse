@@ -140,7 +140,11 @@ int CAsset_GuiToggleStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_GuiToggleStyle::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_GuiToggleStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_GuiToggleStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

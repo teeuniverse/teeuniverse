@@ -161,7 +161,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_Character& Item)
 	{
@@ -257,7 +259,9 @@ public:
 		return Id;
 	}
 	
-	inline int DeletePart(const CSubPath& SubPath) { m_Part.remove_index(SubPath.GetId()); }
+	inline void DeletePart(const CSubPath& SubPath) { m_Part.remove_index(SubPath.GetId()); }
+	
+	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { m_Part.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size()); }
 	

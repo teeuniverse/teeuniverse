@@ -1678,6 +1678,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconNewFolder = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewFolder");
 		m_Path_Sprite_IconDelete = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDelete");
 		m_Path_Sprite_IconCrop = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCrop");
+		m_Path_Sprite_IconMoveBack = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMoveBack");
+		m_Path_Sprite_IconMoveFront = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMoveFront");
 		m_Path_Sprite_IconUp = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconUp");
 		m_Path_Sprite_IconDown = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDown");
 		m_Path_Sprite_IconVFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVFlip");

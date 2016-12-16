@@ -340,6 +340,34 @@ public:
 		if(m_Size < hint)
 			alloc(hint);
 	}
+	
+	void relative_move(int id, int shift)
+	{
+		if(id < 0 || id >= m_Size)
+			return;
+		
+		if(id + shift >= m_Size)
+			shift = m_Size-id-1;
+		if(id + shift < 0)
+			shift = -id;
+		
+		if(shift == 0)
+			return;
+		
+		T Tmp;
+		ALLOCATOR::transfert(Tmp, m_pData[id]);
+		if(shift < 0)
+		{
+			for(int i=id; i>id+shift; i--)
+				ALLOCATOR::transfert(m_pData[i], m_pData[i-1]);
+		}
+		else
+		{
+			for(int i=id; i<id+shift; i++)
+				ALLOCATOR::transfert(m_pData[i], m_pData[i+1]);
+		}
+		ALLOCATOR::transfert(m_pData[id+shift], Tmp);
+	}
 
 	/*
 		Function: all

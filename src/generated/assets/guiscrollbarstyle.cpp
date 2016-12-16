@@ -134,7 +134,11 @@ int CAsset_GuiScrollbarStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_GuiScrollbarStyle::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_GuiScrollbarStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_GuiScrollbarStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

@@ -391,6 +391,8 @@ class AddInterface_Array(GetSetInterface):
 		]
 	def generateDelete(self, var):
 		return [ var + ".remove_index(SubPath.GetId());" ]
+	def generateRelMove(self, var):
+		return [ var + ".relative_move(SubPath.GetId(), RelMove);" ]
 	def generateValid(self, var):
 		return [ 
 			"return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size());"
@@ -405,7 +407,9 @@ class AddInterface_ArrayChild(GetSetInterface):
 	def generateAdd(self, var):
 		return [ "return " + var + "[SubPath.GetId()].Add" + self.interface.name + "();" ]
 	def generateDelete(self, var):
-		return [ "return " + var + "[SubPath.GetId()].Delete" + self.interface.name + "(SubPath.PopId());" ]
+		return [ var + "[SubPath.GetId()].Delete" + self.interface.name + "(SubPath.PopId());" ]
+	def generateRelMove(self, var):
+		return [ var + "[SubPath.GetId()].RelMove" + self.interface.name + "(SubPath.PopId(), RelMove);" ]
 	def generateValid(self, var):
 		return [ "return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
 	
@@ -560,7 +564,9 @@ class AddInterface_Array2dChild(GetSetInterface):
 	def generateAdd(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Add" + self.interface.name + "();" ]
 	def generateDelete(self, var):
-		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Delete" + self.interface.name + "(SubPath.DoublePopId());" ]
+		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Delete" + self.interface.name + "(SubPath.DoublePopId());" ]
+	def generateRelMove(self, var):
+		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).RelMove" + self.interface.name + "(SubPath.DoublePopId(), RelMove);" ]
 	def generateValid(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId());" ]
 		
@@ -684,7 +690,9 @@ class AddInterface_Member(GetSetInterface):
 	def generateAdd(self, var):
 		return [ "return " + var + ".Add" + self.interface.name + "();" ]
 	def generateDelete(self, var):
-		return [ "return " + var + ".Delete" + self.interface.name + "(SubPath);" ]
+		return [ var + ".Delete" + self.interface.name + "(SubPath);" ]
+	def generateRelMove(self, var):
+		return [ var + ".RelMove" + self.interface.name + "(SubPath, RelMove);" ]
 	def generateValid(self, var):
 		return [ "return " + var + ".IsValid" + self.interface.name + "();" ]
 		
@@ -809,13 +817,28 @@ class Member:
 		for i in self.t.addInterfaces():
 			
 			if len(i.generateDelete(self.memberName())) > 1:
-				res.append("inline int Delete"+self.name+i.name+"(const CSubPath& SubPath)")
+				res.append("inline void Delete"+self.name+i.name+"(const CSubPath& SubPath)")
 				res.append("{")
 				for l in i.generateDelete(self.memberName()):
 					res.append("	"+l)
 				res.append("}")
 			else:
-				res.append("inline int Delete"+self.name+i.name+"(const CSubPath& SubPath) { "+i.generateDelete(self.memberName())[0]+" }")
+				res.append("inline void Delete"+self.name+i.name+"(const CSubPath& SubPath) { "+i.generateDelete(self.memberName())[0]+" }")
+				
+			res.append("")
+		return res
+	def generateRelMove(self):
+		res = []
+		for i in self.t.addInterfaces():
+			
+			if len(i.generateRelMove(self.memberName())) > 1:
+				res.append("inline void RelMove"+self.name+i.name+"(const CSubPath& SubPath, int RelMove)")
+				res.append("{")
+				for l in i.generateRelMove(self.memberName()):
+					res.append("	"+l)
+				res.append("}")
+			else:
+				res.append("inline void RelMove"+self.name+i.name+"(const CSubPath& SubPath, int RelMove) { "+i.generateRelMove(self.memberName())[0]+" }")
 				
 			res.append("")
 		return res
@@ -1110,6 +1133,9 @@ class Class(Type):
 			self.addPublicFunc(Mem.generateDelete())
 		
 		for Mem in self.members:
+			self.addPublicFunc(Mem.generateRelMove())
+		
+		for Mem in self.members:
 			self.addPublicFunc(Mem.generateValid())
 		
 		assetPathOperation = [
@@ -1303,7 +1329,7 @@ class ClassAsset(Class):
 				counter = counter+1
 		
 		res = []
-		res.append("int "+self.fullType()+"::DeleteSubItem(const CSubPath& SubPath)")
+		res.append("void "+self.fullType()+"::DeleteSubItem(const CSubPath& SubPath)")
 		res.append("{")
 		if counter > 0:
 			res.append("	switch(SubPath.GetType())")
@@ -1312,12 +1338,31 @@ class ClassAsset(Class):
 			for Mem in self.members: 
 				for inter in Mem.addInterfaces():
 					res.append("		case TYPE_"+inter.enum+":")
-					if inter.subpath:
-						res.append("			Delete"+inter.name+"(SubPath);")
-						res.append("			break;")
-					else:
-						res.append("			return Delete"+inter.name+"(SubPath);")
-						res.append("			break;")
+					res.append("			Delete"+inter.name+"(SubPath);")
+					res.append("			break;")
+			res.append("	}")
+		res.append("}")
+		res.append("")
+		return res
+	
+	def generateRelMoveImpl(self):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.addInterfaces():
+				counter = counter+1
+		
+		res = []
+		res.append("void "+self.fullType()+"::RelMoveSubItem(const CSubPath& SubPath, int RelMove)")
+		res.append("{")
+		if counter > 0:
+			res.append("	switch(SubPath.GetType())")
+			res.append("	{")
+			
+			for Mem in self.members: 
+				for inter in Mem.addInterfaces():
+					res.append("		case TYPE_"+inter.enum+":")
+					res.append("			RelMove"+inter.name+"(SubPath, RelMove);")
+					res.append("			break;")
 			res.append("	}")
 		res.append("}")
 		res.append("")
@@ -1354,7 +1399,8 @@ class ClassAsset(Class):
 				counter = counter+1
 		
 		self.addPublicFunc(["int AddSubItem(int Type, const CSubPath& SubPath);", ""])
-		self.addPublicFunc(["int DeleteSubItem(const CSubPath& SubPath);", ""])
+		self.addPublicFunc(["void DeleteSubItem(const CSubPath& SubPath);", ""])
+		self.addPublicFunc(["void RelMoveSubItem(const CSubPath& SubPath, int RelMove);", ""])
 		
 		return Class.generateClassDefinition(self)
 
@@ -1526,6 +1572,8 @@ def generateImpl(asset):
 	for l in asset.generateAddImpl():
 		print >>f, l
 	for l in asset.generateDeleteImpl():
+		print >>f, l
+	for l in asset.generateRelMoveImpl():
 		print >>f, l
 	print >>f, ""
 	

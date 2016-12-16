@@ -301,12 +301,22 @@ int CAsset_SkeletonSkin::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_SkeletonSkin::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_SkeletonSkin::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_SPRITE:
-			return DeleteSprite(SubPath);
+			DeleteSprite(SubPath);
+			break;
+	}
+}
+
+void CAsset_SkeletonSkin::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_SPRITE:
+			RelMoveSprite(SubPath, RelMove);
 			break;
 	}
 }

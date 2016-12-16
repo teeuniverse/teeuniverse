@@ -185,12 +185,22 @@ int CAsset_Character::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_Character::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_Character::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_PART:
-			return DeletePart(SubPath);
+			DeletePart(SubPath);
+			break;
+	}
+}
+
+void CAsset_Character::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_PART:
+			RelMovePart(SubPath, RelMove);
 			break;
 	}
 }

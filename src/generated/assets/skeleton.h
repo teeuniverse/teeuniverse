@@ -283,7 +283,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_Skeleton& Item)
 	{
@@ -531,9 +533,13 @@ public:
 		return Id;
 	}
 	
-	inline int DeleteBone(const CSubPath& SubPath) { m_Bone.remove_index(SubPath.GetId()); }
+	inline void DeleteBone(const CSubPath& SubPath) { m_Bone.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	
+	inline void RelMoveBone(const CSubPath& SubPath, int RelMove) { m_Bone.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size()); }
 	

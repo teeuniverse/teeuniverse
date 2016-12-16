@@ -365,15 +365,28 @@ int CAsset_MapLayerObjects::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_MapLayerObjects::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_MapLayerObjects::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
 		case TYPE_OBJECT:
-			return DeleteObject(SubPath);
+			DeleteObject(SubPath);
 			break;
 		case TYPE_OBJECT_VERTEX:
 			DeleteObjectVertex(SubPath);
+			break;
+	}
+}
+
+void CAsset_MapLayerObjects::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+{
+	switch(SubPath.GetType())
+	{
+		case TYPE_OBJECT:
+			RelMoveObject(SubPath, RelMove);
+			break;
+		case TYPE_OBJECT_VERTEX:
+			RelMoveObjectVertex(SubPath, RelMove);
 			break;
 	}
 }

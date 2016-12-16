@@ -166,7 +166,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapEntities();
 	void copy(const CAsset_MapEntities& Item)
@@ -277,7 +279,9 @@ public:
 		return Id;
 	}
 	
-	inline int DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
+	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
+	
+	inline void RelMoveEntity(const CSubPath& SubPath, int RelMove) { m_Entity.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size()); }
 	

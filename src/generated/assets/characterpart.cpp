@@ -108,7 +108,11 @@ int CAsset_CharacterPart::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_CharacterPart::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_CharacterPart::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_CharacterPart::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

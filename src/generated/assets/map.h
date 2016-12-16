@@ -183,7 +183,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	void copy(const CAsset_Map& Item)
 	{
@@ -331,13 +333,21 @@ public:
 		return Id;
 	}
 	
-	inline int DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
+	inline void DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteFgGroup(const CSubPath& SubPath) { m_FgGroup.remove_index(SubPath.GetId()); }
+	inline void DeleteFgGroup(const CSubPath& SubPath) { m_FgGroup.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteZoneLayer(const CSubPath& SubPath) { m_ZoneLayer.remove_index(SubPath.GetId()); }
+	inline void DeleteZoneLayer(const CSubPath& SubPath) { m_ZoneLayer.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.remove_index(SubPath.GetId()); }
+	inline void DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.remove_index(SubPath.GetId()); }
+	
+	inline void RelMoveBgGroup(const CSubPath& SubPath, int RelMove) { m_BgGroup.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveFgGroup(const CSubPath& SubPath, int RelMove) { m_FgGroup.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveZoneLayer(const CSubPath& SubPath, int RelMove) { m_ZoneLayer.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { m_EntityLayer.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size()); }
 	

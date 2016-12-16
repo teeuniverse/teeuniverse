@@ -102,7 +102,8 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconHFlip", ImageEditorPath, 23*2, 0*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconRotateCW", ImageEditorPath, 24*2, 0*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconRotateCCW", ImageEditorPath, 25*2, 0*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconFill", ImageEditorPath, 27*2, 0*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconMoveBack", ImageEditorPath, 26*2, 0*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconMoveFront", ImageEditorPath, 27*2, 0*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconNone", ImageEditorPath, 29*2, 0*2, 2, 2);
 	
 	CREATE_SPRITE(PackageId, "iconFolder", ImageEditorPath, 0*2, 1*2, 2, 2);

@@ -127,7 +127,11 @@ int CAsset_GuiSliderStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_GuiSliderStyle::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_GuiSliderStyle::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_GuiSliderStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 

@@ -361,7 +361,9 @@ public:
 			return Id;
 		}
 		
-		inline int DeleteVertex(const CSubPath& SubPath) { m_Vertex.remove_index(SubPath.GetId()); }
+		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.remove_index(SubPath.GetId()); }
+		
+		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { m_Vertex.relative_move(SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size()); }
 		
@@ -406,7 +408,9 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
-	int DeleteSubItem(const CSubPath& SubPath);
+	void DeleteSubItem(const CSubPath& SubPath);
+	
+	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerObjects();
 	void copy(const CAsset_MapLayerObjects& Item)
@@ -705,9 +709,13 @@ public:
 	
 	inline int AddObjectVertex(const CSubPath& SubPath) { return m_Object[SubPath.GetId()].AddVertex(); }
 	
-	inline int DeleteObject(const CSubPath& SubPath) { m_Object.remove_index(SubPath.GetId()); }
+	inline void DeleteObject(const CSubPath& SubPath) { m_Object.remove_index(SubPath.GetId()); }
 	
-	inline int DeleteObjectVertex(const CSubPath& SubPath) { return m_Object[SubPath.GetId()].DeleteVertex(SubPath.PopId()); }
+	inline void DeleteObjectVertex(const CSubPath& SubPath) { m_Object[SubPath.GetId()].DeleteVertex(SubPath.PopId()); }
+	
+	inline void RelMoveObject(const CSubPath& SubPath, int RelMove) { m_Object.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveObjectVertex(const CSubPath& SubPath, int RelMove) { m_Object[SubPath.GetId()].RelMoveVertex(SubPath.PopId(), RelMove); }
 	
 	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size()); }
 	

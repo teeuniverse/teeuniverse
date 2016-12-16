@@ -166,7 +166,11 @@ int CAsset_Image::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
-int CAsset_Image::DeleteSubItem(const CSubPath& SubPath)
+void CAsset_Image::DeleteSubItem(const CSubPath& SubPath)
+{
+}
+
+void CAsset_Image::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 }
 
