@@ -1901,7 +1901,7 @@ public:
 				}\
 				for(int p=0; p<AssetsManager()->GetNumPackages(); p++)\
 				{\
-					if(p != m_pAssetsEditor->GetEditedPackageId())\
+					if(p != m_pAssetsEditor->GetEditedPackageId() && str_comp(AssetsManager()->GetPackageName(p), "gui_editor") != 0)\
 					{\
 						gui::CExpand* pExpand = new gui::CExpand(Context());\
 						pLayout->Add(pExpand);\
