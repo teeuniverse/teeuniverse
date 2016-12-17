@@ -513,6 +513,21 @@ public:
 				Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
 				pPlaces->Add(new CItem_Directory(this, _LSTRING("My packages"), Buffer.buffer()), false);			
 			}
+			{
+				Buffer.clear();
+				Storage()->GetCompletePath(CStorage::TYPE_DATA, "assets", Buffer);
+				pPlaces->Add(new CItem_Directory(this, _LSTRING("Default packages"), Buffer.buffer()), false);			
+			}
+			for(int i=2; i<Storage()->GetNumPaths(); i++)
+			{
+				Buffer.clear();
+				Storage()->GetCompletePath(i, "assets", Buffer);
+				
+				CLocalizableString LString(_("Alternative Data Directory {int:Id}"));
+				LString.AddInteger("Id", i-1);
+				
+				pPlaces->Add(new CItem_Directory(this, LString, Buffer.buffer()), false);
+			}
 			pPlaces->AddSeparator();
 			{
 				Buffer.clear();
@@ -525,17 +540,6 @@ public:
 				fs_storage_path("teeworlds", Buffer);
 				Buffer.append("/downloadedmaps");
 				pPlaces->Add(new CItem_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
-			}
-			pPlaces->AddSeparator();
-			for(int i=0; i<Storage()->GetNumPaths(); i++)
-			{
-				Buffer.clear();
-				Storage()->GetCompletePath(i, "assets", Buffer);
-				
-				CLocalizableString LString(_("Data Directory {int:Id}"));
-				LString.AddInteger("Id", i+1);
-				
-				pPlaces->Add(new CItem_Directory(this, LString, Buffer.buffer()), false);
 			}
 			
 			m_pFilelist = new gui::CVScrollLayout(Context());

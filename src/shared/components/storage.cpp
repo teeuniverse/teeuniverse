@@ -96,19 +96,31 @@ bool CStorage::InitConfig(int argc, const char** argv)
 
 bool CStorage::Init()
 {
-	if(m_StoragePaths.size() == 0)
+	m_StoragePaths.clear();
+	
+	if(!m_SaveDir.empty())
 	{
-		dbg_msg("Storage", "using standard paths");
-		AddDefaultPaths();
+		dynamic_string& NewString = m_StoragePaths.increment();
+		NewString.copy(m_SaveDir);
 	}
-
-	// add save directories
-	if(m_StoragePaths.size() < TYPE_SAVE || m_StoragePaths[TYPE_SAVE].empty())
+	else
 	{
 		dbg_msg("Storage", "no save directory specified");
 		return false;
 	}
 	
+	if(!m_DataDir.empty())
+	{
+		dynamic_string& NewString = m_StoragePaths.increment();
+		NewString.copy(m_DataDir);
+	}
+	else
+	{
+		dbg_msg("Storage", "no data directory specified");
+		return false;
+	}
+	
+	//Initialize directories
 	if(fs_makedir(m_StoragePaths[TYPE_SAVE].buffer()))
 	{
 		if(m_InitializeSaveDir)
@@ -125,7 +137,7 @@ bool CStorage::Init()
 		return false;
 	}
 
-	return m_StoragePaths.size() ? true : false;
+	return true;
 }
 
 void CStorage::LoadPaths(const char *pArgv0)
@@ -166,47 +178,16 @@ void CStorage::LoadPaths(const char *pArgv0)
 		dbg_msg("Storage", "no paths found in storage.cfg");
 }
 
-void CStorage::AddDefaultPaths()
-{
-	AddPath("$USERDIR");
-	AddPath("$DATADIR");
-	AddPath("$CURRENTDIR");
-}
-
 void CStorage::AddPath(const char *pPath)
 {
 	if(!pPath[0])
 		return;
 	
-	if(str_comp(pPath, "$USERDIR") == 0)
-	{
-		if(!m_SaveDir.empty())
-		{
-			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(m_SaveDir);
-		}
-	}
-	else if(str_comp(pPath, "$DATADIR") == 0)
-	{
-		if(!m_DataDir.empty())
-		{
-			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(m_DataDir);
-		}
-	}
-	else if(str_comp(pPath, "$CURRENTDIR") == 0)
+	if(fs_is_dir(pPath))
 	{
 		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString.copy(m_CurrentDir);
-	}
-	else
-	{
-		if(fs_is_dir(pPath))
-		{
-			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(pPath);
-			dbg_msg("Storage", "added path '%s'", pPath);
-		}
+		NewString.copy(pPath);
+		dbg_msg("Storage", "added path '%s'", pPath);
 	}
 }
 

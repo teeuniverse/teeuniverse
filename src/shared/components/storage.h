@@ -95,6 +95,7 @@ public:
 	enum
 	{
 		TYPE_SAVE = 0,
+		TYPE_DATA = 1,
 		TYPE_ALL = -1,
 		TYPE_ABSOLUTE = -2,
 	};
@@ -109,7 +110,6 @@ protected:
 protected:
 	void FindDatadir(const char *pArgv0);
 	void LoadPaths(const char *pArgv0);
-	void AddDefaultPaths();
 	void AddPath(const char *pPath);
 	const dynamic_string& GetPath(int Type, const char *pDir, dynamic_string& Path) const;
 	

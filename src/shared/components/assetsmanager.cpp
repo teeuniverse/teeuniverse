@@ -335,7 +335,11 @@ bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int
 		return false;
 	
 	dynamic_string FullPath;
+#if defined(CONF_FAMILY_WINDOWS)
+	FullPath.append("assets\\");
+#else
 	FullPath.append("assets/");
+#endif
 	FullPath.append(pFilename);
 	FullPath.append(".tup");
 	
@@ -414,7 +418,11 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	}
 	else
 	{
+#if defined(CONF_FAMILY_WINDOWS)
+		FullPath.append("assets\\");
+#else
 		FullPath.append("assets/");
+#endif
 		FullPath.append(pFileName);
 		FullPath.append(".tup");
 		
