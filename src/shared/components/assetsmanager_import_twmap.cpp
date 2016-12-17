@@ -1170,6 +1170,9 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	//Zones
 	if(Format == MAPFORMAT_INFCLASS)
 	{
+		Load_UnivInfClass();
+		Load_UnivTeeWorlds();
+		
 		int StartLayer = LayerId;
 		
 		//Get layer size
@@ -1211,7 +1214,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			if(!pZone)
 				continue;
 			
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics || pZone->GetZoneTypePath() == m_Path_ZoneType_InfClassPhysics)
+			if(pZone->GetZoneTypePath() == m_Path_ZoneType_InfClassPhysics)
 			{
 				for(int j=0; j<pZone->GetTileHeight(); j++)
 				{
@@ -1225,8 +1228,27 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 								pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
 								break;
 							case 2:
-								if(pZone->GetZoneTypePath() == m_Path_ZoneType_InfClassPhysics) //Water
-									pTiles[j*Width+i].m_Index = 2;
+								pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
+								break;
+							case 3:
+								pTiles[j*Width+i].m_Index = 2;
+								break;
+						}
+					}
+				}
+			}
+			else if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics)
+			{
+				for(int j=0; j<pZone->GetTileHeight(); j++)
+				{
+					for(int i=0; i<pZone->GetTileWidth(); i++)
+					{
+						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+						
+						switch(pZone->GetTileIndex(TilePath))
+						{
+							case 1:
+								pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
 								break;
 							case 3:
 								pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
@@ -1427,6 +1449,9 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	}
 	else
 	{
+		Load_UnivTeeWorlds();
+		Load_UnivOpenFNG();
+		
 		int StartLayer = LayerId;
 		
 		//Get layer size
