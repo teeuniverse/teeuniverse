@@ -768,7 +768,8 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 		Graphics()->QuadsDrawFreeform(&Freeform, 1);
 	}
 	
-	Graphics()->QuadsEnd();
+	if(Quads.size())
+		Graphics()->QuadsEnd();
 	
 	if(DrawMesh)
 	{
