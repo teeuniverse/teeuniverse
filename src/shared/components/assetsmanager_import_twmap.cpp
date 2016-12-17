@@ -101,7 +101,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 
 	CAssetPath MapPath;
 	CAsset_Map* pMap = NewAsset_Hard<CAsset_Map>(&MapPath, PackageId);
-	pMap->SetName("map");
+	AssetsManager()->TryChangeAssetName_Hard(MapPath, "map");
 	
 	CAssetPath* pImagePath;
 	//Load images
@@ -270,7 +270,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				//Image name
 				{
 					char *pName = (char *)ArchiveFile.GetData(pItem->m_ImageName);
-					pImage->SetName(pName);
+					AssetsManager()->TryChangeAssetName_Hard(pImagePath[i], pName);
 					ArchiveFile.UnloadData(pItem->m_ImageName);
 				}
 				
@@ -375,7 +375,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			if(!aBuf[0])
 				str_format(aBuf, sizeof(aBuf), "group%d", MapGroupPath.GetId());
 
-			pMapGroup->SetName(aBuf);
+			AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, aBuf);
 
 			for(int l = 0; l < pGItem->m_NumLayers; l++)
 			{
@@ -398,7 +398,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						CAssetPath PhysicsZonePath;
 						CAsset_MapZoneTiles* pPhysicsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
-						pPhysicsZone->SetName("Physics");
+						AssetsManager()->TryChangeAssetName_Hard(PhysicsZonePath, "Physics");
 						pPhysicsZone->SetParentPath(MapPath);
 						
 						if(Format == MAPFORMAT_INFCLASS)
@@ -419,7 +419,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						{
 							CAssetPath EntitiesPath;
 							pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-							pEntities->SetName("Entities");
+							AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Entities");
 							pEntities->SetParentPath(MapPath);
 					
 							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -568,7 +568,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						{
 							CAssetPath ShrineZonePath;
 							CAsset_MapZoneTiles* pShrineZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ShrineZonePath, PackageId);
-							pShrineZone->SetName("Shrines");
+							AssetsManager()->TryChangeAssetName_Hard(ShrineZonePath, "Shrines");
 							pShrineZone->SetZoneTypePath(m_Path_ZoneType_OpenFNGShrine);
 							pShrineZone->SetParentPath(MapPath);
 							
@@ -582,7 +582,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							
 							CAssetPath OpenFNGEntitiesPath;
 							CAsset_MapEntities* pOpenFNGEntities = NewAsset_Hard<CAsset_MapEntities>(&OpenFNGEntitiesPath, PackageId);
-							pOpenFNGEntities->SetName("ScoreDisplay");
+							AssetsManager()->TryChangeAssetName_Hard(OpenFNGEntitiesPath, "ScoreDisplay");
 							pOpenFNGEntities->SetParentPath(MapPath);	
 					
 							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -647,7 +647,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							CSubPath FgGroup = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
 							pMap->SetFgGroup(FgGroup, MapGroupPath);
 							
-							pNewGroup->SetName(pMapGroup->GetName());
+							AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, pMapGroup->GetName());
 							pNewGroup->SetPosition(pMapGroup->GetPosition());
 							pNewGroup->SetHardParallax(pMapGroup->GetHardParallax());
 							pNewGroup->SetParentPath(MapPath);
@@ -663,7 +663,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						CAssetPath EntitiesPath;
 						CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						pEntities->SetName("Spawn");
+						AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Spawn");
 						pEntities->SetParentPath(MapPath);
 					
 						CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -703,7 +703,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						Height = pTilemapItem->m_Height;
 						
 						pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						pEntities->SetName("Flags");
+						AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Flags");
 						pEntities->SetParentPath(MapPath);	
 					
 						MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
@@ -739,7 +739,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						CAssetPath PhysicsZonePath;
 						CAsset_MapZoneTiles* pInfClassZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
-						pInfClassZone->SetName("Zones");
+						AssetsManager()->TryChangeAssetName_Hard(PhysicsZonePath, "Zones");
 						pInfClassZone->SetZoneTypePath(m_Path_ZoneType_InfClassZones);
 						pInfClassZone->SetParentPath(MapPath);
 						
@@ -802,7 +802,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						if(!aBuf[0])
 							str_format(aBuf, sizeof(aBuf), "tilelayer%d", MapLayerPath.GetId());
 						
-						pMapLayer->SetName(aBuf);
+						AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
 										
 						//Tiles
 						int Width = pTilemapItem->m_Width;
@@ -874,7 +874,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					if(!aBuf[0])
 						str_format(aBuf, sizeof(aBuf), "quadlayer%d", MapLayerPath.GetId());
 
-					pMapLayer->SetName(aBuf);
+					AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
 					
 					//Quads
 					tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);

@@ -192,6 +192,7 @@ public:
 	
 	CAssetPath DuplicateAsset(const CAssetPath& Path, int PackageId, int Token = -1);
 	
+	void TryChangeAssetName_Hard(CAssetPath AssetPath, const char* pName);
 	void TryChangeAssetName(CAssetPath AssetPath, const char* pName, int Token = -1);
 
 	template<class ASSET>

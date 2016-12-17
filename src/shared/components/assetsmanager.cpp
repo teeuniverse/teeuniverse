@@ -178,7 +178,7 @@ void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName,
 	
 	if(m_pHistory)
 		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
-		
+	
 	char aNumBuffer[32];
 	dynamic_string Buffer;
 	Buffer.copy(pName);
@@ -211,6 +211,52 @@ void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName,
 			}\
 		}\
 		SetAssetValue<const char*>(AssetPath, CSubPath::Null(), CAsset::NAME, Buffer.buffer(), Token);\
+		break;
+
+	switch(AssetPath.GetType())
+	{
+		#include <generated/assets/assetsmacro.h>
+	}
+	
+	m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);
+
+	#undef MACRO_ASSETTYPE
+}
+
+void CAssetsManager::TryChangeAssetName_Hard(CAssetPath AssetPath, const char* pName)
+{
+	char aNumBuffer[32];
+	dynamic_string Buffer;
+	Buffer.copy(pName);
+	
+	int NumDuplicates = 0;
+	bool DuplicateFound = true;
+		
+	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
+		while(DuplicateFound)\
+		{\
+			DuplicateFound = false;\
+			for(int i=0; i<GetNumAssets<CAsset_##Name>(AssetPath.GetPackageId()); i++)\
+			{\
+				const CAsset_##Name* pAsset = GetAsset<CAsset_##Name>(CAssetPath(CAsset_##Name::TypeId, AssetPath.GetPackageId(), i));\
+				if(pAsset)\
+				{\
+					if(Buffer == pAsset->GetName())\
+					{\
+						str_format(aNumBuffer, sizeof(aNumBuffer), "%d", NumDuplicates+2);\
+						NumDuplicates++;\
+						int BufferIter = 0;\
+						Buffer.clear();\
+						BufferIter = Buffer.append_at(BufferIter, pName);\
+						BufferIter = Buffer.append_at(BufferIter, "_");\
+						BufferIter = Buffer.append_at(BufferIter, aNumBuffer);\
+						DuplicateFound = true;\
+						break;\
+					}\
+				}\
+			}\
+		}\
+		SetAssetValue_Hard<const char*>(AssetPath, CSubPath::Null(), CAsset::NAME, Buffer.buffer());\
 		break;
 
 	switch(AssetPath.GetType())
