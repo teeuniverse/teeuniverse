@@ -32,6 +32,8 @@ teeuniverse_editor
 
 ##Compilation (Windows, MinGW)
 
+MinGW must be installed and configured to be able to compile C++.
+
 ###CMake
 
 Download CMake from its official webpage. If you are using Windows 32-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win32-x86.msi). If you are using Windows 64-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win64-x64.msi)
