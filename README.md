@@ -44,6 +44,10 @@ Download the sources from [GitHub (ZIP file)](https://github.com/teeuniverse/tee
 
 Download all needed libraries and sources from [the official website of TeeUniverse (ZIP file)](http://teeuniverse.net/data/teeuniverse-windows-libs.zip), and extract the content of this archive in the TeeUniverse directory.
 
+Your TeeUniverse directory should look like this:
+
+![Screenshot of the TeeUniverse directory](./doc/images/win-sources.png)
+
 ###Generate the Makefile
 
 Execute CMake (cmake-gui).
@@ -58,7 +62,13 @@ Click on "Add Entry" again, fill the "Name" field with "WITHOUT_HARFBUZZ", the "
 
 Click on "Configure". check that "MinGW Makefiles" is selected and click on "Finish". Other generators maybe be possible to use, but has not been tested yet.
 
-Click on "Generate" and once the generation is done, close CMake.
+Click on "Generate".
+
+Your CMake Window should look like this:
+
+![Screenshot of CMake](./doc/images/win-cmake.png)
+
+You can now close CMake.
 
 ###Compilation
 
