@@ -485,7 +485,7 @@ void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, ar
 	}
 	
 	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
-	TesselateBezierCurve(BezierVertices, LineVertices, 64.0f);
+	TesselateBezierCurve(BezierVertices, LineVertices, 32.0f);
 	ComputeLineNormals<CLineVertex>(LineVertices, Closed);
 	
 	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Object.GetStylePath(), Closed);

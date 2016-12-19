@@ -61,7 +61,11 @@ public:
 		Add(pLayout);
 		
 		for(int i=0; i<EnumDescriptions.size(); i++)
-			pLayout->Add(new CEnumButton(Context(), pComboBox, this, EnumDescriptions[i], i), false);
+		{
+			CEnumButton* pButton = new CEnumButton(Context(), pComboBox, this, EnumDescriptions[i], i);
+			pButton->SetButtonStyle(ButtonStyle);
+			pLayout->Add(pButton, false);
+		}
 	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
