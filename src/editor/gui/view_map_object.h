@@ -49,7 +49,7 @@ protected:
 	
 public:
 	CCursorTool_MapObjectVertexPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath);
-	virtual void RenderView();
+	virtual void RenderPivots();
 	virtual void Update(bool ParentEnabled);
 };
 
@@ -57,11 +57,12 @@ class CCursorTool_MapObjectEditVertex : public CCursorTool_MapObjectVertexPicker
 {
 protected:
 	vec2 ClickDiff;
-	bool m_Drag;
+	int m_DragType;
 	int m_Token;
 	
 public:
 	CCursorTool_MapObjectEditVertex(CViewMap* pViewMap);
+	virtual void RenderView();
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();
@@ -77,6 +78,7 @@ protected:
 	
 public:
 	CCursorTool_MapObjectWeightVertex(CViewMap* pViewMap);
+	virtual void RenderView();
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

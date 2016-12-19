@@ -27,9 +27,29 @@ namespace gui
 
 class CComboBox : public CButton
 {
+public:
+	class CItem
+	{
+	public:
+		CAssetPath m_IconPath;
+		CLocalizableString m_Description;
+		
+		inline void copy(const CItem& Item)
+		{
+			m_IconPath = Item.m_IconPath;
+			m_Description.copy(Item.m_Description);
+		}
+		
+		inline void transfert(CItem& Item)
+		{
+			m_IconPath = Item.m_IconPath;
+			m_Description.transfert(Item.m_Description);
+		}
+	};
+	
 protected:
 	CAssetPath m_ComboBoxStylePath;
-	array< CLocalizableString, allocator_copy<CLocalizableString> > m_EnumDescriptions;
+	array< CItem, allocator_copy<CItem> > m_EnumDescriptions;
 
 protected:
 	virtual void MouseClickAction();
@@ -39,6 +59,7 @@ protected:
 public:
 	CComboBox(class CGui *pConfig);
 	void Add(const CLocalizableString& LString);
+	void Add(const CLocalizableString& LString, const CAssetPath& IconPath);
 	
 	inline CAssetPath GetComboBoxStyle() const { return m_ComboBoxStylePath; }
 	void SetComboBoxStyle(CAssetPath Path);

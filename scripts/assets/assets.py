@@ -2156,6 +2156,8 @@ mapLayerObjects_vertex.addMember("Position", TypeVec2(), "0.0f")
 mapLayerObjects_vertex.addMember("Weight", TypeFloat(), "1.0f")
 mapLayerObjects_vertex.addMember("Color", TypeColor(), "1.0f")
 mapLayerObjects_vertex.addMember("Smoothness", TypeInt32(), "CBezierVertex::TYPE_AUTOSMOOTH")
+mapLayerObjects_vertex.addMember("ControlPoint0", TypeVec2(), "vec2(-16.0f, 0.0f)")
+mapLayerObjects_vertex.addMember("ControlPoint1", TypeVec2(), "vec2(16.0f, 0.0f)")
 
 mapLayerObjects_object = Class("Object")
 mapLayerObjects_object.addMember("Position", TypeVec2(), "0.0f")

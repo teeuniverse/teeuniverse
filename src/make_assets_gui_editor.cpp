@@ -129,6 +129,15 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconLayerAnimation", ImageEditorPath, 20*2, 1*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconCharacter", ImageEditorPath, 21*2, 1*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconCharacterPart", ImageEditorPath, 22*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameMove", ImageEditorPath, 23*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameAdd", ImageEditorPath, 24*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameDelete", ImageEditorPath, 25*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrames", ImageEditorPath, 26*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameColor", ImageEditorPath, 27*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameBone", ImageEditorPath, 28*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconKeyFrameLayer", ImageEditorPath, 29*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFolderEdited", ImageEditorPath, 30*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31*2, 1*2, 2, 2);
 	
 	CREATE_SPRITE(PackageId, "iconTranslate", ImageEditorPath, 1*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconTranslateX", ImageEditorPath, 2*2, 2*2, 2, 2);
@@ -151,19 +160,15 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconGuiLabel", ImageEditorPath, 19*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconGuiToggle", ImageEditorPath, 20*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconGuiSlider", ImageEditorPath, 21*2, 2*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameMove", ImageEditorPath, 23*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameAdd", ImageEditorPath, 24*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameDelete", ImageEditorPath, 25*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrames", ImageEditorPath, 26*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameColor", ImageEditorPath, 27*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameBone", ImageEditorPath, 28*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconKeyFrameLayer", ImageEditorPath, 29*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconFolderEdited", ImageEditorPath, 30*2, 1*2, 2, 2);
-	CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31*2, 1*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconVertexCorner", ImageEditorPath, 22*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconVertexSmooth", ImageEditorPath, 23*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconPolygon", ImageEditorPath, 24*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconVertexFree", ImageEditorPath, 25*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconDeleteVertex", ImageEditorPath, 26*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconAddVertex", ImageEditorPath, 27*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconVertexAligned", ImageEditorPath, 28*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconVertex", ImageEditorPath, 29*2, 2*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconVertexSymetric", ImageEditorPath, 30*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineStyle", ImageEditorPath, 31*2, 2*2, 2, 2);
 	
 	CREATE_SPRITE(PackageId, "iconSpriteCreator", ImageEditorPath, 46, 26, 3, 3);
@@ -181,11 +186,16 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconMove", ImageEditorPath, 58, 29, 3, 3);
 	CREATE_SPRITE(PackageId, "iconStamp", ImageEditorPath, 61, 29,  3, 3);
 	
-	CREATE_SPRITE(PackageId, "gizmoVertexBg", ImageEditorPath, 0*2, 11*2, 2, 2);
-	CREATE_SPRITE(PackageId, "gizmoVertexFg", ImageEditorPath, 1*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexCornerBg", ImageEditorPath, 0*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexCornerFg", ImageEditorPath, 1*2, 11*2, 2, 2);
 	CREATE_SPRITE(PackageId, "gizmoPivot", ImageEditorPath, 2*2, 11*2, 2, 2);
 	CREATE_SPRITE(PackageId, "gizmoScale", ImageEditorPath, 3*2, 11*2, 2, 2);
 	CREATE_SPRITE(PackageId, "gizmoRotate", ImageEditorPath, 4*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexSmoothBg", ImageEditorPath, 5*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexSmoothFg", ImageEditorPath, 6*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexBezierBg", ImageEditorPath, 7*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexBezierFg", ImageEditorPath, 8*2, 11*2, 2, 2);
+	CREATE_SPRITE(PackageId, "gizmoVertexControl", ImageEditorPath, 9*2, 11*2, 2, 2);
 	
 	//Rect
 	CAssetPath RectStampPath;

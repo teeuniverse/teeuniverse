@@ -53,14 +53,14 @@ void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVerte
 			if(BezierVertices[i-1].m_Type == CBezierVertex::TYPE_AUTOSMOOTH)
 				BezierVertices[i-1].m_aControlPoints[1] = Position0 - normalize(ortho(BezierVertices[i-1].m_Thickness)) * Length/3.0f;
 			else if(BezierVertices[i-1].m_Type == CBezierVertex::TYPE_CORNER)
-				BezierVertices[i-1].m_aControlPoints[1] = Position0 + (Position1 - Position0)/3.0f;
+				BezierVertices[i-1].m_aControlPoints[1] = Position0;
 			
 			if(BezierVertices[i].m_Type == CBezierVertex::TYPE_AUTOSMOOTH)
 				BezierVertices[i].m_aControlPoints[0] = Position1 + normalize(ortho(BezierVertices[i].m_Thickness)) * Length/3.0f;
 			else if(BezierVertices[i].m_Type == CBezierVertex::TYPE_CORNER)
-				BezierVertices[i].m_aControlPoints[0] = Position1 - (Position1 - Position0)/3.0f;
+				BezierVertices[i].m_aControlPoints[0] = Position1;
 			
-			int NbSegments = Length/MinWidth;
+			int NbSegments = min((int)(Length/MinWidth), 256); //Small constraint to avoid infinite number of segment in case of corrupted files
 			for(int j=1; j<NbSegments; j++)
 			{
 				float Alpha = static_cast<float>(j)/NbSegments; 
@@ -475,6 +475,8 @@ void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, ar
 		Vertex.m_Weight = ObjectVertices[i].GetWeight();
 		Vertex.m_Color = ObjectVertices[i].GetColor();
 		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
+		Vertex.m_aControlPoints[0] = Vertex.m_Position + ObjectVertices[i].GetControlPoint0();
+		Vertex.m_aControlPoints[1] = Vertex.m_Position + ObjectVertices[i].GetControlPoint1();
 		if(Vertex.m_Type >= CBezierVertex::NUM_TYPES || Vertex.m_Type < 0)
 			Vertex.m_Type = CBezierVertex::TYPE_CORNER;
 	}

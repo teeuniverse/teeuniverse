@@ -39,6 +39,8 @@ CAsset_MapLayerObjects::CVertex::CVertex()
 	m_Weight = 1.0f;
 	m_Color = 1.0f;
 	m_Smoothness = CBezierVertex::TYPE_AUTOSMOOTH;
+	m_ControlPoint0 = vec2(-16.0f, 0.0f);
+	m_ControlPoint1 = vec2(16.0f, 0.0f);
 }
 
 CAsset_MapLayerObjects::CObject::CObject()
@@ -61,6 +63,10 @@ void CAsset_MapLayerObjects::CVertex::CTuaType::Read(CAssetsSaveLoadContext* pLo
 	SysType.m_Weight = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Weight);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	SysType.m_Smoothness = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Smoothness);
+	SysType.m_ControlPoint0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint0.m_X);
+	SysType.m_ControlPoint0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint0.m_Y);
+	SysType.m_ControlPoint1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint1.m_X);
+	SysType.m_ControlPoint1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint1.m_Y);
 }
 
 void CAsset_MapLayerObjects::CObject::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerObjects::CObject& SysType)
@@ -109,6 +115,10 @@ void CAsset_MapLayerObjects::CVertex::CTuaType::Write(CAssetsSaveLoadContext* pL
 	TuaType.m_Weight = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Weight);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	TuaType.m_Smoothness = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Smoothness);
+	TuaType.m_ControlPoint0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint0.x);
+	TuaType.m_ControlPoint0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint0.y);
+	TuaType.m_ControlPoint1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint1.x);
+	TuaType.m_ControlPoint1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint1.y);
 }
 
 void CAsset_MapLayerObjects::CObject::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType& TuaType)
@@ -232,6 +242,14 @@ float CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, f
 			return GetObjectVertexPositionY(SubPath);
 		case OBJECT_VERTEX_WEIGHT:
 			return GetObjectVertexWeight(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT0_X:
+			return GetObjectVertexControlPoint0X(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT0_Y:
+			return GetObjectVertexControlPoint0Y(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT1_X:
+			return GetObjectVertexControlPoint1X(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT1_Y:
+			return GetObjectVertexControlPoint1Y(SubPath);
 	}
 	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
 }
@@ -265,6 +283,18 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, fl
 		case OBJECT_VERTEX_WEIGHT:
 			SetObjectVertexWeight(SubPath, Value);
 			return true;
+		case OBJECT_VERTEX_CONTROLPOINT0_X:
+			SetObjectVertexControlPoint0X(SubPath, Value);
+			return true;
+		case OBJECT_VERTEX_CONTROLPOINT0_Y:
+			SetObjectVertexControlPoint0Y(SubPath, Value);
+			return true;
+		case OBJECT_VERTEX_CONTROLPOINT1_X:
+			SetObjectVertexControlPoint1X(SubPath, Value);
+			return true;
+		case OBJECT_VERTEX_CONTROLPOINT1_Y:
+			SetObjectVertexControlPoint1Y(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<float>(ValueType, SubPath, Value);
 }
@@ -280,6 +310,10 @@ vec2 CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, ve
 			return GetObjectSize(SubPath);
 		case OBJECT_VERTEX_POSITION:
 			return GetObjectVertexPosition(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT0:
+			return GetObjectVertexControlPoint0(SubPath);
+		case OBJECT_VERTEX_CONTROLPOINT1:
+			return GetObjectVertexControlPoint1(SubPath);
 	}
 	return CAsset::GetValue<vec2>(ValueType, SubPath, DefaultValue);
 }
@@ -297,6 +331,12 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, ve
 			return true;
 		case OBJECT_VERTEX_POSITION:
 			SetObjectVertexPosition(SubPath, Value);
+			return true;
+		case OBJECT_VERTEX_CONTROLPOINT0:
+			SetObjectVertexControlPoint0(SubPath, Value);
+			return true;
+		case OBJECT_VERTEX_CONTROLPOINT1:
+			SetObjectVertexControlPoint1(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<vec2>(ValueType, SubPath, Value);

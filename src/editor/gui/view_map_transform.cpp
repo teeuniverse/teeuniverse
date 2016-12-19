@@ -735,7 +735,7 @@ void CCursorTool_MapEdit::RenderView()
 		vec2 VertexScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPos + Position);
 		
 		AssetsRenderer()->DrawSprite(
-			AssetsEditor()->m_Path_Sprite_GizmoVertexBg,
+			AssetsEditor()->m_Path_Sprite_GizmoVertexCornerBg,
 			vec2(VertexScreenPos.x, VertexScreenPos.y),
 			1.0f, 0.0, 0x0, 1.0f
 		);
@@ -743,7 +743,7 @@ void CCursorTool_MapEdit::RenderView()
 		VertexColor.a = 1.0f;
 		
 		AssetsRenderer()->DrawSprite(
-			AssetsEditor()->m_Path_Sprite_GizmoVertexFg,
+			AssetsEditor()->m_Path_Sprite_GizmoVertexCornerFg,
 			vec2(VertexScreenPos.x, VertexScreenPos.y),
 			1.0f, 0.0, 0x0, VertexColor
 		);

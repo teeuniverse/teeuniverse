@@ -41,8 +41,8 @@ protected:
 	}	
 
 public:
-	CEnumButton(CGui *pContext, CComboBox* pComboBox, CPopup* pPopup, const CLocalizableString& LString, int Value) :
-		CButton(pContext, LString),
+	CEnumButton(CGui *pContext, CComboBox* pComboBox, CPopup* pPopup, const CComboBox::CItem& Item, int Value) :
+		CButton(pContext, Item.m_Description, Item.m_IconPath),
 		m_pComboBox(pComboBox),
 		m_pPopup(pPopup),
 		m_Value(Value)
@@ -54,7 +54,9 @@ public:
 class CComboBoxPopup : public CPopup
 {
 public:
-	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< CLocalizableString, allocator_copy<CLocalizableString> >& EnumDescriptions, CAssetPath ButtonStyle) :
+	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< 
+CComboBox::CItem, allocator_copy<
+CComboBox::CItem> >& EnumDescriptions, CAssetPath ButtonStyle) :
 		CPopup(pContext, CreatorRect, CreatorRect.w, -1, CPopup::ALIGNMENT_BOTTOM)
 	{
 		CVListLayout* pLayout = new CVListLayout(Context());
@@ -81,7 +83,15 @@ CComboBox::CComboBox(CGui *pContext) :
 
 void CComboBox::Add(const CLocalizableString& LString)
 {
-	m_EnumDescriptions.increment().copy(LString);
+	CItem& Item = m_EnumDescriptions.increment();
+	Item.m_Description.copy(LString);
+}
+
+void CComboBox::Add(const CLocalizableString& LString, const CAssetPath& IconPath)
+{
+	CItem& Item = m_EnumDescriptions.increment();
+	Item.m_Description.copy(LString);
+	Item.m_IconPath = IconPath;
 }
 
 void CComboBox::RefreshComboBoxStyle()
@@ -97,9 +107,14 @@ void CComboBox::Update(bool ParentEnabled)
 	
 	int Value = GetValue();
 	if(Value >= 0 && Value < m_EnumDescriptions.size())
-		SetText(m_EnumDescriptions[Value]);
+	{
+		SetText(m_EnumDescriptions[Value].m_Description);
+		SetIcon(m_EnumDescriptions[Value].m_IconPath);
+	}
 	else
+	{
 		SetText(_LSTRING("Unknown value"));
+	}
 	
 	CButton::Update(ParentEnabled);
 }

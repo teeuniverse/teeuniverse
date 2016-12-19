@@ -1720,12 +1720,22 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconBigRotateCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigRotateCW");
 		m_Path_Sprite_IconBigRotateCCW = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigRotateCCW");
 		m_Path_Sprite_IconSpriteCreator = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSpriteCreator");
+		m_Path_Sprite_IconVertexCorner = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexCorner");
+		m_Path_Sprite_IconVertexSmooth = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexSmooth");
+		m_Path_Sprite_IconVertexFree = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexFree");
+		m_Path_Sprite_IconVertexSymetric = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexSymetric");
+		m_Path_Sprite_IconVertexAligned = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexAligned");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
 		m_Path_Sprite_GizmoPivot = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoPivot");
-		m_Path_Sprite_GizmoVertexBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBg");
-		m_Path_Sprite_GizmoVertexFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexFg");
+		m_Path_Sprite_GizmoVertexCornerBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexCornerBg");
+		m_Path_Sprite_GizmoVertexCornerFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexCornerFg");
+		m_Path_Sprite_GizmoVertexSmoothBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexSmoothBg");
+		m_Path_Sprite_GizmoVertexSmoothFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexSmoothFg");
+		m_Path_Sprite_GizmoVertexBezierBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBezierBg");
+		m_Path_Sprite_GizmoVertexBezierFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBezierFg");
+		m_Path_Sprite_GizmoVertexControl = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexControl");
 	}
 	
 	//Init default path to the GUI

@@ -172,12 +172,22 @@ public:
 	CAssetPath m_Path_Sprite_IconBigRotateCW;
 	CAssetPath m_Path_Sprite_IconBigRotateCCW;
 	CAssetPath m_Path_Sprite_IconSpriteCreator;
+	CAssetPath m_Path_Sprite_IconVertexCorner;
+	CAssetPath m_Path_Sprite_IconVertexSmooth;
+	CAssetPath m_Path_Sprite_IconVertexFree;
+	CAssetPath m_Path_Sprite_IconVertexAligned;
+	CAssetPath m_Path_Sprite_IconVertexSymetric;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
 	CAssetPath m_Path_Sprite_GizmoPivot;
-	CAssetPath m_Path_Sprite_GizmoVertexBg;
-	CAssetPath m_Path_Sprite_GizmoVertexFg;
+	CAssetPath m_Path_Sprite_GizmoVertexCornerBg;
+	CAssetPath m_Path_Sprite_GizmoVertexCornerFg;
+	CAssetPath m_Path_Sprite_GizmoVertexSmoothBg;
+	CAssetPath m_Path_Sprite_GizmoVertexSmoothFg;
+	CAssetPath m_Path_Sprite_GizmoVertexBezierBg;
+	CAssetPath m_Path_Sprite_GizmoVertexBezierFg;
+	CAssetPath m_Path_Sprite_GizmoVertexControl;
 
 public:
 	CGuiEditor(CEditorKernel* pKernel);
