@@ -22,34 +22,12 @@
 #include <shared/math/vector.h>
 #include <shared/tl/array.h>
 #include <shared/geometry/quad.h>
-
-class CLineVertex
-{
-public:
-	vec4 m_Color;
-	vec2 m_Position;
-	vec2 m_Thickness;
-	float m_Weight;
-};
-
-class CBezierVertex : public CLineVertex
-{
-public:
-	enum
-	{
-		TYPE_CORNER=0,
-		TYPE_AUTOSMOOTH,
-		NUM_TYPES,
-	};
-	
-public:
-	vec2 m_aControlPoints[2];
-	int m_Type;
-};
+#include <generated/assets/maplayerobjects.h>
 
 void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
 
-void GenerateMaterialQuads(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, CAssetPath MaterialPath);
+void GenerateMaterialQuads(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, CAssetPath MaterialPath, bool Closed);
+void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
 
 //If the parameter "Closed" is true, the first and last vertices must be equals
 template<typename VERTEX>

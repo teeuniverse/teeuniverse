@@ -385,7 +385,7 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 	}
 }
 
-void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, CAssetPath MaterialPath)
+void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, CAssetPath MaterialPath, bool Closed)
 {
 	const CAsset_Material* pMaterial = pAssetsManager->GetAsset<CAsset_Material>(MaterialPath);
 	if(!pMaterial)
@@ -395,11 +395,57 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 	const CAsset_Image* pImage = pAssetsManager->GetAsset<CAsset_Image>(pMaterial->GetTexturePath());
 	if(pImage)
 	{
-		TextureScale.x = pImage->GetDataWidth() * pImage->GetTexelSize()/1024.0f;
-		TextureScale.y = pImage->GetDataHeight() * pImage->GetTexelSize()/1024.0f;
+		TextureScale.x = pImage->GetDataWidth() * pImage->GetTexelSize()/1024.0f * pMaterial->GetTextureSize().x;
+		TextureScale.y = pImage->GetDataHeight() * pImage->GetTexelSize()/1024.0f * pMaterial->GetTextureSize().y;
 	}
 	
 	//Render polygon
+	if(Closed && pMaterial->GetTextureEnabled())
+	{
+		if(Vertices.size() >= 3)
+		{
+			float TextureSize = 1.0f;
+			
+			const CAsset_Image* pImage = pAssetsManager->GetAsset<CAsset_Image>(pMaterial->GetTexturePath());
+			if(pImage)
+				TextureSize = pImage->GetDataWidth() * pImage->GetTexelSize() / 1024.0f;
+			
+			int V0 = 0%Vertices.size();
+			int V1 = 1%Vertices.size();
+			int V2 = 3%Vertices.size();
+			int V3 = 2%Vertices.size();
+			
+			int VerticesLeft = Vertices.size() - 2;
+			do
+			{
+				V1 = V0;
+				V3 = V2;
+				V0 = (V0 + Vertices.size() - 1)%Vertices.size();
+				V2 = (V2 + 1)%Vertices.size();
+				VerticesLeft = VerticesLeft-2;
+				
+				CTexturedQuad& Quad = OutputQuads.increment();
+				
+				Quad.m_Position[0] = Vertices[V0].m_Position;
+				Quad.m_Position[1] = Vertices[V1].m_Position;
+				Quad.m_Position[2] = Vertices[V2].m_Position;
+				Quad.m_Position[3] = Vertices[V3].m_Position;
+				
+				Quad.m_Texture[0] = rotate(Quad.m_Position[0]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
+				Quad.m_Texture[1] = rotate(Quad.m_Position[1]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
+				Quad.m_Texture[2] = rotate(Quad.m_Position[2]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
+				Quad.m_Texture[3] = rotate(Quad.m_Position[3]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
+				
+				Quad.m_Color[0] = pMaterial->GetTextureColor();
+				Quad.m_Color[1] = pMaterial->GetTextureColor();
+				Quad.m_Color[2] = pMaterial->GetTextureColor();
+				Quad.m_Color[3] = pMaterial->GetTextureColor();
+				
+				Quad.m_ImagePath = pMaterial->GetTexturePath();
+			}
+			while(VerticesLeft > 0);
+		}
+	}
 	
 	//Render line layers
 	CAsset_Material::CIteratorLayer LayerIter;
@@ -412,4 +458,35 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 		else if(pLayer->GetRepeatType() == CAsset_Material::REPEATTYPE_STRETCH)
 			GenerateMaterialQuads_StretchedQuads(pAssetsManager, OutputQuads, Vertices, pLayer);
 	}
+}
+
+void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
+{
+	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
+	bool Closed = Object.GetClosedPath();
+	
+	array<CBezierVertex> BezierVertices;
+	array<CLineVertex> LineVertices;
+	
+	for(int i=0; i<ObjectVertices.size(); i++)
+	{
+		CBezierVertex& Vertex = BezierVertices.increment();
+		Vertex.m_Position = ObjectVertices[i].GetPosition();
+		Vertex.m_Weight = ObjectVertices[i].GetWeight();
+		Vertex.m_Color = ObjectVertices[i].GetColor();
+		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
+		if(Vertex.m_Type >= CBezierVertex::NUM_TYPES || Vertex.m_Type < 0)
+			Vertex.m_Type = CBezierVertex::TYPE_CORNER;
+	}
+	if(Closed && BezierVertices.size() > 0)
+	{
+		CBezierVertex& Vertex = BezierVertices.increment();
+		Vertex = BezierVertices[0];
+	}
+	
+	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
+	TesselateBezierCurve(BezierVertices, LineVertices, 64.0f);
+	ComputeLineNormals<CLineVertex>(LineVertices, Closed);
+	
+	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Object.GetStylePath(), Closed);
 }

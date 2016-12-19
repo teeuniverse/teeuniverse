@@ -703,34 +703,8 @@ enum
 
 void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh)
 {
-	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
-	bool Closed = Object.GetClosedPath();
-	
-	array<CBezierVertex> BezierVertices;
-	array<CLineVertex> LineVertices;
-	
-	for(int i=0; i<ObjectVertices.size(); i++)
-	{
-		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex.m_Position = ObjectVertices[i].GetPosition();
-		Vertex.m_Weight = ObjectVertices[i].GetWeight();
-		Vertex.m_Color = ObjectVertices[i].GetColor();
-		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
-		if(Vertex.m_Type >= CBezierVertex::NUM_TYPES || Vertex.m_Type < 0)
-			Vertex.m_Type = CBezierVertex::TYPE_CORNER;
-	}
-	if(Closed && BezierVertices.size() > 0)
-	{
-		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex = BezierVertices[0];
-	}
-	
-	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
-	TesselateBezierCurve(BezierVertices, LineVertices, 64.0f);
-	ComputeLineNormals<CLineVertex>(LineVertices, Closed);
-	
 	array<CTexturedQuad> Quads;
-	GenerateMaterialQuads(AssetsManager(), Quads, LineVertices, Object.GetStylePath());
+	GenerateMaterialQuads_Object(AssetsManager(), Quads, Object);
 	
 	CAssetPath CurrentImagePath;
 	for(int i=0; i<Quads.size(); i++)

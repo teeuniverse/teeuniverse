@@ -19,6 +19,7 @@
 #include <shared/components/storage.h>
 #include <tw07/shared/datafile.h>
 #include <tw07/shared/mapitems.h>
+#include <shared/geometry/linetesselation.h>
 
 #include "assetsmanager.h"
 
@@ -1099,6 +1100,120 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
 			
 			delete[] pQuads;
+		}
+		else if(LayerPath.GetType() == CAsset_MapLayerObjects::TypeId)
+		{
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(LayerPath);
+			if(!pLayer)
+				return;
+			
+			array<CTexturedQuad> Quads;
+			
+			CAsset_MapLayerObjects::CIteratorObject Iter;
+			for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
+				GenerateMaterialQuads_Object(AssetsManager(), Quads, pLayer->GetObject(*Iter));
+			
+			if(Quads.size())
+			{
+				array<tw07::CQuad> ExportedQuads;
+				
+				CAssetPath CurrentImagePath;
+				for(int i=0; i<Quads.size(); i++)
+				{
+					if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
+					{
+						//Image switch: save the current quads in a layer
+						tw07::CMapItemLayerQuads LItem;
+						LItem.m_Version = 2;
+						LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+						LItem.m_Layer.m_Flags = 0;
+						LItem.m_Image = -1;
+						LItem.m_NumQuads = ExportedQuads.size();
+						LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(tw07::CQuad), &ExportedQuads[0]);
+						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
+						
+						const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
+						if(pImage)
+						{
+							for(int i=0; i<Images.size(); i++)
+							{
+								if(Images[i] == CurrentImagePath)
+								{
+									LItem.m_Image = i;
+									break;
+								}
+							}
+							
+							if(LItem.m_Image == -1)
+							{
+								LItem.m_Image = Images.size();
+								Images.increment() = CurrentImagePath;
+							}
+						}
+
+						ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+						ExportedQuads.clear();
+					}
+					
+					if(i==0 || CurrentImagePath != Quads[i].m_ImagePath)
+						CurrentImagePath = Quads[i].m_ImagePath;
+					
+					tw07::CQuad& Quad = ExportedQuads.increment();
+					
+					vec2 Barycenter = 0.0f;
+					for(int j=0; j<4; j++)
+					{
+						Barycenter += vec2(Quads[i].m_Position[j]);
+						Quad.m_aPoints[j].x = f2fx(Quads[i].m_Position[j].x);
+						Quad.m_aPoints[j].y = f2fx(Quads[i].m_Position[j].y);
+						Quad.m_aTexcoords[j].x = f2fx(Quads[i].m_Texture[j].x);
+						Quad.m_aTexcoords[j].y = f2fx(Quads[i].m_Texture[j].y);
+						Quad.m_aColors[j].r = Quads[i].m_Color[j].r*255.0f;
+						Quad.m_aColors[j].g = Quads[i].m_Color[j].g*255.0f;
+						Quad.m_aColors[j].b = Quads[i].m_Color[j].b*255.0f;
+						Quad.m_aColors[j].a = Quads[i].m_Color[j].a*255.0f;
+					}
+					
+					Quad.m_aPoints[4].x = f2fx(Barycenter.x/4.0f);
+					Quad.m_aPoints[4].y = f2fx(Barycenter.y/4.0f);
+					
+					Quad.m_PosEnv = -1;
+					Quad.m_PosEnvOffset = 0;
+					Quad.m_ColorEnv = -1;
+					Quad.m_ColorEnvOffset = 0;
+				}
+				
+				//Save the remaning quads
+				tw07::CMapItemLayerQuads LItem;
+				LItem.m_Version = 2;
+				LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Image = -1;
+				LItem.m_NumQuads = ExportedQuads.size();
+				LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(tw07::CQuad), &ExportedQuads[0]);
+				StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
+				
+				const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
+				if(pImage)
+				{
+					for(int i=0; i<Images.size(); i++)
+					{
+						if(Images[i] == CurrentImagePath)
+						{
+							LItem.m_Image = i;
+							break;
+						}
+					}
+					
+					if(LItem.m_Image == -1)
+					{
+						LItem.m_Image = Images.size();
+						Images.increment() = CurrentImagePath;
+					}
+				}
+
+				ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+			}
 		}
 	}		
 	

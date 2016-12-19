@@ -2169,7 +2169,7 @@ mapLayerQuads.addPublicFunc([
 ])
 
 mapLayerObjects = ClassAsset("MapLayerObjects", len(assetsList))
-mapLayerObjects.addHeader("shared/geometry/linetesselation.h")
+mapLayerObjects.addHeader("shared/geometry/bezier.h")
 mapLayerObjects.setInheritance(mainAsset)
 mapLayerObjects.addClass(mapLayerObjects_vertex)
 mapLayerObjects.addClass(mapLayerObjects_object)
@@ -2200,6 +2200,9 @@ material.addClass(material_layer)
 material.addMember("Layer", TypeArray(material_layer))
 material.addMember("TexturePath", TypeAssetPath())
 material.addMember("TextureColor", TypeColor())
+material.addMember("TextureSize", TypeVec2(), "1.0f")
+material.addMember("TextureAngle", TypeFloat(), "0.0f")
+material.addMember("TextureEnabled", TypeBool(), "false")
 material.addPublicLines([
 	"enum",
 	"{",

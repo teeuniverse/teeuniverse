@@ -34,8 +34,8 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
-#include <shared/geometry/linetesselation.h>
 #include <shared/assets/assetpath.h>
+#include <shared/geometry/bezier.h>
 
 class CAsset_MapLayerObjects : public CAsset
 {

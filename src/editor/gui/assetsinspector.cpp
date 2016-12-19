@@ -80,6 +80,36 @@ public:
 	}
 };
 
+class CConditionalEditor : public gui::CVListLayout
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	
+public:
+	CConditionalEditor(CGuiEditor* pAssetsEditor, int Member) :
+		gui::CVListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled)
+		{
+			bool Condition = AssetsManager()->GetAssetValue<bool>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), m_Member, false);
+			if(Condition)
+				Enable();
+			else
+				Disable();
+		}
+		
+		gui::CVListLayout::Update(ParentEnabled);
+	}
+};
+
 class CSubItemEditor : public gui::CVListLayout
 {
 protected:
@@ -1190,8 +1220,16 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_Material::TEXTUREPATH, CAsset_Image::TypeId, _LSTRING("Texture"));
-	AddField_Color(pTab, CAsset_Material::TEXTURECOLOR, _LSTRING("Texture Color"));
+	AddField_Bool(pTab, CAsset_Material::TEXTUREENABLED, _LSTRING("Filling Enabled"));
+	
+	gui::CVListLayout* pTextureEditor = new CConditionalEditor(AssetsEditor(), CAsset_Material::TEXTUREENABLED);
+	pTab->Add(pTextureEditor, false);
+	AddField_Asset(pTextureEditor, CAsset_Material::TEXTUREPATH, CAsset_Image::TypeId, _LSTRING("Texture"));
+	AddField_Color(pTextureEditor, CAsset_Material::TEXTURECOLOR, _LSTRING("Texture Color"));
+	AddField_Vec2(pTextureEditor, CAsset_Material::TEXTURESIZE_X, CAsset_Material::TEXTURESIZE_Y, _LSTRING("Texture Size"));
+	AddField_Angle(pTextureEditor, CAsset_Material::TEXTUREANGLE, _LSTRING("Texture Angle"));
+	
+	pTab->AddSeparator();
 	
 	pTab->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LAYER, CSubPath::Null(), _LSTRING("New Layer"), AssetsEditor()->m_Path_Sprite_IconLayer), false);
 	pTab->Add(new CSubItemList_Material_Layer(AssetsEditor()), true);

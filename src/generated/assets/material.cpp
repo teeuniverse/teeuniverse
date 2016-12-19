@@ -48,6 +48,12 @@ CAsset_Material::CLayer::CLayer()
 	m_Spacing = 0.0f;
 }
 
+CAsset_Material::CAsset_Material()
+{
+	m_TextureSize = 1.0f;
+	m_TextureAngle = 0.0f;
+	m_TextureEnabled = false;
+}
 
 void CAsset_Material::CSprite::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CSprite& SysType)
 {
@@ -93,6 +99,10 @@ void CAsset_Material::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 	
 	pLoadingContext->ReadAssetPath(TuaType.m_TexturePath, SysType.m_TexturePath);
 	SysType.m_TextureColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextureColor);
+	SysType.m_TextureSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_X);
+	SysType.m_TextureSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_Y);
+	SysType.m_TextureAngle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureAngle);
+	SysType.m_TextureEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TextureEnabled);
 }
 
 void CAsset_Material::CSprite::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType& TuaType)
@@ -139,6 +149,10 @@ void CAsset_Material::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, c
 	}
 	pLoadingContext->WriteAssetPath(SysType.m_TexturePath, TuaType.m_TexturePath);
 	TuaType.m_TextureColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextureColor);
+	TuaType.m_TextureSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.x);
+	TuaType.m_TextureSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.y);
+	TuaType.m_TextureAngle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureAngle);
+	TuaType.m_TextureEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TextureEnabled);
 }
 
 template<>
@@ -185,6 +199,29 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, int Value
 }
 
 template<>
+bool CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case TEXTUREENABLED:
+			return GetTextureEnabled();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case TEXTUREENABLED:
+			SetTextureEnabled(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
+}
+
+template<>
 float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const
 {
 	switch(ValueType)
@@ -199,6 +236,12 @@ float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float De
 			return GetLayerSpritePositionY(SubPath);
 		case LAYER_SPACING:
 			return GetLayerSpacing(SubPath);
+		case TEXTURESIZE_X:
+			return GetTextureSizeX();
+		case TEXTURESIZE_Y:
+			return GetTextureSizeY();
+		case TEXTUREANGLE:
+			return GetTextureAngle();
 	}
 	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
 }
@@ -223,6 +266,15 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Val
 		case LAYER_SPACING:
 			SetLayerSpacing(SubPath, Value);
 			return true;
+		case TEXTURESIZE_X:
+			SetTextureSizeX(Value);
+			return true;
+		case TEXTURESIZE_Y:
+			SetTextureSizeY(Value);
+			return true;
+		case TEXTUREANGLE:
+			SetTextureAngle(Value);
+			return true;
 	}
 	return CAsset::SetValue<float>(ValueType, SubPath, Value);
 }
@@ -236,6 +288,8 @@ vec2 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec2 Defa
 			return GetLayerSpriteSize(SubPath);
 		case LAYER_SPRITE_POSITION:
 			return GetLayerSpritePosition(SubPath);
+		case TEXTURESIZE:
+			return GetTextureSize();
 	}
 	return CAsset::GetValue<vec2>(ValueType, SubPath, DefaultValue);
 }
@@ -250,6 +304,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, vec2 Valu
 			return true;
 		case LAYER_SPRITE_POSITION:
 			SetLayerSpritePosition(SubPath, Value);
+			return true;
+		case TEXTURESIZE:
+			SetTextureSize(Value);
 			return true;
 	}
 	return CAsset::SetValue<vec2>(ValueType, SubPath, Value);

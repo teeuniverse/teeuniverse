@@ -89,6 +89,11 @@ public:
 		LAYER,
 		TEXTUREPATH,
 		TEXTURECOLOR,
+		TEXTURESIZE_X,
+		TEXTURESIZE_Y,
+		TEXTURESIZE,
+		TEXTUREANGLE,
+		TEXTUREENABLED,
 	};
 	
 	class CIteratorLayer
@@ -429,6 +434,9 @@ public:
 		CTuaArray m_Layer;
 		CAssetPath::CTuaType m_TexturePath;
 		tua_uint32 m_TextureColor;
+		CTuaVec2 m_TextureSize;
+		tua_float m_TextureAngle;
+		tua_uint8 m_TextureEnabled;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType& TuaType);
 	};
@@ -438,6 +446,9 @@ private:
 	array< CAsset_Material::CLayer, allocator_copy<CAsset_Material::CLayer> > m_Layer;
 	CAssetPath m_TexturePath;
 	vec4 m_TextureColor;
+	vec2 m_TextureSize;
+	float m_TextureAngle;
+	bool m_TextureEnabled;
 
 public:
 	template<typename T>
@@ -458,12 +469,16 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
+	CAsset_Material();
 	void copy(const CAsset_Material& Item)
 	{
 		CAsset::copy(Item);
 		m_Layer.copy(Item.m_Layer);
 		m_TexturePath = Item.m_TexturePath;
 		m_TextureColor = Item.m_TextureColor;
+		m_TextureSize = Item.m_TextureSize;
+		m_TextureAngle = Item.m_TextureAngle;
+		m_TextureEnabled = Item.m_TextureEnabled;
 	}
 	
 	void transfert(CAsset_Material& Item)
@@ -472,6 +487,9 @@ public:
 		m_Layer.transfert(Item.m_Layer);
 		m_TexturePath = Item.m_TexturePath;
 		m_TextureColor = Item.m_TextureColor;
+		m_TextureSize = Item.m_TextureSize;
+		m_TextureAngle = Item.m_TextureAngle;
+		m_TextureEnabled = Item.m_TextureEnabled;
 	}
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
@@ -608,6 +626,16 @@ public:
 	
 	inline vec4 GetTextureColor() const { return m_TextureColor; }
 	
+	inline vec2 GetTextureSize() const { return m_TextureSize; }
+	
+	inline float GetTextureSizeX() const { return m_TextureSize.x; }
+	
+	inline float GetTextureSizeY() const { return m_TextureSize.y; }
+	
+	inline float GetTextureAngle() const { return m_TextureAngle; }
+	
+	inline bool GetTextureEnabled() const { return m_TextureEnabled; }
+	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAsset_Material::CLayer& Value)
@@ -706,6 +734,16 @@ public:
 	
 	inline void SetTextureColor(vec4 Value) { m_TextureColor = Value; }
 	
+	inline void SetTextureSize(vec2 Value) { m_TextureSize = Value; }
+	
+	inline void SetTextureSizeX(float Value) { m_TextureSize.x = Value; }
+	
+	inline void SetTextureSizeY(float Value) { m_TextureSize.y = Value; }
+	
+	inline void SetTextureAngle(float Value) { m_TextureAngle = Value; }
+	
+	inline void SetTextureEnabled(bool Value) { m_TextureEnabled = Value; }
+	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
@@ -740,6 +778,8 @@ public:
 
 template<> int CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
 template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Value);
 template<> vec2 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
