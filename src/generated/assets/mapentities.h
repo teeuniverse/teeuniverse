@@ -85,13 +85,22 @@ public:
 	class CEntity
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
 		{
 		public:
 			CAssetPath::CTuaType m_TypePath;
 			CTuaVec2 m_Position;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapEntities::CEntity& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapEntities::CEntity& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			CAssetPath::CTuaType m_TypePath;
+			CTuaVec2 m_Position;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapEntities::CEntity& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -135,14 +144,24 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
 		CTuaArray m_Entity;
 		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapEntities& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapEntities& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Entity;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapEntities& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -281,7 +300,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtEntity(int Index) { m_Entity.insertat(Index); }
+	inline void AddAtEntity(int Index) { m_Entity.insertat_and_init(Index); }
 	
 	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
 	

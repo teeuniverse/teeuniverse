@@ -59,7 +59,7 @@ public:
 		HEIGHT,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_ImagePath;
@@ -67,8 +67,20 @@ public:
 		tua_int32 m_Y;
 		tua_int32 m_Width;
 		tua_int32 m_Height;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Sprite& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Sprite& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_ImagePath;
+		tua_int32 m_X;
+		tua_int32 m_Y;
+		tua_int32 m_Width;
+		tua_int32 m_Height;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Sprite& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 

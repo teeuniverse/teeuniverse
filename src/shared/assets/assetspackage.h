@@ -34,6 +34,16 @@ struct CAssetState
 	};
 };
 
+//TAG_ASSETSVERSION
+enum
+{
+	ASSETSVERSION_0_1_0=0,
+	ASSETSVERSION_0_2_0,
+	ASSETSVERSION_NOT_SUPPORTED,
+	
+	ASSETSVERSION_CURRENT = ASSETSVERSION_0_2_0,
+};
+
 class CAssetsPackage
 {
 public:

@@ -23,6 +23,32 @@
 #include <shared/assets/assetssaveloadcontext.h>
 #include <shared/archivefile.h>
 
+#define MACRO_LOAD_ASSETSFILE(Version) void Load_AssetsFile_##Version(class CAssetsSaveLoadContext* pLoadingContext)\
+	{\
+		int Type = ASSET::TypeId+2;\
+		int Num = pLoadingContext->ArchiveFile()->GetNumItems(Type);\
+		m_Assets.resize(Num);\
+		for(int i = 0; i < Num; i++)\
+		{\
+			class ASSET::CTuaType_##Version* pItem = (class ASSET::CTuaType_##Version*) pLoadingContext->ArchiveFile()->GetItem(Type, i);\
+			ASSET* pAsset = &m_Assets[i].m_Asset;\
+			pAsset->SetAssetsManager(pLoadingContext->AssetsManager());\
+			ASSET::CTuaType_##Version::Read(pLoadingContext, *pItem, m_Assets[i].m_Asset);\
+		}\
+	}
+
+#define MACRO_SAVE_ASSETSFILE(Version) void Save_AssetsFile_##Version(class CAssetsSaveLoadContext* pLoadingContext) \
+	{\
+		int Type = ASSET::TypeId+2;\
+		pLoadingContext->ArchiveFile()->SetItemType(Type, sizeof(class ASSET::CTuaType_##Version), m_Assets.size());\
+		\
+		for(int i=0; i<m_Assets.size(); i++)\
+		{\
+			class ASSET::CTuaType_##Version* pItem = (class ASSET::CTuaType_##Version*) pLoadingContext->ArchiveFile()->GetItem(Type, i);\
+			ASSET::CTuaType_##Version::Write(pLoadingContext, m_Assets[i].m_Asset, *pItem);\
+		}\
+	}
+
 template<typename ASSET, typename STATE>
 class CAssetsList
 {
@@ -106,31 +132,12 @@ public:
 		return &Entry.m_Asset;
 	}
 	
-	void Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)
-	{
-		int Type = ASSET::TypeId+2;
-		int Num = pLoadingContext->ArchiveFile()->GetNumItems(Type);
-		m_Assets.resize(Num);
-		for(int i = 0; i < Num; i++)
-		{
-			class ASSET::CTuaType* pItem = (class ASSET::CTuaType*) pLoadingContext->ArchiveFile()->GetItem(Type, i);
-			ASSET* pAsset = &m_Assets[i].m_Asset;
-			pAsset->SetAssetsManager(pLoadingContext->AssetsManager());
-			ASSET::CTuaType::Read(pLoadingContext, *pItem, m_Assets[i].m_Asset);
-		}
-	}
+	//TAG_ASSETSVERSION
+	MACRO_SAVE_ASSETSFILE(0_1_0)
+	MACRO_LOAD_ASSETSFILE(0_1_0)
 	
-	void Save_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)
-	{
-		int Type = ASSET::TypeId+2;
-		pLoadingContext->ArchiveFile()->SetItemType(Type, sizeof(class ASSET::CTuaType), m_Assets.size());
-		
-		for(int i=0; i<m_Assets.size(); i++)
-		{
-			class ASSET::CTuaType* pItem = (class ASSET::CTuaType*) pLoadingContext->ArchiveFile()->GetItem(Type, i);
-			ASSET::CTuaType::Write(pLoadingContext, m_Assets[i].m_Asset, *pItem);
-		}
-	}
+	MACRO_SAVE_ASSETSFILE(0_2_0)
+	MACRO_LOAD_ASSETSFILE(0_2_0)
 	
 	void DeleteAsset(const CAssetPath& Path)
 	{

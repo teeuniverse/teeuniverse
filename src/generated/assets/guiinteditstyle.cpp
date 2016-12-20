@@ -34,17 +34,35 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_GuiIntEditStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiIntEditStyle& SysType)
+void CAsset_GuiIntEditStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiIntEditStyle& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_IncreaseButtonStylePath, SysType.m_IncreaseButtonStylePath);
 	pLoadingContext->ReadAssetPath(TuaType.m_DecreaseButtonStylePath, SysType.m_DecreaseButtonStylePath);
 }
 
-void CAsset_GuiIntEditStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType& TuaType)
+
+void CAsset_GuiIntEditStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IncreaseButtonStylePath, TuaType.m_IncreaseButtonStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_DecreaseButtonStylePath, TuaType.m_DecreaseButtonStylePath);
+}
+
+void CAsset_GuiIntEditStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiIntEditStyle& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IncreaseButtonStylePath, SysType.m_IncreaseButtonStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_DecreaseButtonStylePath, SysType.m_DecreaseButtonStylePath);
+}
+
+
+void CAsset_GuiIntEditStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_IncreaseButtonStylePath, TuaType.m_IncreaseButtonStylePath);
 	pLoadingContext->WriteAssetPath(SysType.m_DecreaseButtonStylePath, TuaType.m_DecreaseButtonStylePath);

@@ -41,9 +41,9 @@ CAsset_Sprite::CAsset_Sprite()
 	m_Height = 1;
 }
 
-void CAsset_Sprite::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Sprite& SysType)
+void CAsset_Sprite::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Sprite& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	SysType.m_X = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_X);
@@ -52,9 +52,33 @@ void CAsset_Sprite::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, cons
 	SysType.m_Height = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Height);
 }
 
-void CAsset_Sprite::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType& TuaType)
+
+void CAsset_Sprite::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	TuaType.m_X = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_X);
+	TuaType.m_Y = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Y);
+	TuaType.m_Width = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Width);
+	TuaType.m_Height = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Height);
+}
+
+void CAsset_Sprite::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Sprite& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	SysType.m_X = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_X);
+	SysType.m_Y = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Y);
+	SysType.m_Width = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Width);
+	SysType.m_Height = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Height);
+}
+
+
+void CAsset_Sprite::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Sprite& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 	TuaType.m_X = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_X);

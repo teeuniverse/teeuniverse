@@ -514,9 +514,9 @@ void CCursorTool_MapObjectEditVertex::OnViewButtonClick(int Button)
 		vec2 VertexPosition = PickVertex(MousePos);
 		if(m_CurrentVertex.IsNotNull())
 		{
+			m_Token = AssetsManager()->GenerateToken();
 			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex);
 			ClickDiff = MousePos - VertexPosition;
-			m_Token = AssetsManager()->GenerateToken();
 			m_DragType = 1;
 		}
 	}
@@ -531,13 +531,17 @@ void CCursorTool_MapObjectEditVertex::OnViewButtonClick(int Button)
 		
 		if(PickNewVertex(MousePos, NewVertexPos, PrevVertexPath, NextVertexPath))
 		{
-			int Token = AssetsManager()->GenerateToken();
+			m_Token = AssetsManager()->GenerateToken();
 			
 			CSubPath ObjectPath = CAsset_MapLayerObjects::SubPath_Object(NextVertexPath.GetId());
 			int Index = NextVertexPath.GetId2();
-			AssetsManager()->AddSubItemAt(AssetsEditor()->GetEditedAssetPath(), ObjectPath, CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX, Index, Token);
-			CSubPath NewVertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(NextVertexPath.GetId(), Index);
-			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), NewVertexPath, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, MouseMapPos, Token);
+			AssetsManager()->AddSubItemAt(AssetsEditor()->GetEditedAssetPath(), ObjectPath, CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX, Index, m_Token);
+			m_CurrentVertex = CAsset_MapLayerObjects::SubPath_ObjectVertex(NextVertexPath.GetId(), Index);
+			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, MouseMapPos, m_Token);
+			
+			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex);
+			ClickDiff = 0.0f;
+			m_DragType = 1;
 		}
 	}
 	

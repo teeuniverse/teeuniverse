@@ -55,7 +55,38 @@ CAsset_Material::CAsset_Material()
 	m_TextureEnabled = false;
 }
 
-void CAsset_Material::CSprite::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CSprite& SysType)
+void CAsset_Material::CSprite::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CSprite& SysType)
+{
+}
+
+
+void CAsset_Material::CLayer::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLayer& SysType)
+{
+}
+
+
+void CAsset_Material::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material& SysType)
+{
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
+
+}
+
+
+void CAsset_Material::CSprite::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
+void CAsset_Material::CLayer::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
+void CAsset_Material::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_1_0& TuaType)
+{
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+}
+
+void CAsset_Material::CSprite::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType)
 {
 	pLoadingContext->ReadAssetPath(TuaType.m_Path, SysType.m_Path);
 	SysType.m_Size.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_X);
@@ -67,15 +98,16 @@ void CAsset_Material::CSprite::CTuaType::Read(CAssetsSaveLoadContext* pLoadingCo
 	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
 }
 
-void CAsset_Material::CLayer::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CLayer& SysType)
+
+void CAsset_Material::CLayer::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLayer& SysType)
 {
 	{
-		const CAsset_Material::CSprite::CTuaType* pData = (const CAsset_Material::CSprite::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Sprite.m_Data);
+		const CAsset_Material::CSprite::CTuaType_0_2_0* pData = (const CAsset_Material::CSprite::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Sprite.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Sprite.m_Size);
 		SysType.m_Sprite.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_Material::CSprite::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Sprite[i]);
+			CAsset_Material::CSprite::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Sprite[i]);
 		}
 	}
 	
@@ -83,17 +115,18 @@ void CAsset_Material::CLayer::CTuaType::Read(CAssetsSaveLoadContext* pLoadingCon
 	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Spacing);
 }
 
-void CAsset_Material::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material& SysType)
+
+void CAsset_Material::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
 	{
-		const CAsset_Material::CLayer::CTuaType* pData = (const CAsset_Material::CLayer::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
+		const CAsset_Material::CLayer::CTuaType_0_2_0* pData = (const CAsset_Material::CLayer::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_Material::CLayer::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
+			CAsset_Material::CLayer::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
 		}
 	}
 	
@@ -105,7 +138,8 @@ void CAsset_Material::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 	SysType.m_TextureEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TextureEnabled);
 }
 
-void CAsset_Material::CSprite::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType& TuaType)
+
+void CAsset_Material::CSprite::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType)
 {
 	pLoadingContext->WriteAssetPath(SysType.m_Path, TuaType.m_Path);
 	TuaType.m_Size.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.x);
@@ -117,34 +151,34 @@ void CAsset_Material::CSprite::CTuaType::Write(CAssetsSaveLoadContext* pLoadingC
 	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
 }
 
-void CAsset_Material::CLayer::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType& TuaType)
+void CAsset_Material::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType)
 {
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
-		CAsset_Material::CSprite::CTuaType* pData = new CAsset_Material::CSprite::CTuaType[SysType.m_Sprite.size()];
+		CAsset_Material::CSprite::CTuaType_0_2_0* pData = new CAsset_Material::CSprite::CTuaType_0_2_0[SysType.m_Sprite.size()];
 		for(int i=0; i<SysType.m_Sprite.size(); i++)
 		{
-			CAsset_Material::CSprite::CTuaType::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
+			CAsset_Material::CSprite::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
 		}
-		TuaType.m_Sprite.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CSprite::CTuaType)*SysType.m_Sprite.size());
+		TuaType.m_Sprite.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CSprite::CTuaType_0_2_0)*SysType.m_Sprite.size());
 		delete[] pData;
 	}
 	TuaType.m_RepeatType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_RepeatType);
 	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Spacing);
 }
 
-void CAsset_Material::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType& TuaType)
+void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
-		CAsset_Material::CLayer::CTuaType* pData = new CAsset_Material::CLayer::CTuaType[SysType.m_Layer.size()];
+		CAsset_Material::CLayer::CTuaType_0_2_0* pData = new CAsset_Material::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
 		for(int i=0; i<SysType.m_Layer.size(); i++)
 		{
-			CAsset_Material::CLayer::CTuaType::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
+			CAsset_Material::CLayer::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
-		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CLayer::CTuaType)*SysType.m_Layer.size());
+		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CLayer::CTuaType_0_2_0)*SysType.m_Layer.size());
 		delete[] pData;
 	}
 	pLoadingContext->WriteAssetPath(SysType.m_TexturePath, TuaType.m_TexturePath);

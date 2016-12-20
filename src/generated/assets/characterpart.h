@@ -48,14 +48,24 @@ public:
 		SKELETONSKINPATH,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_CharacterPath;
 		CSubPath::CTuaType m_CharacterPart;
 		CAssetPath::CTuaType m_SkeletonSkinPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_CharacterPart& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_CharacterPart& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_CharacterPath;
+		CSubPath::CTuaType m_CharacterPart;
+		CAssetPath::CTuaType m_SkeletonSkinPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_CharacterPart& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 

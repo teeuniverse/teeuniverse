@@ -39,9 +39,9 @@ CAsset_GuiLineStyle::CAsset_GuiLineStyle()
 	m_BorderColor = 1.0f;
 }
 
-void CAsset_GuiLineStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiLineStyle& SysType)
+void CAsset_GuiLineStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiLineStyle& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Flags);
 	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
@@ -50,9 +50,33 @@ void CAsset_GuiLineStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext
 	pLoadingContext->ReadAssetPath(TuaType.m_ImageRPath, SysType.m_ImageRPath);
 }
 
-void CAsset_GuiLineStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType& TuaType)
+
+void CAsset_GuiLineStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Flags);
+	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageLPath, TuaType.m_ImageLPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageMPath, TuaType.m_ImageMPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageRPath, TuaType.m_ImageRPath);
+}
+
+void CAsset_GuiLineStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiLineStyle& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Flags);
+	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageLPath, SysType.m_ImageLPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageMPath, SysType.m_ImageMPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageRPath, SysType.m_ImageRPath);
+}
+
+
+void CAsset_GuiLineStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Flags);
 	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);

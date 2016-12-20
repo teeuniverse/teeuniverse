@@ -26,12 +26,22 @@
 class CAsset
 {
 public:
-	class CTuaType
+	//TAG_ASSETSVERSION
+	class CTuaType_0_1_0
 	{
 	public:
 		tua_stringid m_Name;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_1_0& TuaType);
+
+	};
+	
+	class CTuaType_0_2_0
+	{
+	public:
+		tua_stringid m_Name;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_0& TuaType);
 
 	};
 
@@ -54,9 +64,6 @@ public:
 		m_pAssetsManager = Asset.m_pAssetsManager;
 		m_Name.transfert(Asset.m_Name);
 	}
-	
-	void Load_AssetsFile(class CArchiveFile* pArchiveFile, const CTuaType* pItem);
-	void Save_AssetsFile(class CArchiveFile* pArchiveFile, CTuaType* pItem);
 
 	void Update() { }
 	void Unload() { }

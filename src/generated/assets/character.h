@@ -85,13 +85,22 @@ public:
 	class CPart
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
 		{
 		public:
 			tua_stringid m_Name;
 			CAssetPath::CTuaType m_DefaultPath;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Character::CPart& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Character::CPart& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			tua_stringid m_Name;
+			CAssetPath::CTuaType m_DefaultPath;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Character::CPart& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -126,7 +135,7 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_IdlePath;
@@ -134,8 +143,20 @@ public:
 		CAssetPath::CTuaType m_ControlledJumpPath;
 		CAssetPath::CTuaType m_UncontrolledJumpPath;
 		CTuaArray m_Part;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Character& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Character& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_IdlePath;
+		CAssetPath::CTuaType m_WalkPath;
+		CAssetPath::CTuaType m_ControlledJumpPath;
+		CAssetPath::CTuaType m_UncontrolledJumpPath;
+		CTuaArray m_Part;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Character& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -261,7 +282,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtPart(int Index) { m_Part.insertat(Index); }
+	inline void AddAtPart(int Index) { m_Part.insertat_and_init(Index); }
 	
 	inline void DeletePart(const CSubPath& SubPath) { m_Part.remove_index(SubPath.GetId()); }
 	

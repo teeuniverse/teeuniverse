@@ -43,7 +43,7 @@ void CAssetsPackage::Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingConte
 		return;
 	
 	int AssetsVersion = pLoadingContext->ArchiveFile()->ReadUInt32(pItem->m_AssetsVersion);
-	if(AssetsVersion != 0)
+	if(AssetsVersion < 0 || AssetsVersion >= ASSETSVERSION_NOT_SUPPORTED)
 		return;
 	
 	m_Author.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Author));
@@ -51,9 +51,20 @@ void CAssetsPackage::Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingConte
 	m_License.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_License));
 	m_Version.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Version));
 	
-	#define MACRO_ASSETTYPE(Name) m_##Name.Load_AssetsFile(pLoadingContext);
-	#include <generated/assets/assetsmacro.h>
-	#undef MACRO_ASSETTYPE
+	//TAG_ASSETSVERSION
+	switch(AssetsVersion)
+	{
+		case ASSETSVERSION_0_1_0:
+			#define MACRO_ASSETTYPE(Name) m_##Name.Load_AssetsFile_0_1_0(pLoadingContext);
+			#include <generated/assets/assetsmacro.h>
+			#undef MACRO_ASSETTYPE
+			break;
+		case ASSETSVERSION_0_2_0:
+			#define MACRO_ASSETTYPE(Name) m_##Name.Load_AssetsFile_0_2_0(pLoadingContext);
+			#include <generated/assets/assetsmacro.h>
+			#undef MACRO_ASSETTYPE
+			break;
+	}
 }
 	
 void CAssetsPackage::Save_AssetsFile(class CAssetsSaveLoadContext* pLoadingContext)
@@ -61,13 +72,14 @@ void CAssetsPackage::Save_AssetsFile(class CAssetsSaveLoadContext* pLoadingConte
 	pLoadingContext->ArchiveFile()->SetItemType(0, sizeof(CTuaType_Info), 1);
 	CTuaType_Info* pItem = reinterpret_cast<CTuaType_Info*>(pLoadingContext->ArchiveFile()->GetItem(0, 0));
 	
-	pItem->m_AssetsVersion = pLoadingContext->ArchiveFile()->WriteUInt32((uint32) 0);
+	pItem->m_AssetsVersion = pLoadingContext->ArchiveFile()->WriteUInt32((uint32) ASSETSVERSION_CURRENT);
 	pItem->m_Author = pLoadingContext->ArchiveFile()->AddString(m_Author.buffer());
 	pItem->m_Credits = pLoadingContext->ArchiveFile()->AddString(m_Credits.buffer());
 	pItem->m_License = pLoadingContext->ArchiveFile()->AddString(m_License.buffer());
 	pItem->m_Version = pLoadingContext->ArchiveFile()->AddString(m_Version.buffer());
 	
-	#define MACRO_ASSETTYPE(Name) m_##Name.Save_AssetsFile(pLoadingContext);
+	//TAG_ASSETSVERSION
+	#define MACRO_ASSETTYPE(Name) m_##Name.Save_AssetsFile_0_2_0(pLoadingContext);
 	#include <generated/assets/assetsmacro.h>
 	#undef MACRO_ASSETTYPE
 	

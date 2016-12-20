@@ -34,18 +34,32 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_GuiComboBoxStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiComboBoxStyle& SysType)
+void CAsset_GuiComboBoxStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiComboBoxStyle& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
+
+}
+
+
+void CAsset_GuiComboBoxStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType_0_1_0& TuaType)
+{
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+}
+
+void CAsset_GuiComboBoxStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiComboBoxStyle& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ButtonPath, SysType.m_ButtonPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_PopupPath, SysType.m_PopupPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_EnumPath, SysType.m_EnumPath);
 }
 
-void CAsset_GuiComboBoxStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType& TuaType)
+
+void CAsset_GuiComboBoxStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType_0_2_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ButtonPath, TuaType.m_ButtonPath);
 	pLoadingContext->WriteAssetPath(SysType.m_PopupPath, TuaType.m_PopupPath);

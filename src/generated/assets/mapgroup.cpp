@@ -43,9 +43,9 @@ CAsset_MapGroup::CAsset_MapGroup()
 	m_Visibility = true;
 }
 
-void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType)
+void CAsset_MapGroup::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapGroup& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	{
@@ -70,9 +70,65 @@ void CAsset_MapGroup::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, co
 	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
-void CAsset_MapGroup::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType)
+
+void CAsset_MapGroup::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	{
+		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
+		for(int i=0; i<SysType.m_Layer.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_Layer[i], pData[i]);
+		}
+		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_Layer.size());
+		delete[] pData;
+	}
+	TuaType.m_Position.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.x);
+	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
+	TuaType.m_HardParallax.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_HardParallax.x);
+	TuaType.m_HardParallax.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_HardParallax.y);
+	TuaType.m_Clipping = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Clipping);
+	TuaType.m_ClipPosition.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipPosition.x);
+	TuaType.m_ClipPosition.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipPosition.y);
+	TuaType.m_ClipSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.x);
+	TuaType.m_ClipSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ClipSize.y);
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+}
+
+void CAsset_MapGroup::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapGroup& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
+		SysType.m_Layer.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_Layer[i]);
+		}
+	}
+	
+	SysType.m_Position.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_X);
+	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
+	SysType.m_HardParallax.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_HardParallax.m_X);
+	SysType.m_HardParallax.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_HardParallax.m_Y);
+	SysType.m_Clipping = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Clipping);
+	SysType.m_ClipPosition.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipPosition.m_X);
+	SysType.m_ClipPosition.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipPosition.m_Y);
+	SysType.m_ClipSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_X);
+	SysType.m_ClipSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ClipSize.m_Y);
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+}
+
+
+void CAsset_MapGroup::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	{

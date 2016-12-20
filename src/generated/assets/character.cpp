@@ -34,41 +34,43 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_Character::CPart::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Character::CPart& SysType)
+void CAsset_Character::CPart::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Character::CPart& SysType)
 {
 	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
 }
 
-void CAsset_Character::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Character& SysType)
+
+void CAsset_Character::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Character& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_IdlePath, SysType.m_IdlePath);
 	pLoadingContext->ReadAssetPath(TuaType.m_WalkPath, SysType.m_WalkPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_ControlledJumpPath, SysType.m_ControlledJumpPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_UncontrolledJumpPath, SysType.m_UncontrolledJumpPath);
 	{
-		const CAsset_Character::CPart::CTuaType* pData = (const CAsset_Character::CPart::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Part.m_Data);
+		const CAsset_Character::CPart::CTuaType_0_1_0* pData = (const CAsset_Character::CPart::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Part.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Part.m_Size);
 		SysType.m_Part.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_Character::CPart::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Part[i]);
+			CAsset_Character::CPart::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Part[i]);
 		}
 	}
 	
 }
 
-void CAsset_Character::CPart::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType& TuaType)
+
+void CAsset_Character::CPart::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType_0_1_0& TuaType)
 {
 	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
 	pLoadingContext->WriteAssetPath(SysType.m_DefaultPath, TuaType.m_DefaultPath);
 }
 
-void CAsset_Character::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType& TuaType)
+void CAsset_Character::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_IdlePath, TuaType.m_IdlePath);
 	pLoadingContext->WriteAssetPath(SysType.m_WalkPath, TuaType.m_WalkPath);
@@ -76,12 +78,66 @@ void CAsset_Character::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	pLoadingContext->WriteAssetPath(SysType.m_UncontrolledJumpPath, TuaType.m_UncontrolledJumpPath);
 	{
 		TuaType.m_Part.m_Size = SysType.m_Part.size();
-		CAsset_Character::CPart::CTuaType* pData = new CAsset_Character::CPart::CTuaType[SysType.m_Part.size()];
+		CAsset_Character::CPart::CTuaType_0_1_0* pData = new CAsset_Character::CPart::CTuaType_0_1_0[SysType.m_Part.size()];
 		for(int i=0; i<SysType.m_Part.size(); i++)
 		{
-			CAsset_Character::CPart::CTuaType::Write(pLoadingContext, SysType.m_Part[i], pData[i]);
+			CAsset_Character::CPart::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Part[i], pData[i]);
 		}
-		TuaType.m_Part.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Character::CPart::CTuaType)*SysType.m_Part.size());
+		TuaType.m_Part.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Character::CPart::CTuaType_0_1_0)*SysType.m_Part.size());
+		delete[] pData;
+	}
+}
+
+void CAsset_Character::CPart::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Character::CPart& SysType)
+{
+	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
+}
+
+
+void CAsset_Character::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Character& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IdlePath, SysType.m_IdlePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_WalkPath, SysType.m_WalkPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ControlledJumpPath, SysType.m_ControlledJumpPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_UncontrolledJumpPath, SysType.m_UncontrolledJumpPath);
+	{
+		const CAsset_Character::CPart::CTuaType_0_2_0* pData = (const CAsset_Character::CPart::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Part.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Part.m_Size);
+		SysType.m_Part.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			CAsset_Character::CPart::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Part[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_Character::CPart::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character::CPart& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
+	pLoadingContext->WriteAssetPath(SysType.m_DefaultPath, TuaType.m_DefaultPath);
+}
+
+void CAsset_Character::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Character& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IdlePath, TuaType.m_IdlePath);
+	pLoadingContext->WriteAssetPath(SysType.m_WalkPath, TuaType.m_WalkPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ControlledJumpPath, TuaType.m_ControlledJumpPath);
+	pLoadingContext->WriteAssetPath(SysType.m_UncontrolledJumpPath, TuaType.m_UncontrolledJumpPath);
+	{
+		TuaType.m_Part.m_Size = SysType.m_Part.size();
+		CAsset_Character::CPart::CTuaType_0_2_0* pData = new CAsset_Character::CPart::CTuaType_0_2_0[SysType.m_Part.size()];
+		for(int i=0; i<SysType.m_Part.size(); i++)
+		{
+			CAsset_Character::CPart::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Part[i], pData[i]);
+		}
+		TuaType.m_Part.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Character::CPart::CTuaType_0_2_0)*SysType.m_Part.size());
 		delete[] pData;
 	}
 }

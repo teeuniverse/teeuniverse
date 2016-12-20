@@ -226,18 +226,6 @@ public:
 		return m_pData[m_Size-1];
 	}
 
-	/*
-		Function: insert
-			Inserts an item into the array at a specified location.
-
-		Arguments:
-			item - Item to insert.
-			index - Index where to insert the item
-
-		Remarks:
-			- Invalidates ranges
-			- See remarks about <array> how the array grows.
-	*/
 	T& insertat(int index)
 	{
 		incsize();
@@ -249,18 +237,13 @@ public:
 		return m_pData[index];
 	}
 
-	/*
-		Function: insert
-			Inserts an item into the array at a specified location.
+	T& insertat_and_init(int index)
+	{
+		T& newitem = insertat(index);
+		ALLOCATOR::copy(newitem, T());
+		return newitem;
+	}
 
-		Arguments:
-			item - Item to insert.
-			index - Index where to insert the item
-
-		Remarks:
-			- Invalidates ranges
-			- See remarks about <array> how the array grows.
-	*/
 	T& insertat_by_copy(const T& item, int index)
 	{
 		T& newitem = insertat(index);

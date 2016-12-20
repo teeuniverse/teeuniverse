@@ -109,7 +109,14 @@ public:
 	class CVertex
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
 		{
 		public:
 			CTuaVec2 m_Position;
@@ -118,8 +125,8 @@ public:
 			tua_int32 m_Smoothness;
 			CTuaVec2 m_ControlPoint0;
 			CTuaVec2 m_ControlPoint1;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -209,7 +216,14 @@ public:
 	class CObject
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
 		{
 		public:
 			CTuaVec2 m_Position;
@@ -218,8 +232,8 @@ public:
 			CAssetPath::CTuaType m_StylePath;
 			CTuaArray m_Vertex;
 			tua_uint8 m_ClosedPath;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerObjects::CObject& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -477,7 +491,7 @@ public:
 			return Id;
 		}
 		
-		inline void AddAtVertex(int Index) { m_Vertex.insertat(Index); }
+		inline void AddAtVertex(int Index) { m_Vertex.insertat_and_init(Index); }
 		
 		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.remove_index(SubPath.GetId()); }
 		
@@ -495,14 +509,21 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
+	{
+	public:
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
 		CTuaArray m_Object;
 		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerObjects& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -907,7 +928,7 @@ public:
 	
 	inline int AddObjectVertex(const CSubPath& SubPath) { return m_Object[SubPath.GetId()].AddVertex(); }
 	
-	inline void AddAtObject(int Index) { m_Object.insertat(Index); }
+	inline void AddAtObject(int Index) { m_Object.insertat_and_init(Index); }
 	
 	inline void AddAtObjectVertex(const CSubPath& SubPath, int Index) { m_Object[SubPath.GetId()].AddAtVertex(Index); }
 	

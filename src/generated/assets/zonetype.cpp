@@ -40,48 +40,98 @@ CAsset_ZoneType::CIndex::CIndex()
 }
 
 
-void CAsset_ZoneType::CIndex::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType::CIndex& SysType)
+void CAsset_ZoneType::CIndex::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
 	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
-void CAsset_ZoneType::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_ZoneType& SysType)
+
+void CAsset_ZoneType::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	{
-		const CAsset_ZoneType::CIndex::CTuaType* pData = (const CAsset_ZoneType::CIndex::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		const CAsset_ZoneType::CIndex::CTuaType_0_1_0* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
 		SysType.m_Index.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_ZoneType::CIndex::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
+			CAsset_ZoneType::CIndex::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
 		}
 	}
 	
 }
 
-void CAsset_ZoneType::CIndex::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType& TuaType)
+
+void CAsset_ZoneType::CIndex::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_1_0& TuaType)
 {
 	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
 	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
 
-void CAsset_ZoneType::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType& TuaType)
+void CAsset_ZoneType::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
-		CAsset_ZoneType::CIndex::CTuaType* pData = new CAsset_ZoneType::CIndex::CTuaType[SysType.m_Index.size()];
+		CAsset_ZoneType::CIndex::CTuaType_0_1_0* pData = new CAsset_ZoneType::CIndex::CTuaType_0_1_0[SysType.m_Index.size()];
 		for(int i=0; i<SysType.m_Index.size(); i++)
 		{
-			CAsset_ZoneType::CIndex::CTuaType::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
+			CAsset_ZoneType::CIndex::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
 		}
-		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType)*SysType.m_Index.size());
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_1_0)*SysType.m_Index.size());
+		delete[] pData;
+	}
+}
+
+void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIndex& SysType)
+{
+	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
+	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+}
+
+
+void CAsset_ZoneType::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	{
+		const CAsset_ZoneType::CIndex::CTuaType_0_2_0* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
+		SysType.m_Index.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
+	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+}
+
+void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
+
+	{
+		TuaType.m_Index.m_Size = SysType.m_Index.size();
+		CAsset_ZoneType::CIndex::CTuaType_0_2_0* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_0[SysType.m_Index.size()];
+		for(int i=0; i<SysType.m_Index.size(); i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
+		}
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_0)*SysType.m_Index.size());
 		delete[] pData;
 	}
 }

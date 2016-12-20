@@ -150,15 +150,26 @@ public:
 	CIteratorEntityLayer ReverseBeginEntityLayer() const { return CIteratorEntityLayer(m_EntityLayer.size()-1, true); }
 	CIteratorEntityLayer ReverseEndEntityLayer() const { return CIteratorEntityLayer(-1, true); }
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CTuaArray m_BgGroup;
 		CTuaArray m_FgGroup;
 		CTuaArray m_ZoneLayer;
 		CTuaArray m_EntityLayer;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Map& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Map& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CTuaArray m_BgGroup;
+		CTuaArray m_FgGroup;
+		CTuaArray m_ZoneLayer;
+		CTuaArray m_EntityLayer;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Map& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -335,13 +346,13 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtBgGroup(int Index) { m_BgGroup.insertat(Index); }
+	inline void AddAtBgGroup(int Index) { m_BgGroup.insertat_and_init(Index); }
 	
-	inline void AddAtFgGroup(int Index) { m_FgGroup.insertat(Index); }
+	inline void AddAtFgGroup(int Index) { m_FgGroup.insertat_and_init(Index); }
 	
-	inline void AddAtZoneLayer(int Index) { m_ZoneLayer.insertat(Index); }
+	inline void AddAtZoneLayer(int Index) { m_ZoneLayer.insertat_and_init(Index); }
 	
-	inline void AddAtEntityLayer(int Index) { m_EntityLayer.insertat(Index); }
+	inline void AddAtEntityLayer(int Index) { m_EntityLayer.insertat_and_init(Index); }
 	
 	inline void DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
 	

@@ -38,9 +38,9 @@ CAsset_GuiToggleStyle::CAsset_GuiToggleStyle()
 	m_SwitchIcon = false;
 }
 
-void CAsset_GuiToggleStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiToggleStyle& SysType)
+void CAsset_GuiToggleStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiToggleStyle& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_IdleTrueStylePath, SysType.m_IdleTrueStylePath);
 	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverTrueStylePath, SysType.m_MouseOverTrueStylePath);
@@ -51,9 +51,37 @@ void CAsset_GuiToggleStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingConte
 	SysType.m_SwitchIcon = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_SwitchIcon);
 }
 
-void CAsset_GuiToggleStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType& TuaType)
+
+void CAsset_GuiToggleStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IdleTrueStylePath, TuaType.m_IdleTrueStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverTrueStylePath, TuaType.m_MouseOverTrueStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconTruePath, TuaType.m_IconTruePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IdleFalseStylePath, TuaType.m_IdleFalseStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverFalseStylePath, TuaType.m_MouseOverFalseStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconFalsePath, TuaType.m_IconFalsePath);
+	TuaType.m_SwitchIcon = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_SwitchIcon);
+}
+
+void CAsset_GuiToggleStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiToggleStyle& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleTrueStylePath, SysType.m_IdleTrueStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverTrueStylePath, SysType.m_MouseOverTrueStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconTruePath, SysType.m_IconTruePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleFalseStylePath, SysType.m_IdleFalseStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverFalseStylePath, SysType.m_MouseOverFalseStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconFalsePath, SysType.m_IconFalsePath);
+	SysType.m_SwitchIcon = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_SwitchIcon);
+}
+
+
+void CAsset_GuiToggleStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_IdleTrueStylePath, TuaType.m_IdleTrueStylePath);
 	pLoadingContext->WriteAssetPath(SysType.m_MouseOverTrueStylePath, TuaType.m_MouseOverTrueStylePath);

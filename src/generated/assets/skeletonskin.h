@@ -99,7 +99,7 @@ public:
 	class CBone
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
 		{
 		public:
 			CAssetPath::CTuaType m_SpritePath;
@@ -111,8 +111,24 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonSkin::CBone& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			CAssetPath::CTuaType m_SpritePath;
+			CSubPath::CTuaType m_BonePath;
+			CSubPath::CTuaType m_LayerPath;
+			tua_float m_Anchor;
+			CTuaVec2 m_Translation;
+			CTuaVec2 m_Scale;
+			tua_float m_Angle;
+			tua_uint32 m_Color;
+			tua_int32 m_Alignment;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonSkin::CBone& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -213,13 +229,22 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
 		CTuaArray m_Sprite;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_SkeletonSkin& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonSkin& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_SkeletonPath;
+		CTuaArray m_Sprite;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonSkin& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -467,7 +492,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtSprite(int Index) { m_Sprite.insertat(Index); }
+	inline void AddAtSprite(int Index) { m_Sprite.insertat_and_init(Index); }
 	
 	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
 	

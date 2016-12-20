@@ -51,7 +51,7 @@ public:
 		RECTPATH,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		tua_int32 m_MinWidth;
@@ -60,8 +60,21 @@ public:
 		tua_int32 m_Padding;
 		tua_int32 m_Spacing;
 		CAssetPath::CTuaType m_RectPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiBoxStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiBoxStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		tua_int32 m_MinWidth;
+		tua_int32 m_MinHeight;
+		tua_int32 m_Margin;
+		tua_int32 m_Padding;
+		tua_int32 m_Spacing;
+		CAssetPath::CTuaType m_RectPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiBoxStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 

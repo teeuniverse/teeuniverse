@@ -34,18 +34,38 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_CharacterPart::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_CharacterPart& SysType)
+void CAsset_CharacterPart::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_CharacterPart& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_CharacterPath, SysType.m_CharacterPath);
 	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_CharacterPart, SysType.m_CharacterPart);
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonSkinPath, SysType.m_SkeletonSkinPath);
 }
 
-void CAsset_CharacterPart::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType& TuaType)
+
+void CAsset_CharacterPart::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_CharacterPath, TuaType.m_CharacterPath);
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_CharacterPart, TuaType.m_CharacterPart);
+	pLoadingContext->WriteAssetPath(SysType.m_SkeletonSkinPath, TuaType.m_SkeletonSkinPath);
+}
+
+void CAsset_CharacterPart::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_CharacterPart& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_CharacterPath, SysType.m_CharacterPath);
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_CharacterPart, SysType.m_CharacterPart);
+	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonSkinPath, SysType.m_SkeletonSkinPath);
+}
+
+
+void CAsset_CharacterPart::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_CharacterPath, TuaType.m_CharacterPath);
 	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_CharacterPart, TuaType.m_CharacterPart);

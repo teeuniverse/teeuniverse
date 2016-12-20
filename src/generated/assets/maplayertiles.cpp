@@ -45,21 +45,22 @@ CAsset_MapLayerTiles::CAsset_MapLayerTiles()
 	m_Visibility = true;
 }
 
-void CAsset_MapLayerTiles::CTile::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerTiles::CTile& SysType)
+void CAsset_MapLayerTiles::CTile::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerTiles::CTile& SysType)
 {
 	SysType.m_Index = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Index);
 	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Flags);
 }
 
-void CAsset_MapLayerTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerTiles& SysType)
+
+void CAsset_MapLayerTiles::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerTiles& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
-		const CAsset_MapLayerTiles::CTile::CTuaType* pData = (const CAsset_MapLayerTiles::CTile::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
+		const CAsset_MapLayerTiles::CTile::CTuaType_0_1_0* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
 		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
 		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
@@ -68,7 +69,7 @@ void CAsset_MapLayerTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 		for(int i=0; i<Size; i++)
 		{
 			CTile ReadedValue;
-			CAsset_MapLayerTiles::CTile::CTuaType::Read(pLoadingContext, pData[i], ReadedValue);
+			CAsset_MapLayerTiles::CTile::CTuaType_0_1_0::Read(pLoadingContext, pData[i], ReadedValue);
 			SysType.m_Tile.linear_set_clamp(i, ReadedValue);
 		}
 	}
@@ -76,15 +77,16 @@ void CAsset_MapLayerTiles::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
 }
 
-void CAsset_MapLayerTiles::CTile::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType& TuaType)
+
+void CAsset_MapLayerTiles::CTile::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_1_0& TuaType)
 {
 	TuaType.m_Index = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index);
 	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Flags);
 }
 
-void CAsset_MapLayerTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType& TuaType)
+void CAsset_MapLayerTiles::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
@@ -93,12 +95,73 @@ void CAsset_MapLayerTiles::CTuaType::Write(CAssetsSaveLoadContext* pLoadingConte
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
-		CAsset_MapLayerTiles::CTile::CTuaType* pData = new CAsset_MapLayerTiles::CTile::CTuaType[SysType.m_Tile.get_linear_size()];
+		CAsset_MapLayerTiles::CTile::CTuaType_0_1_0* pData = new CAsset_MapLayerTiles::CTile::CTuaType_0_1_0[SysType.m_Tile.get_linear_size()];
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
-			CAsset_MapLayerTiles::CTile::CTuaType::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
+			CAsset_MapLayerTiles::CTile::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
 		}
-		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapLayerTiles::CTile::CTuaType)*SysType.m_Tile.get_linear_size());
+		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapLayerTiles::CTile::CTuaType_0_1_0)*SysType.m_Tile.get_linear_size());
+		delete[] pData;
+	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+}
+
+void CAsset_MapLayerTiles::CTile::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerTiles::CTile& SysType)
+{
+	SysType.m_Index = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Index);
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Flags);
+}
+
+
+void CAsset_MapLayerTiles::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerTiles& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	{
+		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_0* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
+		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
+		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
+		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
+		int Size = Width * Height * Depth;
+		SysType.m_Tile.resize(Width, Height, Depth);
+		for(int i=0; i<Size; i++)
+		{
+			CTile ReadedValue;
+			CAsset_MapLayerTiles::CTile::CTuaType_0_2_0::Read(pLoadingContext, pData[i], ReadedValue);
+			SysType.m_Tile.linear_set_clamp(i, ReadedValue);
+		}
+	}
+	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+}
+
+
+void CAsset_MapLayerTiles::CTile::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Index = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index);
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Flags);
+}
+
+void CAsset_MapLayerTiles::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	{
+		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
+		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
+		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
+		CAsset_MapLayerTiles::CTile::CTuaType_0_2_0* pData = new CAsset_MapLayerTiles::CTile::CTuaType_0_2_0[SysType.m_Tile.get_linear_size()];
+		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
+		{
+			CAsset_MapLayerTiles::CTile::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
+		}
+		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapLayerTiles::CTile::CTuaType_0_2_0)*SysType.m_Tile.get_linear_size());
 		delete[] pData;
 	}
 	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);

@@ -18,6 +18,8 @@
 
 import sys, os
 
+versionList = ["0.1.0", "0.2.0"]
+
 class SubPathType:
 	def __init__(self, name, enumname, numidx):
 		self.name = name
@@ -138,11 +140,11 @@ class Type:
 		return []
 	def generateDeclaration(self, var):
 		return [self.tname + " " + var + ";"]
-	def tuaType(self):
+	def tuaType(self, version):
 		return ""
-	def generateTuaDeclaration(self, var):
-		if self.tuaType():
-			return [ self.tuaType() + " " + var + ";" ]
+	def generateTuaDeclaration(self, var, version):
+		if self.tuaType(version):
+			return [ self.tuaType(version) + " " + var + ";" ]
 		else:
 			return []
 	def numSubPathId(self):
@@ -151,20 +153,17 @@ class Type:
 		return []
 	def subPathTypes(self):
 		return []
-	#def generateStorage(self, var):
-	#def generateWrite(self, varSys, varTua):
-	#def generateRead(self, varSys, varTua):
 
 class TypeUInt8(Type):
 	def __init__(self):
 		Type.__init__(self, "uint8")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_uint8"
 	def getSetInterfaces(self):
 		return [GetSetInterface_Simple("", self.tname, "uint32", self.tname)]
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt8(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt8(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, "int", self.tname, "0") ]
@@ -172,13 +171,13 @@ class TypeUInt8(Type):
 class TypeUInt16(Type):
 	def __init__(self):
 		Type.__init__(self, "uint16")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_uint16"
 	def getSetInterfaces(self):
 		return [GetSetInterface_Simple("", self.tname, "uint32", self.tname)]
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt16(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt16(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, "int", self.tname, "0") ]
@@ -186,13 +185,13 @@ class TypeUInt16(Type):
 class TypeUInt32(Type):
 	def __init__(self):
 		Type.__init__(self, "uint32")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_uint32"
 	def getSetInterfaces(self):
 		return [GetSetInterface_Simple("", self.tname, "uint32", self.tname)]
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteUInt32(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt32(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, "uint32", self.tname, self.tname, "0") ]
@@ -200,11 +199,11 @@ class TypeUInt32(Type):
 class TypeInt32(Type):
 	def __init__(self):
 		Type.__init__(self, "int")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_int32"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteInt32(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadInt32(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0") ]
@@ -212,11 +211,11 @@ class TypeInt32(Type):
 class TypeBool(Type):
 	def __init__(self):
 		Type.__init__(self, "bool")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_uint8"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteBool(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadBool(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "false") ]
@@ -224,11 +223,11 @@ class TypeBool(Type):
 class TypeFloat(Type):
 	def __init__(self):
 		Type.__init__(self, "float")
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_float"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteFloat(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadFloat(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0.0f") ]
@@ -244,14 +243,14 @@ class TypeVec2(Type):
 			GetSetInterface_Struct("X", "float", "float", "x", "x", "0.0f"),
 			GetSetInterface_Struct("Y", "float", "float", "y", "y", "0.0f")
 		]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "CTuaVec2"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [
 			varTua + ".m_X = pLoadingContext->ArchiveFile()->WriteFloat(" + varSys + ".x);",
 			varTua + ".m_Y = pLoadingContext->ArchiveFile()->WriteFloat(" + varSys + ".y);"
 		]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [
 			varSys + ".x = pLoadingContext->ArchiveFile()->ReadFloat(" + varTua + ".m_X);",
 			varSys + ".y = pLoadingContext->ArchiveFile()->ReadFloat(" + varTua + ".m_Y);"
@@ -262,11 +261,11 @@ class TypeColor(Type):
 		Type.__init__(self, "vec4")
 	def headers(self):
 		return ["shared/math/vector.h"]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_uint32"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->WriteColor(" + varSys + ");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadColor(" + varTua + ");"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "1.0f") ]
@@ -278,11 +277,11 @@ class TypeAssetPath(Type):
 		return ["shared/assets/assetpath.h"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&", "CAssetPath::Null()") ]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "CAssetPath::CTuaType"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return ["pLoadingContext->WriteAssetPath("+varSys+", "+varTua+");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return ["pLoadingContext->ReadAssetPath("+varTua+", "+varSys+");"]
 	def generateAssetPathOp(self, var, operation):
 		return [operation+".Apply("+var+");"]
@@ -294,11 +293,11 @@ class TypeSubPath(Type):
 		return ["shared/assets/assetpath.h"]
 	def getSetInterfaces(self):
 		return [ GetSetInterface_Simple("", self.tname, self.tname, "const "+self.tname+"&", "CSubPath::Null()") ]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "CSubPath::CTuaType"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return ["CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), "+varSys+", "+varTua+");"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return ["CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), "+varTua+", "+varSys+");"]
 
 class TypeString(Type):
@@ -313,17 +312,17 @@ class TypeString(Type):
 		return [
 			GetSetInterface_Func("", "const char*", "const char*", "buffer", "copy", "NULL")
 		]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "tua_stringid"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->AddString(" + varSys + ".buffer());"]
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		return [varSys + ".copy(pLoadingContext->ArchiveFile()->GetString(" + varTua + "));"]
 
 class TypeTextureHandle(Type):
 	def __init__(self):
 		Type.__init__(self, "CTextureHandle")
-	def tuaType(self):
+	def tuaType(self, version):
 		return ""
 	def getSetInterfaces(self):
 		return [
@@ -390,7 +389,7 @@ class AddInterface_Array(GetSetInterface):
 			"return Id;"
 		]
 	def generateAddAt(self, var):
-		return [ var + ".insertat(Index);" ]
+		return [ var + ".insertat_and_init(Index);" ]
 	def generateDelete(self, var):
 		return [ var + ".remove_index(SubPath.GetId());" ]
 	def generateRelMove(self, var):
@@ -450,31 +449,31 @@ class TypeArray(Type):
 			res.append(SubPathType(spt.name, spt.enumname, spt.numidx))
 		return res
 	
-	def tuaType(self):
+	def tuaType(self, version):
 		return "CTuaArray"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		res = []
 		res.append("{")
 		res.append("	" + varTua + ".m_Size = "+varSys+".size();")
-		res.append("	" + self.t.tuaType() + "* pData = new " + self.t.tuaType() + "["+varSys+".size()];")
+		res.append("	" + self.t.tuaType(version) + "* pData = new " + self.t.tuaType(version) + "["+varSys+".size()];")
 		res.append("	for(int i=0; i<"+varSys+".size(); i++)")
 		res.append("	{")
-		for l in self.t.generateWrite(varSys+"[i]", "pData[i]"):
+		for l in self.t.generateWrite(varSys+"[i]", "pData[i]", version):
 			res.append("		"+l)
 		res.append("	}")
-		res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(" + self.t.tuaType() + ")*"+varSys+".size());")
+		res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(" + self.t.tuaType(version) + ")*"+varSys+".size());")
 		res.append("	delete[] pData;")
 		res.append("}")
 		return res
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		res = []
 		res.append("{")
-		res.append("	const "+self.t.tuaType()+"* pData = (const "+self.t.tuaType()+"*) pLoadingContext->ArchiveFile()->GetData("+varTua+".m_Data);")
+		res.append("	const "+self.t.tuaType(version)+"* pData = (const "+self.t.tuaType(version)+"*) pLoadingContext->ArchiveFile()->GetData("+varTua+".m_Data);")
 		res.append("	uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Size);")
 		res.append("	"+varSys+".resize(Size);")
 		res.append("	for(int i=0; i<Size; i++)")
 		res.append("	{")
-		for l in self.t.generateRead(varSys+"[i]", "pData[i]"):
+		for l in self.t.generateRead(varSys+"[i]", "pData[i]", version):
 			res.append("		"+l)
 		res.append("	}")
 		res.append("}")
@@ -609,9 +608,9 @@ class TypeArray2d(Type):
 		return res
 	def subPathInterfaces(self):
 		return [SubPathInterface()]
-	def tuaType(self):
+	def tuaType(self, version):
 		return "CTuaArray2d"
-	def generateWrite(self, varSys, varTua):
+	def generateWrite(self, varSys, varTua, version):
 		res = []
 		res.append("{")
 		res.append("	" + varTua + ".m_Width = pLoadingContext->ArchiveFile()->WriteUInt32("+varSys+".get_width());")
@@ -620,20 +619,20 @@ class TypeArray2d(Type):
 		if self.t.fullType() == "uint8":
 			res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) "+varSys+".base_ptr(), "+varSys+".get_linear_size());")
 		else:
-			res.append("	" + self.t.tuaType() + "* pData = new " + self.t.tuaType() + "["+varSys+".get_linear_size()];")
+			res.append("	" + self.t.tuaType(version) + "* pData = new " + self.t.tuaType(version) + "["+varSys+".get_linear_size()];")
 			res.append("	for(int i=0; i<"+varSys+".get_linear_size(); i++)")
 			res.append("	{")
-			for l in self.t.generateWrite(varSys+".linear_get_clamp(i)", "pData[i]"):
+			for l in self.t.generateWrite(varSys+".linear_get_clamp(i)", "pData[i]", version):
 				res.append("		"+l)
 			res.append("	}")
-			res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(" + self.t.tuaType() + ")*"+varSys+".get_linear_size());")
+			res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(" + self.t.tuaType(version) + ")*"+varSys+".get_linear_size());")
 			res.append("	delete[] pData;")
 		res.append("}")
 		return res
-	def generateRead(self, varSys, varTua):
+	def generateRead(self, varSys, varTua, version):
 		res = []
 		res.append("{")
-		res.append("	const "+self.t.tuaType()+"* pData = (const "+self.t.tuaType()+"*) pLoadingContext->ArchiveFile()->GetData("+varTua+".m_Data);")
+		res.append("	const "+self.t.tuaType(version)+"* pData = (const "+self.t.tuaType(version)+"*) pLoadingContext->ArchiveFile()->GetData("+varTua+".m_Data);")
 		res.append("	uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Width);")
 		res.append("	uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Height);")
 		res.append("	uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Depth);")
@@ -645,7 +644,7 @@ class TypeArray2d(Type):
 			res.append("	for(int i=0; i<Size; i++)")
 			res.append("	{")
 			res.append("		"+self.t.tname+" ReadedValue;" )
-			for l in self.t.generateRead("ReadedValue", "pData[i]"):
+			for l in self.t.generateRead("ReadedValue", "pData[i]", version):
 				res.append("		"+l)
 			res.append("		"+varSys+".linear_set_clamp(i, ReadedValue);")
 			res.append("	}")
@@ -705,7 +704,8 @@ class AddInterface_Member(GetSetInterface):
 		return [ "return " + var + ".IsValid" + self.interface.name + "();" ]
 		
 class Member:
-	def __init__(self, name, t):
+	def __init__(self, version, name, t):
+		self.version = version
 		self.name = name
 		self.t = t
 	def memberName(self):
@@ -717,8 +717,8 @@ class Member:
 		return self.t.generateReturn(self.memberName())
 	def generateDeclaration(self):
 		return self.t.generateDeclaration(self.memberName())
-	def generateTuaDeclaration(self):
-		return self.t.generateTuaDeclaration(self.memberName())
+	def generateTuaDeclaration(self, version):
+		return self.t.generateTuaDeclaration(self.memberName(), version)
 	def allocator(self):
 		return self.t.allocator()
 	def generateCopy(self, value):
@@ -727,14 +727,14 @@ class Member:
 		return self.t.generateTransfert(self.memberName(), value)
 	def generateStorage(self, var):
 		return self.t.generateStorage(self.memberName())
-	def generateWrite(self):
-		if self.t.tuaType():
-			return self.t.generateWrite("SysType."+self.memberName(), "TuaType."+self.memberName())
+	def generateWrite(self, version):
+		if self.t.tuaType(version):
+			return self.t.generateWrite("SysType."+self.memberName(), "TuaType."+self.memberName(), version)
 		else:
 			return []
-	def generateRead(self):
-		if self.t.tuaType():
-			return self.t.generateRead("SysType."+self.memberName(), "TuaType."+self.memberName())
+	def generateRead(self, version):
+		if self.t.tuaType(version):
+			return self.t.generateRead("SysType."+self.memberName(), "TuaType."+self.memberName(), version)
 		else:
 			return []
 	def generateAssetPathOp(self, operation):
@@ -971,68 +971,82 @@ class Class(Type):
 				res.append(SubPathType(spt.name, spt.enumname, spt.numidx))
 		return res
 	
-	def tuaType(self):
-		return self.fullType()+"::CTuaType"
-	def generateWrite(self, varSys, varTua):
-		return [self.fullType()+"::CTuaType::Write(pLoadingContext, "+varSys+", "+varTua+");"]
-	def generateRead(self, varSys, varTua):
-		return [self.fullType()+"::CTuaType::Read(pLoadingContext, "+varTua+", "+varSys+");"]
+	def tuaType(self, version):
+		return self.fullType()+"::CTuaType_"+version.replace(".", "_")
+	def generateWrite(self, varSys, varTua, version):
+		return [self.fullType()+"::CTuaType_"+version.replace(".", "_")+"::Write(pLoadingContext, "+varSys+", "+varTua+");"]
+	def generateRead(self, varSys, varTua, version):
+		return [self.fullType()+"::CTuaType_"+version.replace(".", "_")+"::Read(pLoadingContext, "+varTua+", "+varSys+");"]
 	def generateTuaType(self):
 		res = []
-		if self.inheritance:
-			res.append("class CTuaType : public "+self.inheritance.fullType()+"::CTuaType")
-		else:
-			res.append("class CTuaType")
 		
-		res.append("{")
-		res.append("public:")
-		for Mem in self.members:
-			for l in Mem.generateTuaDeclaration():
-				res.append("	"+l)
-		res.append("	static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, "+self.fullType()+"& SysType);")
-		res.append("	static void Write(class CAssetsSaveLoadContext* pLoadingContext, const "+self.fullType()+"& SysType, CTuaType& TuaType);")
-		res.append("};")
-		res.append("")
+		acceptedVersion = []
+		for v in versionList:
+			acceptedVersion.append(v)
+			vName = v.replace(".", "_")
+			
+			if self.inheritance:
+				res.append("class CTuaType_"+vName+" : public "+self.inheritance.fullType()+"::CTuaType_"+vName+"")
+			else:
+				res.append("class CTuaType_"+vName)
+			
+			res.append("{")
+			res.append("public:")
+			for Mem in self.members:
+				if Mem.version in acceptedVersion:
+					for l in Mem.generateTuaDeclaration(v):
+						res.append("	"+l)
+			res.append("	static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_"+vName+"& TuaType, "+self.fullType()+"& SysType);")
+			res.append("	static void Write(class CAssetsSaveLoadContext* pLoadingContext, const "+self.fullType()+"& SysType, CTuaType_"+vName+"& TuaType);")
+			res.append("};")
+			res.append("")
 		
 		return res
-	def generateReadImpl(self):
-		ns = self.fullType()+"::CTuaType::"
-		
+	def generateReadImpl(self, acceptedVersion):
 		res = []
 		
+		vName = acceptedVersion[-1].replace(".", "_")
+		ns = self.fullType()+"::CTuaType_"+vName+"::"
+		
 		for c in self.classes:
-			res.extend(c.generateReadImpl())
+			res.extend(c.generateReadImpl(acceptedVersion))
 			res.append("")
 			
-		res.append("void "+ns+"Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, "+self.fullType()+"& SysType)")
+		res.append("void "+ns+"Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_"+vName+"& TuaType, "+self.fullType()+"& SysType)")
 		res.append("{")
 		if self.inheritance:
-			res.append("	"+self.inheritance.fullType()+"::CTuaType::Read(pLoadingContext, TuaType, SysType);")
+			res.append("	"+self.inheritance.fullType()+"::CTuaType_"+vName+"::Read(pLoadingContext, TuaType, SysType);")
 			res.append("")
 		for Mem in self.members:
-			for l in Mem.generateRead():
-				res.append("	"+l)
+			if Mem.version in acceptedVersion:
+				for l in Mem.generateRead(acceptedVersion[-1]):
+					res.append("	"+l)
 		res.append("}")
+		res.append("")
+			
 		return res
 	
-	def generateWriteImpl(self):
-		ns = self.fullType()+"::CTuaType::"
-		
+	def generateWriteImpl(self, acceptedVersion):
 		res = []
 		
+		vName = acceptedVersion[-1].replace(".", "_")
+		ns = self.fullType()+"::CTuaType_"+vName+"::"
+		
 		for c in self.classes:
-			res.extend(c.generateWriteImpl())
+			res.extend(c.generateWriteImpl(acceptedVersion))
 			res.append("")
 			
-		res.append("void "+ns+"Write(CAssetsSaveLoadContext* pLoadingContext, const "+self.fullType()+"& SysType, CTuaType& TuaType)")
+		res.append("void "+ns+"Write(CAssetsSaveLoadContext* pLoadingContext, const "+self.fullType()+"& SysType, CTuaType_"+vName+"& TuaType)")
 		res.append("{")
 		if self.inheritance:
-			res.append("	"+self.inheritance.fullType()+"::CTuaType::Write(pLoadingContext, SysType, TuaType);")
+			res.append("	"+self.inheritance.fullType()+"::CTuaType_"+vName+"::Write(pLoadingContext, SysType, TuaType);")
 			res.append("")
 		for Mem in self.members:
-			for l in Mem.generateWrite():
-				res.append("	"+l)
+			if Mem.version in acceptedVersion:
+				for l in Mem.generateWrite(acceptedVersion[-1]):
+					res.append("	"+l)
 		res.append("}")
+			
 		return res
 		
 	def generateAssetPathOp(self, var, operation):
@@ -1042,8 +1056,8 @@ class Class(Type):
 		self.parent = parent
 	def setInheritance(self, inheritance):
 		self.inheritance = inheritance
-	def addMember(self, memberName, t, defaultValue=None):
-		Mem = Member(memberName, t)
+	def addMember(self, version, memberName, t, defaultValue=None):
+		Mem = Member(version, memberName, t)
 		self.members.append(Mem)
 		if defaultValue:
 			self.constructor.extend(t.generateCopy(Mem.memberName(), defaultValue))
@@ -1585,12 +1599,15 @@ def generateImpl(asset):
 	for l in asset.generateConstructor():
 		print >>f, l
 	print >>f, ""
-	for l in asset.generateReadImpl():
-		print >>f, l
-	print >>f, ""
-	for l in asset.generateWriteImpl():
-		print >>f, l
-	print >>f, ""
+	lAcceptedVersion = []
+	for v in versionList:
+		lAcceptedVersion.append(v)
+		for l in asset.generateReadImpl(lAcceptedVersion):
+			print >>f, l
+		print >>f, ""
+		for l in asset.generateWriteImpl(lAcceptedVersion):
+			print >>f, l
+		print >>f, ""
 	for l in asset.generateGetImpl("int"):
 		print >>f, l
 	for l in asset.generateSetImpl("int"):
@@ -1644,76 +1661,76 @@ mainAsset = Class("Asset")
 
 # CHARACTER ############################################################
 character_part = Class("Part")
-character_part.addMember("Name", TypeString(128))
-character_part.addMember("DefaultPath", TypeAssetPath())
+character_part.addMember("0.1.0", "Name", TypeString(128))
+character_part.addMember("0.1.0", "DefaultPath", TypeAssetPath())
 
 character = ClassAsset("Character", len(assetsList))
 character.setInheritance(mainAsset)
 character.addClass(character_part)
-character.addMember("IdlePath", TypeAssetPath())
-character.addMember("WalkPath", TypeAssetPath())
-character.addMember("ControlledJumpPath", TypeAssetPath())
-character.addMember("UncontrolledJumpPath", TypeAssetPath())
-character.addMember("Part", TypeArray(character_part))
+character.addMember("0.1.0", "IdlePath", TypeAssetPath())
+character.addMember("0.1.0", "WalkPath", TypeAssetPath())
+character.addMember("0.1.0", "ControlledJumpPath", TypeAssetPath())
+character.addMember("0.1.0", "UncontrolledJumpPath", TypeAssetPath())
+character.addMember("0.1.0", "Part", TypeArray(character_part))
 
 assetsList.append(character)
 
 # CHARACTER PART #######################################################
 characterPart = ClassAsset("CharacterPart", len(assetsList))
 characterPart.setInheritance(mainAsset)
-characterPart.addMember("CharacterPath", TypeAssetPath())
-characterPart.addMember("CharacterPart", TypeSubPath())
-characterPart.addMember("SkeletonSkinPath", TypeAssetPath())
+characterPart.addMember("0.1.0", "CharacterPath", TypeAssetPath())
+characterPart.addMember("0.1.0", "CharacterPart", TypeSubPath())
+characterPart.addMember("0.1.0", "SkeletonSkinPath", TypeAssetPath())
 
 assetsList.append(characterPart)
 
 # GUI BOX STYLE ########################################################
 guiBoxStyle = ClassAsset("GuiBoxStyle", len(assetsList))
 guiBoxStyle.setInheritance(mainAsset)
-guiBoxStyle.addMember("MinWidth", TypeInt32(), "0")
-guiBoxStyle.addMember("MinHeight", TypeInt32(), "0")
-guiBoxStyle.addMember("Margin", TypeInt32(), "0")
-guiBoxStyle.addMember("Padding", TypeInt32(), "0")
-guiBoxStyle.addMember("Spacing", TypeInt32(), "0")
-guiBoxStyle.addMember("RectPath", TypeAssetPath())
+guiBoxStyle.addMember("0.1.0", "MinWidth", TypeInt32(), "0")
+guiBoxStyle.addMember("0.1.0", "MinHeight", TypeInt32(), "0")
+guiBoxStyle.addMember("0.1.0", "Margin", TypeInt32(), "0")
+guiBoxStyle.addMember("0.1.0", "Padding", TypeInt32(), "0")
+guiBoxStyle.addMember("0.1.0", "Spacing", TypeInt32(), "0")
+guiBoxStyle.addMember("0.1.0", "RectPath", TypeAssetPath())
 
 assetsList.append(guiBoxStyle)
 
 # GUI BUTTON STYLE #####################################################
 guiButtonStyle = ClassAsset("GuiButtonStyle", len(assetsList))
 guiButtonStyle.setInheritance(mainAsset)
-guiButtonStyle.addMember("IdleStylePath", TypeAssetPath())
-guiButtonStyle.addMember("MouseOverStylePath", TypeAssetPath())
-guiButtonStyle.addMember("ReadOnlyStylePath", TypeAssetPath())
-guiButtonStyle.addMember("FocusStylePath", TypeAssetPath())
+guiButtonStyle.addMember("0.1.0", "IdleStylePath", TypeAssetPath())
+guiButtonStyle.addMember("0.1.0", "MouseOverStylePath", TypeAssetPath())
+guiButtonStyle.addMember("0.1.0", "ReadOnlyStylePath", TypeAssetPath())
+guiButtonStyle.addMember("0.2.0", "FocusStylePath", TypeAssetPath())
 
 assetsList.append(guiButtonStyle)
 
 # GUI COLOR EDIT STYLE #################################################
 guiColorEditStyle = ClassAsset("GuiColorEditStyle", len(assetsList))
 guiColorEditStyle.setInheritance(mainAsset)
-guiColorEditStyle.addMember("ButtonStylePath", TypeAssetPath())
-guiColorEditStyle.addMember("PopupStylePath", TypeAssetPath())
-guiColorEditStyle.addMember("RGBIconPath", TypeAssetPath())
-guiColorEditStyle.addMember("HSVIconPath", TypeAssetPath())
-guiColorEditStyle.addMember("SquareIconPath", TypeAssetPath())
-guiColorEditStyle.addMember("WheelIconPath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "ButtonStylePath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "PopupStylePath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "RGBIconPath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "HSVIconPath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "SquareIconPath", TypeAssetPath())
+guiColorEditStyle.addMember("0.1.0", "WheelIconPath", TypeAssetPath())
 
 assetsList.append(guiColorEditStyle)
 
 # GUI LABEL STYLE ######################################################
 guiLabelStyle = ClassAsset("GuiLabelStyle", len(assetsList))
 guiLabelStyle.setInheritance(mainAsset)
-guiLabelStyle.addMember("MinWidth", TypeInt32(), "0")
-guiLabelStyle.addMember("MinHeight", TypeInt32(), "0")
-guiLabelStyle.addMember("Margin", TypeInt32(), "0")
-guiLabelStyle.addMember("Padding", TypeInt32(), "0")
-guiLabelStyle.addMember("Spacing", TypeInt32(), "0")
-guiLabelStyle.addMember("FontSize", TypeInt32(), "12")
-guiLabelStyle.addMember("TextColor", TypeColor(), "1.0f")
-guiLabelStyle.addMember("TextAlignment", TypeInt32(), "TEXTALIGNMENT_LEFT")
-guiLabelStyle.addMember("RectPath", TypeAssetPath())
-guiLabelStyle.addMember("IconPath", TypeAssetPath())
+guiLabelStyle.addMember("0.1.0", "MinWidth", TypeInt32(), "0")
+guiLabelStyle.addMember("0.1.0", "MinHeight", TypeInt32(), "0")
+guiLabelStyle.addMember("0.1.0", "Margin", TypeInt32(), "0")
+guiLabelStyle.addMember("0.1.0", "Padding", TypeInt32(), "0")
+guiLabelStyle.addMember("0.1.0", "Spacing", TypeInt32(), "0")
+guiLabelStyle.addMember("0.1.0", "FontSize", TypeInt32(), "12")
+guiLabelStyle.addMember("0.1.0", "TextColor", TypeColor(), "1.0f")
+guiLabelStyle.addMember("0.1.0", "TextAlignment", TypeInt32(), "TEXTALIGNMENT_LEFT")
+guiLabelStyle.addMember("0.1.0", "RectPath", TypeAssetPath())
+guiLabelStyle.addMember("0.1.0", "IconPath", TypeAssetPath())
 guiLabelStyle.addPublicLines([
 	"enum",
 	"{",
@@ -1731,19 +1748,19 @@ assetsList.append(guiLabelStyle)
 # GUI INT EDIT #########################################################
 guiIntEditStyle = ClassAsset("GuiIntEditStyle", len(assetsList))
 guiIntEditStyle.setInheritance(mainAsset)
-guiIntEditStyle.addMember("IncreaseButtonStylePath", TypeAssetPath())
-guiIntEditStyle.addMember("DecreaseButtonStylePath", TypeAssetPath())
+guiIntEditStyle.addMember("0.1.0", "IncreaseButtonStylePath", TypeAssetPath())
+guiIntEditStyle.addMember("0.1.0", "DecreaseButtonStylePath", TypeAssetPath())
 
 assetsList.append(guiIntEditStyle)
 
 # GUI LINE STYLE #######################################################
 guiLineStyle = ClassAsset("GuiLineStyle", len(assetsList))
 guiLineStyle.setInheritance(mainAsset)
-guiLineStyle.addMember("Flags", TypeInt32(), "0x0")
-guiLineStyle.addMember("BorderColor", TypeColor(), "1.0f")
-guiLineStyle.addMember("ImageLPath", TypeAssetPath())
-guiLineStyle.addMember("ImageMPath", TypeAssetPath())
-guiLineStyle.addMember("ImageRPath", TypeAssetPath())
+guiLineStyle.addMember("0.1.0", "Flags", TypeInt32(), "0x0")
+guiLineStyle.addMember("0.1.0", "BorderColor", TypeColor(), "1.0f")
+guiLineStyle.addMember("0.1.0", "ImageLPath", TypeAssetPath())
+guiLineStyle.addMember("0.1.0", "ImageMPath", TypeAssetPath())
+guiLineStyle.addMember("0.1.0", "ImageRPath", TypeAssetPath())
 guiLineStyle.addPublicLines([
 	"enum",
 	"{",
@@ -1757,22 +1774,22 @@ assetsList.append(guiLineStyle)
 #~ # GUI RECT STYLE #######################################################
 guiRectStyle = ClassAsset("GuiRectStyle", len(assetsList))
 guiRectStyle.setInheritance(mainAsset)
-guiRectStyle.addMember("Flags", TypeInt32(), "0x0")
-guiRectStyle.addMember("BackgroundColor", TypeColor(), "1.0f")
-guiRectStyle.addMember("BackgroundPadding", TypeFloat(), "0")
-guiRectStyle.addMember("BorderColor", TypeColor(), "1.0f")
-guiRectStyle.addMember("BorderFlags", TypeInt32(), "0x0")
-guiRectStyle.addMember("CornerRadius", TypeFloat(), "0")
-guiRectStyle.addMember("CornerFlags", TypeInt32(), "0x0")
-guiRectStyle.addMember("ImagePadding", TypeInt32(), "0")
-guiRectStyle.addMember("ImageTPath", TypeAssetPath())
-guiRectStyle.addMember("ImageRPath", TypeAssetPath())
-guiRectStyle.addMember("ImageBPath", TypeAssetPath())
-guiRectStyle.addMember("ImageLPath", TypeAssetPath())
-guiRectStyle.addMember("ImageTRPath", TypeAssetPath())
-guiRectStyle.addMember("ImageBRPath", TypeAssetPath())
-guiRectStyle.addMember("ImageBLPath", TypeAssetPath())
-guiRectStyle.addMember("ImageTLPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "Flags", TypeInt32(), "0x0")
+guiRectStyle.addMember("0.1.0", "BackgroundColor", TypeColor(), "1.0f")
+guiRectStyle.addMember("0.1.0", "BackgroundPadding", TypeFloat(), "0")
+guiRectStyle.addMember("0.1.0", "BorderColor", TypeColor(), "1.0f")
+guiRectStyle.addMember("0.1.0", "BorderFlags", TypeInt32(), "0x0")
+guiRectStyle.addMember("0.1.0", "CornerRadius", TypeFloat(), "0")
+guiRectStyle.addMember("0.1.0", "CornerFlags", TypeInt32(), "0x0")
+guiRectStyle.addMember("0.1.0", "ImagePadding", TypeInt32(), "0")
+guiRectStyle.addMember("0.1.0", "ImageTPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageRPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageBPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageLPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageTRPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageBRPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageBLPath", TypeAssetPath())
+guiRectStyle.addMember("0.1.0", "ImageTLPath", TypeAssetPath())
 guiRectStyle.addPublicLines([
 	"enum",
 	"{",
@@ -1814,62 +1831,62 @@ assetsList.append(guiRectStyle)
 # GUI SCROLLBAR STYLE ##################################################
 guiScrollbarStyle = ClassAsset("GuiScrollbarStyle", len(assetsList))
 guiScrollbarStyle.setInheritance(mainAsset)
-guiScrollbarStyle.addMember("RectPath", TypeAssetPath())
-guiScrollbarStyle.addMember("DefaultRailPath", TypeAssetPath())
-guiScrollbarStyle.addMember("DefaultSliderPath", TypeAssetPath())
-guiScrollbarStyle.addMember("MouseOverSliderPath", TypeAssetPath())
-guiScrollbarStyle.addMember("Margin", TypeInt32(), "0")
-guiScrollbarStyle.addMember("Padding", TypeInt32(), "0")
+guiScrollbarStyle.addMember("0.1.0", "RectPath", TypeAssetPath())
+guiScrollbarStyle.addMember("0.1.0", "DefaultRailPath", TypeAssetPath())
+guiScrollbarStyle.addMember("0.1.0", "DefaultSliderPath", TypeAssetPath())
+guiScrollbarStyle.addMember("0.1.0", "MouseOverSliderPath", TypeAssetPath())
+guiScrollbarStyle.addMember("0.1.0", "Margin", TypeInt32(), "0")
+guiScrollbarStyle.addMember("0.1.0", "Padding", TypeInt32(), "0")
 
 assetsList.append(guiScrollbarStyle)
 
 # GUI SCROLLBAR STYLE ##################################################
 guiSliderStyle = ClassAsset("GuiSliderStyle", len(assetsList))
 guiSliderStyle.setInheritance(mainAsset)
-guiSliderStyle.addMember("RectPath", TypeAssetPath())
-guiSliderStyle.addMember("DefaultRailPath", TypeAssetPath())
-guiSliderStyle.addMember("CursorPath", TypeAssetPath())
-guiSliderStyle.addMember("Margin", TypeInt32(), "0")
-guiSliderStyle.addMember("Padding", TypeInt32(), "0")
+guiSliderStyle.addMember("0.1.0", "RectPath", TypeAssetPath())
+guiSliderStyle.addMember("0.1.0", "DefaultRailPath", TypeAssetPath())
+guiSliderStyle.addMember("0.1.0", "CursorPath", TypeAssetPath())
+guiSliderStyle.addMember("0.1.0", "Margin", TypeInt32(), "0")
+guiSliderStyle.addMember("0.1.0", "Padding", TypeInt32(), "0")
 
 assetsList.append(guiSliderStyle)
 
 # GUI TABS STYLE #######################################################
 guiTabsStyle = ClassAsset("GuiTabsStyle", len(assetsList))
 guiTabsStyle.setInheritance(mainAsset)
-guiTabsStyle.addMember("LayoutPath", TypeAssetPath())
-guiTabsStyle.addMember("ContentPath", TypeAssetPath())
-guiTabsStyle.addMember("ButtonListPath", TypeAssetPath())
-guiTabsStyle.addMember("InactiveButtonPath", TypeAssetPath())
-guiTabsStyle.addMember("ActiveButtonPath", TypeAssetPath())
-guiTabsStyle.addMember("ButtonListFill", TypeBool(), "false")
-guiTabsStyle.addMember("ButtonListText", TypeBool(), "false")
+guiTabsStyle.addMember("0.1.0", "LayoutPath", TypeAssetPath())
+guiTabsStyle.addMember("0.1.0", "ContentPath", TypeAssetPath())
+guiTabsStyle.addMember("0.1.0", "ButtonListPath", TypeAssetPath())
+guiTabsStyle.addMember("0.1.0", "InactiveButtonPath", TypeAssetPath())
+guiTabsStyle.addMember("0.1.0", "ActiveButtonPath", TypeAssetPath())
+guiTabsStyle.addMember("0.1.0", "ButtonListFill", TypeBool(), "false")
+guiTabsStyle.addMember("0.1.0", "ButtonListText", TypeBool(), "false")
 
 assetsList.append(guiTabsStyle)
 
 # GUI TOGGLE STYLE #####################################################
 guiToggleStyle = ClassAsset("GuiToggleStyle", len(assetsList))
 guiToggleStyle.setInheritance(mainAsset)
-guiToggleStyle.addMember("IdleTrueStylePath", TypeAssetPath())
-guiToggleStyle.addMember("MouseOverTrueStylePath", TypeAssetPath())
-guiToggleStyle.addMember("IconTruePath", TypeAssetPath())
-guiToggleStyle.addMember("IdleFalseStylePath", TypeAssetPath())
-guiToggleStyle.addMember("MouseOverFalseStylePath", TypeAssetPath())
-guiToggleStyle.addMember("IconFalsePath", TypeAssetPath())
-guiToggleStyle.addMember("SwitchIcon", TypeBool(), "false")
+guiToggleStyle.addMember("0.1.0", "IdleTrueStylePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "MouseOverTrueStylePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "IconTruePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "IdleFalseStylePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "MouseOverFalseStylePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "IconFalsePath", TypeAssetPath())
+guiToggleStyle.addMember("0.1.0", "SwitchIcon", TypeBool(), "false")
 
 assetsList.append(guiToggleStyle)
 
 # IMAGE ################################################################
 image = ClassAsset("Image", len(assetsList))
 image.setInheritance(mainAsset)
-image.addMember("GridWidth", TypeInt32(), "1")
-image.addMember("GridHeight", TypeInt32(), "1")
-image.addMember("GridSpacing", TypeInt32(), "0")
-image.addMember("TexelSize", TypeInt32(), "1024")
-image.addMember("TilingEnabled", TypeBool(), "false")
-image.addMember("Data", TypeArray2d(TypeUInt8()))
-image.addMember("Texture", TypeTextureHandle())
+image.addMember("0.1.0", "GridWidth", TypeInt32(), "1")
+image.addMember("0.1.0", "GridHeight", TypeInt32(), "1")
+image.addMember("0.1.0", "GridSpacing", TypeInt32(), "0")
+image.addMember("0.1.0", "TexelSize", TypeInt32(), "1024")
+image.addMember("0.1.0", "TilingEnabled", TypeBool(), "false")
+image.addMember("0.1.0", "Data", TypeArray2d(TypeUInt8()))
+image.addMember("0.2.0", "Texture", TypeTextureHandle())
 image.addHeader("shared/graphics.h")
 image.addPublicFunc([
 	"vec4 GetColor(int x, int y) const;"
@@ -1881,45 +1898,45 @@ assetsList.append(image)
 # MAP ##################################################################
 _map = ClassAsset("Map", len(assetsList))
 _map.setInheritance(mainAsset)
-_map.addMember("BgGroup", TypeArray(TypeAssetPath()))
-_map.addMember("FgGroup", TypeArray(TypeAssetPath()))
-_map.addMember("ZoneLayer", TypeArray(TypeAssetPath()))
-_map.addMember("EntityLayer", TypeArray(TypeAssetPath()))
+_map.addMember("0.1.0", "BgGroup", TypeArray(TypeAssetPath()))
+_map.addMember("0.1.0", "FgGroup", TypeArray(TypeAssetPath()))
+_map.addMember("0.1.0", "ZoneLayer", TypeArray(TypeAssetPath()))
+_map.addMember("0.1.0", "EntityLayer", TypeArray(TypeAssetPath()))
 
 assetsList.append(_map)
 
 # MAP GROUP ############################################################
 mapGroup = ClassAsset("MapGroup", len(assetsList))
 mapGroup.setInheritance(mainAsset)
-mapGroup.addMember("ParentPath", TypeAssetPath())
-mapGroup.addMember("Layer", TypeArray(TypeAssetPath()))
-mapGroup.addMember("Position", TypeVec2(), "vec2(0.0f, 0.0f)")
-mapGroup.addMember("HardParallax", TypeVec2(), "vec2(1.0f, 1.0f)")
-mapGroup.addMember("Clipping", TypeBool(), "false")
-mapGroup.addMember("ClipPosition", TypeVec2(), "vec2(0.0f, 0.0f)")
-mapGroup.addMember("ClipSize", TypeVec2(), "vec2(64.0f, 64.0f)")
-mapGroup.addMember("Visibility", TypeBool(), "true")
+mapGroup.addMember("0.1.0", "ParentPath", TypeAssetPath())
+mapGroup.addMember("0.1.0", "Layer", TypeArray(TypeAssetPath()))
+mapGroup.addMember("0.1.0", "Position", TypeVec2(), "vec2(0.0f, 0.0f)")
+mapGroup.addMember("0.1.0", "HardParallax", TypeVec2(), "vec2(1.0f, 1.0f)")
+mapGroup.addMember("0.1.0", "Clipping", TypeBool(), "false")
+mapGroup.addMember("0.1.0", "ClipPosition", TypeVec2(), "vec2(0.0f, 0.0f)")
+mapGroup.addMember("0.1.0", "ClipSize", TypeVec2(), "vec2(64.0f, 64.0f)")
+mapGroup.addMember("0.1.0", "Visibility", TypeBool(), "true")
 
 assetsList.append(mapGroup)
 
 # MAP LAYER QUADS ######################################################
 mapLayerQuads_quad = Class("Quad")
-mapLayerQuads_quad.addMember("Pivot", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("Size", TypeVec2(), "1.0f")
-mapLayerQuads_quad.addMember("Angle", TypeFloat(), "0.0f")
-mapLayerQuads_quad.addMember("Vertex0", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("Vertex1", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("Vertex2", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("Vertex3", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("UV0", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("UV1", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("UV2", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("UV3", TypeVec2(), "0.0f")
-mapLayerQuads_quad.addMember("Color0", TypeColor(), "1.0f")
-mapLayerQuads_quad.addMember("Color1", TypeColor(), "1.0f")
-mapLayerQuads_quad.addMember("Color2", TypeColor(), "1.0f")
-mapLayerQuads_quad.addMember("Color3", TypeColor(), "1.0f")
-mapLayerQuads_quad.addMember("AnimationPath", TypeAssetPath())
+mapLayerQuads_quad.addMember("0.1.0", "Pivot", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Size", TypeVec2(), "1.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Angle", TypeFloat(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Vertex0", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Vertex1", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Vertex2", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Vertex3", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "UV0", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "UV1", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "UV2", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "UV3", TypeVec2(), "0.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Color0", TypeColor(), "1.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Color1", TypeColor(), "1.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Color2", TypeColor(), "1.0f")
+mapLayerQuads_quad.addMember("0.1.0", "Color3", TypeColor(), "1.0f")
+mapLayerQuads_quad.addMember("0.1.0", "AnimationPath", TypeAssetPath())
 mapLayerQuads_quad.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"
@@ -1928,14 +1945,14 @@ mapLayerQuads_quad.addPublicFunc([
 mapLayerQuads = ClassAsset("MapLayerQuads", len(assetsList))
 mapLayerQuads.setInheritance(mainAsset)
 mapLayerQuads.addClass(mapLayerQuads_quad)
-mapLayerQuads.addMember("ParentPath", TypeAssetPath())
-mapLayerQuads.addMember("ImagePath", TypeAssetPath())
-mapLayerQuads.addMember("Quad", TypeArray(mapLayerQuads_quad))
+mapLayerQuads.addMember("0.1.0", "ParentPath", TypeAssetPath())
+mapLayerQuads.addMember("0.1.0", "ImagePath", TypeAssetPath())
+mapLayerQuads.addMember("0.1.0", "Quad", TypeArray(mapLayerQuads_quad))
 mapLayerQuads.addPublicFunc([
 	"void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
 ])
-mapLayerQuads.addMember("Visibility", TypeBool(), "true")
+mapLayerQuads.addMember("0.1.0", "Visibility", TypeBool(), "true")
 mapLayerQuads.addPublicLines([
 	"enum",
 	"{",
@@ -1953,17 +1970,17 @@ assetsList.append(mapLayerQuads)
 
 # MAP LAYER TILES ######################################################
 mapLayerTiles_tile = Class("Tile")
-mapLayerTiles_tile.addMember("Index", TypeUInt8(), "0")
-mapLayerTiles_tile.addMember("Flags", TypeUInt8(), "0x0")
+mapLayerTiles_tile.addMember("0.1.0", "Index", TypeUInt8(), "0")
+mapLayerTiles_tile.addMember("0.1.0", "Flags", TypeUInt8(), "0x0")
 
 mapLayerTiles = ClassAsset("MapLayerTiles", len(assetsList))
 mapLayerTiles.setInheritance(mainAsset)
 mapLayerTiles.addClass(mapLayerTiles_tile)
-mapLayerTiles.addMember("ParentPath", TypeAssetPath())
-mapLayerTiles.addMember("ImagePath", TypeAssetPath())
-mapLayerTiles.addMember("Color", TypeColor(), "1.0f")
-mapLayerTiles.addMember("Tile", TypeArray2d(mapLayerTiles_tile))
-mapLayerTiles.addMember("Visibility", TypeBool(), "true")
+mapLayerTiles.addMember("0.1.0", "ParentPath", TypeAssetPath())
+mapLayerTiles.addMember("0.1.0", "ImagePath", TypeAssetPath())
+mapLayerTiles.addMember("0.1.0", "Color", TypeColor(), "1.0f")
+mapLayerTiles.addMember("0.1.0", "Tile", TypeArray2d(mapLayerTiles_tile))
+mapLayerTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
 
 mapLayerTiles.addPublicLines([
 	"enum",
@@ -1980,94 +1997,94 @@ assetsList.append(mapLayerTiles)
 
 # MAP ZONE TILES #######################################################
 mapZoneTiles_tile = Class("Tile")
-mapZoneTiles_tile.addMember("Index", TypeUInt8(), "0")
+mapZoneTiles_tile.addMember("0.1.0", "Index", TypeUInt8(), "0")
 
 mapZoneTiles = ClassAsset("MapZoneTiles", len(assetsList))
 mapZoneTiles.setInheritance(mainAsset)
 mapZoneTiles.addClass(mapZoneTiles_tile)
-mapZoneTiles.addMember("ParentPath", TypeAssetPath())
-mapZoneTiles.addMember("ZoneTypePath", TypeAssetPath())
-mapZoneTiles.addMember("Tile", TypeArray2d(mapZoneTiles_tile))
-mapZoneTiles.addMember("Visibility", TypeBool(), "true")
+mapZoneTiles.addMember("0.1.0", "ParentPath", TypeAssetPath())
+mapZoneTiles.addMember("0.1.0", "ZoneTypePath", TypeAssetPath())
+mapZoneTiles.addMember("0.1.0", "Tile", TypeArray2d(mapZoneTiles_tile))
+mapZoneTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
 
 assetsList.append(mapZoneTiles)
 
 # MAP ENTITIES #########################################################
 mapEntities_entity = Class("Entity")
-mapEntities_entity.addMember("TypePath", TypeAssetPath())
-mapEntities_entity.addMember("Position", TypeVec2(), "0.0f")
+mapEntities_entity.addMember("0.1.0", "TypePath", TypeAssetPath())
+mapEntities_entity.addMember("0.1.0", "Position", TypeVec2(), "0.0f")
 
 mapEntities = ClassAsset("MapEntities", len(assetsList))
 mapEntities.setInheritance(mainAsset)
 mapEntities.addClass(mapEntities_entity)
-mapEntities.addMember("ParentPath", TypeAssetPath())
-mapEntities.addMember("Entity", TypeArray(mapEntities_entity))
-mapEntities.addMember("Visibility", TypeBool(), "true")
+mapEntities.addMember("0.1.0", "ParentPath", TypeAssetPath())
+mapEntities.addMember("0.1.0", "Entity", TypeArray(mapEntities_entity))
+mapEntities.addMember("0.1.0", "Visibility", TypeBool(), "true")
 
 assetsList.append(mapEntities)
 
 # ZONE TYPE ############################################################
 zoneType_index = Class("Index")
-zoneType_index.addMember("Used", TypeBool(), "true")
-zoneType_index.addMember("Description", TypeString(128))
-zoneType_index.addMember("Color", TypeColor(), "1.0f")
+zoneType_index.addMember("0.1.0", "Used", TypeBool(), "true")
+zoneType_index.addMember("0.1.0", "Description", TypeString(128))
+zoneType_index.addMember("0.1.0", "Color", TypeColor(), "1.0f")
 
 zoneType = ClassAsset("ZoneType", len(assetsList))
 zoneType.setInheritance(mainAsset)
 zoneType.addClass(zoneType_index)
-zoneType.addMember("Index", TypeArray(zoneType_index))
+zoneType.addMember("0.1.0", "Index", TypeArray(zoneType_index))
 
 assetsList.append(zoneType)
 
 # ENTITY TYPE ##########################################################
 entityType = ClassAsset("EntityType", len(assetsList))
 entityType.setInheritance(mainAsset)
-entityType.addMember("GizmoPath", TypeAssetPath())
-entityType.addMember("CollisionRadius", TypeFloat())
+entityType.addMember("0.1.0", "GizmoPath", TypeAssetPath())
+entityType.addMember("0.1.0", "CollisionRadius", TypeFloat())
 
 assetsList.append(entityType)
 
 # SKELETON #############################################################
 skeleton_bone = Class("Bone")
-skeleton_bone.addMember("Length", TypeFloat(), "32.0f")
-skeleton_bone.addMember("Anchor", TypeFloat(), "0.0f")
-skeleton_bone.addMember("Translation", TypeVec2(), "0.0f")
-skeleton_bone.addMember("Scale", TypeVec2(), "1.0f")
-skeleton_bone.addMember("Angle", TypeFloat(), "0.0f")
-skeleton_bone.addMember("Name", TypeString(128))
-skeleton_bone.addMember("Color", TypeColor(), "1.0f")
+skeleton_bone.addMember("0.1.0", "Length", TypeFloat(), "32.0f")
+skeleton_bone.addMember("0.1.0", "Anchor", TypeFloat(), "0.0f")
+skeleton_bone.addMember("0.1.0", "Translation", TypeVec2(), "0.0f")
+skeleton_bone.addMember("0.1.0", "Scale", TypeVec2(), "1.0f")
+skeleton_bone.addMember("0.1.0", "Angle", TypeFloat(), "0.0f")
+skeleton_bone.addMember("0.1.0", "Name", TypeString(128))
+skeleton_bone.addMember("0.1.0", "Color", TypeColor(), "1.0f")
 
 skeleton_layer = Class("Layer")
-skeleton_layer.addMember("Name", TypeString(128))
+skeleton_layer.addMember("0.1.0", "Name", TypeString(128))
 
 skeleton = ClassAsset("Skeleton", len(assetsList))
 skeleton.setInheritance(mainAsset)
 skeleton.addClass(skeleton_bone)
 skeleton.addClass(skeleton_layer)
-skeleton.addMember("ParentPath", TypeAssetPath())
-skeleton.addMember("DefaultSkinPath", TypeAssetPath())
-skeleton.addMember("Bone", TypeArray(skeleton_bone))
-skeleton.addMember("Layer", TypeArray(skeleton_layer))
+skeleton.addMember("0.1.0", "ParentPath", TypeAssetPath())
+skeleton.addMember("0.1.0", "DefaultSkinPath", TypeAssetPath())
+skeleton.addMember("0.1.0", "Bone", TypeArray(skeleton_bone))
+skeleton.addMember("0.1.0", "Layer", TypeArray(skeleton_layer))
 
 assetsList.append(skeleton)
 
 # SKELETON ANIMATION ###################################################
 skeletonAnim_boneAnim_frame = Class("Frame")
-skeletonAnim_boneAnim_frame.addMember("Translation", TypeVec2(), "0.0f")
-skeletonAnim_boneAnim_frame.addMember("Scale", TypeVec2(), "1.0f")
-skeletonAnim_boneAnim_frame.addMember("Angle", TypeFloat(), "0.0f")
-skeletonAnim_boneAnim_frame.addMember("Alignment", TypeInt32(), "BONEALIGN_PARENTBONE")
+skeletonAnim_boneAnim_frame.addMember("0.1.0", "Translation", TypeVec2(), "0.0f")
+skeletonAnim_boneAnim_frame.addMember("0.1.0", "Scale", TypeVec2(), "1.0f")
+skeletonAnim_boneAnim_frame.addMember("0.1.0", "Angle", TypeFloat(), "0.0f")
+skeletonAnim_boneAnim_frame.addMember("0.1.0", "Alignment", TypeInt32(), "BONEALIGN_PARENTBONE")
 
 skeletonAnim_boneAnim_keyframe = Class("KeyFrame")
 skeletonAnim_boneAnim_keyframe.setInheritance(skeletonAnim_boneAnim_frame)
-skeletonAnim_boneAnim_keyframe.addMember("Time", TypeInt32(), "0")
+skeletonAnim_boneAnim_keyframe.addMember("0.1.0", "Time", TypeInt32(), "0")
 
 skeletonAnim_boneAnim = Class("BoneAnimation")
 skeletonAnim_boneAnim.addClass(skeletonAnim_boneAnim_frame)
 skeletonAnim_boneAnim.addClass(skeletonAnim_boneAnim_keyframe)
-skeletonAnim_boneAnim.addMember("KeyFrame", TypeArray(skeletonAnim_boneAnim_keyframe))
-skeletonAnim_boneAnim.addMember("BonePath", TypeSubPath())
-skeletonAnim_boneAnim.addMember("CycleType", TypeInt32(), "CYCLETYPE_CLAMP")
+skeletonAnim_boneAnim.addMember("0.1.0", "KeyFrame", TypeArray(skeletonAnim_boneAnim_keyframe))
+skeletonAnim_boneAnim.addMember("0.1.0", "BonePath", TypeSubPath())
+skeletonAnim_boneAnim.addMember("0.1.0", "CycleType", TypeInt32(), "CYCLETYPE_CLAMP")
 skeletonAnim_boneAnim.addPublicFunc([
 	"float GetDuration() const;",
 	"int IntTimeToKeyFrame(int IntTime) const;",
@@ -2077,19 +2094,19 @@ skeletonAnim_boneAnim.addPublicFunc([
 ])
 
 skeletonAnim_layerAnim_frame = Class("Frame")
-skeletonAnim_layerAnim_frame.addMember("Color", TypeColor(), "1.0f")
-skeletonAnim_layerAnim_frame.addMember("State", TypeInt32(), "LAYERSTATE_VISIBLE")
+skeletonAnim_layerAnim_frame.addMember("0.1.0", "Color", TypeColor(), "1.0f")
+skeletonAnim_layerAnim_frame.addMember("0.1.0", "State", TypeInt32(), "LAYERSTATE_VISIBLE")
 
 skeletonAnim_layerAnim_keyframe = Class("KeyFrame")
 skeletonAnim_layerAnim_keyframe.setInheritance(skeletonAnim_layerAnim_frame)
-skeletonAnim_layerAnim_keyframe.addMember("Time", TypeInt32(), "0")
+skeletonAnim_layerAnim_keyframe.addMember("0.1.0", "Time", TypeInt32(), "0")
 
 skeletonAnim_layerAnim = Class("LayerAnimation")
 skeletonAnim_layerAnim.addClass(skeletonAnim_layerAnim_frame)
 skeletonAnim_layerAnim.addClass(skeletonAnim_layerAnim_keyframe)
-skeletonAnim_layerAnim.addMember("KeyFrame", TypeArray(skeletonAnim_layerAnim_keyframe))
-skeletonAnim_layerAnim.addMember("LayerPath", TypeSubPath())
-skeletonAnim_layerAnim.addMember("CycleType", TypeInt32(), "CYCLETYPE_CLAMP")
+skeletonAnim_layerAnim.addMember("0.1.0", "KeyFrame", TypeArray(skeletonAnim_layerAnim_keyframe))
+skeletonAnim_layerAnim.addMember("0.1.0", "LayerPath", TypeSubPath())
+skeletonAnim_layerAnim.addMember("0.1.0", "CycleType", TypeInt32(), "CYCLETYPE_CLAMP")
 skeletonAnim_layerAnim.addPublicFunc([
 	"float GetDuration() const;",
 	"int IntTimeToKeyFrame(int IntTime) const;",
@@ -2102,10 +2119,10 @@ skeletonAnim = ClassAsset("SkeletonAnimation", len(assetsList))
 skeletonAnim.setInheritance(mainAsset)
 skeletonAnim.addClass(skeletonAnim_boneAnim)
 skeletonAnim.addClass(skeletonAnim_layerAnim)
-skeletonAnim.addMember("SkeletonPath", TypeAssetPath())
-skeletonAnim.addMember("LocalBoneAnim", TypeArray(skeletonAnim_boneAnim))
-skeletonAnim.addMember("ParentBoneAnim", TypeArray(skeletonAnim_boneAnim))
-skeletonAnim.addMember("LayerAnimation", TypeArray(skeletonAnim_layerAnim))
+skeletonAnim.addMember("0.1.0", "SkeletonPath", TypeAssetPath())
+skeletonAnim.addMember("0.1.0", "LocalBoneAnim", TypeArray(skeletonAnim_boneAnim))
+skeletonAnim.addMember("0.1.0", "ParentBoneAnim", TypeArray(skeletonAnim_boneAnim))
+skeletonAnim.addMember("0.1.0", "LayerAnimation", TypeArray(skeletonAnim_layerAnim))
 
 skeletonAnim.addPublicLines([
 	"enum",
@@ -2148,20 +2165,20 @@ assetsList.append(skeletonAnim)
 
 # SKELETON SKIN ########################################################
 skeletonSkin_sprite = Class("Bone")
-skeletonSkin_sprite.addMember("SpritePath", TypeAssetPath())
-skeletonSkin_sprite.addMember("BonePath", TypeSubPath())
-skeletonSkin_sprite.addMember("LayerPath", TypeSubPath())
-skeletonSkin_sprite.addMember("Anchor", TypeFloat(), "0.0f")
-skeletonSkin_sprite.addMember("Translation", TypeVec2(), "0.0f")
-skeletonSkin_sprite.addMember("Scale", TypeVec2(), "1.0f")
-skeletonSkin_sprite.addMember("Angle", TypeFloat(), "0.0f")
-skeletonSkin_sprite.addMember("Color", TypeColor(), "1.0f")
-skeletonSkin_sprite.addMember("Alignment", TypeInt32(), "ALIGNMENT_BONE")
+skeletonSkin_sprite.addMember("0.1.0", "SpritePath", TypeAssetPath())
+skeletonSkin_sprite.addMember("0.1.0", "BonePath", TypeSubPath())
+skeletonSkin_sprite.addMember("0.1.0", "LayerPath", TypeSubPath())
+skeletonSkin_sprite.addMember("0.1.0", "Anchor", TypeFloat(), "0.0f")
+skeletonSkin_sprite.addMember("0.1.0", "Translation", TypeVec2(), "0.0f")
+skeletonSkin_sprite.addMember("0.1.0", "Scale", TypeVec2(), "1.0f")
+skeletonSkin_sprite.addMember("0.1.0", "Angle", TypeFloat(), "0.0f")
+skeletonSkin_sprite.addMember("0.1.0", "Color", TypeColor(), "1.0f")
+skeletonSkin_sprite.addMember("0.1.0", "Alignment", TypeInt32(), "ALIGNMENT_BONE")
 skeletonSkin = ClassAsset("SkeletonSkin", len(assetsList))
 skeletonSkin.setInheritance(mainAsset)
 skeletonSkin.addClass(skeletonSkin_sprite)
-skeletonSkin.addMember("SkeletonPath", TypeAssetPath())
-skeletonSkin.addMember("Sprite", TypeArray(skeletonSkin_sprite))
+skeletonSkin.addMember("0.1.0", "SkeletonPath", TypeAssetPath())
+skeletonSkin.addMember("0.1.0", "Sprite", TypeArray(skeletonSkin_sprite))
 
 skeletonSkin.addPublicLines([
 	"enum",
@@ -2177,11 +2194,11 @@ assetsList.append(skeletonSkin)
 # SPRITE ###############################################################
 sprite = ClassAsset("Sprite", len(assetsList))
 sprite.setInheritance(mainAsset)
-sprite.addMember("ImagePath", TypeAssetPath())
-sprite.addMember("X", TypeInt32(), "0")
-sprite.addMember("Y", TypeInt32(), "0")
-sprite.addMember("Width", TypeInt32(), "1")
-sprite.addMember("Height", TypeInt32(), "1")
+sprite.addMember("0.1.0", "ImagePath", TypeAssetPath())
+sprite.addMember("0.1.0", "X", TypeInt32(), "0")
+sprite.addMember("0.1.0", "Y", TypeInt32(), "0")
+sprite.addMember("0.1.0", "Width", TypeInt32(), "1")
+sprite.addMember("0.1.0", "Height", TypeInt32(), "1")
 sprite.addPublicLines([
 	"enum",
 	"{",
@@ -2203,29 +2220,29 @@ assetsList.append(sprite)
 # WEAPON ###############################################################
 weapon = ClassAsset("Weapon", len(assetsList))
 weapon.setInheritance(mainAsset)
-weapon.addMember("CharacterPath", TypeAssetPath())
-weapon.addMember("CursorPath", TypeAssetPath())
-weapon.addMember("SkinPath", TypeAssetPath())
-weapon.addMember("AttackAnimationPath", TypeAssetPath())
+weapon.addMember("0.1.0", "CharacterPath", TypeAssetPath())
+weapon.addMember("0.1.0", "CursorPath", TypeAssetPath())
+weapon.addMember("0.1.0", "SkinPath", TypeAssetPath())
+weapon.addMember("0.1.0", "AttackAnimationPath", TypeAssetPath())
 
 assetsList.append(weapon)
 
 # MAP LAYER OBJECTS ####################################################
 mapLayerObjects_vertex = Class("Vertex")
-mapLayerObjects_vertex.addMember("Position", TypeVec2(), "0.0f")
-mapLayerObjects_vertex.addMember("Weight", TypeFloat(), "1.0f")
-mapLayerObjects_vertex.addMember("Color", TypeColor(), "1.0f")
-mapLayerObjects_vertex.addMember("Smoothness", TypeInt32(), "CBezierVertex::TYPE_AUTOSMOOTH")
-mapLayerObjects_vertex.addMember("ControlPoint0", TypeVec2(), "vec2(-16.0f, 0.0f)")
-mapLayerObjects_vertex.addMember("ControlPoint1", TypeVec2(), "vec2(16.0f, 0.0f)")
+mapLayerObjects_vertex.addMember("0.2.0", "Position", TypeVec2(), "0.0f")
+mapLayerObjects_vertex.addMember("0.2.0", "Weight", TypeFloat(), "1.0f")
+mapLayerObjects_vertex.addMember("0.2.0", "Color", TypeColor(), "1.0f")
+mapLayerObjects_vertex.addMember("0.2.0", "Smoothness", TypeInt32(), "CBezierVertex::TYPE_AUTOSMOOTH")
+mapLayerObjects_vertex.addMember("0.2.0", "ControlPoint0", TypeVec2(), "vec2(-16.0f, 0.0f)")
+mapLayerObjects_vertex.addMember("0.2.0", "ControlPoint1", TypeVec2(), "vec2(16.0f, 0.0f)")
 
 mapLayerObjects_object = Class("Object")
-mapLayerObjects_object.addMember("Position", TypeVec2(), "0.0f")
-mapLayerObjects_object.addMember("Size", TypeVec2(), "1.0f")
-mapLayerObjects_object.addMember("Angle", TypeFloat(), "0.0f")
-mapLayerObjects_object.addMember("StylePath", TypeAssetPath())
-mapLayerObjects_object.addMember("Vertex", TypeArray(mapLayerObjects_vertex))
-mapLayerObjects_object.addMember("ClosedPath", TypeBool(), "false")
+mapLayerObjects_object.addMember("0.2.0", "Position", TypeVec2(), "0.0f")
+mapLayerObjects_object.addMember("0.2.0", "Size", TypeVec2(), "1.0f")
+mapLayerObjects_object.addMember("0.2.0", "Angle", TypeFloat(), "0.0f")
+mapLayerObjects_object.addMember("0.2.0", "StylePath", TypeAssetPath())
+mapLayerObjects_object.addMember("0.2.0", "Vertex", TypeArray(mapLayerObjects_vertex))
+mapLayerObjects_object.addMember("0.2.0", "ClosedPath", TypeBool(), "false")
 mapLayerQuads.addPublicFunc([
 	"void GenerateQuads() const;",
 ])
@@ -2235,36 +2252,36 @@ mapLayerObjects.addHeader("shared/geometry/bezier.h")
 mapLayerObjects.setInheritance(mainAsset)
 mapLayerObjects.addClass(mapLayerObjects_vertex)
 mapLayerObjects.addClass(mapLayerObjects_object)
-mapLayerObjects.addMember("ParentPath", TypeAssetPath())
-mapLayerObjects.addMember("Object", TypeArray(mapLayerObjects_object))
-mapLayerObjects.addMember("Visibility", TypeBool(), "true")
+mapLayerObjects.addMember("0.2.0", "ParentPath", TypeAssetPath())
+mapLayerObjects.addMember("0.2.0", "Object", TypeArray(mapLayerObjects_object))
+mapLayerObjects.addMember("0.2.0", "Visibility", TypeBool(), "true")
 
 assetsList.append(mapLayerObjects)
 
 # MATERIAL #############################################################
 material_sprite = Class("Sprite")
-material_sprite.addMember("Path", TypeAssetPath())
-material_sprite.addMember("Size", TypeVec2(), "1.0f")
-material_sprite.addMember("Color", TypeColor(), "1.0f")
-material_sprite.addMember("Flags", TypeInt32(), "0x0")
-material_sprite.addMember("Position", TypeVec2(), "0.0f")
-material_sprite.addMember("Alignment", TypeInt32(), "SPRITEALIGN_LINE")
+material_sprite.addMember("0.2.0", "Path", TypeAssetPath())
+material_sprite.addMember("0.2.0", "Size", TypeVec2(), "1.0f")
+material_sprite.addMember("0.2.0", "Color", TypeColor(), "1.0f")
+material_sprite.addMember("0.2.0", "Flags", TypeInt32(), "0x0")
+material_sprite.addMember("0.2.0", "Position", TypeVec2(), "0.0f")
+material_sprite.addMember("0.2.0", "Alignment", TypeInt32(), "SPRITEALIGN_LINE")
 
 material_layer = Class("Layer")
-material_layer.addMember("Sprite", TypeArray(material_sprite))
-material_layer.addMember("RepeatType", TypeInt32(), "REPEATTYPE_STATIC")
-material_layer.addMember("Spacing", TypeFloat(), "0.0f")
+material_layer.addMember("0.2.0", "Sprite", TypeArray(material_sprite))
+material_layer.addMember("0.2.0", "RepeatType", TypeInt32(), "REPEATTYPE_STATIC")
+material_layer.addMember("0.2.0", "Spacing", TypeFloat(), "0.0f")
 
 material = ClassAsset("Material", len(assetsList))
 material.setInheritance(mainAsset)
 material.addClass(material_sprite)
 material.addClass(material_layer)
-material.addMember("Layer", TypeArray(material_layer))
-material.addMember("TexturePath", TypeAssetPath())
-material.addMember("TextureColor", TypeColor())
-material.addMember("TextureSize", TypeVec2(), "1.0f")
-material.addMember("TextureAngle", TypeFloat(), "0.0f")
-material.addMember("TextureEnabled", TypeBool(), "false")
+material.addMember("0.2.0", "Layer", TypeArray(material_layer))
+material.addMember("0.2.0", "TexturePath", TypeAssetPath())
+material.addMember("0.2.0", "TextureColor", TypeColor())
+material.addMember("0.2.0", "TextureSize", TypeVec2(), "1.0f")
+material.addMember("0.2.0", "TextureAngle", TypeFloat(), "0.0f")
+material.addMember("0.2.0", "TextureEnabled", TypeBool(), "false")
 material.addPublicLines([
 	"enum",
 	"{",
@@ -2286,9 +2303,9 @@ assetsList.append(material)
 # GUI COMBO BOX STYLE ##################################################
 guiComboBoxStyle = ClassAsset("GuiComboBoxStyle", len(assetsList))
 guiComboBoxStyle.setInheritance(mainAsset)
-guiComboBoxStyle.addMember("ButtonPath", TypeAssetPath())
-guiComboBoxStyle.addMember("PopupPath", TypeAssetPath())
-guiComboBoxStyle.addMember("EnumPath", TypeAssetPath())
+guiComboBoxStyle.addMember("0.2.0", "ButtonPath", TypeAssetPath())
+guiComboBoxStyle.addMember("0.2.0", "PopupPath", TypeAssetPath())
+guiComboBoxStyle.addMember("0.2.0", "EnumPath", TypeAssetPath())
 
 assetsList.append(guiComboBoxStyle)
 

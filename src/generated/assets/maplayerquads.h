@@ -128,7 +128,7 @@ public:
 	class CQuad
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
 		{
 		public:
 			CTuaVec2 m_Pivot;
@@ -147,8 +147,31 @@ public:
 			tua_uint32 m_Color2;
 			tua_uint32 m_Color3;
 			CAssetPath::CTuaType m_AnimationPath;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			CTuaVec2 m_Pivot;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CTuaVec2 m_Vertex0;
+			CTuaVec2 m_Vertex1;
+			CTuaVec2 m_Vertex2;
+			CTuaVec2 m_Vertex3;
+			CTuaVec2 m_UV0;
+			CTuaVec2 m_UV1;
+			CTuaVec2 m_UV2;
+			CTuaVec2 m_UV3;
+			tua_uint32 m_Color0;
+			tua_uint32 m_Color1;
+			tua_uint32 m_Color2;
+			tua_uint32 m_Color3;
+			CAssetPath::CTuaType m_AnimationPath;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -364,15 +387,26 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
 		CAssetPath::CTuaType m_ImagePath;
 		CTuaArray m_Quad;
 		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapLayerQuads& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ImagePath;
+		CTuaArray m_Quad;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerQuads& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -937,7 +971,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtQuad(int Index) { m_Quad.insertat(Index); }
+	inline void AddAtQuad(int Index) { m_Quad.insertat_and_init(Index); }
 	
 	inline void DeleteQuad(const CSubPath& SubPath) { m_Quad.remove_index(SubPath.GetId()); }
 	

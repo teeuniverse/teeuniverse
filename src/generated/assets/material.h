@@ -118,7 +118,14 @@ public:
 	class CSprite
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
 		{
 		public:
 			CAssetPath::CTuaType m_Path;
@@ -127,8 +134,8 @@ public:
 			tua_int32 m_Flags;
 			CTuaVec2 m_Position;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -211,14 +218,21 @@ public:
 	class CLayer
 	{
 	public:
-		class CTuaType
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
 		{
 		public:
 			CTuaArray m_Sprite;
 			tua_int32 m_RepeatType;
 			tua_float m_Spacing;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 	
@@ -413,7 +427,7 @@ public:
 			return Id;
 		}
 		
-		inline void AddAtSprite(int Index) { m_Sprite.insertat(Index); }
+		inline void AddAtSprite(int Index) { m_Sprite.insertat_and_init(Index); }
 		
 		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
 		
@@ -430,7 +444,14 @@ public:
 		}
 		
 	};
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
+	{
+	public:
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
 		CTuaArray m_Layer;
@@ -439,8 +460,8 @@ public:
 		CTuaVec2 m_TextureSize;
 		tua_float m_TextureAngle;
 		tua_uint8 m_TextureEnabled;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -757,7 +778,7 @@ public:
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
 	
-	inline void AddAtLayer(int Index) { m_Layer.insertat(Index); }
+	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
 	
 	inline void AddAtLayerSprite(const CSubPath& SubPath, int Index) { m_Layer[SubPath.GetId()].AddAtSprite(Index); }
 	

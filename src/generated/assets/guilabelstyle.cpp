@@ -45,9 +45,9 @@ CAsset_GuiLabelStyle::CAsset_GuiLabelStyle()
 	m_TextAlignment = TEXTALIGNMENT_LEFT;
 }
 
-void CAsset_GuiLabelStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiLabelStyle& SysType)
+void CAsset_GuiLabelStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiLabelStyle& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	SysType.m_MinWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinWidth);
 	SysType.m_MinHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinHeight);
@@ -61,9 +61,43 @@ void CAsset_GuiLabelStyle::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContex
 	pLoadingContext->ReadAssetPath(TuaType.m_IconPath, SysType.m_IconPath);
 }
 
-void CAsset_GuiLabelStyle::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType& TuaType)
+
+void CAsset_GuiLabelStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
+	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);
+	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
+	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
+	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Spacing);
+	TuaType.m_FontSize = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FontSize);
+	TuaType.m_TextColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextColor);
+	TuaType.m_TextAlignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TextAlignment);
+	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconPath, TuaType.m_IconPath);
+}
+
+void CAsset_GuiLabelStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiLabelStyle& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_MinWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinWidth);
+	SysType.m_MinHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinHeight);
+	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
+	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
+	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Spacing);
+	SysType.m_FontSize = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FontSize);
+	SysType.m_TextColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextColor);
+	SysType.m_TextAlignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TextAlignment);
+	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconPath, SysType.m_IconPath);
+}
+
+
+void CAsset_GuiLabelStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
 	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);

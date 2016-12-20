@@ -92,7 +92,7 @@ public:
 	CIteratorLayer ReverseBeginLayer() const { return CIteratorLayer(m_Layer.size()-1, true); }
 	CIteratorLayer ReverseEndLayer() const { return CIteratorLayer(-1, true); }
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
@@ -103,8 +103,23 @@ public:
 		CTuaVec2 m_ClipPosition;
 		CTuaVec2 m_ClipSize;
 		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_MapGroup& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapGroup& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Layer;
+		CTuaVec2 m_Position;
+		CTuaVec2 m_HardParallax;
+		tua_uint8 m_Clipping;
+		CTuaVec2 m_ClipPosition;
+		CTuaVec2 m_ClipSize;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapGroup& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
@@ -258,7 +273,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtLayer(int Index) { m_Layer.insertat(Index); }
+	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
 	
 	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
 	

@@ -44,7 +44,7 @@ CAsset_Skeleton::CBone::CBone()
 }
 
 
-void CAsset_Skeleton::CBone::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Skeleton::CBone& SysType)
+void CAsset_Skeleton::CBone::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton::CBone& SysType)
 {
 	SysType.m_Length = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Length);
 	SysType.m_Anchor = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Anchor);
@@ -57,40 +57,43 @@ void CAsset_Skeleton::CBone::CTuaType::Read(CAssetsSaveLoadContext* pLoadingCont
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
-void CAsset_Skeleton::CLayer::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Skeleton::CLayer& SysType)
+
+void CAsset_Skeleton::CLayer::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton::CLayer& SysType)
 {
 	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
 }
 
-void CAsset_Skeleton::CTuaType::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Skeleton& SysType)
+
+void CAsset_Skeleton::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton& SysType)
 {
-	CAsset::CTuaType::Read(pLoadingContext, TuaType, SysType);
+	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultSkinPath, SysType.m_DefaultSkinPath);
 	{
-		const CAsset_Skeleton::CBone::CTuaType* pData = (const CAsset_Skeleton::CBone::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Bone.m_Data);
+		const CAsset_Skeleton::CBone::CTuaType_0_1_0* pData = (const CAsset_Skeleton::CBone::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Bone.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Bone.m_Size);
 		SysType.m_Bone.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_Skeleton::CBone::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Bone[i]);
+			CAsset_Skeleton::CBone::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Bone[i]);
 		}
 	}
 	
 	{
-		const CAsset_Skeleton::CLayer::CTuaType* pData = (const CAsset_Skeleton::CLayer::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
+		const CAsset_Skeleton::CLayer::CTuaType_0_1_0* pData = (const CAsset_Skeleton::CLayer::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
 		for(int i=0; i<Size; i++)
 		{
-			CAsset_Skeleton::CLayer::CTuaType::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
+			CAsset_Skeleton::CLayer::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
 		}
 	}
 	
 }
 
-void CAsset_Skeleton::CBone::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType& TuaType)
+
+void CAsset_Skeleton::CBone::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_1_0& TuaType)
 {
 	TuaType.m_Length = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Length);
 	TuaType.m_Anchor = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Anchor);
@@ -103,35 +106,130 @@ void CAsset_Skeleton::CBone::CTuaType::Write(CAssetsSaveLoadContext* pLoadingCon
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
 
-void CAsset_Skeleton::CLayer::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType& TuaType)
+void CAsset_Skeleton::CLayer::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_1_0& TuaType)
 {
 	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
 }
 
-void CAsset_Skeleton::CTuaType::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType& TuaType)
+void CAsset_Skeleton::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_1_0& TuaType)
 {
-	CAsset::CTuaType::Write(pLoadingContext, SysType, TuaType);
+	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
 	pLoadingContext->WriteAssetPath(SysType.m_DefaultSkinPath, TuaType.m_DefaultSkinPath);
 	{
 		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
-		CAsset_Skeleton::CBone::CTuaType* pData = new CAsset_Skeleton::CBone::CTuaType[SysType.m_Bone.size()];
+		CAsset_Skeleton::CBone::CTuaType_0_1_0* pData = new CAsset_Skeleton::CBone::CTuaType_0_1_0[SysType.m_Bone.size()];
 		for(int i=0; i<SysType.m_Bone.size(); i++)
 		{
-			CAsset_Skeleton::CBone::CTuaType::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
+			CAsset_Skeleton::CBone::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
 		}
-		TuaType.m_Bone.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CBone::CTuaType)*SysType.m_Bone.size());
+		TuaType.m_Bone.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CBone::CTuaType_0_1_0)*SysType.m_Bone.size());
 		delete[] pData;
 	}
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
-		CAsset_Skeleton::CLayer::CTuaType* pData = new CAsset_Skeleton::CLayer::CTuaType[SysType.m_Layer.size()];
+		CAsset_Skeleton::CLayer::CTuaType_0_1_0* pData = new CAsset_Skeleton::CLayer::CTuaType_0_1_0[SysType.m_Layer.size()];
 		for(int i=0; i<SysType.m_Layer.size(); i++)
 		{
-			CAsset_Skeleton::CLayer::CTuaType::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
+			CAsset_Skeleton::CLayer::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
-		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CLayer::CTuaType)*SysType.m_Layer.size());
+		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CLayer::CTuaType_0_1_0)*SysType.m_Layer.size());
+		delete[] pData;
+	}
+}
+
+void CAsset_Skeleton::CBone::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton::CBone& SysType)
+{
+	SysType.m_Length = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Length);
+	SysType.m_Anchor = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Anchor);
+	SysType.m_Translation.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_X);
+	SysType.m_Translation.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_Y);
+	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
+	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
+	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
+	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+}
+
+
+void CAsset_Skeleton::CLayer::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton::CLayer& SysType)
+{
+	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+}
+
+
+void CAsset_Skeleton::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton& SysType)
+{
+	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_DefaultSkinPath, SysType.m_DefaultSkinPath);
+	{
+		const CAsset_Skeleton::CBone::CTuaType_0_2_0* pData = (const CAsset_Skeleton::CBone::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Bone.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Bone.m_Size);
+		SysType.m_Bone.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			CAsset_Skeleton::CBone::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Bone[i]);
+		}
+	}
+	
+	{
+		const CAsset_Skeleton::CLayer::CTuaType_0_2_0* pData = (const CAsset_Skeleton::CLayer::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
+		SysType.m_Layer.resize(Size);
+		for(int i=0; i<Size; i++)
+		{
+			CAsset_Skeleton::CLayer::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_Skeleton::CBone::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Length = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Length);
+	TuaType.m_Anchor = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Anchor);
+	TuaType.m_Translation.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.x);
+	TuaType.m_Translation.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.y);
+	TuaType.m_Scale.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.x);
+	TuaType.m_Scale.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.y);
+	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
+	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+}
+
+void CAsset_Skeleton::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.m_Name.buffer());
+}
+
+void CAsset_Skeleton::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_2_0& TuaType)
+{
+	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_DefaultSkinPath, TuaType.m_DefaultSkinPath);
+	{
+		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
+		CAsset_Skeleton::CBone::CTuaType_0_2_0* pData = new CAsset_Skeleton::CBone::CTuaType_0_2_0[SysType.m_Bone.size()];
+		for(int i=0; i<SysType.m_Bone.size(); i++)
+		{
+			CAsset_Skeleton::CBone::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
+		}
+		TuaType.m_Bone.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CBone::CTuaType_0_2_0)*SysType.m_Bone.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
+		CAsset_Skeleton::CLayer::CTuaType_0_2_0* pData = new CAsset_Skeleton::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
+		for(int i=0; i<SysType.m_Layer.size(); i++)
+		{
+			CAsset_Skeleton::CLayer::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
+		}
+		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Skeleton::CLayer::CTuaType_0_2_0)*SysType.m_Layer.size());
 		delete[] pData;
 	}
 }

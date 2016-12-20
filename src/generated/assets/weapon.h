@@ -49,15 +49,26 @@ public:
 		ATTACKANIMATIONPATH,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_CharacterPath;
 		CAssetPath::CTuaType m_CursorPath;
 		CAssetPath::CTuaType m_SkinPath;
 		CAssetPath::CTuaType m_AttackAnimationPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Weapon& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Weapon& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_CharacterPath;
+		CAssetPath::CTuaType m_CursorPath;
+		CAssetPath::CTuaType m_SkinPath;
+		CAssetPath::CTuaType m_AttackAnimationPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Weapon& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 

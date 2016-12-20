@@ -65,7 +65,7 @@ public:
 		TEXTURE,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		tua_int32 m_GridWidth;
@@ -74,8 +74,21 @@ public:
 		tua_int32 m_TexelSize;
 		tua_uint8 m_TilingEnabled;
 		CTuaArray2d m_Data;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_Image& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Image& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		tua_int32 m_GridWidth;
+		tua_int32 m_GridHeight;
+		tua_int32 m_GridSpacing;
+		tua_int32 m_TexelSize;
+		tua_uint8 m_TilingEnabled;
+		CTuaArray2d m_Data;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Image& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 

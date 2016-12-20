@@ -52,7 +52,7 @@ public:
 		BUTTONLISTTEXT,
 	};
 	
-	class CTuaType : public CAsset::CTuaType
+	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
 		CAssetPath::CTuaType m_LayoutPath;
@@ -62,8 +62,22 @@ public:
 		CAssetPath::CTuaType m_ActiveButtonPath;
 		tua_uint8 m_ButtonListFill;
 		tua_uint8 m_ButtonListText;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType& TuaType, CAsset_GuiTabsStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiTabsStyle& SysType, CTuaType& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiTabsStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiTabsStyle& SysType, CTuaType_0_1_0& TuaType);
+	};
+	
+	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
+	{
+	public:
+		CAssetPath::CTuaType m_LayoutPath;
+		CAssetPath::CTuaType m_ContentPath;
+		CAssetPath::CTuaType m_ButtonListPath;
+		CAssetPath::CTuaType m_InactiveButtonPath;
+		CAssetPath::CTuaType m_ActiveButtonPath;
+		tua_uint8 m_ButtonListFill;
+		tua_uint8 m_ButtonListText;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiTabsStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiTabsStyle& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 
