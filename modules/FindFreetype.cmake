@@ -64,7 +64,7 @@ find_path(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   PATH_SUFFIXES include/freetype2 include
 )
 
-find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
+find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h freetype2/config/ftheader.h
   HINTS
     ENV FREETYPE_DIR
     ${_PC_FREETYPE_INCLUDE_DIRS}
@@ -79,6 +79,9 @@ find_path(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
 	${CMAKE_BINARY_DIR}
   PATH_SUFFIXES include/freetype2 include/freetype include
 )
+
+message(STATUS "${FREETYPE_INCLUDE_DIR_ft2build}")
+message(STATUS "${FREETYPE_INCLUDE_DIR_freetype2}")
 
 find_library(FREETYPE_LIBRARY
   NAMES freetype libfreetype freetype219 freetype6
