@@ -400,6 +400,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
+	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
@@ -934,6 +936,8 @@ public:
 		m_Quad.increment();
 		return Id;
 	}
+	
+	inline void AddAtQuad(int Index) { m_Quad.insertat(Index); }
 	
 	inline void DeleteQuad(const CSubPath& SubPath) { m_Quad.remove_index(SubPath.GetId()); }
 	

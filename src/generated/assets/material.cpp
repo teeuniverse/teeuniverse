@@ -380,6 +380,20 @@ int CAsset_Material::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_Material::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_LAYER:
+			AddAtLayer(Index);
+			return Index;
+		case TYPE_LAYER_SPRITE:
+			AddAtLayerSprite(SubPath, Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_Material::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

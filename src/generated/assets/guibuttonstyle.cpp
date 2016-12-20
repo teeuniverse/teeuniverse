@@ -97,6 +97,11 @@ int CAsset_GuiButtonStyle::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_GuiButtonStyle::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	return -1;
+}
+
 void CAsset_GuiButtonStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }

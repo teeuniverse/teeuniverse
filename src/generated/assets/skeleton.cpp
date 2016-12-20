@@ -336,6 +336,20 @@ int CAsset_Skeleton::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_Skeleton::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_BONE:
+			AddAtBone(Index);
+			return Index;
+		case TYPE_LAYER:
+			AddAtLayer(Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_Skeleton::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

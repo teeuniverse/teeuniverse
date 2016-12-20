@@ -356,6 +356,7 @@ public:
 	}
 
 	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
+	int AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Type, int Index, int Token = -1);
 	int DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int Token = -1);
 	int RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int RelMove, int Token = -1);
 	

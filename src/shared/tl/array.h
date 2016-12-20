@@ -238,7 +238,7 @@ public:
 			- Invalidates ranges
 			- See remarks about <array> how the array grows.
 	*/
-	T& insertat_by_copy(const T& item, int index)
+	T& insertat(int index)
 	{
 		incsize();
 		resize(size()+1);
@@ -246,9 +246,26 @@ public:
 		for(int i = m_Size-1; i > index; i--)
 			ALLOCATOR::transfert(m_pData[i], m_pData[i-1]);
 
-		ALLOCATOR::copy(m_pData[index], item);
-
 		return m_pData[index];
+	}
+
+	/*
+		Function: insert
+			Inserts an item into the array at a specified location.
+
+		Arguments:
+			item - Item to insert.
+			index - Index where to insert the item
+
+		Remarks:
+			- Invalidates ranges
+			- See remarks about <array> how the array grows.
+	*/
+	T& insertat_by_copy(const T& item, int index)
+	{
+		T& newitem = insertat(index);
+		ALLOCATOR::copy(newitem, item);
+		return newitem;
 	}
 
 	/*

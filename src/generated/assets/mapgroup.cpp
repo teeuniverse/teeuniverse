@@ -282,6 +282,17 @@ int CAsset_MapGroup::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_MapGroup::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_LAYER:
+			AddAtLayer(Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_MapGroup::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

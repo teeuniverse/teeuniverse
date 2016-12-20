@@ -413,6 +413,8 @@ public:
 			return Id;
 		}
 		
+		inline void AddAtSprite(int Index) { m_Sprite.insertat(Index); }
+		
 		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
 		
 		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
@@ -464,6 +466,8 @@ public:
 	}
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
+	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
@@ -752,6 +756,10 @@ public:
 	}
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
+	
+	inline void AddAtLayer(int Index) { m_Layer.insertat(Index); }
+	
+	inline void AddAtLayerSprite(const CSubPath& SubPath, int Index) { m_Layer[SubPath.GetId()].AddAtSprite(Index); }
 	
 	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
 	

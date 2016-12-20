@@ -389,6 +389,8 @@ public:
 			return Id;
 		}
 		
+		inline void AddAtKeyFrame(int Index) { m_KeyFrame.insertat(Index); }
+		
 		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
 		
 		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
@@ -578,6 +580,8 @@ public:
 			return Id;
 		}
 		
+		inline void AddAtKeyFrame(int Index) { m_KeyFrame.insertat(Index); }
+		
 		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.remove_index(SubPath.GetId()); }
 		
 		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
@@ -628,6 +632,8 @@ public:
 	}
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
+	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
@@ -1002,6 +1008,18 @@ public:
 	}
 	
 	inline int AddLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].AddKeyFrame(); }
+	
+	inline void AddAtLocalBoneAnim(int Index) { m_LocalBoneAnim.insertat(Index); }
+	
+	inline void AddAtLocalBoneAnimKeyFrame(const CSubPath& SubPath, int Index) { m_LocalBoneAnim[SubPath.GetId()].AddAtKeyFrame(Index); }
+	
+	inline void AddAtParentBoneAnim(int Index) { m_ParentBoneAnim.insertat(Index); }
+	
+	inline void AddAtParentBoneAnimKeyFrame(const CSubPath& SubPath, int Index) { m_ParentBoneAnim[SubPath.GetId()].AddAtKeyFrame(Index); }
+	
+	inline void AddAtLayerAnimation(int Index) { m_LayerAnimation.insertat(Index); }
+	
+	inline void AddAtLayerAnimationKeyFrame(const CSubPath& SubPath, int Index) { m_LayerAnimation[SubPath.GetId()].AddAtKeyFrame(Index); }
 	
 	inline void DeleteLocalBoneAnim(const CSubPath& SubPath) { m_LocalBoneAnim.remove_index(SubPath.GetId()); }
 	

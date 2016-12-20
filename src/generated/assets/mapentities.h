@@ -166,6 +166,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
+	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
@@ -278,6 +280,8 @@ public:
 		m_Entity.increment();
 		return Id;
 	}
+	
+	inline void AddAtEntity(int Index) { m_Entity.insertat(Index); }
 	
 	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
 	

@@ -477,6 +477,8 @@ public:
 			return Id;
 		}
 		
+		inline void AddAtVertex(int Index) { m_Vertex.insertat(Index); }
+		
 		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.remove_index(SubPath.GetId()); }
 		
 		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { m_Vertex.relative_move(SubPath.GetId(), RelMove); }
@@ -523,6 +525,8 @@ public:
 	}
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
+	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
@@ -902,6 +906,10 @@ public:
 	}
 	
 	inline int AddObjectVertex(const CSubPath& SubPath) { return m_Object[SubPath.GetId()].AddVertex(); }
+	
+	inline void AddAtObject(int Index) { m_Object.insertat(Index); }
+	
+	inline void AddAtObjectVertex(const CSubPath& SubPath, int Index) { m_Object[SubPath.GetId()].AddAtVertex(Index); }
 	
 	inline void DeleteObject(const CSubPath& SubPath) { m_Object.remove_index(SubPath.GetId()); }
 	

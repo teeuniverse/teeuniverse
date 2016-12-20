@@ -389,6 +389,8 @@ class AddInterface_Array(GetSetInterface):
 			var + ".increment();",
 			"return Id;"
 		]
+	def generateAddAt(self, var):
+		return [ var + ".insertat(Index);" ]
 	def generateDelete(self, var):
 		return [ var + ".remove_index(SubPath.GetId());" ]
 	def generateRelMove(self, var):
@@ -406,6 +408,8 @@ class AddInterface_ArrayChild(GetSetInterface):
 		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + "[SubPath.GetId()].Add" + self.interface.name + "();" ]
+	def generateAddAt(self, var):
+		return [ var + "[SubPath.GetId()].AddAt" + self.interface.name + "(Index);" ]
 	def generateDelete(self, var):
 		return [ var + "[SubPath.GetId()].Delete" + self.interface.name + "(SubPath.PopId());" ]
 	def generateRelMove(self, var):
@@ -563,6 +567,8 @@ class AddInterface_Array2dChild(GetSetInterface):
 		self.enum = interface.enum
 	def generateAdd(self, var):
 		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Add" + self.interface.name + "();" ]
+	def generateAddAt(self, var):
+		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).AddAt" + self.interface.name + "(Index);" ]
 	def generateDelete(self, var):
 		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Delete" + self.interface.name + "(SubPath.DoublePopId());" ]
 	def generateRelMove(self, var):
@@ -689,6 +695,8 @@ class AddInterface_Member(GetSetInterface):
 			self.name = m.name
 	def generateAdd(self, var):
 		return [ "return " + var + ".Add" + self.interface.name + "();" ]
+	def generateAddAt(self, var):
+		return [ var + ".AddAt" + self.interface.name + "(Index);" ]
 	def generateDelete(self, var):
 		return [ var + ".Delete" + self.interface.name + "(SubPath);" ]
 	def generateRelMove(self, var):
@@ -809,6 +817,24 @@ class Member:
 				res.append("}")
 			else:
 				res.append("inline int Add"+self.name+i.name+"("+params+") { "+i.generateAdd(self.memberName())[0]+" }")
+			
+			res.append("")
+		return res
+	def generateAddAt(self):
+		res = []
+		for i in self.t.addInterfaces():
+			params = "int Index"
+			if i.subpath:
+				params = "const CSubPath& SubPath, " + params
+				
+			if len(i.generateAddAt(self.memberName())) > 1:
+				res.append("inline void AddAt"+self.name+i.name+"("+params+")")
+				res.append("{")
+				for l in i.generateAddAt(self.memberName()):
+					res.append("	"+l)
+				res.append("}")
+			else:
+				res.append("inline void AddAt"+self.name+i.name+"("+params+") { "+i.generateAddAt(self.memberName())[0]+" }")
 			
 			res.append("")
 		return res
@@ -1130,6 +1156,9 @@ class Class(Type):
 			self.addPublicFunc(Mem.generateAdd())
 		
 		for Mem in self.members:
+			self.addPublicFunc(Mem.generateAddAt())
+		
+		for Mem in self.members:
 			self.addPublicFunc(Mem.generateDelete())
 		
 		for Mem in self.members:
@@ -1322,6 +1351,34 @@ class ClassAsset(Class):
 		res.append("")
 		return res
 	
+	def generateAddAtImpl(self):
+		counter = 0
+		for Mem in self.members: 
+			for inter in Mem.addInterfaces():
+				counter = counter+1
+		
+		res = []
+		res.append("int "+self.fullType()+"::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)")
+		res.append("{")
+		if counter > 0:
+			res.append("	switch(Type)")
+			res.append("	{")
+			
+			for Mem in self.members: 
+				for inter in Mem.addInterfaces():
+					res.append("		case TYPE_"+inter.enum+":")
+					if inter.subpath:
+						res.append("			AddAt"+inter.name+"(SubPath, Index);")
+						res.append("			return Index;")
+					else:
+						res.append("			AddAt"+inter.name+"(Index);")
+						res.append("			return Index;")
+			res.append("	}")		
+		res.append("	return -1;")
+		res.append("}")
+		res.append("")
+		return res
+	
 	def generateDeleteImpl(self):
 		counter = 0
 		for Mem in self.members: 
@@ -1399,6 +1456,7 @@ class ClassAsset(Class):
 				counter = counter+1
 		
 		self.addPublicFunc(["int AddSubItem(int Type, const CSubPath& SubPath);", ""])
+		self.addPublicFunc(["int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);", ""])
 		self.addPublicFunc(["void DeleteSubItem(const CSubPath& SubPath);", ""])
 		self.addPublicFunc(["void RelMoveSubItem(const CSubPath& SubPath, int RelMove);", ""])
 		
@@ -1570,6 +1628,8 @@ def generateImpl(asset):
 	for l in asset.generateSetImpl("CSubPath"):
 		print >>f, l
 	for l in asset.generateAddImpl():
+		print >>f, l
+	for l in asset.generateAddAtImpl():
 		print >>f, l
 	for l in asset.generateDeleteImpl():
 		print >>f, l

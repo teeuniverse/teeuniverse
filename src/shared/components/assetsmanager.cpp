@@ -725,7 +725,7 @@ void CAssetsManager::Load_UnivOpenFNG()
 int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token)
 {
 	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
-		return false;
+		return -1;
 		
 	if(m_pHistory)
 		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
@@ -737,6 +737,36 @@ int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type,
 		{\
 			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
 			return pAsset->AddSubItem(Type, SubPath);\
+		}\
+		else\
+			return -1;\
+	}
+	
+	switch(AssetPath.GetType())
+	{
+		#include <generated/assets/assetsmacro.h>
+	}
+	
+	#undef MACRO_ASSETTYPE
+	
+	return -1;
+}
+
+int CAssetsManager::AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Type, int Index, int Token)
+{
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return -1;
+		
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
+	
+	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
+	{\
+		CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
+		if(pAsset)\
+		{\
+			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
+			return pAsset->AddSubItemAt(Type, SubPath, Index);\
 		}\
 		else\
 			return -1;\

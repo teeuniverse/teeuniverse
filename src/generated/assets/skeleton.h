@@ -283,6 +283,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
+	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
@@ -532,6 +534,10 @@ public:
 		m_Layer.increment();
 		return Id;
 	}
+	
+	inline void AddAtBone(int Index) { m_Bone.insertat(Index); }
+	
+	inline void AddAtLayer(int Index) { m_Layer.insertat(Index); }
 	
 	inline void DeleteBone(const CSubPath& SubPath) { m_Bone.remove_index(SubPath.GetId()); }
 	

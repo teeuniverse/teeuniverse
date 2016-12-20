@@ -183,6 +183,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
+	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
@@ -332,6 +334,14 @@ public:
 		m_EntityLayer.increment();
 		return Id;
 	}
+	
+	inline void AddAtBgGroup(int Index) { m_BgGroup.insertat(Index); }
+	
+	inline void AddAtFgGroup(int Index) { m_FgGroup.insertat(Index); }
+	
+	inline void AddAtZoneLayer(int Index) { m_ZoneLayer.insertat(Index); }
+	
+	inline void AddAtEntityLayer(int Index) { m_EntityLayer.insertat(Index); }
 	
 	inline void DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
 	

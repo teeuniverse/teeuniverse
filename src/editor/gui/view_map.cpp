@@ -133,11 +133,11 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
 	m_pToolbar->Add(m_pCursorTool_MapCrop);
 	
-	m_pCursorTool_MapEditVertex = new CCursorTool_MapObjectEditVertex(this);
-	m_pToolbar->Add(m_pCursorTool_MapEditVertex);
-	
 	m_pCursorTool_MapAddVertex = new CCursorTool_MapObjectAddVertex(this);
 	m_pToolbar->Add(m_pCursorTool_MapAddVertex);
+	
+	m_pCursorTool_MapEditVertex = new CCursorTool_MapObjectEditVertex(this);
+	m_pToolbar->Add(m_pCursorTool_MapEditVertex);
 	
 	m_pCursorTool_MapWeightVertex = new CCursorTool_MapObjectWeightVertex(this);
 	m_pToolbar->Add(m_pCursorTool_MapWeightVertex);
@@ -146,8 +146,8 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapEdit->UpdateToolbar();
 	m_pCursorTool_MapEraser->UpdateToolbar();
 	m_pCursorTool_MapCrop->UpdateToolbar();
-	m_pCursorTool_MapEditVertex->UpdateToolbar();
 	m_pCursorTool_MapAddVertex->UpdateToolbar();
+	m_pCursorTool_MapEditVertex->UpdateToolbar();
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CFiller(Context()), true);

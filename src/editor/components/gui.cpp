@@ -1725,6 +1725,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconVertexFree = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexFree");
 		m_Path_Sprite_IconVertexSymetric = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexSymetric");
 		m_Path_Sprite_IconVertexAligned = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexAligned");
+		m_Path_Sprite_IconMatLayerRepeat = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatLayerRepeat");
+		m_Path_Sprite_IconMatLayerStretch = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatLayerStretch");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");

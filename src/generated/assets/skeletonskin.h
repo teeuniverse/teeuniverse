@@ -242,6 +242,8 @@ public:
 	
 	int AddSubItem(int Type, const CSubPath& SubPath);
 	
+	int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);
+	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
@@ -464,6 +466,8 @@ public:
 		m_Sprite.increment();
 		return Id;
 	}
+	
+	inline void AddAtSprite(int Index) { m_Sprite.insertat(Index); }
 	
 	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
 	

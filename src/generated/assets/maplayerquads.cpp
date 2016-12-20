@@ -473,6 +473,17 @@ int CAsset_MapLayerQuads::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_MapLayerQuads::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_QUAD:
+			AddAtQuad(Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_MapLayerQuads::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

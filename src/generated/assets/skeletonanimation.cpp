@@ -420,6 +420,32 @@ int CAsset_SkeletonAnimation::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_SkeletonAnimation::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_LOCALBONEANIM:
+			AddAtLocalBoneAnim(Index);
+			return Index;
+		case TYPE_LOCALBONEANIM_KEYFRAME:
+			AddAtLocalBoneAnimKeyFrame(SubPath, Index);
+			return Index;
+		case TYPE_PARENTBONEANIM:
+			AddAtParentBoneAnim(Index);
+			return Index;
+		case TYPE_PARENTBONEANIM_KEYFRAME:
+			AddAtParentBoneAnimKeyFrame(SubPath, Index);
+			return Index;
+		case TYPE_LAYERANIMATION:
+			AddAtLayerAnimation(Index);
+			return Index;
+		case TYPE_LAYERANIMATION_KEYFRAME:
+			AddAtLayerAnimationKeyFrame(SubPath, Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_SkeletonAnimation::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

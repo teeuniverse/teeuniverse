@@ -1245,9 +1245,9 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	
 	{
 		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_REPEATTYPE);
-		pComboBox->Add(_LSTRING("Static"));
-		pComboBox->Add(_LSTRING("Stretched"));
-		AddField(pLayerEditor, pComboBox, _LSTRING("Type of repetition"));
+		pComboBox->Add(_LSTRING("Repeated"), AssetsEditor()->m_Path_Sprite_IconMatLayerRepeat);
+		pComboBox->Add(_LSTRING("Stretched"), AssetsEditor()->m_Path_Sprite_IconMatLayerStretch);
+		AddField(pLayerEditor, pComboBox, _LSTRING("Sprite arrangment"));
 	}
 	
 	gui::CVListLayout* pSpriteEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER_SPRITE);

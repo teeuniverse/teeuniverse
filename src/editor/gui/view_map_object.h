@@ -21,7 +21,22 @@
 
 #include <editor/gui/view_map.h>
 
-class CCursorTool_MapObjectAddVertex : public CViewMap::CCursorTool
+class CCursorTool_MapObjectVertexPicker : public CViewMap::CCursorTool
+{
+protected:
+	CSubPath m_CurrentVertex;
+	
+protected:
+	vec2 PickVertex(vec2 Position);
+	bool PickNewVertex(vec2 Position, vec2& VertexPosition, CSubPath& PreviousVertex, CSubPath& NextVertex);
+	
+public:
+	CCursorTool_MapObjectVertexPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath);
+	virtual void RenderPivots();
+	virtual void Update(bool ParentEnabled);
+};
+
+class CCursorTool_MapObjectAddVertex : public CCursorTool_MapObjectVertexPicker
 {
 protected:
 	CSubPath m_CurrentObject;
@@ -37,20 +52,6 @@ public:
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
 	virtual void OnInputEvent(const CInput::CEvent& Event);
-};
-
-class CCursorTool_MapObjectVertexPicker : public CViewMap::CCursorTool
-{
-protected:
-	CSubPath m_CurrentVertex;
-	
-protected:
-	virtual vec2 PickVertex(vec2 Position);
-	
-public:
-	CCursorTool_MapObjectVertexPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath);
-	virtual void RenderPivots();
-	virtual void Update(bool ParentEnabled);
 };
 
 class CCursorTool_MapObjectEditVertex : public CCursorTool_MapObjectVertexPicker

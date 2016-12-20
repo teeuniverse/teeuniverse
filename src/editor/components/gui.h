@@ -177,6 +177,8 @@ public:
 	CAssetPath m_Path_Sprite_IconVertexFree;
 	CAssetPath m_Path_Sprite_IconVertexAligned;
 	CAssetPath m_Path_Sprite_IconVertexSymetric;
+	CAssetPath m_Path_Sprite_IconMatLayerRepeat;
+	CAssetPath m_Path_Sprite_IconMatLayerStretch;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

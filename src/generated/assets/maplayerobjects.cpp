@@ -405,6 +405,20 @@ int CAsset_MapLayerObjects::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_MapLayerObjects::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_OBJECT:
+			AddAtObject(Index);
+			return Index;
+		case TYPE_OBJECT_VERTEX:
+			AddAtObjectVertex(SubPath, Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_MapLayerObjects::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())

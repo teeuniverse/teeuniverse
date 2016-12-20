@@ -129,6 +129,11 @@ int CAsset_Sprite::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_Sprite::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	return -1;
+}
+
 void CAsset_Sprite::DeleteSubItem(const CSubPath& SubPath)
 {
 }

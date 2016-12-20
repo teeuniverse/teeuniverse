@@ -221,6 +221,11 @@ int CAsset_MapLayerTiles::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_MapLayerTiles::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	return -1;
+}
+
 void CAsset_MapLayerTiles::DeleteSubItem(const CSubPath& SubPath)
 {
 }

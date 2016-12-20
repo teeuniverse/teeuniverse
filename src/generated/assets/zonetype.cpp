@@ -188,6 +188,17 @@ int CAsset_ZoneType::AddSubItem(int Type, const CSubPath& SubPath)
 	return -1;
 }
 
+int CAsset_ZoneType::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
+{
+	switch(Type)
+	{
+		case TYPE_INDEX:
+			AddAtIndex(Index);
+			return Index;
+	}
+	return -1;
+}
+
 void CAsset_ZoneType::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
