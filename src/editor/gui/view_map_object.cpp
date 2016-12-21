@@ -23,136 +23,6 @@
 #include <shared/geometry/geometry.h>
 #include <generated/assets/maplayerobjects.h>
 
-/* CURSORTOOL OBJECT ADD VERTEX ***************************************/
-
-CCursorTool_MapObjectAddVertex::CCursorTool_MapObjectAddVertex(CViewMap* pViewMap) :
-	CCursorTool_MapObjectVertexPicker(pViewMap, _LSTRING("Line Drawer"), pViewMap->AssetsEditor()->m_Path_Sprite_IconPencil)
-{
-	
-}
-
-void CCursorTool_MapObjectAddVertex::Reset()
-{
-	m_CurrentObject = CSubPath::Null();
-	m_CurrentAssetPath = CAssetPath::Null();
-}
-
-void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
-{
-	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
-		return;
-	
-	if(Button != KEY_MOUSE_1)
-		return;
-	
-	const CAsset_MapLayerObjects* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
-	if(!pMapLayer)
-		return;
-	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
-	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	vec2 Positon = ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos);
-	
-	int Token = AssetsManager()->GenerateToken();
-	if(m_CurrentObject.IsNull())
-	{
-		m_CurrentObject = CAsset_MapLayerObjects::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapLayerObjects::TYPE_OBJECT, Token));			
-		m_CurrentAssetPath = AssetsEditor()->GetEditedAssetPath();
-		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject);
-	}
-	
-	if(pMapLayer->IsValidObject(m_CurrentObject))
-	{
-		CSubPath VertexPath;
-		bool ClosePath = false;
-		
-		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(m_CurrentObject);
-		if(Object.GetVertexArraySize())
-		{
-			VertexPath.SetId(0);
-			vec2 StartPosition = ViewMap()->MapRenderer()->MapPosToScreenPos(Object.GetVertexPosition(VertexPath));
-			if(distance(StartPosition, MousePos) < 16)
-				ClosePath = true;
-		}
-		
-		if(ClosePath)
-		{
-			m_CurrentObject = CSubPath::Null();
-			m_CurrentAssetPath = CAssetPath::Null(); 
-		}
-		else
-		{
-			VertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(
-				m_CurrentObject.GetId(),
-				AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject, CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX, Token)
-			);
-			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), VertexPath, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, Positon, Token);
-			AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), VertexPath, CAsset_MapLayerObjects::OBJECT_VERTEX_WEIGHT, 1.0f, Token);
-		}
-		
-		CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
-		pState->m_NumUpdates++;
-	}
-	
-	ViewMap()->MapRenderer()->UnsetGroup();
-}
-	
-void CCursorTool_MapObjectAddVertex::OnViewButtonRelease(int Button)
-{
-	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
-		return;
-	
-}
-	
-void CCursorTool_MapObjectAddVertex::OnViewMouseMove()
-{
-	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
-		return;
-	
-}
-	
-void CCursorTool_MapObjectAddVertex::RenderView()
-{
-	RenderPivots();
-}
-	
-void CCursorTool_MapObjectAddVertex::Update(bool ParentEnabled)
-{
-	switch(AssetsEditor()->GetEditedAssetPath().GetType())
-	{
-		case CAsset_MapLayerObjects::TypeId:
-			Enable();
-			break;
-		default:
-			Disable();
-	}
-	
-	if(m_CurrentAssetPath != AssetsEditor()->GetEditedAssetPath())
-		Reset();
-	
-	CCursorTool::Update(ParentEnabled);
-}
-
-void CCursorTool_MapObjectAddVertex::OnMouseMove()
-{
-	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Line Drawer: Create lines and polygons"));
-	
-	CViewMap::CCursorTool::OnMouseMove();
-}
-
-void CCursorTool_MapObjectAddVertex::OnInputEvent(const CInput::CEvent& Event)
-{
-	if(Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER)
-	{
-		m_CurrentObject = CSubPath::Null();
-		m_CurrentAssetPath = CAssetPath::Null();
-	}
-	
-	CViewMap::CCursorTool::OnInputEvent(Event);
-}
-
 /* CURSORTOOL OBJECT VERTEX PICKER ************************************/
 
 CCursorTool_MapObjectVertexPicker::CCursorTool_MapObjectVertexPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath) :
@@ -348,6 +218,185 @@ bool CCursorTool_MapObjectVertexPicker::PickNewVertex(vec2 PickPosition, vec2& V
 	}
 	else
 		return false;
+}
+
+/* CURSORTOOL OBJECT ADD VERTEX ***************************************/
+
+CCursorTool_MapObjectAddVertex::CCursorTool_MapObjectAddVertex(CViewMap* pViewMap) :
+	CCursorTool_MapObjectVertexPicker(pViewMap, _LSTRING("Line Drawer"), pViewMap->AssetsEditor()->m_Path_Sprite_IconPencil)
+{
+	
+}
+
+void CCursorTool_MapObjectAddVertex::Reset()
+{
+	m_CurrentObject = CSubPath::Null();
+	m_CurrentAssetPath = CAssetPath::Null();
+}
+
+void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
+{
+	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
+		return;
+	
+	if(Button != KEY_MOUSE_1)
+		return;
+	
+	const CAsset_MapLayerObjects* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+	if(!pMapLayer)
+		return;
+	
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	
+	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+	vec2 Positon = ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos);
+	
+	int Token = AssetsManager()->GenerateToken();
+	if(m_CurrentObject.IsNull())
+	{
+		m_CurrentObject = CAsset_MapLayerObjects::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapLayerObjects::TYPE_OBJECT, Token));			
+		m_CurrentAssetPath = AssetsEditor()->GetEditedAssetPath();
+		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject);
+	}
+	
+	if(pMapLayer->IsValidObject(m_CurrentObject))
+	{
+		CSubPath VertexPath;
+		bool ClosePath = false;
+		
+		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(m_CurrentObject);
+		if(Object.GetVertexArraySize())
+		{
+			VertexPath.SetId(0);
+			vec2 StartPosition = ViewMap()->MapRenderer()->MapPosToScreenPos(Object.GetVertexPosition(VertexPath));
+			if(distance(StartPosition, MousePos) < 16)
+				ClosePath = true;
+		}
+		
+		if(ClosePath)
+		{
+			AssetsManager()->SetAssetValue<bool>(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject, CAsset_MapLayerObjects::OBJECT_CLOSEDPATH, true, Token);
+			m_CurrentObject = CSubPath::Null();
+			m_CurrentAssetPath = CAssetPath::Null(); 
+		}
+		else
+		{
+			VertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(
+				m_CurrentObject.GetId(),
+				AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject, CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX, Token)
+			);
+			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), VertexPath, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, Positon, Token);
+			AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), VertexPath, CAsset_MapLayerObjects::OBJECT_VERTEX_WEIGHT, 1.0f, Token);
+		}
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+}
+	
+void CCursorTool_MapObjectAddVertex::OnViewButtonRelease(int Button)
+{
+	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
+		return;
+	
+}
+	
+void CCursorTool_MapObjectAddVertex::OnViewMouseMove()
+{
+	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
+		return;
+	
+}
+	
+void CCursorTool_MapObjectAddVertex::RenderView()
+{
+	const CAsset_MapLayerObjects* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+	if(!pMapLayer)
+		return;
+	
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	
+	Graphics()->TextureClear();
+	Graphics()->LinesBegin();
+	
+	//Iterator over all polygons
+	CAsset_MapLayerObjects::CIteratorObject Iter;
+	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
+	{
+		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(*Iter);
+		
+		//Iterate over all edges
+		int FirstVertex = Object.GetClosedPath() ? 0 : 1;
+		for(int i=FirstVertex; i<Object.GetVertexArraySize(); i++)
+		{
+			CSubPath Vertex0Path;
+			CSubPath Vertex1Path;
+			Vertex0Path.SetId((i+Object.GetVertexArraySize()-1)%Object.GetVertexArraySize());
+			Vertex1Path.SetId(i);
+			
+			vec2 Position0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Object.GetVertexPosition(Vertex0Path));
+			vec2 Position1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Object.GetVertexPosition(Vertex1Path));
+			
+			CGraphics::CLineItem LineItem(Position0.x, Position0.y, Position1.x, Position1.y);
+			Graphics()->LinesDraw(&LineItem, 1);
+		}
+		
+		if(m_CurrentObject == *Iter && Object.GetVertexArraySize())
+		{
+			CSubPath Vertex0Path;
+			Vertex0Path.SetId(Object.GetVertexArraySize()-1);
+			
+			vec2 Position0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Object.GetVertexPosition(Vertex0Path));
+			vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+			
+			CGraphics::CLineItem LineItem(Position0.x, Position0.y, MousePos.x, MousePos.y);
+			Graphics()->LinesDraw(&LineItem, 1);
+		}
+	}
+	
+	Graphics()->LinesEnd();
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+	
+	RenderPivots();
+}
+	
+void CCursorTool_MapObjectAddVertex::Update(bool ParentEnabled)
+{
+	switch(AssetsEditor()->GetEditedAssetPath().GetType())
+	{
+		case CAsset_MapLayerObjects::TypeId:
+			Enable();
+			break;
+		default:
+			Disable();
+	}
+	
+	if(m_CurrentAssetPath != AssetsEditor()->GetEditedAssetPath())
+		Reset();
+	
+	CCursorTool::Update(ParentEnabled);
+}
+
+void CCursorTool_MapObjectAddVertex::OnMouseMove()
+{
+	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Line Drawer: Create lines and polygons"));
+	
+	CViewMap::CCursorTool::OnMouseMove();
+}
+
+void CCursorTool_MapObjectAddVertex::OnInputEvent(const CInput::CEvent& Event)
+{
+	if(Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER)
+	{
+		m_CurrentObject = CSubPath::Null();
+		m_CurrentAssetPath = CAssetPath::Null();
+	}
+	
+	CViewMap::CCursorTool::OnInputEvent(Event);
 }
 
 /* CURSORTOOL OBJECT EDIT VERTEX **************************************/
