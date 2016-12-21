@@ -370,11 +370,25 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 				res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
 			if defaultValue:
 				res.append("else return " + defaultValue + ";")
+			else:
+				res.append("else")
+				res.append("{")
+				res.append("	dbg_msg(\"Asset\", \"Try to access to an inexistant subitem\");")
+				res.append("	dbg_break();")
+				if self.interface.subpath > 0:
+					res.append("	return " + var + "[0].Get" + self.interface.name + "(SubPath.PopId()); //Useless line needed to avoid compilation errors")
+				else:
+					res.append("	return " + var + "[0].Get" + self.interface.name + "(); //Useless line needed to avoid compilation errors")
+				res.append("}")
 		else:
 			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
 			res.append("	return " + var + "[SubPath.GetId()];")
 			res.append("else")
+			res.append("{")
 			res.append("	dbg_msg(\"Asset\", \"Try to access to an inexistant subitem\");")
+			res.append("	dbg_break();")
+			res.append("	return " + var + "[0]; //Useless line needed to avoid compilation errors")
+			res.append("}")
 		return res
 			
 class AddInterface_Array(GetSetInterface):

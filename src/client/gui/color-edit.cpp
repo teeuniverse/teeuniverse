@@ -567,10 +567,10 @@ public:
 		vec3 ColorRGB1 = HsvToRgb(vec3(ColorHSV.x, 1.0f, 1.0f));
 
 		float CurrentHue = (m_Clicked == 2 ? m_LastHue : ColorHSV.r);
-		float CursorAngle = CurrentHue*2.0f*pi;
+		float CursorAngle = CurrentHue*2.0f*Pi;
 		
 		const int nbSegments = 64;
-		const float deltaAngle = pi*2.0f/nbSegments;
+		const float deltaAngle = Pi*2.0f/nbSegments;
 		
 		Graphics()->QuadsBegin();
 		
@@ -609,9 +609,9 @@ public:
 			Graphics()->SetColorVertex(ColorArray, 4);
 			
 			CGraphics::CFreeformItem Freeform(
-				Center.x + Radius0*cos(CursorAngle-2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*pi/3.0f),
-				Center.x + Radius0*cos(CursorAngle-2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*pi/3.0f),
-				Center.x + Radius0*cos(CursorAngle+2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*pi/3.0f),
+				Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f),
+				Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f),
+				Center.x + Radius0*cos(CursorAngle+2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*Pi/3.0f),
 				Center.x + Radius0*cos(CursorAngle), Center.y + Radius0*sin(CursorAngle));
 			Graphics()->QuadsDrawFreeform(&Freeform, 1);
 		}
@@ -630,8 +630,8 @@ public:
 		}
 		{
 			vec2 HuePos(Center.x + Radius0*cos(CursorAngle), Center.y + Radius0*sin(CursorAngle));
-			vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*pi/3.0f));
-			vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*pi/3.0f));
+			vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*Pi/3.0f));
+			vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f));
 			vec2 Origin = (SaturationPos + HuePos)/2.0f;
 			
 			CGraphics::CLineItem TriangleLines[3] = {
@@ -660,7 +660,7 @@ public:
 		if(m_Clicked == 1)
 		{
 			vec2 Center(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2);
-			float Hue = angle(MousePos-Center)/(2.0f*pi);
+			float Hue = angle(MousePos-Center)/(2.0f*Pi);
 			if(Hue < 0.0f) Hue += 1.0f;
 			
 			vec4 Color = m_pColorEdit->GetValue();
@@ -673,15 +673,15 @@ public:
 		{
 			vec4 Color = m_pColorEdit->GetValue();
 			vec3 ColorHSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
-			float CursorAngle = m_LastHue*2.0f*pi;
+			float CursorAngle = m_LastHue*2.0f*Pi;
 			
 			float Radius1 = min(m_DrawRect.w, m_DrawRect.h)/2.0f - 1.0f;
 			float Radius0 = Radius1*0.8f;
 			
 			vec2 Center(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2);
 			vec2 HuePos(Center.x + Radius0*cos(CursorAngle), Center.y + Radius0*sin(CursorAngle));
-			vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*pi/3.0f));
-			vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*pi/3.0f));
+			vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*Pi/3.0f));
+			vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f));
 			vec2 Origin = (SaturationPos + HuePos)/2.0f;
 			float Size = length(SaturationPos - HuePos);
 			float Size2 = length(ValuePos - Origin);
@@ -724,15 +724,15 @@ public:
 		
 		vec4 Color = m_pColorEdit->GetValue();
 		vec3 ColorHSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
-		float CursorAngle = ColorHSV.r*2.0f*pi;
+		float CursorAngle = ColorHSV.r*2.0f*Pi;
 		
 		float Radius1 = min(m_DrawRect.w, m_DrawRect.h)/2.0f - 1.0f;
 		float Radius0 = Radius1*0.8f;
 		
 		vec2 Center(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2);
 		vec2 HuePos(Center.x + Radius0*cos(CursorAngle), Center.y + Radius0*sin(CursorAngle));
-		vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*pi/3.0f));
-		vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*pi/3.0f));
+		vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*Pi/3.0f));
+		vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f));
 		vec2 Origin = (SaturationPos + HuePos)/2.0f;
 		
 		float d = distance(Center, MousePos);

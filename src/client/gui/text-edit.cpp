@@ -310,7 +310,7 @@ void CAbstractTextEdit::Render()
 		Graphics()->TextureClear();
 		Graphics()->LinesBegin();
 		double Time = fmod((double)time_get()/(double)time_freq(), 1.0f);
-		Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.5f+cos(2.0f*pi*Time)/2.0f), true);		
+		Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.5f+cos(2.0f*Pi*Time)/2.0f), true);		
 		
 		float x = GetTextPosition().x + m_TextCursor.m_Position.x + 0.5f;
 		float y0 = GetTextRect().y;

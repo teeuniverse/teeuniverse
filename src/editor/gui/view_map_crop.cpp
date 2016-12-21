@@ -290,15 +290,15 @@ void CCursorTool_MapCrop::RenderView()
 		);
 		
 		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y - GizmoSize), 1.0f, 0.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMax.y + GizmoSize), 1.0f, pi/2.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMin.y - GizmoSize), 1.0f, pi/4.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, pi/2.0f+pi/4.0f, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMax.y + GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMin.y - GizmoSize), 1.0f, Pi/4.0f, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, Pi/2.0f+Pi/4.0f, 0x0, 1.0f);
 	}
 	
-	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y - GizmoSize), 1.0f, pi/2.0f, 0x0, 1.0f);
-	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMax.y + GizmoSize), 1.0f, pi, 0x0, 1.0f);
-	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMax.y + GizmoSize), 1.0f, pi/4.0f+pi, 0x0, 1.0f);
-	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, pi/2.0f+pi/4.0f+pi, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y - GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMax.y + GizmoSize), 1.0f, Pi, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMax.y + GizmoSize), 1.0f, Pi/4.0f+Pi, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, Pi/2.0f+Pi/4.0f+Pi, 0x0, 1.0f);
 	
 	ViewMap()->MapRenderer()->UnsetGroup();
 }

@@ -222,7 +222,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Entity.size())
 			return m_Entity[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Entity[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline CAssetPath GetEntityTypePath(const CSubPath& SubPath) const

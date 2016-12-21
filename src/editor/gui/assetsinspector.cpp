@@ -1775,7 +1775,7 @@ protected:
 			m_pAssetsEditor->GetEditedSubPath(),
 			m_Member,
 			0
-		)/pi;
+		)/Pi;
 	}
 	
 	virtual void SetValue(float Value)
@@ -1784,7 +1784,7 @@ protected:
 			m_pAssetsEditor->GetEditedAssetPath(),
 			m_pAssetsEditor->GetEditedSubPath(),
 			m_Member,
-			Value * pi/180.0f
+			Value * Pi/180.0f
 		);
 	}
 	

@@ -195,7 +195,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline vec2 GetPosition() const { return m_Position; }

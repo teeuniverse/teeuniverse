@@ -273,7 +273,7 @@ uint8* CArchiveFile::GetData(tua_dataid StoredDataId)
 {
 	uint32 DataId = ReadDataId(StoredDataId);
 	
-	if(DataId < 0 || DataId >= m_RawDatas.size())
+	if(DataId >= m_RawDatas.size())
 	{
 		dbg_msg("ArchiveFile", "can't read the data #%d", DataId);
 		return NULL;

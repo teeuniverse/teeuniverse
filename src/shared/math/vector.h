@@ -150,7 +150,7 @@ inline float angle(const vector2_base<float> &a, const vector2_base<float> &b)
 	if(d >= 0.0f)
 		return asinf(w);
 	else
-		return pi - asinf(w);
+		return Pi - asinf(w);
 }
 
 inline vector2_base<float> normalize(const vector2_base<float> &v)

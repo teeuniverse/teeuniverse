@@ -844,7 +844,7 @@ void CCursorTool_MapStamp::RenderView()
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
 	float Time = fmod(ViewMap()->MapRenderer()->GetLocalTime(), 1.0f);
-	Color.a *= 0.3f + 0.7f*(1.0f+cos(2.0f*pi*Time))/2.0f;
+	Color.a *= 0.3f + 0.7f*(1.0f+cos(2.0f*Pi*Time))/2.0f;
 	
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
@@ -1170,7 +1170,7 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotX(-m_QuadSelection[i].GetPivotX());
@@ -1181,7 +1181,7 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPositionX(-m_EntitySelection[i].GetPositionX());
@@ -1241,7 +1241,7 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotY(-m_QuadSelection[i].GetPivotY());
@@ -1252,7 +1252,7 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPositionY(-m_EntitySelection[i].GetPositionY());
@@ -1300,7 +1300,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
@@ -1310,7 +1310,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = -pi/4.0f;
+			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));
@@ -1358,7 +1358,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = pi/4.0f;
+			float Angle = Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
@@ -1368,7 +1368,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = pi/4.0f;
+			float Angle = Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));

@@ -230,7 +230,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size())
 			return m_BgGroup[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_BgGroup[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetFgGroupArraySize() const { return m_FgGroup.size(); }
@@ -245,7 +249,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size())
 			return m_FgGroup[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_FgGroup[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetZoneLayerArraySize() const { return m_ZoneLayer.size(); }
@@ -260,7 +268,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size())
 			return m_ZoneLayer[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_ZoneLayer[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
@@ -275,7 +287,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size())
 			return m_EntityLayer[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_EntityLayer[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline void SetBgGroupArraySize(int Value) { m_BgGroup.resize(Value); }

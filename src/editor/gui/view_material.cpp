@@ -99,7 +99,7 @@ void CViewMaterial::RenderView()
 	int NumSegments = 64;
 	for(int i=0; i<NumSegments; i++)
 	{
-		float Angle = 2.0f*pi*i/static_cast<float>(NumSegments);
+		float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
 		CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
 		Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 		Vertex.SetColor(1.0f);

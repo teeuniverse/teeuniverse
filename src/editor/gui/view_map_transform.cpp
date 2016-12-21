@@ -483,9 +483,9 @@ void CCursorTool_MapTransform::RenderView()
 		float GizmoAngle = angle(vec2(1.0f, 0.0f), Transform * vec2(1.0f, 0.0f));
 		
 		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex0Pos.x, Vertex0Pos.y), 1.0f, GizmoAngle, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex1Pos.x, Vertex1Pos.y), 1.0f, GizmoAngle+pi/2.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex2Pos.x, Vertex2Pos.y), 1.0f, GizmoAngle-pi/2.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex3Pos.x, Vertex3Pos.y), 1.0f, GizmoAngle+pi, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex1Pos.x, Vertex1Pos.y), 1.0f, GizmoAngle+Pi/2.0f, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex2Pos.x, Vertex2Pos.y), 1.0f, GizmoAngle-Pi/2.0f, 0x0, 1.0f);
+		AssetsRenderer()->DrawSprite(GizmoPath, vec2(Vertex3Pos.x, Vertex3Pos.y), 1.0f, GizmoAngle+Pi, 0x0, 1.0f);
 	}
 	
 	ViewMap()->MapRenderer()->UnsetGroup();

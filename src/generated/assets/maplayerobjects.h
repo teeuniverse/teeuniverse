@@ -297,7 +297,11 @@ public:
 			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()];
 			else
+			{
 				dbg_msg("Asset", "Try to access to an inexistant subitem");
+				dbg_break();
+				return m_Vertex[0]; //Useless line needed to avoid compilation errors
+			}
 		}
 		
 		inline vec2 GetVertexPosition(const CSubPath& SubPath) const
@@ -588,7 +592,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Object[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline vec2 GetObjectPosition(const CSubPath& SubPath) const
@@ -665,17 +673,35 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Object[0].GetVertexArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	inline array< CVertex, allocator_copy<CVertex> >& GetObjectVertexArray(const CSubPath& SubPath)
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Object[0].GetVertexArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const CAsset_MapLayerObjects::CVertex& GetObjectVertex(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertex(SubPath.PopId());
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Object[0].GetVertex(SubPath.PopId()); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline vec2 GetObjectVertexPosition(const CSubPath& SubPath) const

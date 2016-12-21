@@ -377,7 +377,11 @@ public:
 			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size())
 				return m_KeyFrame[SubPath.GetId()];
 			else
+			{
 				dbg_msg("Asset", "Try to access to an inexistant subitem");
+				dbg_break();
+				return m_KeyFrame[0]; //Useless line needed to avoid compilation errors
+			}
 		}
 		
 		inline int GetKeyFrameTime(const CSubPath& SubPath) const
@@ -595,7 +599,11 @@ public:
 			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_KeyFrame.size())
 				return m_KeyFrame[SubPath.GetId()];
 			else
+			{
 				dbg_msg("Asset", "Try to access to an inexistant subitem");
+				dbg_break();
+				return m_KeyFrame[0]; //Useless line needed to avoid compilation errors
+			}
 		}
 		
 		inline int GetKeyFrameTime(const CSubPath& SubPath) const
@@ -738,7 +746,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size())
 			return m_LocalBoneAnim[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LocalBoneAnim[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetLocalBoneAnimKeyFrameArraySize(const CSubPath& SubPath) const
@@ -759,17 +771,35 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size())
 			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LocalBoneAnim[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	inline array< CBoneAnimation::CKeyFrame, allocator_copy<CBoneAnimation::CKeyFrame> >& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath)
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size())
 			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LocalBoneAnim[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetLocalBoneAnimKeyFrame(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LocalBoneAnim.size())
 			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LocalBoneAnim[0].GetKeyFrame(SubPath.PopId()); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetLocalBoneAnimKeyFrameTime(const CSubPath& SubPath) const
@@ -805,7 +835,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ParentBoneAnim.size())
 			return m_ParentBoneAnim[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_ParentBoneAnim[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetParentBoneAnimKeyFrameArraySize(const CSubPath& SubPath) const
@@ -826,17 +860,35 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ParentBoneAnim.size())
 			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_ParentBoneAnim[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	inline array< CBoneAnimation::CKeyFrame, allocator_copy<CBoneAnimation::CKeyFrame> >& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath)
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ParentBoneAnim.size())
 			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_ParentBoneAnim[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetParentBoneAnimKeyFrame(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ParentBoneAnim.size())
 			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_ParentBoneAnim[0].GetKeyFrame(SubPath.PopId()); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetParentBoneAnimKeyFrameTime(const CSubPath& SubPath) const
@@ -872,7 +924,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LayerAnimation.size())
 			return m_LayerAnimation[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LayerAnimation[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetLayerAnimationKeyFrameArraySize(const CSubPath& SubPath) const
@@ -893,17 +949,35 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LayerAnimation.size())
 			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LayerAnimation[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	inline array< CLayerAnimation::CKeyFrame, allocator_copy<CLayerAnimation::CKeyFrame> >& GetLayerAnimationKeyFrameArray(const CSubPath& SubPath)
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LayerAnimation.size())
 			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LayerAnimation[0].GetKeyFrameArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& GetLayerAnimationKeyFrame(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_LayerAnimation.size())
 			return m_LayerAnimation[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_LayerAnimation[0].GetKeyFrame(SubPath.PopId()); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetLayerAnimationKeyFrameTime(const CSubPath& SubPath) const

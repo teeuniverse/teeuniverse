@@ -113,7 +113,7 @@ public:
 	operator float() const { return value/(float)(1<<10); }
 };
 
-const float pi = 3.1415926535897932384626433f;
+const float Pi = 3.1415926535897932384626433f;
 
 template <typename T> inline T min(T a, T b) { return a<b?a:b; }
 template <typename T> inline T max(T a, T b) { return a>b?a:b; }

@@ -120,9 +120,9 @@ void CAssetsRenderer::Draw_RoundRect_Background(float x, float y, float w, float
 	int Num = 8;
 	for(int i = 0; i < Num; i+=2)
 	{
-		float a1 = i/(float)Num * pi/2;
-		float a2 = (i+1)/(float)Num * pi/2;
-		float a3 = (i+2)/(float)Num * pi/2;
+		float a1 = i/(float)Num * Pi/2;
+		float a2 = (i+1)/(float)Num * Pi/2;
+		float a3 = (i+2)/(float)Num * Pi/2;
 		float Ca1 = cosf(a1);
 		float Ca2 = cosf(a2);
 		float Ca3 = cosf(a3);
@@ -183,9 +183,9 @@ void CAssetsRenderer::Draw_RoundRect_Border(float x, float y, float w, float h, 
 	int Num = 8;
 	for(int i = 0; i < Num; i+=2)
 	{
-		float a1 = i/(float)Num * pi/2;
-		float a2 = (i+1)/(float)Num * pi/2;
-		float a3 = (i+2)/(float)Num * pi/2;
+		float a1 = i/(float)Num * Pi/2;
+		float a2 = (i+1)/(float)Num * Pi/2;
+		float a3 = (i+2)/(float)Num * Pi/2;
 		float Ca1 = cosf(a1);
 		float Ca2 = cosf(a2);
 		float Ca3 = cosf(a3);

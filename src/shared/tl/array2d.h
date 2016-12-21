@@ -138,7 +138,7 @@ public:
 		return m_pData[(y*m_Width+x)*m_Depth+d];
 	}
 	
-	T& set_clamp(int x, int y, const T& Element)
+	void set_clamp(int x, int y, const T& Element)
 	{
 		x = clamp(x, 0, m_Width-1);
 		y = clamp(y, 0, m_Height-1);
@@ -146,7 +146,7 @@ public:
 		ALLOCATOR::copy(m_pData[(y*m_Width+x)*m_Depth], Element);
 	}
 	
-	T& set_clamp(int x, int y, int d, const T& Element)
+	void set_clamp(int x, int y, int d, const T& Element)
 	{
 		x = clamp(x, 0, m_Width-1);
 		y = clamp(y, 0, m_Height-1);

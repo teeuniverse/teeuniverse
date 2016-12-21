@@ -269,7 +269,11 @@ public:
 			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()];
 			else
+			{
 				dbg_msg("Asset", "Try to access to an inexistant subitem");
+				dbg_break();
+				return m_Sprite[0]; //Useless line needed to avoid compilation errors
+			}
 		}
 		
 		inline CAssetPath GetSpritePath(const CSubPath& SubPath) const
@@ -529,7 +533,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline int GetLayerSpriteArraySize(const CSubPath& SubPath) const
@@ -550,17 +558,35 @@ public:
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0].GetSpriteArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	inline array< CSprite, allocator_copy<CSprite> >& GetLayerSpriteArray(const CSubPath& SubPath)
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteArray();
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0].GetSpriteArray(); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const CAsset_Material::CSprite& GetLayerSprite(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSprite(SubPath.PopId());
+		else
+		{
+			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0].GetSprite(SubPath.PopId()); //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline CAssetPath GetLayerSpritePath(const CSubPath& SubPath) const

@@ -356,7 +356,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Bone.size())
 			return m_Bone[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Bone[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline float GetBoneLength(const CSubPath& SubPath) const
@@ -448,7 +452,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Layer[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline const char* GetLayerName(const CSubPath& SubPath) const

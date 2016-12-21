@@ -205,7 +205,11 @@ public:
 		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
 			return m_Index[SubPath.GetId()];
 		else
+		{
 			dbg_msg("Asset", "Try to access to an inexistant subitem");
+			dbg_break();
+			return m_Index[0]; //Useless line needed to avoid compilation errors
+		}
 	}
 	
 	inline bool GetIndexUsed(const CSubPath& SubPath) const
