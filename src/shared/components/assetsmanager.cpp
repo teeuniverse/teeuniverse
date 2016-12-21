@@ -757,7 +757,7 @@ int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type,
 	if(m_pHistory)
 		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
 		
-	return AddSubItem(AssetPath, SubPath, Type);
+	return AddSubItem_Hard(AssetPath, SubPath, Type);
 }
 
 int CAssetsManager::AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Type, int Index, int Token)
