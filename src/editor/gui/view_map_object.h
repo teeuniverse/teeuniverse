@@ -33,6 +33,7 @@ protected:
 public:
 	CCursorTool_MapObjectVertexPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath);
 	virtual void RenderPivots();
+	virtual void RenderVertices();
 	virtual void Update(bool ParentEnabled);
 };
 

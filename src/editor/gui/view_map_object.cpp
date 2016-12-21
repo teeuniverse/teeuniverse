@@ -42,6 +42,64 @@ void CCursorTool_MapObjectVertexPicker::RenderPivots()
 	float GizmoSize = 16.0f;
 	
 	CAsset_MapLayerObjects::CIteratorObject Iter;
+	
+	Graphics()->TextureClear();
+	Graphics()->LinesBegin();
+	
+	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
+	{
+		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(*Iter);
+		vec2 Position;
+		matrix2x2 Transform;
+		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+		
+		//Iterate over all edges
+		int FirstVertex = Object.GetClosedPath() ? 0 : 1;
+		for(int i=FirstVertex; i<Object.GetVertexArraySize(); i++)
+		{
+			CSubPath Vertex0Path;
+			CSubPath Vertex1Path;
+			Vertex0Path.SetId((i+Object.GetVertexArraySize()-1)%Object.GetVertexArraySize());
+			Vertex1Path.SetId(i);
+			
+			vec2 VertexPosition0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Object.GetVertexPosition(Vertex0Path) + Position);
+			vec2 VertexPosition1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Object.GetVertexPosition(Vertex1Path) + Position);
+			
+			CGraphics::CLineItem LineItem(VertexPosition0.x, VertexPosition0.y, VertexPosition1.x, VertexPosition1.y);
+			Graphics()->LinesDraw(&LineItem, 1);
+		}
+	}
+	
+	Graphics()->LinesEnd();
+	
+	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
+	{
+		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(*Iter);
+		vec2 Position;
+		matrix2x2 Transform;
+		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+		
+		AssetsRenderer()->DrawSprite(
+			AssetsEditor()->m_Path_Sprite_GizmoPivot,
+			ViewMap()->MapRenderer()->MapPosToScreenPos(Position),
+			1.0f, 0.0f, 0x0, 1.0f
+		);
+	}
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+}
+	
+void CCursorTool_MapObjectVertexPicker::RenderVertices()
+{
+	const CAsset_MapLayerObjects* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+	if(!pMapLayer)
+		return;
+		
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	
+	float GizmoSize = 16.0f;
+	
+	CAsset_MapLayerObjects::CIteratorObject Iter;
 	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
 	{
 		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(*Iter);
@@ -289,6 +347,13 @@ void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
 	if(!ViewMap()->GetViewRect().IsInside(Context()->GetMousePos()))
 		return;
 	
+	if(Button == KEY_MOUSE_2)
+	{
+		m_CurrentObject = CSubPath::Null();
+		m_CurrentAssetPath = CAssetPath::Null();
+		return;
+	}
+	
 	if(Button != KEY_MOUSE_1)
 		return;
 	
@@ -374,52 +439,31 @@ void CCursorTool_MapObjectAddVertex::RenderView()
 	
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	Graphics()->TextureClear();
-	Graphics()->LinesBegin();
-	
-	//Iterator over all polygons
-	CAsset_MapLayerObjects::CIteratorObject Iter;
-	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
+	if(m_CurrentObject.IsNotNull() && pMapLayer->IsValidObject(m_CurrentObject))
 	{
-		const CAsset_MapLayerObjects::CObject& Object = pMapLayer->GetObject(*Iter);
 		vec2 Position;
 		matrix2x2 Transform;
-		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+		pMapLayer->GetObjectTransform(m_CurrentObject, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
-		//Iterate over all edges
-		int FirstVertex = Object.GetClosedPath() ? 0 : 1;
-		for(int i=FirstVertex; i<Object.GetVertexArraySize(); i++)
-		{
-			CSubPath Vertex0Path;
-			CSubPath Vertex1Path;
-			Vertex0Path.SetId((i+Object.GetVertexArraySize()-1)%Object.GetVertexArraySize());
-			Vertex1Path.SetId(i);
-			
-			vec2 VertexPosition0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Object.GetVertexPosition(Vertex0Path) + Position);
-			vec2 VertexPosition1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Object.GetVertexPosition(Vertex1Path) + Position);
-			
-			CGraphics::CLineItem LineItem(VertexPosition0.x, VertexPosition0.y, VertexPosition1.x, VertexPosition1.y);
-			Graphics()->LinesDraw(&LineItem, 1);
-		}
+		CSubPath Vertex0Path = CAsset_MapLayerObjects::SubPath_ObjectVertex(m_CurrentObject.GetId(), pMapLayer->GetObjectVertexArraySize(m_CurrentObject)-1);
 		
-		if(m_CurrentObject == *Iter && Object.GetVertexArraySize())
-		{
-			CSubPath Vertex0Path;
-			Vertex0Path.SetId(Object.GetVertexArraySize()-1);
-			
-			vec2 VertexPosition = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Object.GetVertexPosition(Vertex0Path)+Position);
-			vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-			
-			CGraphics::CLineItem LineItem(VertexPosition.x, VertexPosition.y, MousePos.x, MousePos.y);
-			Graphics()->LinesDraw(&LineItem, 1);
-		}
-	}
+		vec2 VertexPosition = pMapLayer->GetObjectVertexPosition(Vertex0Path);
+		VertexPosition = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPosition+Position);
+		vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+		
+		Graphics()->TextureClear();
+		Graphics()->LinesBegin();
 	
-	Graphics()->LinesEnd();
+		CGraphics::CLineItem LineItem(VertexPosition.x, VertexPosition.y, MousePos.x, MousePos.y);
+		Graphics()->LinesDraw(&LineItem, 1);
+		
+		Graphics()->LinesEnd();
+	}
 	
 	ViewMap()->MapRenderer()->UnsetGroup();
 	
 	RenderPivots();
+	RenderVertices();
 }
 	
 void CCursorTool_MapObjectAddVertex::Update(bool ParentEnabled)
@@ -482,6 +526,7 @@ void CCursorTool_MapObjectEditVertex::RenderView()
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
 	RenderPivots();
+	RenderVertices();
 	
 	//Render control points
 	vec2 VertexPos = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, 0.0f);
@@ -547,12 +592,6 @@ void CCursorTool_MapObjectEditVertex::RenderView()
 			
 			Vertex0Pos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Vertex0Pos + Position);
 			Vertex1Pos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*Vertex1Pos + Position);
-			
-			Graphics()->TextureClear();
-			Graphics()->LinesBegin();
-			CGraphics::CLineItem LineItem(Vertex0Pos.x, Vertex0Pos.y, Vertex1Pos.x, Vertex1Pos.y);
-			Graphics()->LinesDraw(&LineItem, 1);
-			Graphics()->LinesEnd();
 			
 			AssetsRenderer()->DrawSprite(
 				AssetsEditor()->m_Path_Sprite_GizmoVertexSmoothBg,
@@ -742,6 +781,7 @@ CCursorTool_MapObjectWeightVertex::CCursorTool_MapObjectWeightVertex(CViewMap* p
 void CCursorTool_MapObjectWeightVertex::RenderView()
 {
 	RenderPivots();
+	RenderVertices();
 }
 
 void CCursorTool_MapObjectWeightVertex::OnViewButtonClick(int Button)
