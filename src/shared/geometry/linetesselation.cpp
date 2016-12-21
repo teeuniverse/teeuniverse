@@ -460,10 +460,13 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 	}
 }
 
-void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
+void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
 {
 	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
 	bool Closed = Object.GetClosedPath();
+	vec2 Position;
+	matrix2x2 Transform;
+	Object.GetTransform(pAssetsManager, Time, &Transform, &Position);
 	
 	array<CBezierVertex> BezierVertices;
 	array<CLineVertex> LineVertices;
@@ -471,7 +474,7 @@ void GenerateMaterialQuads_Object(const class CAssetsManager* pAssetsManager, ar
 	for(int i=0; i<ObjectVertices.size(); i++)
 	{
 		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex.m_Position = ObjectVertices[i].GetPosition();
+		Vertex.m_Position = Transform*ObjectVertices[i].GetPosition() + Position;
 		Vertex.m_Weight = ObjectVertices[i].GetWeight();
 		Vertex.m_Color = ObjectVertices[i].GetColor();
 		Vertex.m_Type = ObjectVertices[i].GetSmoothness();

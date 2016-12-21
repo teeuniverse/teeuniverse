@@ -2243,8 +2243,9 @@ mapLayerObjects_object.addMember("0.2.0", "Angle", TypeFloat(), "0.0f")
 mapLayerObjects_object.addMember("0.2.0", "StylePath", TypeAssetPath())
 mapLayerObjects_object.addMember("0.2.0", "Vertex", TypeArray(mapLayerObjects_vertex))
 mapLayerObjects_object.addMember("0.2.0", "ClosedPath", TypeBool(), "false")
-mapLayerQuads.addPublicFunc([
-	"void GenerateQuads() const;",
+mapLayerObjects_object.addPublicFunc([
+	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
+	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"
 ])
 
 mapLayerObjects = ClassAsset("MapLayerObjects", len(assetsList))
@@ -2255,6 +2256,10 @@ mapLayerObjects.addClass(mapLayerObjects_object)
 mapLayerObjects.addMember("0.2.0", "ParentPath", TypeAssetPath())
 mapLayerObjects.addMember("0.2.0", "Object", TypeArray(mapLayerObjects_object))
 mapLayerObjects.addMember("0.2.0", "Visibility", TypeBool(), "true")
+mapLayerObjects.addPublicFunc([
+	"void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
+	"void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
+])
 
 assetsList.append(mapLayerObjects)
 

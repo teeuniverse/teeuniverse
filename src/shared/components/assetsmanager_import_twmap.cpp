@@ -1111,7 +1111,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			
 			CAsset_MapLayerObjects::CIteratorObject Iter;
 			for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
-				GenerateMaterialQuads_Object(AssetsManager(), Quads, pLayer->GetObject(*Iter));
+				GenerateMaterialQuads_Object(AssetsManager(), 0.0f, Quads, pLayer->GetObject(*Iter));
 			
 			if(Quads.size())
 			{

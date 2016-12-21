@@ -246,6 +246,8 @@ public:
 		bool m_ClosedPath;
 	
 	public:
+		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
+		void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;
 		CObject();
 		void copy(const CAsset_MapLayerObjects::CObject& Item)
 		{
@@ -533,6 +535,8 @@ private:
 	bool m_Visibility;
 
 public:
+	void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
+	void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

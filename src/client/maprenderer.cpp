@@ -704,7 +704,7 @@ enum
 void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh)
 {
 	array<CTexturedQuad> Quads;
-	GenerateMaterialQuads_Object(AssetsManager(), Quads, Object);
+	GenerateMaterialQuads_Object(AssetsManager(), GetTime(), Quads, Object);
 	
 	CAssetPath CurrentImagePath;
 	for(int i=0; i<Quads.size(); i++)

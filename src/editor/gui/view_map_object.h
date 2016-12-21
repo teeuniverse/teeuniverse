@@ -41,7 +41,10 @@ class CCursorTool_MapObjectAddVertex : public CCursorTool_MapObjectVertexPicker
 protected:
 	CSubPath m_CurrentObject;
 	CAssetPath m_CurrentAssetPath;
-	
+
+protected:
+	void UpdateBarycenter(int Token);
+
 public:
 	CCursorTool_MapObjectAddVertex(CViewMap* pViewMap);
 	virtual void Reset();
