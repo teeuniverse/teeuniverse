@@ -54,6 +54,12 @@ enum
 
 typedef struct IOINTERNAL *IOHANDLE;
 
+#if defined(CONF_FAMILY_WINDOWS)
+	#define FS_DIRECTORY_SEPARATOR "\\"
+#else
+	#define FS_DIRECTORY_SEPARATOR "/"
+#endif
+
 /*
 	Function: io_open
 		Opens a file.

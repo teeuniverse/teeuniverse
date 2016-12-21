@@ -201,7 +201,7 @@ public:
 		if(m_First)
 		{
 			m_First = false;
-			return false;
+			return true;
 		}
 		else
 			return (FindNextFileA(m_Handle, &m_FindData) != 0);
