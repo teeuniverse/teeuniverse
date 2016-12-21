@@ -154,7 +154,7 @@ void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, c
 	SpriteInfo.m_Height *= pMaterialSprite->GetSize().y;
 }
 
-void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const CAsset_Material::CLayer* pLayer)
+void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer)
 {
 	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
@@ -243,10 +243,10 @@ void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager,
 					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
 				}
 				
-				Quad.m_Position[0] = Pos + DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[1] = Pos - DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[2] = Pos + DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[3] = Pos - DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f;
+				Quad.m_Position[0] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[1] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[2] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[3] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
 				
 				//Switch to the next sprite
 				if(Sprites.size() > 1)
@@ -262,7 +262,7 @@ void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager,
 	}
 }
 
-void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const CAsset_Material::CLayer* pLayer)
+void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer)
 {
 	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
@@ -363,10 +363,10 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * TextureEnd, SpriteInfo.m_VMin + VSize * VMax);
 				}
 				
-				Quad.m_Position[0] = PositionAlphaPrev + OrthoAlphaPrev * StepMin * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[1] = PositionAlpha + OrthoAlpha * StepMin * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[2] = PositionAlphaPrev + OrthoAlphaPrev * StepMax * SpriteInfo.m_Height/2.0f;
-				Quad.m_Position[3] = PositionAlpha + OrthoAlpha * StepMax * SpriteInfo.m_Height/2.0f;
+				Quad.m_Position[0] = ObjPosition + Transform*(PositionAlphaPrev + OrthoAlphaPrev * StepMin * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[1] = ObjPosition + Transform*(PositionAlpha + OrthoAlpha * StepMin * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[2] = ObjPosition + Transform*(PositionAlphaPrev + OrthoAlphaPrev * StepMax * SpriteInfo.m_Height/2.0f);
+				Quad.m_Position[3] = ObjPosition + Transform*(PositionAlpha + OrthoAlpha * StepMax * SpriteInfo.m_Height/2.0f);
 			}
 			
 			PositionAlphaPrev = PositionAlpha;
@@ -385,7 +385,7 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 	}
 }
 
-void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, CAssetPath MaterialPath, bool Closed)
+void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, CAssetPath MaterialPath, bool Closed)
 {
 	const CAsset_Material* pMaterial = pAssetsManager->GetAsset<CAsset_Material>(MaterialPath);
 	if(!pMaterial)
@@ -426,10 +426,10 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 				
 				CTexturedQuad& Quad = OutputQuads.increment();
 				
-				Quad.m_Position[0] = Vertices[V0].m_Position;
-				Quad.m_Position[1] = Vertices[V1].m_Position;
-				Quad.m_Position[2] = Vertices[V2].m_Position;
-				Quad.m_Position[3] = Vertices[V3].m_Position;
+				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position);
+				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position);
+				Quad.m_Position[2] = ObjPosition + Transform*(Vertices[V2].m_Position);
+				Quad.m_Position[3] = ObjPosition + Transform*(Vertices[V3].m_Position);
 				
 				Quad.m_Texture[0] = rotate(Quad.m_Position[0]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
 				Quad.m_Texture[1] = rotate(Quad.m_Position[1]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
@@ -454,9 +454,9 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 		const CAsset_Material::CLayer* pLayer = &pMaterial->GetLayer(*LayerIter);
 			
 		if(pLayer->GetRepeatType() == CAsset_Material::REPEATTYPE_STATIC)
-			GenerateMaterialQuads_RepeatedSprites(pAssetsManager, OutputQuads, Vertices, pLayer);
+			GenerateMaterialQuads_RepeatedSprites(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer);
 		else if(pLayer->GetRepeatType() == CAsset_Material::REPEATTYPE_STRETCH)
-			GenerateMaterialQuads_StretchedQuads(pAssetsManager, OutputQuads, Vertices, pLayer);
+			GenerateMaterialQuads_StretchedQuads(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer);
 	}
 }
 
@@ -464,9 +464,9 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 {
 	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
 	bool Closed = Object.GetClosedPath();
-	vec2 Position;
+	vec2 ObjPosition;
 	matrix2x2 Transform;
-	Object.GetTransform(pAssetsManager, Time, &Transform, &Position);
+	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
 	
 	array<CBezierVertex> BezierVertices;
 	array<CLineVertex> LineVertices;
@@ -474,7 +474,7 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	for(int i=0; i<ObjectVertices.size(); i++)
 	{
 		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex.m_Position = Transform*ObjectVertices[i].GetPosition() + Position;
+		Vertex.m_Position = ObjectVertices[i].GetPosition();
 		Vertex.m_Weight = ObjectVertices[i].GetWeight();
 		Vertex.m_Color = ObjectVertices[i].GetColor();
 		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
@@ -493,5 +493,5 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	TesselateBezierCurve(BezierVertices, LineVertices, 32.0f);
 	ComputeLineNormals<CLineVertex>(LineVertices, Closed);
 	
-	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Object.GetStylePath(), Closed);
+	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed);
 }
