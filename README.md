@@ -2,17 +2,17 @@
 
 TeeUniverse is a free and open-source game offering powerful and robust support for playing online various gamemodes and playgrounds.
 
+# Compilation (Ubuntu) #
 
-##Required Libraries and Programs
+## Installation of needed libraries ##
 
-TeeUniverse, like TeeWorlds, needs SDL2, OpenGL, libpng and freetype.
-The libraries ICU and Harfbuzz must be also installed.
-Please make sure that CMake is install too, because the compilation process relies on it.
+```
+sudo apt-get install build-essential git cmake libfreetype6-dev libharfbuzz-dev libsdl2-dev libicu-dev
+```
 
+## Compilation ##
 
-##Compilation (Linux)
-
-Download the sources using github:
+Download the sources using git:
 ```
 git clone https://github.com/teeuniverse/teeuniverse.git
 cd teeuniverse
@@ -22,35 +22,39 @@ Compile the project:
 ```
 cmake -DCMAKE_BUILD_TYPE=Release .
 make
-sudo make install
 ```
 
 Execute the TeeUniverse editor:
 ```
-teeuniverse_editor
+./bin/release/teeuniverse_editor
 ```
 
-##Compilation (Windows, MinGW)
+# Compilation (Windows, MinGW) #
 
-MinGW must be installed and configured to be able to compile C++.
+## Installation of MinGW ##
 
-###CMake
+## Installation of CMake ##
 
-Download CMake from its official webpage. If you are using Windows 32-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win32-x86.msi). If you are using Windows 64-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win64-x64.msi)
+Download CMake from its official webpage.
+If you are using Windows 32-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win32-x86.msi).
+If you are using Windows 64-bit, [download this installer (official download page)](https://cmake.org/files/v3.7/cmake-3.7.1-win64-x64.msi)
 
-Execute the downloaded MSI file and install CMake. Defaults options are fine.
+Execute the downloaded MSI file and install CMake.
+Defaults options are fine.
 
-###TeeUniverse
+## Sources and needed libraries ##
 
-Download the sources from [GitHub (ZIP file)](https://github.com/teeuniverse/teeuniverse/archive/master.zip) and extract the content of this archive in your computer. We will refer to this extracted directory as "TeeUniverse directory"
+Download the sources from [GitHub (ZIP file)](https://github.com/teeuniverse/teeuniverse/archive/master.zip) and extract the content of this archive in your computer.
+We will refer to this extracted directory as "TeeUniverse directory"
 
-Download all needed libraries and sources from [the official website of TeeUniverse (ZIP file)](http://teeuniverse.net/data/teeuniverse-windows-libs.zip), and extract the content of this archive in the TeeUniverse directory.
+Download all needed libraries and sources from [the official website of TeeUniverse (ZIP file)](http://teeuniverse.net/data/teeuniverse-windows-libs.zip),
+and extract the content of this archive in the TeeUniverse directory.
 
 Your TeeUniverse directory should look like this:
 
 ![Screenshot of the TeeUniverse directory](./doc/images/win-sources.png)
 
-###Generate the Makefile
+## Generate the Makefile ##
 
 Execute CMake (cmake-gui).
 
@@ -72,7 +76,7 @@ Your CMake Window should look like this:
 
 You can now close CMake.
 
-###Compilation
+## Compilation ##
 
 Execute MinGW Command Prompt and type the following command to go in the TeeUniverse directory (please replace "C:\path\to\teeuniverse\directory" by your actual path to the TeeUniverse directory):
 ```
