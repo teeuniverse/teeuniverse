@@ -252,17 +252,110 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV DESERT */
-	PackageId = pKernel->AssetsManager()->NewPackage("env_desert");
-	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
-	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
-	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
-	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "desertMain", "datasrc/images/env_desert/desert_main.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "desertDoodads", "datasrc/images/env_desert/desert_doodads.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "desertMountains1", "datasrc/images/env_desert/desert_mountains.png", CStorage::TYPE_ABSOLUTE, 1, 1);
-	CreateNewImage(pKernel, PackageId, "desertMountains2", "datasrc/images/env_desert/desert_mountains2.png", CStorage::TYPE_ABSOLUTE, 1, 1);
-	CreateNewImage(pKernel, PackageId, "desertSun", "datasrc/images/env_desert/desert_sun.png", CStorage::TYPE_ABSOLUTE, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	{
+		PackageId = pKernel->AssetsManager()->NewPackage("env_desert");
+		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+		pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
+		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
+		
+		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "desertMain", "datasrc/images/env_desert/desert_main.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
+		CreateNewImage(pKernel, PackageId, "desertDoodads", "datasrc/images/env_desert/desert_doodads.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
+		CreateNewImage(pKernel, PackageId, "desertMountains1", "datasrc/images/env_desert/desert_mountains.png", CStorage::TYPE_ABSOLUTE, 1, 1);
+		CreateNewImage(pKernel, PackageId, "desertMountains2", "datasrc/images/env_desert/desert_mountains2.png", CStorage::TYPE_ABSOLUTE, 1, 1);
+		CreateNewImage(pKernel, PackageId, "desertSun", "datasrc/images/env_desert/desert_sun.png", CStorage::TYPE_ABSOLUTE, 1, 1);
+		
+		CAssetPath RedRockTopPath;
+		CAssetPath YellowRockTopPath;
+		CAssetPath BrownRockTopPath;
+		CAssetPath UndergroundCablePath;
+		CAssetPath UndergroundCable2Path;
+		
+		CREATE_SPRITE_PATH(RedRockTopPath, PackageId, "redRockTop", MainImagePath, 0, 1, 1, 1);
+		CREATE_SPRITE_PATH(YellowRockTopPath, PackageId, "yellowRockTop", MainImagePath, 5, 0, 1, 1);
+		CREATE_SPRITE_PATH(BrownRockTopPath, PackageId, "brownRockTop", MainImagePath, 0, 6, 1, 1);
+		CREATE_SPRITE_PATH(UndergroundCablePath, PackageId, "undergroundCable", MainImagePath, 7, 7, 1, 1);
+		CREATE_SPRITE_PATH(UndergroundCable2Path, PackageId, "undergroundCable2", MainImagePath, 8, 5, 1, 1);
+		
+		//Material: RedRock
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("redRock");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(188.0f/255.0f, 95.0f/255.0f, 53.0f/255.0f, 1.0f));
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, RedRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+		}
+		//Material: YellowRock
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("yellowRock");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(244.0f/255.0f, 209.0f/255.0f, 126.0f/255.0f, 1.0f));
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, YellowRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+		}
+		//Material: BrownRock
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("brownRock");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(129.0f/255.0f, 90.0f/255.0f, 71.0f/255.0f, 1.0f));
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, BrownRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+		}
+		//Material: Underground cable
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("undergroundCable");
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath;
+			
+			for(int i=0; i<2; i++)
+			{
+				SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCablePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+			}
+			
+			SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCable2Path);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			
+			for(int i=0; i<2; i++)
+			{
+				SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCablePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+			}
+		}
+		
+		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	}
 	
 	/* ENV GENERIC */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_generic");

@@ -722,13 +722,10 @@ void CAssetsManager::Load_UnivOpenFNG()
 	}
 }
 
-int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token)
+int CAssetsManager::AddSubItem_Hard(CAssetPath AssetPath, CSubPath SubPath, int Type)
 {
-	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+	if(!IsValidPackage(AssetPath.GetPackageId()))
 		return -1;
-		
-	if(m_pHistory)
-		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
 	
 	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 	{\
@@ -750,6 +747,17 @@ int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type,
 	#undef MACRO_ASSETTYPE
 	
 	return -1;
+}
+
+int CAssetsManager::AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token)
+{
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return -1;
+		
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, Token);
+		
+	return AddSubItem(AssetPath, SubPath, Type);
 }
 
 int CAssetsManager::AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Type, int Index, int Token)
