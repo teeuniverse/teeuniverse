@@ -29,6 +29,35 @@ Execute the TeeUniverse editor:
 ./bin/release/teeuniverse_editor
 ```
 
+# Compilation (OSX) #
+
+## Installation of needed libraries ##
+
+[Follow the instructions to install MacPorts](https://www.macports.org/install.php), then install all libraries using this command:
+
+```
+sudo port install cmake git freetype harfbuzz harfbuzz-icu libsdl2 icu
+```
+
+## Compilation ##
+
+Download the sources using git:
+```
+git clone https://github.com/teeuniverse/teeuniverse.git
+cd teeuniverse
+```
+
+Compile the project:
+```
+cmake -DCMAKE_BUILD_TYPE=Release .
+make
+```
+
+Execute the TeeUniverse editor:
+```
+./bin/release/teeuniverse_editor
+```
+
 # Compilation (Windows, MinGW) #
 
 ## Installation of MinGW ##
