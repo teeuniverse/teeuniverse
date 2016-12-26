@@ -929,13 +929,7 @@ void CGraphics::SaveConfig(class CCLI_Output* pOutput)
 }
 
 bool CGraphics::Init()
-{	
-	m_RenderFrameTime = 0.0001f;
-	m_RenderFrameTimeLow = 1.0f;
-	m_RenderFrameTimeHigh = 0.0f;
-	m_RenderFrames = 0;
-	m_LastRenderTime = time_get();
-	
+{
 	// Set all z to -5.0f
 	for(int i = 0; i < MAX_VERTICES; i++)
 		m_aVertices[i].m_Pos.z = -5.0f;
@@ -1051,21 +1045,7 @@ bool CGraphics::PreUpdate()
 	
 	m_IsReadyToRender = false;
 	if(!m_Cfg_AsyncRender || IsIdle())
-	{		
-		m_RenderFrames++;
-
-		// update frametime
-		int64 Now = time_get();
-		m_RenderFrameTime = (Now - m_LastRenderTime) / (float)time_freq();
-		
-		if(m_RenderFrameTime < m_RenderFrameTimeLow)
-			m_RenderFrameTimeLow = m_RenderFrameTime;
-			
-		if(m_RenderFrameTime > m_RenderFrameTimeHigh)
-			m_RenderFrameTimeHigh = m_RenderFrameTime;
-
-		m_LastRenderTime = Now;
-		
+	{
 		if(m_Cfg_Clear)
 			Graphics()->Clear(0.5f, 0.5f, 0.5f);
 		

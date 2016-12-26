@@ -359,7 +359,7 @@ void CAbstractLabel::Render()
 		gui::CRect Selection;
 		Selection.x = GetTextPosition().x + min(m_TextSelection0.m_Position.x, m_TextSelection1.m_Position.x);
 		Selection.y = GetTextRect().y;
-		Selection.w = abs(m_TextSelection0.m_Position.x - m_TextSelection1.m_Position.x);
+		Selection.w = std::abs(m_TextSelection0.m_Position.x - m_TextSelection1.m_Position.x);
 		Selection.h = GetTextRect().h;
 		
 		AssetsRenderer()->DrawGuiRect(&Selection, Context()->GetTextSelectionStyle());
@@ -476,7 +476,7 @@ void CAbstractLabel::OnInputEvent(const CInput::CEvent& Event)
 	{	
 		if(Event.m_Key == KEY_C && Input()->KeyIsPressed(KEY_LCTRL))
 		{
-			int Size = abs(m_TextSelection1.m_TextIter - m_TextSelection0.m_TextIter);
+			int Size = std::abs(m_TextSelection1.m_TextIter - m_TextSelection0.m_TextIter);
 			int Pos = min(m_TextSelection0.m_TextIter, m_TextSelection1.m_TextIter);
 			int Length = m_Text.length();
 			

@@ -36,7 +36,8 @@
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <cmath>
 
 template <typename T>
 inline T clamp(T val, T min, T max)

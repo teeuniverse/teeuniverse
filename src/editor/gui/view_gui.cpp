@@ -39,8 +39,8 @@ void CViewGui::RenderView()
 			ivec2 Center = ivec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2);
 			ivec2 Pointer = AssetsEditor()->GetMousePos();
 			
-			int SizeX = abs(Center.x - Pointer.x);
-			int SizeY = abs(Center.y - Pointer.y);
+			int SizeX = std::abs(Center.x - Pointer.x);
+			int SizeY = std::abs(Center.y - Pointer.y);
 			
 			if(!m_ViewRect.IsInside(Pointer.x, Pointer.y))
 			{

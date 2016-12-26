@@ -812,7 +812,7 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	vec2 TestPos = vec2(MousePosition.x - TextPosition.x, MousePosition.y - TextPosition.y);
 	for(int i=0; i<pTextCache->m_Quads.size(); i++)
 	{
-		float Dist = fabs(pTextCache->m_Quads[i].m_QuadPos.x + pTextCache->m_Quads[i].m_Size.x/2.0f - TestPos.x);
+		float Dist = std::abs(pTextCache->m_Quads[i].m_QuadPos.x + pTextCache->m_Quads[i].m_Size.x/2.0f - TestPos.x);
 		if(Dist < CharDistance)
 		{
 			NearestQuad = i;
