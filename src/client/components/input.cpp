@@ -280,12 +280,6 @@ bool CInput::PreUpdate()
 						case SDL_WINDOWEVENT_SIZE_CHANGED:
 							Graphics()->SetScreenSize(Event.window.data1, Event.window.data2);
 							break;
-#if defined(CONF_PLATFORM_MACOSX)	// Todo SDL: remove this when fixed (mouse state is faulty on start)
-						case SDL_WINDOWEVENT_MAXIMIZED:
-							MouseModeAbsolute();
-							MouseModeRelative();
-							break;
-#endif
 					}
 					break;
 				
