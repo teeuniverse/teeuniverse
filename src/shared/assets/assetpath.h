@@ -40,8 +40,8 @@ private:
 	uint16 m_Type;		//(type == 0 means null)
 	
 public:
-	CAssetPath() : m_Type(0), m_PackageId(0), m_Id(0) { }
-	CAssetPath(uint16 Type, uint16 PackageId, uint32 Id) : m_Type(Type+1), m_PackageId(PackageId), m_Id(Id) { }
+	CAssetPath() : m_Id(0), m_PackageId(0), m_Type(0) { }
+	CAssetPath(uint16 Type, uint16 PackageId, uint32 Id) : m_Id(Id), m_PackageId(PackageId), m_Type(Type+1) { }
 	
 	inline uint16 GetType() const { return m_Type-1; }
 	inline uint16 GetPackageId() const { return m_PackageId; }
@@ -82,9 +82,9 @@ public:
 		{
 			struct
 			{
-				int m_PackageId;
-				int m_Id;
-				int m_Type;
+				uint32 m_Id;
+				uint16 m_PackageId;
+				uint16 m_Type;
 			} m_OpDelete;
 			struct
 			{
@@ -156,10 +156,10 @@ public:
 	};
 	
 private:
+	uint16 m_Type;
 	uint16 m_Id0;
 	uint16 m_Id1;
 	uint16 m_Id2;
-	uint16 m_Type;
 	
 public:
 	CSubPath() : m_Type(0), m_Id0(0), m_Id1(0), m_Id2(0) {  }

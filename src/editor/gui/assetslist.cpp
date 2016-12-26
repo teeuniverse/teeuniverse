@@ -1031,8 +1031,8 @@ public:
 	CImageItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		if(m_PackageId == m_AssetPath.GetPackageId())
@@ -1072,8 +1072,8 @@ public:
 	CSkeletonItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		if(m_PackageId == m_AssetPath.GetPackageId())
@@ -1126,9 +1126,9 @@ public:
 	CCharacterPartItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, CSubPath SubPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
 		m_SubPath(SubPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		if(m_PackageId == m_AssetPath.GetPackageId())
@@ -1169,8 +1169,8 @@ public:
 	CCharacterItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		if(m_PackageId == m_AssetPath.GetPackageId())
@@ -1229,8 +1229,8 @@ public:
 	CMapGroupItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		if(m_PackageId == m_AssetPath.GetPackageId())
@@ -1278,8 +1278,8 @@ public:
 	CMapItem(CGuiEditor* pAssetsEditor, CAssetPath AssetPath, int PackageId) :
 		gui::CExpand(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_PackageId(PackageId),
 		m_AssetPath(AssetPath),
+		m_PackageId(PackageId),
 		m_PackageIdFound(false)
 	{
 		gui::CExpand* pZoneExpand = new gui::CExpand(Context());
@@ -1361,8 +1361,8 @@ public:
 
 CPackagesTree::CPackagesTree(CAssetsOrganizer* pAssetsOrganizer) :
 	gui::CVScrollLayout(pAssetsOrganizer->AssetsEditor()),
-	m_pAssetsOrganizer(pAssetsOrganizer),
-	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor())
+	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor()),
+	m_pAssetsOrganizer(pAssetsOrganizer)
 {
 	SetBoxStyle(AssetsEditor()->m_Path_Box_Panel);
 	Refresh();
@@ -1398,8 +1398,8 @@ void CPackagesTree::Refresh()
 
 CAssetsTree::CAssetsTree(CAssetsOrganizer* pAssetsOrganizer) :
 	gui::CVScrollLayout(pAssetsOrganizer->AssetsEditor()),
-	m_pAssetsOrganizer(pAssetsOrganizer),
 	m_pAssetsEditor(pAssetsOrganizer->AssetsEditor()),
+	m_pAssetsOrganizer(pAssetsOrganizer),
 	m_PackageId(-1)
 {
 	SetBoxStyle(AssetsEditor()->m_Path_Box_Panel);

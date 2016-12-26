@@ -141,8 +141,8 @@ public:
 	public:		
 		CListDirIterator(CStorage* pStorage, const char *pDir, int Type) :
 			m_pStorage(pStorage),
-			m_Type(Type),
 			m_pDir(pDir),
+			m_Type(Type),
 			m_TypeIter(Type == TYPE_ALL ? 0 : Type),
 			m_pIter(NULL)
 		{

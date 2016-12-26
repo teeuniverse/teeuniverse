@@ -146,12 +146,6 @@ void CStorage::LoadPaths(const char *pArgv0)
 	IOHANDLE File = io_open("config/storage.cfg", IOFLAG_READ);
 	if(!File)
 	{
-		// check usable path in argv[0]
-		unsigned int Pos = ~0U;
-		for(unsigned i = 0; pArgv0[i]; i++)
-			if(pArgv0[i] == '/' || pArgv0[i] == '\\')
-				Pos = i;
-		
 		dynamic_string Filename(pArgv0);
 		Filename.append("/config/storage.cfg");
 		File = io_open(Filename.buffer(), IOFLAG_READ);

@@ -264,11 +264,11 @@ public:
 class CSubItemList : public gui::CVScrollLayout
 {
 protected:
-	CAssetPath m_AssetPath;
 	CGuiEditor* m_pAssetsEditor;
+	CAssetPath m_AssetPath;
+	int m_AssetType;
 	int m_AssetVersion;
 	bool m_UpdateNeeded;
-	int m_AssetType;
 	CAssetPath m_IconPath;
 	
 protected:
@@ -1054,8 +1054,7 @@ public:
 			if(m_UpdateNeeded)
 			{
 				Clear();
-				char aBuf[128];
-					
+				
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_pAssetsEditor->GetEditedAssetPath());
 				if(pZoneType)
 				{
@@ -1135,8 +1134,8 @@ public:
 	CNewSubItemButton_Material_Layer(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
 		gui::CButton(pAssetsEditor, LString, IconPath),
 		m_pAssetsEditor(pAssetsEditor),
-		m_Type(Type),
-		m_SubPath(SubPath)
+		m_SubPath(SubPath),
+		m_Type(Type)
 	{
 		
 	}
@@ -1154,8 +1153,7 @@ protected:
 		if(pMaterial && pMaterial->IsValidLayer(m_pAssetsEditor->GetEditedSubPath()))
 		{
 			int Token = AssetsManager()->GenerateToken();
-			int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_Material::TYPE_LAYER_SPRITE, Token);
-			CSubPath SubPath = CAsset_Material::SubPath_LayerSprite(m_pAssetsEditor->GetEditedSubPath().GetId(), Id);
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_Material::TYPE_LAYER_SPRITE, Token);
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;
@@ -1875,8 +1873,8 @@ public:
 		public:
 			CItem(CPopup* pPopup, CAssetPath AssetPath, bool CheckTileCompatibility) :
 				gui::CButton(pPopup->Context(), ""),
-				m_pPopup(pPopup),
-				m_AssetPath(AssetPath)
+				m_AssetPath(AssetPath),
+				m_pPopup(pPopup)
 			{
 				if(m_AssetPath.IsNull())
 				{

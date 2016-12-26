@@ -74,8 +74,8 @@ public:
 		
 	public:
 		CCommand_ConfigString(const char* pCommandName, const char* pDescription, STRING* pValue) :
-			m_pDescription(pDescription),
-			m_pValue(pValue)
+			m_pValue(pValue),
+			m_pDescription(pDescription)
 		{
 			m_Usage.append(pCommandName);
 			m_Usage.append(" Value");

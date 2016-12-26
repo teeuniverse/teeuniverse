@@ -29,10 +29,10 @@ namespace gui
 
 CAbstractTextEdit::CAbstractTextEdit(CGui* pContext) :
 	CAbstractLabel(pContext),
-	m_Changes(false),
-	m_Composing(false),
 	m_MouseOver(false),
+	m_Changes(false),
 	m_SaveOnChange(false),
+	m_Composing(false),
 	m_Editable(true)
 {
 	m_ButtonStylePath = Context()->GetTextEntryStyle();
@@ -374,8 +374,6 @@ void CAbstractTextEdit::OnInputEvent(const CInput::CEvent& Event)
 			{
 				int TextIter = m_TextCursor.m_TextIter;
 				
-				int Len = m_Text.length();
-				int NumChars = Len;
 				if(LineInput(Event, m_Text, TextIter))
 				{
 					m_Localize = false;

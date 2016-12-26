@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 	//Images
 	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "datasrc/images/gui_editor.png", CStorage::TYPE_ABSOLUTE, 64, 32);
 	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "datasrc/images/gui_editor_box.png", CStorage::TYPE_ABSOLUTE, 16, 16);
-	CAssetPath ImageZoneTexturePath = CreateNewImage(pKernel, PackageId, "zoneTexture", "datasrc/images/gui_editor_zonetexture.png", CStorage::TYPE_ABSOLUTE, 1, 1);
+	CreateNewImage(pKernel, PackageId, "zoneTexture", "datasrc/images/gui_editor_zonetexture.png", CStorage::TYPE_ABSOLUTE, 1, 1);
 	
 	//Sprites
 	CAssetPath IconDecreasePath;

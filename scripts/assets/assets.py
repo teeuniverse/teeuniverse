@@ -348,13 +348,13 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 	def generateSet(self, var, value):
 		res = []
 		if self.interface.name:
-			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
+			res.append("if(SubPath.GetId() < " + var + ".size())")
 			if self.interface.subpath > 0:
 				res.append("	" + var + "[SubPath.GetId()].Set" + self.interface.name + "(SubPath.PopId(), " + value + ");")
 			else:
 				res.append("	" + var + "[SubPath.GetId()].Set" + self.interface.name + "(" + value + ");")
 		else:
-			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
+			res.append("if(SubPath.GetId() < " + var + ".size())")
 			res.append("{")
 			for l in self.t.generateCopy(var + "[SubPath.GetId()]", value):
 				res.append("	" + l)
@@ -363,32 +363,22 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 	def generateGet(self, var, defaultValue):
 		res = []
 		if self.interface.name:
-			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
-			if self.interface.subpath > 0:
-				res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "(SubPath.PopId());")
-			else:
-				res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
 			if defaultValue:
+				res.append("if(SubPath.GetId() < " + var + ".size())")
+				if self.interface.subpath > 0:
+					res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "(SubPath.PopId());")
+				else:
+					res.append("	return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
 				res.append("else return " + defaultValue + ";")
 			else:
-				res.append("else")
-				res.append("{")
-				res.append("	dbg_msg(\"Asset\", \"Try to access to an inexistant subitem\");")
-				res.append("	dbg_break();")
+				res.append("assert(SubPath.GetId() < " + var + ".size());")
 				if self.interface.subpath > 0:
-					res.append("	return " + var + "[0].Get" + self.interface.name + "(SubPath.PopId()); //Useless line needed to avoid compilation errors")
+					res.append("return " + var + "[SubPath.GetId()].Get" + self.interface.name + "(SubPath.PopId());")
 				else:
-					res.append("	return " + var + "[0].Get" + self.interface.name + "(); //Useless line needed to avoid compilation errors")
-				res.append("}")
+					res.append("return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
 		else:
-			res.append("if(SubPath.GetId() >= 0 && SubPath.GetId() < " + var + ".size())")
-			res.append("	return " + var + "[SubPath.GetId()];")
-			res.append("else")
-			res.append("{")
-			res.append("	dbg_msg(\"Asset\", \"Try to access to an inexistant subitem\");")
-			res.append("	dbg_break();")
-			res.append("	return " + var + "[0]; //Useless line needed to avoid compilation errors")
-			res.append("}")
+			res.append("assert(SubPath.GetId() < " + var + ".size());")
+			res.append("return " + var + "[SubPath.GetId()];")
 		return res
 			
 class AddInterface_Array(GetSetInterface):
@@ -410,7 +400,7 @@ class AddInterface_Array(GetSetInterface):
 		return [ var + ".relative_move(SubPath.GetId(), RelMove);" ]
 	def generateValid(self, var):
 		return [ 
-			"return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size());"
+			"return (SubPath.GetId() < "+var+".size());"
 		]
 			
 class AddInterface_ArrayChild(GetSetInterface):
@@ -428,7 +418,7 @@ class AddInterface_ArrayChild(GetSetInterface):
 	def generateRelMove(self, var):
 		return [ var + "[SubPath.GetId()].RelMove" + self.interface.name + "(SubPath.PopId(), RelMove);" ]
 	def generateValid(self, var):
-		return [ "return (SubPath.GetId() >= 0 && SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
+		return [ "return (SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
 	
 class TypeArray(Type):
 	def __init__(self, t):
@@ -485,7 +475,7 @@ class TypeArray(Type):
 		res.append("	const "+self.t.tuaType(version)+"* pData = (const "+self.t.tuaType(version)+"*) pLoadingContext->ArchiveFile()->GetData("+varTua+".m_Data);")
 		res.append("	uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Size);")
 		res.append("	"+varSys+".resize(Size);")
-		res.append("	for(int i=0; i<Size; i++)")
+		res.append("	for(uint32 i=0; i<Size; i++)")
 		res.append("	{")
 		for l in self.t.generateRead(varSys+"[i]", "pData[i]", version):
 			res.append("		"+l)
@@ -650,11 +640,11 @@ class TypeArray2d(Type):
 		res.append("	uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Width);")
 		res.append("	uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Height);")
 		res.append("	uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32("+varTua+".m_Depth);")
-		res.append("	int Size = Width * Height * Depth;")
 		res.append("	"+varSys+".resize(Width, Height, Depth);")
 		if self.t.fullType() == "uint8":
 			res.append("	mem_copy((uint8*) "+varSys+".base_ptr(), pData, "+varSys+".get_linear_size());")
 		else:
+			res.append("	int Size = Width * Height * Depth;")
 			res.append("	for(int i=0; i<Size; i++)")
 			res.append("	{")
 			res.append("		"+self.t.tname+" ReadedValue;" )

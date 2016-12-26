@@ -39,8 +39,6 @@ void CCursorTool_MapObjectVertexPicker::RenderPivots()
 		
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	float GizmoSize = 16.0f;
-	
 	CAsset_MapLayerObjects::CIteratorObject Iter;
 	
 	Graphics()->TextureClear();
@@ -96,8 +94,6 @@ void CCursorTool_MapObjectVertexPicker::RenderVertices()
 		return;
 		
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
-	float GizmoSize = 16.0f;
 	
 	CAsset_MapLayerObjects::CIteratorObject Iter;
 	for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
@@ -314,10 +310,8 @@ void CCursorTool_MapObjectAddVertex::UpdateBarycenter(int Token)
 		
 		vec2 Position;
 		matrix2x2 Transform;
-		matrix2x2 TransformInv = matrix2x2::inverse(Transform);
 		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
-		vec2 OldBarycenter = Object.GetPosition();
 		vec2 Barycenter = 0.0f;
 		
 		for(int i=0; i<Object.GetVertexArraySize(); i++)
@@ -554,8 +548,6 @@ void CCursorTool_MapObjectEditVertex::RenderView()
 		VertexControlPoint1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint1 + VertexPos) + Position);
 		VertexPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPos + Position);
 		
-		float GizmoSize = 16.0f;
-		
 		Graphics()->TextureClear();
 		Graphics()->LinesBegin();
 		CGraphics::CLineItem aLineItem[] = {
@@ -680,7 +672,6 @@ void CCursorTool_MapObjectEditVertex::OnViewButtonClick(int Button)
 	if(m_DragType == 0)
 	{
 		vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-		vec2 MouseMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos);
 		vec2 NewVertexPos;
 		CSubPath PrevVertexPath;
 		CSubPath NextVertexPath;
@@ -798,8 +789,6 @@ void CCursorTool_MapObjectWeightVertex::OnViewButtonClick(int Button)
 	
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	vec2 VertexPosition = PickVertex(MousePos);
 	if(m_CurrentVertex.IsNotNull())
 	{
 		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex);

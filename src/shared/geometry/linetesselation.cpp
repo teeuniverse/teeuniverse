@@ -166,8 +166,6 @@ void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager,
 	CSpriteInfo SpriteInfo;
 	GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
 	
-	float SegmentLength = SpriteInfo.m_Width;
-	
 	float LengthIter = 0.0;
 	float LengthCutPos = 0.0;
 	for(int i=1; i<Vertices.size(); i++)
@@ -273,8 +271,6 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 	
 	CSpriteInfo SpriteInfo;
 	GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
-	
-	float SegmentLength = SpriteInfo.m_Width;
 		
 	float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
 	float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
@@ -390,14 +386,6 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 	const CAsset_Material* pMaterial = pAssetsManager->GetAsset<CAsset_Material>(MaterialPath);
 	if(!pMaterial)
 		return;
-
-	vec2 TextureScale = 1.0f;
-	const CAsset_Image* pImage = pAssetsManager->GetAsset<CAsset_Image>(pMaterial->GetTexturePath());
-	if(pImage)
-	{
-		TextureScale.x = pImage->GetDataWidth() * pImage->GetTexelSize()/1024.0f * pMaterial->GetTextureSize().x;
-		TextureScale.y = pImage->GetDataHeight() * pImage->GetTexelSize()/1024.0f * pMaterial->GetTextureSize().y;
-	}
 	
 	//Render polygon
 	if(Closed && pMaterial->GetTextureEnabled())

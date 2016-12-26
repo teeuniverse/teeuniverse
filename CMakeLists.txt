@@ -117,6 +117,10 @@ else()
 	endif()
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCC)
+    add_definitions("-Wall -Wextra -Wno-unused-parameter -Wno-maybe-uninitialized")
+endif()
+
 ########################################################################
 # SHARED
 ########################################################################

@@ -557,7 +557,7 @@ static int png_process_chunk(png_t* png)
 {
 	int result = PNG_NO_ERROR;
 	unsigned type;
-	unsigned length;
+	unsigned length = 0;
 
 	file_read_ul(png, &length);
 
@@ -803,7 +803,7 @@ int png_get_data(png_t* png, unsigned char* data)
 
 int png_set_data(png_t* png, unsigned width, unsigned height, char depth, int color, unsigned char* data)
 {
-	int i;
+	unsigned int i;
 	unsigned char *filtered;
 	png->width = width;
 	png->height = height;

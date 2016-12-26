@@ -294,96 +294,90 @@ public:
 		
 		inline const CAsset_MapLayerObjects::CVertex& GetVertex(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
-				return m_Vertex[SubPath.GetId()];
-			else
-			{
-				dbg_msg("Asset", "Try to access to an inexistant subitem");
-				dbg_break();
-				return m_Vertex[0]; //Useless line needed to avoid compilation errors
-			}
+			assert(SubPath.GetId() < m_Vertex.size());
+			return m_Vertex[SubPath.GetId()];
 		}
 		
 		inline vec2 GetVertexPosition(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetPosition();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexPositionX(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetPositionX();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexPositionY(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetPositionY();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexWeight(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetWeight();
 			else return 0.0f;
 		}
 		
 		inline vec4 GetVertexColor(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetColor();
 			else return 1.0f;
 		}
 		
 		inline int GetVertexSmoothness(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetSmoothness();
 			else return 0;
 		}
 		
 		inline vec2 GetVertexControlPoint0(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint0();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexControlPoint0X(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint0X();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexControlPoint0Y(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint0Y();
 			else return 0.0f;
 		}
 		
 		inline vec2 GetVertexControlPoint1(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint1();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexControlPoint1X(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint1X();
 			else return 0.0f;
 		}
 		
 		inline float GetVertexControlPoint1Y(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				return m_Vertex[SubPath.GetId()].GetControlPoint1Y();
 			else return 0.0f;
 		}
@@ -410,7 +404,7 @@ public:
 		
 		inline void SetVertex(const CSubPath& SubPath, const CAsset_MapLayerObjects::CVertex& Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 			{
 				m_Vertex[SubPath.GetId()].copy(Value);
 			}
@@ -418,73 +412,73 @@ public:
 		
 		inline void SetVertexPosition(const CSubPath& SubPath, vec2 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetPosition(Value);
 		}
 		
 		inline void SetVertexPositionX(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetPositionX(Value);
 		}
 		
 		inline void SetVertexPositionY(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetPositionY(Value);
 		}
 		
 		inline void SetVertexWeight(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetWeight(Value);
 		}
 		
 		inline void SetVertexColor(const CSubPath& SubPath, vec4 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetColor(Value);
 		}
 		
 		inline void SetVertexSmoothness(const CSubPath& SubPath, int Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetSmoothness(Value);
 		}
 		
 		inline void SetVertexControlPoint0(const CSubPath& SubPath, vec2 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint0(Value);
 		}
 		
 		inline void SetVertexControlPoint0X(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint0X(Value);
 		}
 		
 		inline void SetVertexControlPoint0Y(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint0Y(Value);
 		}
 		
 		inline void SetVertexControlPoint1(const CSubPath& SubPath, vec2 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint1(Value);
 		}
 		
 		inline void SetVertexControlPoint1X(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint1X(Value);
 		}
 		
 		inline void SetVertexControlPoint1Y(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size())
+			if(SubPath.GetId() < m_Vertex.size())
 				m_Vertex[SubPath.GetId()].SetControlPoint1Y(Value);
 		}
 		
@@ -503,7 +497,7 @@ public:
 		
 		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { m_Vertex.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Vertex.size()); }
+		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Vertex.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -589,208 +583,184 @@ public:
 	
 	inline const CAsset_MapLayerObjects::CObject& GetObject(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Object[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Object.size());
+		return m_Object[SubPath.GetId()];
 	}
 	
 	inline vec2 GetObjectPosition(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetPosition();
 		else return 0.0f;
 	}
 	
 	inline float GetObjectPositionX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetPositionX();
 		else return 0.0f;
 	}
 	
 	inline float GetObjectPositionY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetPositionY();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetObjectSize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetSize();
 		else return 0.0f;
 	}
 	
 	inline float GetObjectSizeX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetSizeX();
 		else return 0.0f;
 	}
 	
 	inline float GetObjectSizeY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetSizeY();
 		else return 0.0f;
 	}
 	
 	inline float GetObjectAngle(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetAngle();
 		else return 0.0f;
 	}
 	
 	inline CAssetPath GetObjectStylePath(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetStylePath();
 		else return CAssetPath::Null();
 	}
 	
 	inline int GetObjectVertexArraySize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexArraySize();
 		else return 0;
 	}
 	
 	inline const CAsset_MapLayerObjects::CVertex* GetObjectVertexPtr(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexPtr();
 		else return NULL;
 	}
 	
 	inline const array< CVertex, allocator_copy<CVertex> >& GetObjectVertexArray(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()].GetVertexArray();
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Object[0].GetVertexArray(); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Object.size());
+		return m_Object[SubPath.GetId()].GetVertexArray();
 	}
 	inline array< CVertex, allocator_copy<CVertex> >& GetObjectVertexArray(const CSubPath& SubPath)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()].GetVertexArray();
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Object[0].GetVertexArray(); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Object.size());
+		return m_Object[SubPath.GetId()].GetVertexArray();
 	}
 	
 	inline const CAsset_MapLayerObjects::CVertex& GetObjectVertex(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()].GetVertex(SubPath.PopId());
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Object[0].GetVertex(SubPath.PopId()); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Object.size());
+		return m_Object[SubPath.GetId()].GetVertex(SubPath.PopId());
 	}
 	
 	inline vec2 GetObjectVertexPosition(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexPosition(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexPositionX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexPositionX(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexPositionY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexPositionY(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexWeight(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexWeight(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline vec4 GetObjectVertexColor(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexColor(SubPath.PopId());
 		else return 1.0f;
 	}
 	
 	inline int GetObjectVertexSmoothness(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexSmoothness(SubPath.PopId());
 		else return 0;
 	}
 	
 	inline vec2 GetObjectVertexControlPoint0(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint0(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexControlPoint0X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint0X(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexControlPoint0Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint0Y(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline vec2 GetObjectVertexControlPoint1(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint1(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexControlPoint1X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint1X(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetObjectVertexControlPoint1Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetVertexControlPoint1Y(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline bool GetObjectClosedPath(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			return m_Object[SubPath.GetId()].GetClosedPath();
 		else return false;
 	}
@@ -803,7 +773,7 @@ public:
 	
 	inline void SetObject(const CSubPath& SubPath, const CAsset_MapLayerObjects::CObject& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 		{
 			m_Object[SubPath.GetId()].copy(Value);
 		}
@@ -811,139 +781,139 @@ public:
 	
 	inline void SetObjectPosition(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetPosition(Value);
 	}
 	
 	inline void SetObjectPositionX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetPositionX(Value);
 	}
 	
 	inline void SetObjectPositionY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetPositionY(Value);
 	}
 	
 	inline void SetObjectSize(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetSize(Value);
 	}
 	
 	inline void SetObjectSizeX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetSizeX(Value);
 	}
 	
 	inline void SetObjectSizeY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetSizeY(Value);
 	}
 	
 	inline void SetObjectAngle(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetAngle(Value);
 	}
 	
 	inline void SetObjectStylePath(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetStylePath(Value);
 	}
 	
 	inline void SetObjectVertexArraySize(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexArraySize(Value);
 	}
 	
 	inline void SetObjectVertex(const CSubPath& SubPath, const CAsset_MapLayerObjects::CVertex& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertex(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexPosition(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexPosition(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexPositionX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexPositionX(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexPositionY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexPositionY(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexWeight(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexWeight(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexColor(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexColor(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexSmoothness(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexSmoothness(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint0(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint0(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint0X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint0X(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint0Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint0Y(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint1(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint1(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint1X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint1X(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectVertexControlPoint1Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetVertexControlPoint1Y(SubPath.PopId(), Value);
 	}
 	
 	inline void SetObjectClosedPath(const CSubPath& SubPath, bool Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size())
+		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetClosedPath(Value);
 	}
 	
@@ -970,9 +940,9 @@ public:
 	
 	inline void RelMoveObjectVertex(const CSubPath& SubPath, int RelMove) { m_Object[SubPath.GetId()].RelMoveVertex(SubPath.PopId(), RelMove); }
 	
-	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size()); }
+	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Object.size()); }
 	
-	inline bool IsValidObjectVertex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Object.size() && m_Object[SubPath.GetId()].IsValidVertex(SubPath.PopId())); }
+	inline bool IsValidObjectVertex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Object.size() && m_Object[SubPath.GetId()].IsValidVertex(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

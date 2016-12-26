@@ -47,6 +47,7 @@ protected:
 	CWidget(class CGui *pContext);
 	
 public:
+	virtual ~CWidget() {};
 	virtual void Destroy();
 
 	virtual void UpdateBoundingSize() = 0;

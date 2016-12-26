@@ -166,11 +166,11 @@ protected:
 	
 public:
 	CCommand_ConfigInteger(const char* pCommandName, const char* pDescription, int* pValue, int DefaultValue, int Min, int Max) :
-		m_pDescription(pDescription),
 		m_pValue(pValue),
 		m_DefaultValue(DefaultValue),
 		m_Min(Min),
-		m_Max(Max)
+		m_Max(Max),
+		m_pDescription(pDescription)
 	{
 		m_Usage.append(pCommandName);
 		m_Usage.append(" Value");
@@ -506,20 +506,19 @@ int CCommandLineInterpreter::ExecuteImpl(const char* pCommandLine, CCLI_Output* 
 
 int CCommandLineInterpreter::Help(const char* pCommandLine, CCLI_Output* pOutput)
 {
-	ExecuteImpl(pCommandLine, pOutput, true);
+	return ExecuteImpl(pCommandLine, pOutput, true);
 }
 
 
 int CCommandLineInterpreter::Execute(const char* pCommandLine, CCLI_Output* pOutput)
 {
-	ExecuteImpl(pCommandLine, pOutput, false);
+	return ExecuteImpl(pCommandLine, pOutput, false);
 }
 
 bool CCommandLineInterpreter::ExecuteFile(const char* pFilename, CCLI_Output* pOutput)
 {	
 	IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_READ, CStorage::TYPE_ALL);
 
-	char aBuf[256];
 	if(File)
 	{
 		dbg_msg("CLI", "Execute file %s", pFilename);

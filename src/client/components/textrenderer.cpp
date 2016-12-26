@@ -257,7 +257,7 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::NewGlyph(CGlyphId GlyphId, in
 	
 	if(OldestGlyph >= 0) //Replace the glyph
 	{
-		CGlyph Glyph = CGlyph(GlyphId);
+		CGlyph Glyph(GlyphId);
 		Glyph.m_Block = m_Glyphs[OldestGlyph].m_Block;
 		Glyph.m_BlockPos = m_Glyphs[OldestGlyph].m_BlockPos;
 		
@@ -337,8 +337,8 @@ void CTextRenderer::CGlyphCache::UpdateTexture(CTextRenderer::CGlyph* pGlyph, co
 /* TEXT CACHE *********************************************************/
 
 CTextRenderer::CTextCache::CTextCache() :
-	m_GlyphCacheId(-1),
-	m_Rendered(false)
+	m_Rendered(false),
+	m_GlyphCacheId(-1)
 {
 	
 }
@@ -590,9 +590,8 @@ void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, con
 	
 	unsigned int GlyphCount;
 	hb_glyph_info_t* GlyphInfo = hb_buffer_get_glyph_infos(m_pHBBuffer, &GlyphCount);
-	hb_glyph_position_t* GlyphPos = hb_buffer_get_glyph_positions(m_pHBBuffer, &GlyphCount);
 
-	for(int i=0; i<GlyphCount; i++)
+	for(unsigned int i=0; i<GlyphCount; i++)
 	{
 		CShaperGlyph& Glyph = pGlyphChain->increment();
 		Glyph.m_GlyphId = CGlyphId(FontId, GlyphInfo[i].codepoint);
@@ -694,7 +693,6 @@ void CTextRenderer::UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const
 	
 	if(U_SUCCESS(ICUError))
 	{
-		UBiDiLevel ICULevel = 1&ubidi_getParaLevel(pICUBiDi);
 		UBiDiDirection Direction = ubidi_getDirection(pICUBiDi);
 
 		if(Direction != UBIDI_MIXED)
@@ -703,8 +701,6 @@ void CTextRenderer::UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const
 		}
 		else
 		{
-			int CharStart = 0;
-			UBiDiLevel level;
 			int NumberOfParts = ubidi_countRuns(pICUBiDi, &ICUError);
 			if(U_SUCCESS(ICUError))
 			{

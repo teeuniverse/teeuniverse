@@ -60,7 +60,7 @@ void CAsset_MapEntities::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingCo
 		const CAsset_MapEntities::CEntity::CTuaType_0_1_0* pData = (const CAsset_MapEntities::CEntity::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Entity.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Entity.m_Size);
 		SysType.m_Entity.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Entity[i]);
 		}
@@ -112,7 +112,7 @@ void CAsset_MapEntities::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingCo
 		const CAsset_MapEntities::CEntity::CTuaType_0_2_0* pData = (const CAsset_MapEntities::CEntity::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Entity.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Entity.m_Size);
 		SysType.m_Entity.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Entity[i]);
 		}

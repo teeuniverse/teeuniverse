@@ -227,14 +227,8 @@ public:
 	
 	inline CAssetPath GetBgGroup(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size())
-			return m_BgGroup[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_BgGroup[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_BgGroup.size());
+		return m_BgGroup[SubPath.GetId()];
 	}
 	
 	inline int GetFgGroupArraySize() const { return m_FgGroup.size(); }
@@ -246,14 +240,8 @@ public:
 	
 	inline CAssetPath GetFgGroup(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size())
-			return m_FgGroup[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_FgGroup[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_FgGroup.size());
+		return m_FgGroup[SubPath.GetId()];
 	}
 	
 	inline int GetZoneLayerArraySize() const { return m_ZoneLayer.size(); }
@@ -265,14 +253,8 @@ public:
 	
 	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size())
-			return m_ZoneLayer[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_ZoneLayer[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_ZoneLayer.size());
+		return m_ZoneLayer[SubPath.GetId()];
 	}
 	
 	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
@@ -284,21 +266,15 @@ public:
 	
 	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size())
-			return m_EntityLayer[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_EntityLayer[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_EntityLayer.size());
+		return m_EntityLayer[SubPath.GetId()];
 	}
 	
 	inline void SetBgGroupArraySize(int Value) { m_BgGroup.resize(Value); }
 	
 	inline void SetBgGroup(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size())
+		if(SubPath.GetId() < m_BgGroup.size())
 		{
 			m_BgGroup[SubPath.GetId()] = Value;
 		}
@@ -308,7 +284,7 @@ public:
 	
 	inline void SetFgGroup(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size())
+		if(SubPath.GetId() < m_FgGroup.size())
 		{
 			m_FgGroup[SubPath.GetId()] = Value;
 		}
@@ -318,7 +294,7 @@ public:
 	
 	inline void SetZoneLayer(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size())
+		if(SubPath.GetId() < m_ZoneLayer.size())
 		{
 			m_ZoneLayer[SubPath.GetId()] = Value;
 		}
@@ -328,7 +304,7 @@ public:
 	
 	inline void SetEntityLayer(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size())
+		if(SubPath.GetId() < m_EntityLayer.size())
 		{
 			m_EntityLayer[SubPath.GetId()] = Value;
 		}
@@ -386,13 +362,13 @@ public:
 	
 	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { m_EntityLayer.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_BgGroup.size()); }
+	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_BgGroup.size()); }
 	
-	inline bool IsValidFgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_FgGroup.size()); }
+	inline bool IsValidFgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_FgGroup.size()); }
 	
-	inline bool IsValidZoneLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_ZoneLayer.size()); }
+	inline bool IsValidZoneLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_ZoneLayer.size()); }
 	
-	inline bool IsValidEntityLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_EntityLayer.size()); }
+	inline bool IsValidEntityLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_EntityLayer.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

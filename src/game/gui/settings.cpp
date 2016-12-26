@@ -152,10 +152,10 @@ public:
 class CFlagButton : public gui::CButton
 {
 private:
+	CGuiGame* m_pMenu;
 	const char* m_pSearch;
 	int* m_pCode;
 	int m_Index;
-	CGuiGame* m_pMenu;
 	
 	virtual void MouseClickAction()
 	{
@@ -167,8 +167,8 @@ public:
 		gui::CButton(pContext, ""),
 		m_pMenu(pContext),
 		m_pSearch(pSearch),
-		m_Index(Index),
-		m_pCode(pCode)
+		m_pCode(pCode),
+		m_Index(Index)
 	{
 		CAssetPath SpritePath = m_pMenu->GameKernel()->CountryFlags()->GetFlagFromIndex(m_Index).m_SpritePath;
 		const char* pCountryName = m_pMenu->GameKernel()->CountryFlags()->GetFlagFromIndex(m_Index).m_aEnglishName;
@@ -201,8 +201,8 @@ public:
 class CFlagLabel : public gui::CLabel
 {
 private:
-	int* m_pCode;
 	CGuiGame* m_pMenu;
+	int* m_pCode;
 
 public:
 	CFlagLabel(CGuiGame* pContext, int* pCode) :
@@ -235,9 +235,9 @@ protected:
 	class CBindEdit : public gui::CAbstractBindEdit
 	{
 	protected:
+		CGuiGame* m_pMenu;
 		std::string m_Command;
 		int m_BindNum;
-		CGuiGame* m_pMenu;
 		
 		virtual int GetValue() const
 		{

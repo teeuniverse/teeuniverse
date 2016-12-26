@@ -446,8 +446,8 @@ public:
 		gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 600, 450, gui::CPopup::ALIGNMENT_INNER),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pFilelist(NULL),
-		m_Save(Save),
 		m_Format(Format),
+		m_Save(Save),
 		m_RefreshList(true)
 	{
 		gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
@@ -1245,7 +1245,6 @@ protected:
 				CAssetPath GroupPath;
 				CAssetPath SubAssetPath;
 				CAsset_MapGroup* pMapGroup;
-				CAsset_MapLayerTiles* pMapLayerTiles;
 				CAsset_MapLayerQuads* pMapLayerQuads;
 				CAsset_MapZoneTiles* pMapZoneTiles;
 				CAsset_MapEntities* pMapEntities;

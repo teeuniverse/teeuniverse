@@ -131,8 +131,6 @@ void CCursorTool_MapPicker::RenderPivots()
 	if(!pMapLayer)
 		return;
 	
-	float GizmoSize = 16.0f;
-	
 	CAsset_MapLayerQuads::CIteratorQuad Iter;
 	for(Iter = pMapLayer->BeginQuad(); Iter != pMapLayer->EndQuad(); ++Iter)
 	{
@@ -173,8 +171,6 @@ void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(pMapLayer)
 	{
-		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pMapLayer->GetImagePath());
-		
 		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 		
 		//Find gizmo
@@ -354,7 +350,7 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 			Vertex = pMapLayer->GetQuadVertex3(SelectedQuad);
 			UpdateBoundingBox(Vertex, &BBMin, &BBMax);
 			
-			vec2 GizmosPos;
+			vec2 GizmosPos = Position;
 			switch(m_SelectedGizmo)
 			{
 				case 0:
@@ -407,7 +403,6 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		
 		ViewMap()->MapRenderer()->UnsetGroup();
 		
-		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 		int RelX = Context()->GetMouseRelPos().x;
 		int RelY = Context()->GetMouseRelPos().y;
 		
@@ -451,8 +446,6 @@ void CCursorTool_MapTransform::RenderView()
 	{
 		ViewMap()->MapRenderer()->RenderQuads_Mesh(&pMapLayer->GetQuad(SelectedQuad), 1);
 
-		float GizmoSize = 16.0f;
-	
 		vec2 Position;
 		matrix2x2 Transform;
 		pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
@@ -519,8 +512,8 @@ void CCursorTool_MapTransform::OnMouseMove()
 
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
 	CCursorTool_MapPicker(pViewMap, _LSTRING("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMoveVertex),
-	m_Token(CAssetsHistory::NEW_TOKEN),
-	m_Vertex(CAsset_MapLayerQuads::VERTEX_NONE)
+	m_Vertex(CAsset_MapLayerQuads::VERTEX_NONE),
+	m_Token(CAssetsHistory::NEW_TOKEN)
 {
 	
 }
@@ -696,8 +689,6 @@ void CCursorTool_MapEdit::RenderView()
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
 	RenderPivots();
-	
-	float GizmoSize = 16.0f;
 	
 	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
 	if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))

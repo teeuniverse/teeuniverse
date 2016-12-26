@@ -94,11 +94,10 @@ void CreateNewImage_CopyData(png_t& Png, unsigned char*& pBuffer, CAsset_Image* 
 	
 	Data.resize(Png.width, Png.height, BBP);
 	
-	for(int j=0; j<Png.height; j++)
+	for(unsigned int j=0; j<Png.height; j++)
 	{
-		for(int i=0; i<Png.width; i++)
+		for(unsigned int i=0; i<Png.width; i++)
 		{
-			int Value = 0;
 			if(Png.color_type == PNG_TRUECOLOR)
 			{
 				Data.set_clamp(i, j, 0, pBuffer[(j*Png.width+i)*Png.bpp+0]);

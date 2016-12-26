@@ -104,8 +104,6 @@ void CHSlider::Render()
 		AssetsRenderer()->DrawGuiRect(&Rect, pSliderStyle->GetRectPath());
 			
 		Rect.RemoveMargin(Context()->ApplyGuiScale(pSliderStyle->GetPadding()));
-	
-		ivec2 MousePos = Context()->GetMousePos();
 		
 		ivec2 RailPos0(m_ClipRect.x, m_ClipRect.y + m_ClipRect.h/2);
 		ivec2 RailPos1(m_ClipRect.x + m_ClipRect.w, m_ClipRect.y + m_ClipRect.h/2);
@@ -146,8 +144,6 @@ void CHSlider::OnMouseMove()
 {
 	if(m_Clicked)
 	{
-		int PosX = static_cast<float>(m_ClipRect.w * (GetValue() - m_Min))/static_cast<float>(m_Max - m_Min);
-		
 		int CursorPos = (Context()->GetMousePos().x - m_ClickShift) - m_ClipRect.x;
 		int Value = m_Min + static_cast<float>(CursorPos * (m_Max - m_Min)) / m_ClipRect.w;
 		SetValue(clamp(Value, m_Min, m_Max));

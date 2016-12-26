@@ -192,14 +192,8 @@ public:
 	
 	inline CAssetPath GetLayer(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Layer[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Layer.size());
+		return m_Layer[SubPath.GetId()];
 	}
 	
 	inline vec2 GetPosition() const { return m_Position; }
@@ -236,7 +230,7 @@ public:
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 		{
 			m_Layer[SubPath.GetId()] = Value;
 		}
@@ -283,7 +277,7 @@ public:
 	
 	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size()); }
+	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

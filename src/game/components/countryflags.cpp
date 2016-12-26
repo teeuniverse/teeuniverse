@@ -97,7 +97,7 @@ bool CCountryFlags::Init()
 	if(rInit.type == json_object)
 	{
 		const char* paIndices[3] = {"teeuniverse", "ISO 3166-1", "ISO 3166-2"};
-		for(int Index = 0; Index < sizeof(paIndices)/sizeof(const char*); ++Index)
+		for(int Index = 0; Index < (int)(sizeof(paIndices)/sizeof(const char*)); ++Index)
 		{
 			const json_value &rStart = rInit[(const char*)paIndices[Index]];
 			if(rStart.type == json_array)

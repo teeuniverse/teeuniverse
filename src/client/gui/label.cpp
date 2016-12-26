@@ -30,10 +30,10 @@ CAbstractLabel::CAbstractLabel(CGui *pContext) :
 	CWidget(pContext),
 	m_IconPath(CAssetPath::Null()),
 	m_pIconWidget(NULL),
-	m_Localize(false),
 	m_ClipText(true),
-	m_DragSelection(false),
+	m_Localize(false),
 	m_SelectionEnabled(false),
+	m_DragSelection(false),
 	m_TextShift(0)
 {
 	SetLabelStyle(Context()->GetLabelStyle());

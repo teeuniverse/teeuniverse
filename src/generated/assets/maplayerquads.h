@@ -471,264 +471,258 @@ public:
 	
 	inline const CAsset_MapLayerQuads::CQuad& GetQuad(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
-			return m_Quad[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Quad[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Quad.size());
+		return m_Quad[SubPath.GetId()];
 	}
 	
 	inline vec2 GetQuadPivot(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetPivot();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadPivotX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetPivotX();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadPivotY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetPivotY();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadSize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetSize();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadSizeX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetSizeX();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadSizeY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetSizeY();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadAngle(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetAngle();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadVertex0(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex0();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex0X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex0X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex0Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex0Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadVertex1(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex1();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex1X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex1X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex1Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex1Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadVertex2(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex2();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex2X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex2X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex2Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex2Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadVertex3(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex3();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex3X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex3X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadVertex3Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetVertex3Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadUV0(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV0();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV0X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV0X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV0Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV0Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadUV1(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV1();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV1X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV1X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV1Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV1Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadUV2(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV2();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV2X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV2X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV2Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV2Y();
 		else return 0.0f;
 	}
 	
 	inline vec2 GetQuadUV3(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV3();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV3X(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV3X();
 		else return 0.0f;
 	}
 	
 	inline float GetQuadUV3Y(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetUV3Y();
 		else return 0.0f;
 	}
 	
 	inline vec4 GetQuadColor0(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetColor0();
 		else return 1.0f;
 	}
 	
 	inline vec4 GetQuadColor1(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetColor1();
 		else return 1.0f;
 	}
 	
 	inline vec4 GetQuadColor2(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetColor2();
 		else return 1.0f;
 	}
 	
 	inline vec4 GetQuadColor3(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetColor3();
 		else return 1.0f;
 	}
 	
 	inline CAssetPath GetQuadAnimationPath(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			return m_Quad[SubPath.GetId()].GetAnimationPath();
 		else return CAssetPath::Null();
 	}
@@ -743,7 +737,7 @@ public:
 	
 	inline void SetQuad(const CSubPath& SubPath, const CAsset_MapLayerQuads::CQuad& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 		{
 			m_Quad[SubPath.GetId()].copy(Value);
 		}
@@ -751,217 +745,217 @@ public:
 	
 	inline void SetQuadPivot(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetPivot(Value);
 	}
 	
 	inline void SetQuadPivotX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetPivotX(Value);
 	}
 	
 	inline void SetQuadPivotY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetPivotY(Value);
 	}
 	
 	inline void SetQuadSize(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetSize(Value);
 	}
 	
 	inline void SetQuadSizeX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetSizeX(Value);
 	}
 	
 	inline void SetQuadSizeY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetSizeY(Value);
 	}
 	
 	inline void SetQuadAngle(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetAngle(Value);
 	}
 	
 	inline void SetQuadVertex0(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex0(Value);
 	}
 	
 	inline void SetQuadVertex0X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex0X(Value);
 	}
 	
 	inline void SetQuadVertex0Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex0Y(Value);
 	}
 	
 	inline void SetQuadVertex1(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex1(Value);
 	}
 	
 	inline void SetQuadVertex1X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex1X(Value);
 	}
 	
 	inline void SetQuadVertex1Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex1Y(Value);
 	}
 	
 	inline void SetQuadVertex2(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex2(Value);
 	}
 	
 	inline void SetQuadVertex2X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex2X(Value);
 	}
 	
 	inline void SetQuadVertex2Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex2Y(Value);
 	}
 	
 	inline void SetQuadVertex3(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex3(Value);
 	}
 	
 	inline void SetQuadVertex3X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex3X(Value);
 	}
 	
 	inline void SetQuadVertex3Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetVertex3Y(Value);
 	}
 	
 	inline void SetQuadUV0(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV0(Value);
 	}
 	
 	inline void SetQuadUV0X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV0X(Value);
 	}
 	
 	inline void SetQuadUV0Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV0Y(Value);
 	}
 	
 	inline void SetQuadUV1(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV1(Value);
 	}
 	
 	inline void SetQuadUV1X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV1X(Value);
 	}
 	
 	inline void SetQuadUV1Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV1Y(Value);
 	}
 	
 	inline void SetQuadUV2(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV2(Value);
 	}
 	
 	inline void SetQuadUV2X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV2X(Value);
 	}
 	
 	inline void SetQuadUV2Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV2Y(Value);
 	}
 	
 	inline void SetQuadUV3(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV3(Value);
 	}
 	
 	inline void SetQuadUV3X(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV3X(Value);
 	}
 	
 	inline void SetQuadUV3Y(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetUV3Y(Value);
 	}
 	
 	inline void SetQuadColor0(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetColor0(Value);
 	}
 	
 	inline void SetQuadColor1(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetColor1(Value);
 	}
 	
 	inline void SetQuadColor2(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetColor2(Value);
 	}
 	
 	inline void SetQuadColor3(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetColor3(Value);
 	}
 	
 	inline void SetQuadAnimationPath(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size())
+		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetAnimationPath(Value);
 	}
 	
@@ -980,7 +974,7 @@ public:
 	
 	inline void RelMoveQuad(const CSubPath& SubPath, int RelMove) { m_Quad.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Quad.size()); }
+	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Quad.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

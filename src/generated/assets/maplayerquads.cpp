@@ -98,7 +98,7 @@ void CAsset_MapLayerQuads::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoading
 		const CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0* pData = (const CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Quad.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Quad.m_Size);
 		SysType.m_Quad.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Quad[i]);
 		}
@@ -198,7 +198,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoading
 		const CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0* pData = (const CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Quad.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Quad.m_Size);
 		SysType.m_Quad.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Quad[i]);
 		}

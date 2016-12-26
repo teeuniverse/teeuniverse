@@ -306,8 +306,8 @@ protected:
 	public:
 		CPaletteImagePicker(CCursorTool_MapStamp* pCursorTool, CPopup_ImagePalette* pPopup, CAssetPath ImagePath) :
 			CImagePicker(pCursorTool->AssetsEditor(), ImagePath),
-			m_pCursorTool(pCursorTool),
-			m_pPopup(pPopup)
+			m_pPopup(pPopup),
+			m_pCursorTool(pCursorTool)
 		{
 			
 		}
@@ -1170,7 +1170,6 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotX(-m_QuadSelection[i].GetPivotX());
@@ -1181,7 +1180,6 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPositionX(-m_EntitySelection[i].GetPositionX());
@@ -1241,7 +1239,6 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotY(-m_QuadSelection[i].GetPivotY());
@@ -1252,11 +1249,8 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			float Angle = -Pi/4.0f;
 			for(int i=0; i<m_EntitySelection.size(); i++)
-			{
 				m_EntitySelection[i].SetPositionY(-m_EntitySelection[i].GetPositionY());
-			}
 			break;
 		}
 	}

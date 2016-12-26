@@ -560,10 +560,8 @@ void CAssetsRenderer::DrawGuiLine(ivec2 Point0, ivec2 Point1, CAssetPath StylePa
 		CSpriteInfo SpriteInfo;
 		
 		//L
-		float LWidth = 0.0f;
 		if(GetSpriteInfo(pStyle->GetImageLPath(), SpriteInfo))
 		{
-			LWidth = SpriteInfo.m_Width;
 			vec2 Shift = Dir * SpriteInfo.m_Width/2.0f;
 			TextureSet(SpriteInfo.m_ImagePath);
 			Graphics()->QuadsBegin();
@@ -580,10 +578,8 @@ void CAssetsRenderer::DrawGuiLine(ivec2 Point0, ivec2 Point1, CAssetPath StylePa
 			Graphics()->QuadsEnd();
 		}
 		//R
-		float RWidth = 0.0f;
 		if(GetSpriteInfo(pStyle->GetImageRPath(), SpriteInfo))
 		{
-			RWidth = SpriteInfo.m_Width;
 			vec2 Shift = Dir * SpriteInfo.m_Width/2.0f;
 			TextureSet(SpriteInfo.m_ImagePath);
 			Graphics()->QuadsBegin();

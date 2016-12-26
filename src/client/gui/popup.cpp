@@ -26,14 +26,14 @@ namespace gui
 
 CPopup::CPopup(CGui* pContext, const CRect& CreatorRect, int Width, int Height, int Alignment) :
 	CWidget(pContext),
-	m_pChild(0),
+	m_Level(LEVEL_LOWEST),
+	m_pChild(NULL),
 	m_IsClosed(false),
-	m_Width(Width),
-	m_Height(Height),
-	m_Alignment(Alignment),
 	m_CreatorRect(CreatorRect),
 	m_BoxStylePath(Context()->GetPopupStyle()),
-	m_Level(LEVEL_LOWEST)
+	m_Width(Width),
+	m_Height(Height),
+	m_Alignment(Alignment)
 {
 
 }

@@ -202,33 +202,27 @@ public:
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
-			return m_Index[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Index[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Index.size());
+		return m_Index[SubPath.GetId()];
 	}
 	
 	inline bool GetIndexUsed(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			return m_Index[SubPath.GetId()].GetUsed();
 		else return false;
 	}
 	
 	inline const char* GetIndexDescription(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			return m_Index[SubPath.GetId()].GetDescription();
 		else return NULL;
 	}
 	
 	inline vec4 GetIndexColor(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			return m_Index[SubPath.GetId()].GetColor();
 		else return 1.0f;
 	}
@@ -237,7 +231,7 @@ public:
 	
 	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 		{
 			m_Index[SubPath.GetId()].copy(Value);
 		}
@@ -245,19 +239,19 @@ public:
 	
 	inline void SetIndexUsed(const CSubPath& SubPath, bool Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			m_Index[SubPath.GetId()].SetUsed(Value);
 	}
 	
 	inline void SetIndexDescription(const CSubPath& SubPath, const char* Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			m_Index[SubPath.GetId()].SetDescription(Value);
 	}
 	
 	inline void SetIndexColor(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size())
+		if(SubPath.GetId() < m_Index.size())
 			m_Index[SubPath.GetId()].SetColor(Value);
 	}
 	
@@ -274,7 +268,7 @@ public:
 	
 	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { m_Index.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Index.size()); }
+	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Index.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

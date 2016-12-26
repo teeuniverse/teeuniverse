@@ -259,21 +259,21 @@ void CGraphics::GetScreen(float *pTopLeftX, float *pTopLeftY, float *pBottomRigh
 
 void CGraphics::LinesBegin()
 {
-	dbg_assert(m_Drawing == 0, "called Graphics()->LinesBegin twice");
+	assert(m_Drawing == 0);
 	m_Drawing = DRAWING_LINES;
 	SetColor(1,1,1,1);
 }
 
 void CGraphics::LinesEnd()
 {
-	dbg_assert(m_Drawing == DRAWING_LINES, "called Graphics()->LinesEnd without begin");
+	assert(m_Drawing == DRAWING_LINES);
 	FlushVertices();
 	m_Drawing = 0;
 }
 
 void CGraphics::LinesDraw(const CLineItem *pArray, int Num)
 {
-	dbg_assert(m_Drawing == DRAWING_LINES, "called Graphics()->LinesDraw without begin");
+	assert(m_Drawing == DRAWING_LINES);
 
 	for(int i = 0; i < Num; ++i)
 	{
@@ -530,7 +530,7 @@ void CGraphics::ScreenshotDirect(const char *pFilename)
 
 void CGraphics::TextureSet(CTextureHandle TextureID)
 {
-	dbg_assert(m_Drawing == 0, "called Graphics()->TextureSet within begin");
+	assert(m_Drawing == 0);
 	m_State.m_Texture = TextureID.Id();
 	m_State.m_Dimension = 2;
 }
@@ -547,7 +547,7 @@ void CGraphics::Clear(float r, float g, float b)
 
 void CGraphics::QuadsBegin()
 {
-	dbg_assert(m_Drawing == 0, "called Graphics()->QuadsBegin twice");
+	assert(m_Drawing == 0);
 	m_Drawing = DRAWING_QUADS;
 
 	QuadsSetSubset(0,0,1,1,-1);
@@ -557,20 +557,20 @@ void CGraphics::QuadsBegin()
 
 void CGraphics::QuadsEnd()
 {
-	dbg_assert(m_Drawing == DRAWING_QUADS, "called Graphics()->QuadsEnd without begin");
+	assert(m_Drawing == DRAWING_QUADS);
 	FlushVertices();
 	m_Drawing = 0;
 }
 
 void CGraphics::QuadsSetRotation(float Angle)
 {
-	dbg_assert(m_Drawing == DRAWING_QUADS, "called Graphics()->QuadsSetRotation without begin");
+	assert(m_Drawing == DRAWING_QUADS);
 	m_Rotation = Angle;
 }
 
 void CGraphics::SetColorVertex(const CColorVertex *pArray, int Num)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColorVertex without begin");
+	assert(m_Drawing != 0);
 
 	for(int i = 0; i < Num; ++i)
 	{
@@ -583,7 +583,7 @@ void CGraphics::SetColorVertex(const CColorVertex *pArray, int Num)
 
 void CGraphics::SetColor(float r, float g, float b, float a)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
+	assert(m_Drawing != 0);
 	CColorVertex Array[4] = {
 		CColorVertex(0, r, g, b, a),
 		CColorVertex(1, r, g, b, a),
@@ -594,7 +594,7 @@ void CGraphics::SetColor(float r, float g, float b, float a)
 
 void CGraphics::SetColor(vec4 rgba, bool AlphaBlend)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
+	assert(m_Drawing != 0);
 	if(AlphaBlend)
 	{
 		CColorVertex Array[4] = {
@@ -617,7 +617,7 @@ void CGraphics::SetColor(vec4 rgba, bool AlphaBlend)
 
 void CGraphics::SetColor2(vec4 Color0, vec4 Color1, bool AlphaBlend)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
+	assert(m_Drawing != 0);
 	if(AlphaBlend)
 	{
 		CColorVertex Array[2] = {
@@ -638,7 +638,7 @@ void CGraphics::SetColor2(vec4 Color0, vec4 Color1, bool AlphaBlend)
 
 void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3, bool AlphaBlend)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
+	assert(m_Drawing != 0);
 	if(AlphaBlend)
 	{
 		CColorVertex Array[4] = {
@@ -661,7 +661,7 @@ void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3, bool AlphaBlend)
 
 void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3)
 {
-	dbg_assert(m_Drawing != 0, "called Graphics()->SetColor without begin");
+	assert(m_Drawing != 0);
 	CColorVertex Array[4] = {
 		CColorVertex(0, C0.r, C0.g, C0.b, C0.a),
 		CColorVertex(1, C1.r, C1.g, C1.b, C1.a),
@@ -672,7 +672,7 @@ void CGraphics::SetColor4(vec4 C0, vec4 C1, vec4 C2, vec4 C3)
 
 void CGraphics::QuadsSetSubset(float TlU, float TlV, float BrU, float BrV, int TextureIndex)
 {
-	dbg_assert(m_Drawing == DRAWING_QUADS, "called Graphics()->QuadsSetSubset without begin");
+	assert(m_Drawing == DRAWING_QUADS);
 
 	m_aTexture[0].u = TlU;	m_aTexture[1].u = BrU;
 	m_aTexture[0].v = TlV;	m_aTexture[1].v = TlV;
@@ -713,7 +713,7 @@ void CGraphics::QuadsDrawTL(const CQuadItem *pArray, int Num)
 	CCommandBuffer::SPoint Center;
 	Center.z = 0;
 
-	dbg_assert(m_Drawing == DRAWING_QUADS, "called Graphics()->QuadsDrawTL without begin");
+	assert(m_Drawing == DRAWING_QUADS);
 
 	for(int i = 0; i < Num; ++i)
 	{
@@ -751,7 +751,7 @@ void CGraphics::QuadsDrawTL(const CQuadItem *pArray, int Num)
 
 void CGraphics::QuadsDrawFreeform(const CFreeformItem *pArray, int Num)
 {
-	dbg_assert(m_Drawing == DRAWING_QUADS, "called Graphics()->QuadsDrawFreeform without begin");
+	assert(m_Drawing == DRAWING_QUADS);
 
 	for(int i = 0; i < Num; ++i)
 	{
@@ -1020,7 +1020,7 @@ bool CGraphics::PreUpdate()
 			UnloadTexture(&Texture);
 		
 		int Flags = 0x0;
-		if(pImage->GetTilingEnabled() && pImage->GetGridWidth() == 16 || pImage->GetGridHeight() == 16)
+		if(pImage->GetTilingEnabled() && pImage->GetGridWidth() == 16 && pImage->GetGridHeight() == 16)
 			Flags = CGraphics::TEXLOAD_MULTI_DIMENSION;
 		
 		const array2d<uint8>& Data = pImage->GetDataArray();

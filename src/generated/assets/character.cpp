@@ -53,7 +53,7 @@ void CAsset_Character::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingCont
 		const CAsset_Character::CPart::CTuaType_0_1_0* pData = (const CAsset_Character::CPart::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Part.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Part.m_Size);
 		SysType.m_Part.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Character::CPart::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Part[i]);
 		}
@@ -107,7 +107,7 @@ void CAsset_Character::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingCont
 		const CAsset_Character::CPart::CTuaType_0_2_0* pData = (const CAsset_Character::CPart::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Part.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Part.m_Size);
 		SysType.m_Part.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Character::CPart::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Part[i]);
 		}

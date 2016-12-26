@@ -27,9 +27,9 @@
 
 CGui::CGui(CClientKernel* pKernel) :
 	CClientKernel::CComponent(pKernel),
-	m_pMainWidget(0),
 	m_LocalizationUpdated(false),
-	m_pFocusedWidget(0)
+	m_pMainWidget(NULL),
+	m_pFocusedWidget(NULL)
 {
 	SetName("Gui");
 	Localization()->AddListener(this);

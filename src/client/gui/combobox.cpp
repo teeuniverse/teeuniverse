@@ -43,9 +43,9 @@ protected:
 public:
 	CEnumButton(CGui *pContext, CComboBox* pComboBox, CPopup* pPopup, const CComboBox::CItem& Item, int Value) :
 		CButton(pContext, Item.m_Description, Item.m_IconPath),
-		m_pComboBox(pComboBox),
+		m_Value(Value),
 		m_pPopup(pPopup),
-		m_Value(Value)
+		m_pComboBox(pComboBox)
 	{
 		
 	}

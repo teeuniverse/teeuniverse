@@ -74,7 +74,7 @@ AssetsFile.append("/test.tup");
 	//Compressed data
 	{
 		int aData[128];
-		for(int i=0; i<sizeof(aData)/sizeof(int); i++)
+		for(unsigned int i=0; i<sizeof(aData)/sizeof(int); i++)
 			aData[i] = i;
 		
 		CTuaArray* pItem = (CTuaArray*) File.GetItem(52, 0);
@@ -87,7 +87,7 @@ AssetsFile.append("/test.tup");
 	//Compressed data
 	{
 		int aData[2048];
-		for(int i=0; i<sizeof(aData)/sizeof(int); i++)
+		for(unsigned int i=0; i<sizeof(aData)/sizeof(int); i++)
 			aData[i] = 0;
 		
 		CTuaArray* pItem = (CTuaArray*) File.GetItem(52, 1);
@@ -100,7 +100,7 @@ AssetsFile.append("/test.tup");
 	//Uncompressed data
 	{
 		int aData[1];
-		for(int i=0; i<sizeof(aData)/sizeof(int); i++)
+		for(unsigned int i=0; i<sizeof(aData)/sizeof(int); i++)
 			aData[i] = 1;
 		
 		CTuaArray* pItem = (CTuaArray*) File.GetItem(52, 2);

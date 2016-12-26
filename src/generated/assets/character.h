@@ -225,26 +225,20 @@ public:
 	
 	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
-			return m_Part[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Part[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Part.size());
+		return m_Part[SubPath.GetId()];
 	}
 	
 	inline const char* GetPartName(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		if(SubPath.GetId() < m_Part.size())
 			return m_Part[SubPath.GetId()].GetName();
 		else return NULL;
 	}
 	
 	inline CAssetPath GetPartDefaultPath(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		if(SubPath.GetId() < m_Part.size())
 			return m_Part[SubPath.GetId()].GetDefaultPath();
 		else return CAssetPath::Null();
 	}
@@ -261,7 +255,7 @@ public:
 	
 	inline void SetPart(const CSubPath& SubPath, const CAsset_Character::CPart& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		if(SubPath.GetId() < m_Part.size())
 		{
 			m_Part[SubPath.GetId()].copy(Value);
 		}
@@ -269,13 +263,13 @@ public:
 	
 	inline void SetPartName(const CSubPath& SubPath, const char* Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		if(SubPath.GetId() < m_Part.size())
 			m_Part[SubPath.GetId()].SetName(Value);
 	}
 	
 	inline void SetPartDefaultPath(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size())
+		if(SubPath.GetId() < m_Part.size())
 			m_Part[SubPath.GetId()].SetDefaultPath(Value);
 	}
 	
@@ -292,7 +286,7 @@ public:
 	
 	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { m_Part.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Part.size()); }
+	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Part.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

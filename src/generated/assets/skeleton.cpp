@@ -74,7 +74,7 @@ void CAsset_Skeleton::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_Skeleton::CBone::CTuaType_0_1_0* pData = (const CAsset_Skeleton::CBone::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Bone.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Bone.m_Size);
 		SysType.m_Bone.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Bone[i]);
 		}
@@ -84,7 +84,7 @@ void CAsset_Skeleton::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_Skeleton::CLayer::CTuaType_0_1_0* pData = (const CAsset_Skeleton::CLayer::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
 		}
@@ -169,7 +169,7 @@ void CAsset_Skeleton::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_Skeleton::CBone::CTuaType_0_2_0* pData = (const CAsset_Skeleton::CBone::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Bone.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Bone.m_Size);
 		SysType.m_Bone.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Bone[i]);
 		}
@@ -179,7 +179,7 @@ void CAsset_Skeleton::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_Skeleton::CLayer::CTuaType_0_2_0* pData = (const CAsset_Skeleton::CLayer::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
 		}

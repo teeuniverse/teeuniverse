@@ -64,8 +64,8 @@ void CAsset_MapLayerTiles::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoading
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
 		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
 		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
-		int Size = Width * Height * Depth;
 		SysType.m_Tile.resize(Width, Height, Depth);
+		int Size = Width * Height * Depth;
 		for(int i=0; i<Size; i++)
 		{
 			CTile ReadedValue;
@@ -125,8 +125,8 @@ void CAsset_MapLayerTiles::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoading
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
 		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
 		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
-		int Size = Width * Height * Depth;
 		SysType.m_Tile.resize(Width, Height, Depth);
+		int Size = Width * Height * Depth;
 		for(int i=0; i<Size; i++)
 		{
 			CTile ReadedValue;

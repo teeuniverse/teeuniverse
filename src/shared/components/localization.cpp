@@ -617,10 +617,7 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 	}
 	
 	const array< CLocalizableString::CParameter, allocator_copy<CLocalizableString::CParameter> >& Parameters = LString.GetParameters();
-	
-	const char* pVarArgName = NULL;
-	const void* pVarArgValue = NULL;
-	
+		
 	int Iter = 0;
 	int Start = Iter;
 	int ParamTypeStart = -1;

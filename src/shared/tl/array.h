@@ -280,7 +280,7 @@ public:
 	*/
 	T& operator[] (int index)
 	{
-		dbg_assert(index >= 0 && index < size(), "Wrong index");
+		assert(index >= 0 && index < size());
 		return m_pData[index];
 	}
 
@@ -289,7 +289,7 @@ public:
 	*/
 	const T& operator[] (int index) const
 	{
-		dbg_assert(index >= 0 && index < size(), "Wrong index");
+		assert(index >= 0 && index < size());
 		return m_pData[index];
 	}
 

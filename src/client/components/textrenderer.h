@@ -54,7 +54,7 @@ protected:
 		~CFont();
 	};
 	
-	struct CBlock
+	class CBlock
 	{
 	public:
 		ivec2 m_Granularity;
@@ -64,8 +64,9 @@ protected:
 		inline bool IsFull() const { return (m_Size >= m_MaxSize); }
 	};
 	
-	struct CGlyphId
+	class CGlyphId
 	{
+	public:
 		int m_FontId;
 		int m_GlyphCode;
 		
@@ -77,14 +78,16 @@ protected:
 		inline bool operator<(const CGlyphId& GlyphId) const { return ((m_FontId == GlyphId.m_FontId) ? (m_GlyphCode < GlyphId.m_GlyphCode) : (m_FontId < GlyphId.m_FontId)); }
 	};
 	
-	struct CShaperGlyph
+	class CShaperGlyph
 	{
+	public:
 		CGlyphId m_GlyphId;
 		int m_CharPos;
 	};
 	
-	struct CGlyph
+	class CGlyph
 	{
+	public:
 		CGlyphId m_GlyphId;
 		int m_RenderTick;
 		int m_Width;

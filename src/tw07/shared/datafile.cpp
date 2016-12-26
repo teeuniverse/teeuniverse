@@ -419,7 +419,7 @@ CDataFileWriter::~CDataFileWriter()
 
 bool CDataFileWriter::Open(CStorage *pStorage, int StorageType, const char *pFilename)
 {
-	dbg_assert(!m_File, "a file already exists");
+	assert(!m_File);
 	m_File = pStorage->OpenFile(pFilename, IOFLAG_WRITE, StorageType);
 	if(!m_File)
 		return false;
@@ -442,9 +442,9 @@ int CDataFileWriter::AddItem(int Type, int ID, int Size, void *pData)
 {
 	if(!m_File) return 0;
 
-	dbg_assert(Type >= 0 && Type < 0xFFFF, "incorrect type");
-	dbg_assert(m_NumItems < 1024, "too many items");
-	dbg_assert(Size%sizeof(int) == 0, "incorrect boundary");
+	assert(Type >= 0 && Type < 0xFFFF);
+	assert(m_NumItems < 1024);
+	assert(Size%sizeof(int) == 0);
 
 	m_pItems[m_NumItems].m_Type = Type;
 	m_pItems[m_NumItems].m_ID = ID;
@@ -478,7 +478,7 @@ int CDataFileWriter::AddData(int Size, void *pData)
 {
 	if(!m_File) return 0;
 
-	dbg_assert(m_NumDatas < 1024, "too much data");
+	assert(m_NumDatas < 1024);
 
 	CDataInfo *pInfo = &m_pDatas[m_NumDatas];
 	unsigned long s = compressBound(Size);
@@ -488,7 +488,7 @@ int CDataFileWriter::AddData(int Size, void *pData)
 	if(Result != Z_OK)
 	{
 		dbg_msg("datafile", "compression error %d", Result);
-		dbg_assert(0, "zlib error");
+		abort();
 	}
 
 	pInfo->m_UncompressedSize = Size;
@@ -503,7 +503,7 @@ int CDataFileWriter::AddData(int Size, void *pData)
 
 int CDataFileWriter::AddDataSwapped(int Size, void *pData)
 {
-	dbg_assert(Size%sizeof(int) == 0, "incorrect boundary");
+	assert(Size%sizeof(int) == 0);
 
 #if defined(CONF_ARCH_ENDIAN_BIG)
 	void *pSwapped = mem_alloc(Size, 1); // temporary buffer that we use during compression

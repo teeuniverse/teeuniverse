@@ -64,8 +64,8 @@ public:
 
 CViewMaterial::CViewMaterial(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
-	m_pMapRenderer(NULL),
-	m_ShowMeshes(false)
+	m_ShowMeshes(false),
+	m_pMapRenderer(NULL)
 {	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
 	

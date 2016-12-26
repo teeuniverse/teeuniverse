@@ -63,6 +63,8 @@ public:
 		fixed_string128 m_Name;
 		
 	public:
+		virtual ~IComponent() {}
+		
 		virtual bool InitConfig(int argc, const char** argv) { return true; }
 		virtual void SaveConfig(class CCLI_Output* pOutput) {}
 		

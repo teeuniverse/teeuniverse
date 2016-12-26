@@ -167,8 +167,8 @@ public:
 	typedef T type;
 	plain_range()
 	{
-		begin = 0x0;
-		end = 0x0;
+		begin = NULL;
+		end = NULL;
 	}
 
 	plain_range(const plain_range &r)
@@ -183,11 +183,11 @@ public:
 	}
 
 	bool empty() const { return begin >= end; }
-	void pop_front() { tl_assert(!empty()); begin++; }
-	void pop_back() { tl_assert(!empty()); end--; }
-	T& front() { tl_assert(!empty()); return *begin; }
-	T& back() { tl_assert(!empty()); return *(end-1); }
-	T& index(unsigned i) { tl_assert(i < (unsigned)(end-begin)); return begin[i]; }
+	void pop_front() { assert(!empty()); begin++; }
+	void pop_back() { assert(!empty()); end--; }
+	T& front() { assert(!empty()); return *begin; }
+	T& back() { assert(!empty()); return *(end-1); }
+	T& index(unsigned i) { assert(i < (unsigned)(end-begin)); return begin[i]; }
 	unsigned size() const { return (unsigned)(end-begin); }
 	plain_range slice(unsigned startindex, unsigned endindex)
 	{
@@ -217,13 +217,12 @@ public:
 	plain_range_sorted()
 	{}
 
-	plain_range_sorted(const plain_range_sorted &r)
-	{
-		*this = r;
-	}
+	plain_range_sorted(const plain_range_sorted &r) :
+		parent(r)
+	{ }
 
-	plain_range_sorted(T *b, T *e)
-	: parent(b, e)
+	plain_range_sorted(T *b, T *e) :
+		parent(b, e)
 	{}
 
 	plain_range_sorted slice(unsigned start, unsigned count)

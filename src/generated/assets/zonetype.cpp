@@ -56,7 +56,7 @@ void CAsset_ZoneType::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_ZoneType::CIndex::CTuaType_0_1_0* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
 		SysType.m_Index.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
 		}
@@ -104,7 +104,7 @@ void CAsset_ZoneType::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAsset_ZoneType::CIndex::CTuaType_0_2_0* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
 		SysType.m_Index.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
 		}

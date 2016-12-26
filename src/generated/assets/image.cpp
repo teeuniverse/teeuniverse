@@ -56,7 +56,6 @@ void CAsset_Image::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext,
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Width);
 		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Height);
 		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Depth);
-		int Size = Width * Height * Depth;
 		SysType.m_Data.resize(Width, Height, Depth);
 		mem_copy((uint8*) SysType.m_Data.base_ptr(), pData, SysType.m_Data.get_linear_size());
 	}
@@ -95,7 +94,6 @@ void CAsset_Image::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext,
 		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Width);
 		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Height);
 		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Depth);
-		int Size = Width * Height * Depth;
 		SysType.m_Data.resize(Width, Height, Depth);
 		mem_copy((uint8*) SysType.m_Data.base_ptr(), pData, SysType.m_Data.get_linear_size());
 	}

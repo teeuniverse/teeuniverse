@@ -62,8 +62,8 @@ void CViewManager::CView::CCursorTool::OnUse(bool Used)
 
 CViewManager::CView::CView(CGuiEditor* pAssetsEditor) :
 	gui::CWidget(pAssetsEditor),
-	m_pCursorTool(0),
-	m_pAssetsEditor(pAssetsEditor)
+	m_pAssetsEditor(pAssetsEditor),
+	m_pCursorTool(NULL)
 {
 	m_pToolbar = new gui::CHListLayout(Context());
 	m_pToolbar->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Panel);
@@ -175,8 +175,13 @@ void CViewManager::CView::OnInputEvent(const CInput::CEvent& Event)
 CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 	gui::CWidget(pAssetsEditor),
 	m_pAssetsEditor(pAssetsEditor),
-	m_pCurrentView(0),
-	m_BoxStylePath(pAssetsEditor->m_Path_Box_View)
+	m_BoxStylePath(pAssetsEditor->m_Path_Box_View),
+	m_pCurrentView(NULL),
+	m_pViewImage(NULL),
+	m_pViewSprite(NULL),
+	m_pViewMap(NULL),
+	m_pViewMaterial(NULL),
+	m_pViewGui(NULL)
 {
 	m_pViewImage = new CViewImage(AssetsEditor());
 	m_pViewSprite = new CViewSprite(AssetsEditor());

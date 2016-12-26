@@ -52,7 +52,7 @@ void CAsset_MapGroup::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			pLoadingContext->ReadAssetPath(pData[i], SysType.m_Layer[i]);
 		}
@@ -107,7 +107,7 @@ void CAsset_MapGroup::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			pLoadingContext->ReadAssetPath(pData[i], SysType.m_Layer[i]);
 		}

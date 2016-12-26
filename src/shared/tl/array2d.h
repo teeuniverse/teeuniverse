@@ -38,10 +38,10 @@ private:
 
 public:
 	array2d() :
-		m_pData(NULL),
 		m_Width(0),
 		m_Height(0),
-		m_Depth(1)
+		m_Depth(1),
+		m_pData(NULL)
 	{
 		
 	}

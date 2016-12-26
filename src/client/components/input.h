@@ -118,7 +118,11 @@ public:
 	{
 		if(Index < 0 || Index >= m_NumEvents)
 		{
-			CInput::CEvent e = {0,0};
+			CInput::CEvent e;
+			e.m_Flags = 0;
+			e.m_Key = 0;
+			e.m_aText[0] = 0;
+			e.m_InputCount = 0;
 			return e;
 		}
 		return m_aInputEvents[Index];

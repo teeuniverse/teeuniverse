@@ -472,14 +472,7 @@ public:
 
 		Graphics()->LinesBegin();
 		Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
-		
-		CGraphics::CLineItem Lines[4] = {
-				CGraphics::CLineItem(m_DrawRect.x, m_DrawRect.y, m_DrawRect.x+m_DrawRect.w, m_DrawRect.y),
-				CGraphics::CLineItem(m_DrawRect.x+m_DrawRect.w, m_DrawRect.y, m_DrawRect.x+m_DrawRect.w, m_DrawRect.y+m_DrawRect.h),
-				CGraphics::CLineItem(m_DrawRect.x+m_DrawRect.w, m_DrawRect.y+m_DrawRect.h, m_DrawRect.x, m_DrawRect.y+m_DrawRect.h),
-				CGraphics::CLineItem(m_DrawRect.x, m_DrawRect.y+m_DrawRect.h, m_DrawRect.x, m_DrawRect.y)
-		};
-		
+				
 		vec2 CursorPos = vec2(m_DrawRect.x + m_DrawRect.w*ColorHSV.g, m_DrawRect.y + m_DrawRect.h*(1.0f-ColorHSV.b));
 		CGraphics::CLineItem CursorLines[4] = {
 				CGraphics::CLineItem(CursorPos.x - 2.0f, CursorPos.y - 2.0f, CursorPos.x + 2.0f, CursorPos.y - 2.0f),
@@ -563,9 +556,7 @@ public:
 
 		vec4 Color = m_pColorEdit->GetValue();
 		vec3 ColorHSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
-		vec3 ColorRGB0 = HsvToRgb(vec3(ColorHSV.x, 0.0f, 1.0f));
-		vec3 ColorRGB1 = HsvToRgb(vec3(ColorHSV.x, 1.0f, 1.0f));
-
+		
 		float CurrentHue = (m_Clicked == 2 ? m_LastHue : ColorHSV.r);
 		float CursorAngle = CurrentHue*2.0f*Pi;
 		
@@ -672,7 +663,6 @@ public:
 		else if(m_Clicked == 2)
 		{
 			vec4 Color = m_pColorEdit->GetValue();
-			vec3 ColorHSV = RgbToHsv(vec3(Color.r, Color.g, Color.b));
 			float CursorAngle = m_LastHue*2.0f*Pi;
 			
 			float Radius1 = min(m_DrawRect.w, m_DrawRect.h)/2.0f - 1.0f;
@@ -733,7 +723,6 @@ public:
 		vec2 HuePos(Center.x + Radius0*cos(CursorAngle), Center.y + Radius0*sin(CursorAngle));
 		vec2 SaturationPos(Center.x + Radius0*cos(CursorAngle+2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle+2.0f*Pi/3.0f));
 		vec2 ValuePos(Center.x + Radius0*cos(CursorAngle-2.0f*Pi/3.0f), Center.y + Radius0*sin(CursorAngle-2.0f*Pi/3.0f));
-		vec2 Origin = (SaturationPos + HuePos)/2.0f;
 		
 		float d = distance(Center, MousePos);
 		if(Radius0 < d && d < Radius1)

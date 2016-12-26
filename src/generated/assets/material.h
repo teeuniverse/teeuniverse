@@ -266,82 +266,76 @@ public:
 		
 		inline const CAsset_Material::CSprite& GetSprite(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
-				return m_Sprite[SubPath.GetId()];
-			else
-			{
-				dbg_msg("Asset", "Try to access to an inexistant subitem");
-				dbg_break();
-				return m_Sprite[0]; //Useless line needed to avoid compilation errors
-			}
+			assert(SubPath.GetId() < m_Sprite.size());
+			return m_Sprite[SubPath.GetId()];
 		}
 		
 		inline CAssetPath GetSpritePath(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetPath();
 			else return CAssetPath::Null();
 		}
 		
 		inline vec2 GetSpriteSize(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetSize();
 			else return 0.0f;
 		}
 		
 		inline float GetSpriteSizeX(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetSizeX();
 			else return 0.0f;
 		}
 		
 		inline float GetSpriteSizeY(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetSizeY();
 			else return 0.0f;
 		}
 		
 		inline vec4 GetSpriteColor(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetColor();
 			else return 1.0f;
 		}
 		
 		inline int GetSpriteFlags(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetFlags();
 			else return 0;
 		}
 		
 		inline vec2 GetSpritePosition(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetPosition();
 			else return 0.0f;
 		}
 		
 		inline float GetSpritePositionX(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetPositionX();
 			else return 0.0f;
 		}
 		
 		inline float GetSpritePositionY(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetPositionY();
 			else return 0.0f;
 		}
 		
 		inline int GetSpriteAlignment(const CSubPath& SubPath) const
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				return m_Sprite[SubPath.GetId()].GetAlignment();
 			else return 0;
 		}
@@ -354,7 +348,7 @@ public:
 		
 		inline void SetSprite(const CSubPath& SubPath, const CAsset_Material::CSprite& Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 			{
 				m_Sprite[SubPath.GetId()].copy(Value);
 			}
@@ -362,61 +356,61 @@ public:
 		
 		inline void SetSpritePath(const CSubPath& SubPath, const CAssetPath& Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetPath(Value);
 		}
 		
 		inline void SetSpriteSize(const CSubPath& SubPath, vec2 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetSize(Value);
 		}
 		
 		inline void SetSpriteSizeX(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetSizeX(Value);
 		}
 		
 		inline void SetSpriteSizeY(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetSizeY(Value);
 		}
 		
 		inline void SetSpriteColor(const CSubPath& SubPath, vec4 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetColor(Value);
 		}
 		
 		inline void SetSpriteFlags(const CSubPath& SubPath, int Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetFlags(Value);
 		}
 		
 		inline void SetSpritePosition(const CSubPath& SubPath, vec2 Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetPosition(Value);
 		}
 		
 		inline void SetSpritePositionX(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetPositionX(Value);
 		}
 		
 		inline void SetSpritePositionY(const CSubPath& SubPath, float Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetPositionY(Value);
 		}
 		
 		inline void SetSpriteAlignment(const CSubPath& SubPath, int Value)
 		{
-			if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size())
+			if(SubPath.GetId() < m_Sprite.size())
 				m_Sprite[SubPath.GetId()].SetAlignment(Value);
 		}
 		
@@ -437,7 +431,7 @@ public:
 		
 		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Sprite.size()); }
+		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Sprite.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -530,145 +524,121 @@ public:
 	
 	inline const CAsset_Material::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()];
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Layer[0]; //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Layer.size());
+		return m_Layer[SubPath.GetId()];
 	}
 	
 	inline int GetLayerSpriteArraySize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteArraySize();
 		else return 0;
 	}
 	
 	inline const CAsset_Material::CSprite* GetLayerSpritePtr(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePtr();
 		else return NULL;
 	}
 	
 	inline const array< CSprite, allocator_copy<CSprite> >& GetLayerSpriteArray(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()].GetSpriteArray();
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Layer[0].GetSpriteArray(); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Layer.size());
+		return m_Layer[SubPath.GetId()].GetSpriteArray();
 	}
 	inline array< CSprite, allocator_copy<CSprite> >& GetLayerSpriteArray(const CSubPath& SubPath)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()].GetSpriteArray();
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Layer[0].GetSpriteArray(); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Layer.size());
+		return m_Layer[SubPath.GetId()].GetSpriteArray();
 	}
 	
 	inline const CAsset_Material::CSprite& GetLayerSprite(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()].GetSprite(SubPath.PopId());
-		else
-		{
-			dbg_msg("Asset", "Try to access to an inexistant subitem");
-			dbg_break();
-			return m_Layer[0].GetSprite(SubPath.PopId()); //Useless line needed to avoid compilation errors
-		}
+		assert(SubPath.GetId() < m_Layer.size());
+		return m_Layer[SubPath.GetId()].GetSprite(SubPath.PopId());
 	}
 	
 	inline CAssetPath GetLayerSpritePath(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePath(SubPath.PopId());
 		else return CAssetPath::Null();
 	}
 	
 	inline vec2 GetLayerSpriteSize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteSize(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetLayerSpriteSizeX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteSizeX(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetLayerSpriteSizeY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteSizeY(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline vec4 GetLayerSpriteColor(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteColor(SubPath.PopId());
 		else return 1.0f;
 	}
 	
 	inline int GetLayerSpriteFlags(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteFlags(SubPath.PopId());
 		else return 0;
 	}
 	
 	inline vec2 GetLayerSpritePosition(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePosition(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetLayerSpritePositionX(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePositionX(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline float GetLayerSpritePositionY(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePositionY(SubPath.PopId());
 		else return 0.0f;
 	}
 	
 	inline int GetLayerSpriteAlignment(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpriteAlignment(SubPath.PopId());
 		else return 0;
 	}
 	
 	inline int GetLayerRepeatType(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetRepeatType();
 		else return 0;
 	}
 	
 	inline float GetLayerSpacing(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpacing();
 		else return 0.0f;
 	}
@@ -691,7 +661,7 @@ public:
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAsset_Material::CLayer& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 		{
 			m_Layer[SubPath.GetId()].copy(Value);
 		}
@@ -699,85 +669,85 @@ public:
 	
 	inline void SetLayerSpriteArraySize(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteArraySize(Value);
 	}
 	
 	inline void SetLayerSprite(const CSubPath& SubPath, const CAsset_Material::CSprite& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSprite(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpritePath(const CSubPath& SubPath, const CAssetPath& Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpritePath(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteSize(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteSize(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteSizeX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteSizeX(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteSizeY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteSizeY(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteColor(const CSubPath& SubPath, vec4 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteColor(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteFlags(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteFlags(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpritePosition(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpritePosition(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpritePositionX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpritePositionX(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpritePositionY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpritePositionY(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerSpriteAlignment(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpriteAlignment(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerRepeatType(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetRepeatType(Value);
 	}
 	
 	inline void SetLayerSpacing(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size())
+		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSpacing(Value);
 	}
 	
@@ -816,9 +786,9 @@ public:
 	
 	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
 	
-	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size()); }
+	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size()); }
 	
-	inline bool IsValidLayerSprite(const CSubPath& SubPath) const { return (SubPath.GetId() >= 0 && SubPath.GetId() < m_Layer.size() && m_Layer[SubPath.GetId()].IsValidSprite(SubPath.PopId())); }
+	inline bool IsValidLayerSprite(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size() && m_Layer[SubPath.GetId()].IsValidSprite(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

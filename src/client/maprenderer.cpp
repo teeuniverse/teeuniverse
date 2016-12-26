@@ -186,16 +186,7 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			vec2 TilePos = pMapRenderer->MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
 			
 			float Shift = fmod(pMapRenderer->m_LocalTime/4.0f, 1.0f);
-			int Size = 8;
 			
-			//~ float x0 = ((i%Size))/static_cast<float>(Size) + Shift;
-			//~ float y0 = ((j%Size))/static_cast<float>(Size) + Shift;
-			//~ float x2 = x0 + 1.0f/static_cast<float>(Size);
-			//~ float y2 = y0 + 1.0f/static_cast<float>(Size);
-			//~ float x1 = x2;
-			//~ float y1 = y0;
-			//~ float x3 = x0;
-			//~ float y3 = y2;
 			float x0 = (TilePos.x/TileSize)/16.0f + Shift;
 			float y0 = (TilePos.y/TileSize)/16.0f + Shift;
 			float x2 = (TilePos.x/TileSize+1.0f)/16.0f + Shift;
@@ -602,26 +593,10 @@ void CMapRenderer::RenderQuads(const CAsset_MapLayerQuads::CQuad* pQuads, int Nb
 		//Vertices
 		
 		vec2 Vertices[4];
-		{
-			vec2 TestBefore = pQuad->GetVertex0();
-			vec2 TestAfter = Transform*pQuad->GetVertex0() + Position;
-			Vertices[0] = MapPosToScreenPos(Transform*pQuad->GetVertex0() + Position);
-		}
-		{
-			vec2 TestBefore = pQuad->GetVertex1();
-			vec2 TestAfter = Transform*pQuad->GetVertex1() + Position;
-			Vertices[1] = MapPosToScreenPos(Transform*pQuad->GetVertex1() + Position);
-		}
-		{
-			vec2 TestBefore = pQuad->GetVertex2();
-			vec2 TestAfter = Transform*pQuad->GetVertex2() + Position;
-			Vertices[2] = MapPosToScreenPos(Transform*pQuad->GetVertex2() + Position);
-		}
-		{
-			vec2 TestBefore = pQuad->GetVertex3();
-			vec2 TestAfter = Transform*pQuad->GetVertex3() + Position;
-			Vertices[3] = MapPosToScreenPos(Transform*pQuad->GetVertex3() + Position);
-		}
+		Vertices[0] = MapPosToScreenPos(Transform*pQuad->GetVertex0() + Position);
+		Vertices[1] = MapPosToScreenPos(Transform*pQuad->GetVertex1() + Position);
+		Vertices[2] = MapPosToScreenPos(Transform*pQuad->GetVertex2() + Position);
+		Vertices[3] = MapPosToScreenPos(Transform*pQuad->GetVertex3() + Position);
 
 		CGraphics::CFreeformItem Freeform(
 			Vertices[0].x, Vertices[0].y,
@@ -645,8 +620,6 @@ void CMapRenderer::RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, i
 	for(int i=0; i<NbQuads; i++)
 	{
 		const CAsset_MapLayerQuads::CQuad* pQuad = &pQuads[i];
-		
-		vec4 Color = 1.0f;
 		
 		vec2 Position;
 		matrix2x2 Transform;

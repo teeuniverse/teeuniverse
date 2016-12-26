@@ -51,9 +51,9 @@ void CTabs::CTabButton::MouseClickAction()
 	//Tabs
 CTabs::CTabs(CGui *pContext) :
 	CWidget(pContext),
+	m_TabsStylePath(Context()->GetTabsStyle()),
 	m_SelectedTab(-1),
-	m_pButtonList(0),
-	m_TabsStylePath(Context()->GetTabsStyle())
+	m_pButtonList(NULL)
 {
 	m_pButtonList = new CHListLayout(pContext);
 }
@@ -80,12 +80,10 @@ void CTabs::OpenTab(int TabId)
 void CTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizableString* pLocalizableName, CAssetPath IconPath)
 {
 	bool Fill = true;
-	bool ButtonListText = true;
 	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
 	if(pTabsStyle)
 	{
 		Fill = pTabsStyle->GetButtonListFill();
-		ButtonListText = pTabsStyle->GetButtonListText();
 	}
 	int TabId = m_Tabs.size();
 	CTab& Tab = m_Tabs.increment();
@@ -269,8 +267,6 @@ void CTabs::Render()
 		pLayoutStyle = AssetsManager()->GetAsset<CAsset_GuiBoxStyle>(pTabsStyle->GetLayoutPath());
 		pContentStyle = AssetsManager()->GetAsset<CAsset_GuiBoxStyle>(pTabsStyle->GetContentPath());
 	}
-	
-	ivec2 MousePos = Context()->GetMousePos();
 	
 	if(pLayoutStyle)
 	{

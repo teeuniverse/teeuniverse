@@ -67,7 +67,7 @@ public:
 	
 	public:
 		CView(CGuiEditor* pAssetsEditor);
-		~CView();
+		virtual ~CView();
 		
 		virtual void Update(bool ParentEnabled);
 		virtual void UpdateBoundingSize();

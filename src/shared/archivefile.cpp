@@ -23,6 +23,7 @@
 #include <shared/components/storage.h>
 
 #include <zlib.h>
+#include <limits>
 
 CArchiveFile::CArchiveFile()
 {
@@ -194,7 +195,7 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 	}
 	
 	//Write raw datas
-	for(uint32 i=0; i<m_RawDatas.size(); i++)
+	for(uint32 i=0; i<(uint32)m_RawDatas.size(); i++)
 	{
 		CRawData& RawData = m_RawDatas[i];
 		CArchiveFile_RawData StoredRawData;
@@ -215,7 +216,7 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 	}
 	
 	//Write strings
-	for(uint32 i=0; i<m_Strings.size(); i++)
+	for(uint32 i=0; i<(uint32)m_Strings.size(); i++)
 	{
 		
 		CString& String = m_Strings[i];
@@ -273,7 +274,7 @@ uint8* CArchiveFile::GetData(tua_dataid StoredDataId)
 {
 	uint32 DataId = ReadDataId(StoredDataId);
 	
-	if(DataId >= m_RawDatas.size())
+	if(DataId >= (uint32)m_RawDatas.size())
 	{
 		dbg_msg("ArchiveFile", "can't read the data #%d", DataId);
 		return NULL;
@@ -334,11 +335,11 @@ tua_dataid CArchiveFile::AddData(uint8* pData, uint32 Size)
 
 const char* CArchiveFile::GetString(tua_stringid StoredStringId)
 {
-	if(StoredStringId == -1)
+	if(StoredStringId == std::numeric_limits<tua_stringid>::max())
 		return NULL;
 	
 	uint32 StringId = ReadStringId(StoredStringId);
-	if(StringId >= m_Strings.size())
+	if(StringId >= (tua_stringid)m_Strings.size())
 		return NULL;
 	else
 		return m_Strings[StringId].m_pText;

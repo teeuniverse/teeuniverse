@@ -27,6 +27,9 @@
 CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
 	m_pHistory(0),
+	m_PackageId_UnivTeeWorlds(-1),
+	m_PackageId_UnivInfClass(-1),
+	m_PackageId_UnivOpenFNG(-1),
 	m_PackageId_EnvClouds(-1),
 	m_PackageId_EnvDesert(-1),
 	m_PackageId_EnvGeneric(-1),
@@ -37,10 +40,7 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_EnvSnow(-1),
 	m_PackageId_EnvStars(-1),
 	m_PackageId_EnvSun(-1),
-	m_PackageId_EnvWinter(-1),
-	m_PackageId_UnivTeeWorlds(-1),
-	m_PackageId_UnivInfClass(-1),
-	m_PackageId_UnivOpenFNG(-1)
+	m_PackageId_EnvWinter(-1)
 {
 	SetName("AssetsManager");
 }
@@ -790,7 +790,7 @@ int CAssetsManager::AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Typ
 	return -1;
 }
 
-int CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int Token)
+bool CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int Token)
 {
 	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
 		return false;
@@ -814,9 +814,11 @@ int CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int To
 	}
 	
 	#undef MACRO_ASSETTYPE
+	
+	return true;
 }
 
-int CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int RelMove, int Token)
+bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int RelMove, int Token)
 {
 	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
 		return false;
@@ -840,6 +842,8 @@ int CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int R
 	}
 	
 	#undef MACRO_ASSETTYPE
+	
+	return true;
 }
 	
 CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId, int Token)

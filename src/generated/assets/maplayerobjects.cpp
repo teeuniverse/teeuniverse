@@ -113,7 +113,7 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Read(CAssetsSaveLoadContex
 		const CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0* pData = (const CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Vertex.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Vertex.m_Size);
 		SysType.m_Vertex.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Vertex[i]);
 		}
@@ -132,7 +132,7 @@ void CAsset_MapLayerObjects::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadi
 		const CAsset_MapLayerObjects::CObject::CTuaType_0_2_0* pData = (const CAsset_MapLayerObjects::CObject::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Object.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Object.m_Size);
 		SysType.m_Object.resize(Size);
-		for(int i=0; i<Size; i++)
+		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Object[i]);
 		}
