@@ -374,14 +374,102 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV GRASS */
-	PackageId = pKernel->AssetsManager()->NewPackage("env_grass");
-	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
-	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
-	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
-	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "grassMain", "datasrc/images/env_grass/grass_main.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "grassDoodads", "datasrc/images/env_grass/grass_doodads.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	{
+		PackageId = pKernel->AssetsManager()->NewPackage("env_grass");
+		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+		pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
+		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
+		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "grassMain", "datasrc/images/env_grass/grass_main.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
+		CreateNewImage(pKernel, PackageId, "grassDoodads", "datasrc/images/env_grass/grass_doodads.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 1);
+		
+		CAssetPath GrassPath;
+		CAssetPath DirtPath;
+		CAssetPath DarkDirtPath;
+		CAssetPath DirtTransitionPath;
+		
+		CREATE_SPRITE_PATH(GrassPath, PackageId, "grass", MainImagePath, 0, 1, 1, 1);
+		CREATE_SPRITE_PATH(DirtPath, PackageId, "dirt", MainImagePath, 4, 1, 1, 1);
+		CREATE_SPRITE_PATH(DarkDirtPath, PackageId, "darkDirt", MainImagePath, 8, 1, 1, 1);
+		CREATE_SPRITE_PATH(DirtTransitionPath, PackageId, "dirtTransition", MainImagePath, 8, 5, 1, 1);
+		
+		//Material: Grass
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("grass");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(161.0f/255.0f, 110.0f/255.0f, 54.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+		}
+		
+		//Material: Dirt
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("dirt");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(161.0f/255.0f, 110.0f/255.0f, 54.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+		}
+		
+		//Material: DarkDirt
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("darkDirt");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(98.0f/255.0f, 73.0f/255.0f, 45.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DarkDirtPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+		}
+		
+		//Material: DirtTransition
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("dirtTransition");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(84.0f/255.0f, 62.0f/255.0f, 36.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtTransitionPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+		}
+		
+		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	}
 	
 	/* ENV JUNGLE */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_jungle");
