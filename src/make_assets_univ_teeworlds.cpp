@@ -284,6 +284,7 @@ int main(int argc, char* argv[])
 			pAsset->SetName("redRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(188.0f/255.0f, 95.0f/255.0f, 53.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
 			
 			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
 			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
@@ -291,6 +292,7 @@ int main(int argc, char* argv[])
 			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
 			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, RedRockTopPath);
 			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: YellowRock
 		{
@@ -299,6 +301,7 @@ int main(int argc, char* argv[])
 			pAsset->SetName("yellowRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(244.0f/255.0f, 209.0f/255.0f, 126.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
 			
 			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
 			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
@@ -306,6 +309,7 @@ int main(int argc, char* argv[])
 			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
 			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, YellowRockTopPath);
 			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: BrownRock
 		{
@@ -314,6 +318,7 @@ int main(int argc, char* argv[])
 			pAsset->SetName("brownRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(129.0f/255.0f, 90.0f/255.0f, 71.0f/255.0f, 1.0f));
+			pAsset->SetTextureSpacing(-16.0f);
 			
 			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
 			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, LayerPath, CAsset_Material::LAYER_REPEATTYPE, CAsset_Material::REPEATTYPE_STRETCH);
@@ -321,6 +326,7 @@ int main(int argc, char* argv[])
 			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
 			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, BrownRockTopPath);
 			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: Underground cable
 		{

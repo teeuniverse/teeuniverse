@@ -27,6 +27,7 @@
 void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
 
 void GenerateMaterialQuads(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, CAssetPath MaterialPath, bool Closed);
+void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
 void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
 
 //If the parameter "Closed" is true, the first and last vertices must be equals

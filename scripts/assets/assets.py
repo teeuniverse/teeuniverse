@@ -2290,6 +2290,7 @@ material.addMember("0.2.0", "TexturePath", TypeAssetPath())
 material.addMember("0.2.0", "TextureColor", TypeColor())
 material.addMember("0.2.0", "TextureSize", TypeVec2(), "1.0f")
 material.addMember("0.2.0", "TextureAngle", TypeFloat(), "0.0f")
+material.addMember("0.2.0", "TextureSpacing", TypeFloat(), "0.0f")
 material.addMember("0.2.0", "TextureEnabled", TypeBool(), "false")
 material.addPublicLines([
 	"enum",

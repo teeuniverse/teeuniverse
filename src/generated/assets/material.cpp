@@ -52,6 +52,7 @@ CAsset_Material::CAsset_Material()
 {
 	m_TextureSize = 1.0f;
 	m_TextureAngle = 0.0f;
+	m_TextureSpacing = 0.0f;
 	m_TextureEnabled = false;
 }
 
@@ -135,6 +136,7 @@ void CAsset_Material::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 	SysType.m_TextureSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_X);
 	SysType.m_TextureSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_Y);
 	SysType.m_TextureAngle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureAngle);
+	SysType.m_TextureSpacing = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSpacing);
 	SysType.m_TextureEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TextureEnabled);
 }
 
@@ -186,6 +188,7 @@ void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	TuaType.m_TextureSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.x);
 	TuaType.m_TextureSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.y);
 	TuaType.m_TextureAngle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureAngle);
+	TuaType.m_TextureSpacing = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSpacing);
 	TuaType.m_TextureEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TextureEnabled);
 }
 
@@ -276,6 +279,8 @@ float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float De
 			return GetTextureSizeY();
 		case TEXTUREANGLE:
 			return GetTextureAngle();
+		case TEXTURESPACING:
+			return GetTextureSpacing();
 	}
 	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
 }
@@ -308,6 +313,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Val
 			return true;
 		case TEXTUREANGLE:
 			SetTextureAngle(Value);
+			return true;
+		case TEXTURESPACING:
+			SetTextureSpacing(Value);
 			return true;
 	}
 	return CAsset::SetValue<float>(ValueType, SubPath, Value);

@@ -108,4 +108,6 @@ void CViewMaterial::RenderView()
 	}
 	
 	MapRenderer()->RenderObject(Object, 0.0f, m_ShowMeshes);
+	if(m_ShowMeshes)
+		MapRenderer()->RenderObjectCurve(Object, 0.0f);
 }

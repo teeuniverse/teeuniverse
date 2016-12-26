@@ -1229,6 +1229,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	AddField_Color(pTextureEditor, CAsset_Material::TEXTURECOLOR, _LSTRING("Texture Color"));
 	AddField_Vec2(pTextureEditor, CAsset_Material::TEXTURESIZE_X, CAsset_Material::TEXTURESIZE_Y, _LSTRING("Texture Size"));
 	AddField_Angle(pTextureEditor, CAsset_Material::TEXTUREANGLE, _LSTRING("Texture Angle"));
+	AddField_Float(pTextureEditor, CAsset_Material::TEXTURESPACING, _LSTRING("Texture Spacing"));
 	
 	pTab->AddSeparator();
 	

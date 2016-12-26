@@ -93,6 +93,7 @@ public:
 		TEXTURESIZE_Y,
 		TEXTURESIZE,
 		TEXTUREANGLE,
+		TEXTURESPACING,
 		TEXTUREENABLED,
 	};
 	
@@ -457,6 +458,7 @@ public:
 		tua_uint32 m_TextureColor;
 		CTuaVec2 m_TextureSize;
 		tua_float m_TextureAngle;
+		tua_float m_TextureSpacing;
 		tua_uint8 m_TextureEnabled;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType);
@@ -469,6 +471,7 @@ private:
 	vec4 m_TextureColor;
 	vec2 m_TextureSize;
 	float m_TextureAngle;
+	float m_TextureSpacing;
 	bool m_TextureEnabled;
 
 public:
@@ -501,6 +504,7 @@ public:
 		m_TextureColor = Item.m_TextureColor;
 		m_TextureSize = Item.m_TextureSize;
 		m_TextureAngle = Item.m_TextureAngle;
+		m_TextureSpacing = Item.m_TextureSpacing;
 		m_TextureEnabled = Item.m_TextureEnabled;
 	}
 	
@@ -512,6 +516,7 @@ public:
 		m_TextureColor = Item.m_TextureColor;
 		m_TextureSize = Item.m_TextureSize;
 		m_TextureAngle = Item.m_TextureAngle;
+		m_TextureSpacing = Item.m_TextureSpacing;
 		m_TextureEnabled = Item.m_TextureEnabled;
 	}
 	
@@ -655,6 +660,8 @@ public:
 	
 	inline float GetTextureAngle() const { return m_TextureAngle; }
 	
+	inline float GetTextureSpacing() const { return m_TextureSpacing; }
+	
 	inline bool GetTextureEnabled() const { return m_TextureEnabled; }
 	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
@@ -762,6 +769,8 @@ public:
 	inline void SetTextureSizeY(float Value) { m_TextureSize.y = Value; }
 	
 	inline void SetTextureAngle(float Value) { m_TextureAngle = Value; }
+	
+	inline void SetTextureSpacing(float Value) { m_TextureSpacing = Value; }
 	
 	inline void SetTextureEnabled(bool Value) { m_TextureEnabled = Value; }
 	

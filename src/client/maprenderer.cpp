@@ -742,6 +742,23 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 	}
 }
 
+void CMapRenderer::RenderObjectCurve(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos)
+{
+	array<CLineVertex> Lines;
+	GenerateMaterialCurve_Object(AssetsManager(), GetTime(), Lines, Object);
+	
+	Graphics()->TextureClear();
+	Graphics()->LinesBegin();
+	for(int i=1; i<Lines.size(); i++)
+	{
+		vec2 P0 = MapPosToScreenPos(Lines[i-1].m_Position);
+		vec2 P1 = MapPosToScreenPos(Lines[i].m_Position);
+		CGraphics::CLineItem LineItem(P0.x, P0.y, P1.x, P1.y);
+		Graphics()->LinesDraw(&LineItem, 1);
+	}
+	Graphics()->LinesEnd();
+}
+
 void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 {
 	const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(LayerPath);
