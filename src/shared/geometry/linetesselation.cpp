@@ -121,23 +121,28 @@ void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, c
 		
 			float texStepX = 1.0f/GridWidth;
 			float texStepY = 1.0f/GridHeight;
-			SpriteInfo.m_UMin = pSprite->GetX()*texStepX;
-			SpriteInfo.m_UMax = (pSprite->GetX()+pSprite->GetWidth())*texStepX;
-			SpriteInfo.m_VMin = pSprite->GetY()*texStepY;
-			SpriteInfo.m_VMax = (pSprite->GetY()+pSprite->GetHeight())*texStepY;
-			SpriteInfo.m_Width = TexelSize * pSprite->GetWidth() * static_cast<float>(ImageWidth) / GridWidth;
-			SpriteInfo.m_Height = TexelSize * pSprite->GetHeight() * static_cast<float>(ImageHeight) / GridHeight;
+			float texSpacingX = pImage->GetGridSpacing()/static_cast<float>(ImageWidth);
+			float texSpacingY = pImage->GetGridSpacing()/static_cast<float>(ImageHeight);
+			SpriteInfo.m_UMin = pSprite->GetX()*texStepX + texSpacingX;
+			SpriteInfo.m_UMax = (pSprite->GetX()+pSprite->GetWidth())*texStepX - texSpacingX;
+			SpriteInfo.m_VMin = pSprite->GetY()*texStepY + texSpacingY;
+			SpriteInfo.m_VMax = (pSprite->GetY()+pSprite->GetHeight())*texStepY - texSpacingY;
+			SpriteInfo.m_Width = TexelSize * (pSprite->GetWidth() * static_cast<float>(ImageWidth) / GridWidth - 2*pImage->GetGridSpacing());
+			SpriteInfo.m_Height = TexelSize * (pSprite->GetHeight() * static_cast<float>(ImageHeight) / GridHeight - 2*pImage->GetGridSpacing());
 		}
 	}
 	
+	SpriteInfo.m_Width *= pMaterialSprite->GetSize().x;
+	SpriteInfo.m_Height *= pMaterialSprite->GetSize().y;
+	
 	float Tmp;
-	if(pMaterialSprite->GetFlags() & CAsset_Material::SPRITEFLAG_VFLIP)
+	if((pMaterialSprite->GetFlags() & CAsset_Material::SPRITEFLAG_VFLIP) || SpriteInfo.m_Width < 0)
 	{
 		Tmp = SpriteInfo.m_UMin;
 		SpriteInfo.m_UMin = SpriteInfo.m_UMax;
 		SpriteInfo.m_UMax = Tmp;
 	}
-	if(pMaterialSprite->GetFlags() & CAsset_Material::SPRITEFLAG_HFLIP)
+	if((pMaterialSprite->GetFlags() & CAsset_Material::SPRITEFLAG_HFLIP) || SpriteInfo.m_Height < 0)
 	{
 		Tmp = SpriteInfo.m_VMin;
 		SpriteInfo.m_VMin = SpriteInfo.m_VMax;
@@ -150,8 +155,8 @@ void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, c
 		SpriteInfo.m_Height = Tmp;
 	}
 	
-	SpriteInfo.m_Width *= pMaterialSprite->GetSize().x;
-	SpriteInfo.m_Height *= pMaterialSprite->GetSize().y;
+	SpriteInfo.m_Width = std::abs(SpriteInfo.m_Width);
+	SpriteInfo.m_Height = std::abs(SpriteInfo.m_Height);
 }
 
 void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer)
@@ -271,9 +276,6 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 	
 	CSpriteInfo SpriteInfo;
 	GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
-		
-	float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
-	float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
 	
 	float LengthIter = 0.0;
 	float LengthCutPos = 0.0;
@@ -330,6 +332,9 @@ void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, 
 				VerticalTesselation = 1;
 			for(int k=0; k<VerticalTesselation; k++)
 			{
+				float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
+				float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
+				
 				CTexturedQuad& Quad = OutputQuads.increment();
 				
 				float StepMin = -(2.0f * static_cast<float>(k)/VerticalTesselation - 1.0f);
