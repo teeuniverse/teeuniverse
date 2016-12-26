@@ -41,8 +41,10 @@ public:
 
 /* COMMANDS ***********************************************************/
 
-bool CCommandLineInterpreter::CCommand::GetString(const char** ppArgs, char* pBuf, int MaxLength)
+bool CCommandLineInterpreter::CCommand::GetString(const char** ppArgs, dynamic_string& Buffer)
 {
+	Buffer.clear();
+	
 	const char* pArgIter = str_skip_whitespaces((char*) *ppArgs);
 	
 	if(!(*pArgIter))
@@ -54,12 +56,11 @@ bool CCommandLineInterpreter::CCommand::GetString(const char** ppArgs, char* pBu
 	int BufIter = 0;
 	char StringDelimiter = 0;
 	bool EscapeNextChar = false;
-	while(*pArgIter && BufIter < MaxLength)
+	while(*pArgIter)
 	{
 		if(EscapeNextChar)
 		{
-			pBuf[BufIter] = *pArgIter;
-			BufIter++;
+			BufIter = Buffer.append_at_num(BufIter, pArgIter, 1);
 			EscapeNextChar = false;
 		}
 		else if(*pArgIter == '\\')
@@ -83,13 +84,10 @@ bool CCommandLineInterpreter::CCommand::GetString(const char** ppArgs, char* pBu
 		}
 		else
 		{
-			pBuf[BufIter] = *pArgIter;
-			BufIter++;
+			BufIter = Buffer.append_at_num(BufIter, pArgIter, 1);
 			pArgIter++;
 		}
 	}
-	
-	pBuf[BufIter] = 0;
 	
 	*ppArgs = pArgIter;
 	return true;
@@ -97,8 +95,8 @@ bool CCommandLineInterpreter::CCommand::GetString(const char** ppArgs, char* pBu
 
 bool CCommandLineInterpreter::CCommand::GetInteger(const char** ppArgs, int* pResult)
 {
-	fixed_string128 Buffer;
-	if(!GetString(ppArgs, Buffer.buffer(), Buffer.maxsize()))
+	dynamic_string Buffer;
+	if(!GetString(ppArgs, Buffer))
 	{
 		*pResult = 0;
 		return false;
@@ -214,8 +212,8 @@ public:
 	{
 		const char* pArgsIter = pArgs;
 		
-		fixed_string128 Filename;
-		if(!GetString(&pArgsIter, Filename.buffer(), Filename.maxsize()))
+		dynamic_string Filename;
+		if(!GetString(&pArgsIter, Filename))
 		{
 			if(pOutput)
 			{
@@ -263,8 +261,8 @@ public:
 	{
 		const char* pArgsIter = pArgs;
 		
-		fixed_string128 Filename;
-		if(!GetString(&pArgsIter, Filename.buffer(), Filename.maxsize()))
+		dynamic_string Filename;
+		if(!GetString(&pArgsIter, Filename))
 		{
 			if(pOutput)
 			{

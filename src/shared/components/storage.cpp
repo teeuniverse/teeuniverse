@@ -346,4 +346,19 @@ void CStorage::GetCompletePath(int Type, const char *pDir, dynamic_string& Buffe
 	GetPath(Type, pDir, Buffer);
 }
 
+bool CStorage::FileExists(const char* pFilename, int Type)
+{
+	dynamic_string Buffer;
+	GetPath(Type, pFilename, Buffer);
+	
+	IOHANDLE TestHandle = io_open(Buffer.buffer(), IOFLAG_READ);
+	if(TestHandle)
+	{
+		io_close(TestHandle);
+		return true;
+	}
+	else
+		return false;
+}
+
 /* FOREIGN CODE END: TeeWorlds ****************************************/

@@ -85,6 +85,12 @@ public:
 			if(m_Type == TYPE_STRING)
 				Param.m_String.m_pValue = NULL;
 		}
+		
+		~CParameter()
+		{
+			if(m_Type == TYPE_STRING && m_String.m_pValue)
+				delete[] m_String.m_pValue;
+		}
 	};
 	
 protected:
@@ -134,6 +140,16 @@ public:
 		Param.m_Name.copy(pName);
 		Param.m_Float.m_Value = Value;
 		Param.m_Type = TYPE_FLOAT;
+	}
+	
+	inline void AddString(const char* pName, const char* pValue)
+	{
+		CParameter& Param = m_Parameters.increment();
+		Param.m_Name.copy(pName);
+		int Length = str_length(pValue);
+		Param.m_String.m_pValue = new char[Length+1];
+		str_copy(Param.m_String.m_pValue, pValue, Length+1);
+		Param.m_Type = TYPE_STRING;
 	}
 	
 	inline void ClearParameters()

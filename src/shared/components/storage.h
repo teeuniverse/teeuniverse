@@ -124,6 +124,8 @@ public:
 	void GetCompletePath(int Type, const char *pDir, dynamic_string& Buffer);
 	
 	int GetNumPaths() { return m_StoragePaths.size(); }
+	
+	bool FileExists(const char* pFilename, int Type);
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
 	

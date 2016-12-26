@@ -37,23 +37,22 @@ public:
 	
 	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
 	{
-		char aBuf[128];
-		
-		if(!GetString(&pArgs, aBuf, sizeof(aBuf)))
+		dynamic_string Buffer;
+		if(!GetString(&pArgs, Buffer))
 		{
 			pOutput->Print("Missing \"Key\" parameter", CLI_LINETYPE_ERROR);
 			Help(pOutput);
 			return CLI_FAILURE_WRONG_PARAMETER;
 		}
 		
-		int Key = m_pBindManager->Input()->KeyID(aBuf);
+		int Key = m_pBindManager->Input()->KeyID(Buffer.buffer());
 		if(Key == KEY_UNKNOWN)
 		{
 			pOutput->Print("Unknown key", CLI_LINETYPE_ERROR);
 			return CLI_FAILURE_WRONG_PARAMETER;
 		}
 		
-		if(!GetString(&pArgs, aBuf, sizeof(aBuf)))
+		if(!GetString(&pArgs, Buffer))
 		{
 			pOutput->Print("Missing \"Command\" parameter", CLI_LINETYPE_ERROR);
 			Help(pOutput);

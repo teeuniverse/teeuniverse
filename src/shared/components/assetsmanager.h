@@ -165,6 +165,8 @@ public:
 	
 	void InitAssetState(int Source, const CAssetState& State);
 	
+	bool GetPackageSaveFilename(int PackageId, dynamic_string& Filename);
+	
 	bool Save_AssetsFile(int PackageId);
 	bool Save_AssetsFile(const char *pFileName, int StorageType, int PackageId);
 	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0);

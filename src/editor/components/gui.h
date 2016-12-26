@@ -195,6 +195,8 @@ public:
 	CGuiEditor(CEditorKernel* pKernel);
 	virtual ~CGuiEditor();
 	
+	virtual bool InitConfig(int argc, const char** argv);
+	
 	virtual void LoadAssets();
 	virtual gui::CWidget* CreateMainWidget();
 	
@@ -231,19 +233,19 @@ public:
 	inline gui::CVListLayout* List() { return m_pList; }
 };
 
-class CDialog : public gui::CPopup
+class CMessageDialog : public gui::CPopup
 {
 protected:
 	class CClose : public gui::CButton
 	{
 	protected:
-		CDialog* m_pPopup;
+		CMessageDialog* m_pPopup;
 		
 	protected:
 		virtual void MouseClickAction() { m_pPopup->Close(); }
 		
 	public:
-		CClose(CDialog* pPopup) :
+		CClose(CMessageDialog* pPopup) :
 			gui::CButton(pPopup->Context(), _LSTRING("Close")),
 			m_pPopup(pPopup)
 		{
@@ -255,11 +257,11 @@ protected:
 	CGuiEditor* m_pAssetsEditor;
 	
 public:
-	CDialog(CGuiEditor* pAssetsEditor);
+	CMessageDialog(CGuiEditor* pAssetsEditor);
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
-class PackagePropertiesDialog : public CDialog
+class PackagePropertiesDialog : public CMessageDialog
 {
 protected:
 	int m_PackageId;
@@ -268,10 +270,58 @@ public:
 	PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId);
 };
 
-class CErrorDialog : public CDialog
+class CErrorDialog : public CMessageDialog
 {
 public:
 	CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString);
+};
+
+class CConfirmationDialog : public gui::CPopup
+{
+protected:
+	class CConfirm : public gui::CButton
+	{
+	protected:
+		CConfirmationDialog* m_pPopup;
+		
+	protected:
+		virtual void MouseClickAction() { m_pPopup->Close(); m_pPopup->OnConfirmation(); }
+		
+	public:
+		CConfirm(CConfirmationDialog* pPopup) :
+			gui::CButton(pPopup->Context(), _LSTRING("Continue")),
+			m_pPopup(pPopup)
+		{
+			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+		}
+	};
+	
+	class CCancel : public gui::CButton
+	{
+	protected:
+		CConfirmationDialog* m_pPopup;
+		
+	protected:
+		virtual void MouseClickAction() { m_pPopup->Close(); }
+		
+	public:
+		CCancel(CConfirmationDialog* pPopup) :
+			gui::CButton(pPopup->Context(), _LSTRING("Cancel")),
+			m_pPopup(pPopup)
+		{
+			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+		}
+	};
+
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void OnConfirmation() = 0;
+	
+public:
+	CConfirmationDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString);
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
 #endif

@@ -329,19 +329,26 @@ int CAssetsManager::AddNameToResolve(const char* pName)
 	return m_pNamesToResolved.size()-1;
 }
 
+bool CAssetsManager::GetPackageSaveFilename(int PackageId, dynamic_string& Filename)
+{
+	if(!IsValidPackage(PackageId))
+		return false;
+	
+	Filename.append("assets/");
+	Filename.append(m_pPackages[PackageId]->GetName());
+	Filename.append(".tup");
+	
+	return true;
+}
+
 bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int PackageId)
 {
 	if(!IsValidPackage(PackageId))
 		return false;
 	
 	dynamic_string FullPath;
-#if defined(CONF_FAMILY_WINDOWS)
-	FullPath.append("assets\\");
-#else
-	FullPath.append("assets/");
-#endif
-	FullPath.append(pFilename);
-	FullPath.append(".tup");
+	if(!GetPackageSaveFilename(PackageId, FullPath))
+		return false;
 	
 	CArchiveFile ArchiveFile;
 	CAssetsSaveLoadContext SaveLoadContext(this, &ArchiveFile, PackageId);

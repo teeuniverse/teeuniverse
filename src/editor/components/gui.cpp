@@ -20,6 +20,7 @@
 
 #include <shared/components/assetsmanager.h>
 #include <shared/components/storage.h>
+#include <shared/components/cli.h>
 #include <client/gui/panellayout.h>
 #include <client/gui/popup.h>
 #include <client/gui/filler.h>
@@ -33,6 +34,63 @@
 #include <editor/gui/view.h>
 #include <editor/gui/timeline.h>
 #include <editor/gui/assetsinspector.h>
+
+/* COMMANDS ***********************************************************/
+
+class CSaveConfirmationDialog : public CConfirmationDialog
+{
+protected:
+	virtual void OnConfirmation()
+	{
+		if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(m_pAssetsEditor->GetEditedPackageId()))
+			m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
+	}
+
+public:
+	CSaveConfirmationDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
+		CConfirmationDialog(pAssetsEditor, LString)
+	{ }
+};
+
+	//Echo
+class CCommand_SavePackage : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CCommand_SavePackage(CGuiEditor* pAssetsEditor) :
+		CCommandLineInterpreter::CCommand(),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		dynamic_string Filename;
+		if(!m_pAssetsEditor->AssetsManager()->GetPackageSaveFilename(m_pAssetsEditor->GetEditedPackageId(), Filename))
+			return CLI_SUCCESS;
+		
+		int Type = CStorage::TYPE_SAVE;
+			
+		if(m_pAssetsEditor->Storage()->FileExists(Filename.buffer(), Type))
+		{
+			CLocalizableString LString(_("Do you want to overwrite \"{str:Filename}\"?"));
+			LString.AddString("Filename", Filename.buffer());
+			
+			m_pAssetsEditor->DisplayPopup(new CSaveConfirmationDialog(m_pAssetsEditor, LString));
+		}
+		else
+		{
+			if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(Filename.buffer(), m_pAssetsEditor->GetEditedPackageId(), Type))
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
+		}
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "editor_save"; }
+	virtual const char* Description() { return "Save the current package"; }
+};
 
 /* CONTEXT MENU *******************************************************/
 
@@ -175,15 +233,43 @@ public:
 	{ }
 };
 
-CDialog::CDialog(CGuiEditor* pAssetsEditor) :
+CMessageDialog::CMessageDialog(CGuiEditor* pAssetsEditor) :
 	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 400, 300, gui::CPopup::ALIGNMENT_INNER),
 	m_pAssetsEditor(pAssetsEditor)
 {
 	
 }
 
+CConfirmationDialog::CConfirmationDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
+	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 400, 300, gui::CPopup::ALIGNMENT_INNER),
+	m_pAssetsEditor(pAssetsEditor)
+{
+	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+	Add(pLayout);
+	
+	pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Confirmation")), false);
+	
+	gui::CLabel* pMessage = new gui::CLabel(Context(), LString);
+	pMessage->SetLabelStyle(m_pAssetsEditor->m_Path_Label_DialogMessage);
+	pMessage->NoTextClipping();
+	pLayout->Add(pMessage, true);
+	
+	pLayout->AddSeparator();
+	
+	//Buttonlist
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new CCancel(this), false);
+		pHList->Add(new gui::CFiller(Context()), true);
+		pHList->Add(new CConfirm(this), false);
+	}
+}
+
 PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int PackageId) :
-	CDialog(pAssetsEditor),
+	CMessageDialog(pAssetsEditor),
 	m_PackageId(PackageId)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
@@ -243,7 +329,7 @@ PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int 
 }
 
 CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
-	CDialog(pAssetsEditor)
+	CMessageDialog(pAssetsEditor)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
@@ -780,14 +866,6 @@ public:
 				}
 				break;
 			}
-			case FORMAT_PACKAGE:
-			{
-				if(!AssetsManager()->Save_AssetsFile(m_Filename.buffer(), CStorage::TYPE_SAVE, m_pAssetsEditor->GetEditedPackageId()))
-				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
-				}
-				break;
-			}
 		}
 			
 		m_pAssetsEditor->RefreshPackageTree();
@@ -1121,37 +1199,18 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		AssetsManager()->Save_AssetsFile(m_pAssetsEditor->GetEditedPackageId());
+		dynamic_string Filename;
+		if(AssetsManager()->GetPackageSaveFilename(m_pAssetsEditor->GetEditedPackageId(), Filename))
+		{
+			CLI()->Execute("editor_save");
+		}
+		
 		m_pPopupMenu->Close();
 	}
 
 public:
 	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, _LSTRING("Save Package")),
-		m_pAssetsEditor(pAssetsEditor),
-		m_pPopupMenu(pPopupMenu)
-	{
-		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
-		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSave);
-	}
-};
-
-class CSavePackageAsButton : public gui::CButton
-{
-protected:
-	CGuiEditor* m_pAssetsEditor;
-	CPopup_Menu* m_pPopupMenu;
-	
-protected:
-	virtual void MouseClickAction()
-	{
-		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, true, COpenSavePackageDialog::FORMAT_PACKAGE));
-		m_pPopupMenu->Close();
-	}
-
-public:
-	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
-		gui::CButton(pAssetsEditor, _LSTRING("Save Package As...")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1401,7 +1460,6 @@ protected:
 		pMenu->List()->Add(new CNewPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new COpenPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
-		pMenu->List()->Add(new CSavePackageAsButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
@@ -1547,6 +1605,11 @@ void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 		Context()->m_Cfg_Scale += 4;
 		return;
 	}
+	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_S && (Event.m_Flags & CInput::FLAG_RELEASE))
+	{
+		CLI()->Execute("editor_save");
+		return;
+	}
 	
 	gui::CVListLayout::OnInputEvent(Event);
 }
@@ -1598,6 +1661,16 @@ CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 CGuiEditor::~CGuiEditor()
 {
 	
+}
+
+bool CGuiEditor::InitConfig(int argc, const char** argv)
+{
+	if(!CGui::InitConfig(argc, argv))
+		return false;
+	
+	CLI()->Register("editor_save", new CCommand_SavePackage(this));
+	
+	return true;
 }
 
 void CGuiEditor::LoadAssets()

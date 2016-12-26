@@ -51,7 +51,7 @@ public:
 	class CCommand
 	{
 	protected:
-		bool GetString(const char** ppArgs, char* pBuf, int MaxLength);
+		bool GetString(const char** ppArgs, dynamic_string& Buffer);
 		bool GetInteger(const char** ppArgs, int* pResult);
 		
 	public:
@@ -86,9 +86,9 @@ public:
 		virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
 		{
 			const char* pArgsIter = pArgs;
-			fixed_string128 Buffer;
+			dynamic_string Buffer;
 			
-			if(!GetString(&pArgsIter, Buffer.buffer(), Buffer.maxsize()))
+			if(!GetString(&pArgsIter, Buffer))
 			{
 				if(pOutput)
 				{
