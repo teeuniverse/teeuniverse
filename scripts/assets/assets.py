@@ -2275,11 +2275,13 @@ material_sprite.addMember("0.2.0", "Color", TypeColor(), "1.0f")
 material_sprite.addMember("0.2.0", "Flags", TypeInt32(), "0x0")
 material_sprite.addMember("0.2.0", "Position", TypeVec2(), "0.0f")
 material_sprite.addMember("0.2.0", "Alignment", TypeInt32(), "SPRITEALIGN_LINE")
+material_sprite.addMember("0.2.0", "Filling", TypeInt32(), "SPRITEFILLING_SCALING")
+material_sprite.addMember("0.2.0", "TileType", TypeInt32(), "SPRITETILE_LINE")
+material_sprite.addMember("0.2.0", "TileLabel0", TypeInt32(), "0")
+material_sprite.addMember("0.2.0", "TileLabel1", TypeInt32(), "0")
 
 material_layer = Class("Layer")
 material_layer.addMember("0.2.0", "Sprite", TypeArray(material_sprite))
-material_layer.addMember("0.2.0", "RepeatType", TypeInt32(), "REPEATTYPE_STATIC")
-material_layer.addMember("0.2.0", "Spacing", TypeFloat(), "0.0f")
 
 material = ClassAsset("Material", len(assetsList))
 material.setInheritance(mainAsset)
@@ -2299,11 +2301,19 @@ material.addPublicLines([
 	"	SPRITEFLAG_HFLIP = 2,",
 	"	SPRITEFLAG_ROTATION = 4,",
 	"",
-	"	SPRITEALIGN_LINE = 0,",
-	"	SPRITEALIGN_WORLD,",
+	"	SPRITEFILLING_SCALING = 0,",
+	"	SPRITEFILLING_STRETCHING,",
+	"	SPRITEFILLING_SPACING,",
 	"",
-	"	REPEATTYPE_STATIC = 0,",
-	"	REPEATTYPE_STRETCH,",
+	"	SPRITEALIGN_LINE = 0,",
+	"	SPRITEALIGN_OBJECT,",
+	"	SPRITEALIGN_STRETCHED,",
+	"",
+	"	SPRITETILE_LINE = 0,",
+	"	SPRITETILE_CAP_START,",
+	"	SPRITETILE_CAP_END,",
+	"	SPRITETILE_CORNER_CONVEX,",
+	"	SPRITETILE_CORNER_CONCAVE,",
 	"};",
 	""
 ])

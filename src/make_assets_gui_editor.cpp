@@ -171,9 +171,30 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconVertexSymetric", ImageEditorPath, 30*2, 2*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineStyle", ImageEditorPath, 31*2, 2*2, 2, 2);
 	
-	CREATE_SPRITE(PackageId, "iconMatLayerRepeat", ImageEditorPath, 0*2, 3*2, 4, 2);
-	CREATE_SPRITE(PackageId, "iconMatLayerStretch", ImageEditorPath, 2*2, 3*2, 4, 2);
+	CREATE_SPRITE(PackageId, "iconMatSpriteAlignLine", ImageEditorPath, 0*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconMatSpriteAlignObject", ImageEditorPath, 1*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconMatSpriteAlignStretched", ImageEditorPath, 2*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileBg", ImageEditorPath, 4*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileFg", ImageEditorPath, 5*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileCapEnd", ImageEditorPath, 6*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileCapBegin", ImageEditorPath, 7*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileCornerConvex", ImageEditorPath, 8*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileCornerConcave", ImageEditorPath, 9*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineTileLine", ImageEditorPath, 10*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillingScaling", ImageEditorPath, 11*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillingStretching", ImageEditorPath, 12*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillingSpacing", ImageEditorPath, 13*2, 3*2, 2, 2);
 	
+	CREATE_SPRITE(PackageId, "iconShapeStar", ImageEditorPath, 40, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeHexagon", ImageEditorPath, 43, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeHexagon2", ImageEditorPath, 46, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapePentagon", ImageEditorPath, 49, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeTriangle", ImageEditorPath, 52, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeSquare", ImageEditorPath, 55, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeArcWeight", ImageEditorPath, 58, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeArc", ImageEditorPath, 61, 23, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeBow", ImageEditorPath, 40, 26, 3, 3);
+	CREATE_SPRITE(PackageId, "iconShapeCircle", ImageEditorPath, 43, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconSpriteCreator", ImageEditorPath, 46, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconBigVFlip", ImageEditorPath, 49, 26, 3, 3);
 	CREATE_SPRITE(PackageId, "iconBigHFlip", ImageEditorPath, 52, 26, 3, 3);
@@ -1297,6 +1318,15 @@ int main(int argc, char* argv[])
 			pAsset->SetMargin(0);
 			pAsset->SetSpacing(0);
 		}
+	}
+	
+	{
+		CAssetPath RectPath;
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectPath, PackageId);
+		pAsset->SetName("guiBox");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BORDER);
+		pAsset->SetBorderColor(ColorBorder);
+		pAsset->SetBorderFlags(CAsset_GuiRectStyle::BORDERFLAG_ALL);
 	}
 	
 	//Statusbar

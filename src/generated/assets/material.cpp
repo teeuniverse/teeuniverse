@@ -40,12 +40,10 @@ CAsset_Material::CSprite::CSprite()
 	m_Flags = 0x0;
 	m_Position = 0.0f;
 	m_Alignment = SPRITEALIGN_LINE;
-}
-
-CAsset_Material::CLayer::CLayer()
-{
-	m_RepeatType = REPEATTYPE_STATIC;
-	m_Spacing = 0.0f;
+	m_Filling = SPRITEFILLING_STRETCHING;
+	m_TileType = SPRITETILE_LINE;
+	m_TileLabel0 = 0;
+	m_TileLabel1 = 0;
 }
 
 CAsset_Material::CAsset_Material()
@@ -97,6 +95,10 @@ void CAsset_Material::CSprite::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoa
 	SysType.m_Position.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_X);
 	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
 	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
+	SysType.m_Filling = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Filling);
+	SysType.m_TileType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileType);
+	SysType.m_TileLabel0 = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileLabel0);
+	SysType.m_TileLabel1 = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileLabel1);
 }
 
 
@@ -112,8 +114,6 @@ void CAsset_Material::CLayer::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoad
 		}
 	}
 	
-	SysType.m_RepeatType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_RepeatType);
-	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Spacing);
 }
 
 
@@ -151,6 +151,10 @@ void CAsset_Material::CSprite::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLo
 	TuaType.m_Position.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.x);
 	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
 	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
+	TuaType.m_Filling = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Filling);
+	TuaType.m_TileType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileType);
+	TuaType.m_TileLabel0 = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileLabel0);
+	TuaType.m_TileLabel1 = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileLabel1);
 }
 
 void CAsset_Material::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType)
@@ -165,8 +169,6 @@ void CAsset_Material::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoa
 		TuaType.m_Sprite.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CSprite::CTuaType_0_2_0)*SysType.m_Sprite.size());
 		delete[] pData;
 	}
-	TuaType.m_RepeatType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_RepeatType);
-	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Spacing);
 }
 
 void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType)
@@ -205,8 +207,14 @@ int CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, int Defaul
 			return GetLayerSpriteFlags(SubPath);
 		case LAYER_SPRITE_ALIGNMENT:
 			return GetLayerSpriteAlignment(SubPath);
-		case LAYER_REPEATTYPE:
-			return GetLayerRepeatType(SubPath);
+		case LAYER_SPRITE_FILLING:
+			return GetLayerSpriteFilling(SubPath);
+		case LAYER_SPRITE_TILETYPE:
+			return GetLayerSpriteTileType(SubPath);
+		case LAYER_SPRITE_TILELABEL0:
+			return GetLayerSpriteTileLabel0(SubPath);
+		case LAYER_SPRITE_TILELABEL1:
+			return GetLayerSpriteTileLabel1(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -228,8 +236,17 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, int Value
 		case LAYER_SPRITE_ALIGNMENT:
 			SetLayerSpriteAlignment(SubPath, Value);
 			return true;
-		case LAYER_REPEATTYPE:
-			SetLayerRepeatType(SubPath, Value);
+		case LAYER_SPRITE_FILLING:
+			SetLayerSpriteFilling(SubPath, Value);
+			return true;
+		case LAYER_SPRITE_TILETYPE:
+			SetLayerSpriteTileType(SubPath, Value);
+			return true;
+		case LAYER_SPRITE_TILELABEL0:
+			SetLayerSpriteTileLabel0(SubPath, Value);
+			return true;
+		case LAYER_SPRITE_TILELABEL1:
+			SetLayerSpriteTileLabel1(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
@@ -271,8 +288,6 @@ float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float De
 			return GetLayerSpritePositionX(SubPath);
 		case LAYER_SPRITE_POSITION_Y:
 			return GetLayerSpritePositionY(SubPath);
-		case LAYER_SPACING:
-			return GetLayerSpacing(SubPath);
 		case TEXTURESIZE_X:
 			return GetTextureSizeX();
 		case TEXTURESIZE_Y:
@@ -301,9 +316,6 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Val
 			return true;
 		case LAYER_SPRITE_POSITION_Y:
 			SetLayerSpritePositionY(SubPath, Value);
-			return true;
-		case LAYER_SPACING:
-			SetLayerSpacing(SubPath, Value);
 			return true;
 		case TEXTURESIZE_X:
 			SetTextureSizeX(Value);

@@ -751,9 +751,13 @@ void CMapRenderer::RenderObjectCurve(const CAsset_MapLayerObjects::CObject& Obje
 	Graphics()->LinesBegin();
 	for(int i=1; i<Lines.size(); i++)
 	{
+		float Alpha0 = (i-1)/static_cast<float>(Lines.size());
+		float Alpha1 = i/static_cast<float>(Lines.size());
+		
 		vec2 P0 = MapPosToScreenPos(Lines[i-1].m_Position);
 		vec2 P1 = MapPosToScreenPos(Lines[i].m_Position);
 		CGraphics::CLineItem LineItem(P0.x, P0.y, P1.x, P1.y);
+		Graphics()->SetColor2(vec4(Alpha0, 1.0f-Alpha0, 0.0f, 1.0f), vec4(Alpha1, 1.0f-Alpha1, 0.0f, 1.0f), true);
 		Graphics()->LinesDraw(&LineItem, 1);
 	}
 	Graphics()->LinesEnd();

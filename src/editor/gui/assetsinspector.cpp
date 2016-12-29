@@ -19,6 +19,7 @@
 #include <editor/gui/assetsinspector.h>
 #include <editor/components/gui.h>
 #include <shared/components/assetsmanager.h>
+#include <client/components/assetsrenderer.h>
 #include <client/gui/text-edit.h>
 #include <client/gui/integer-edit.h>
 #include <client/gui/float-edit.h>
@@ -28,6 +29,7 @@
 #include <client/gui/popup.h>
 #include <client/gui/expand.h>
 #include <shared/components/localization.h>
+#include <shared/geometry/linetesselation.h>
 
 /* COMBOBOX ***********************************************************/
 	
@@ -1211,7 +1213,155 @@ public:
 	{ }	
 };
 
-class 
+class CMaterialSpritePreview : public gui::CWidget
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CMaterialSpritePreview(CGuiEditor* pAssetsEditor) :
+		gui::CWidget(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+	
+	virtual void UpdateBoundingSize()
+	{		
+		m_BoundingSizeRect.BSNoConstraint();
+		m_BoundingSizeRect.BSMinimum(256, 256);
+	}
+	
+	virtual void Render()
+	{
+		gui::CRect SpriteRect = m_DrawRect;
+		SpriteRect.RemoveMargin(2);
+		
+		AssetsRenderer()->DrawGuiRect(&SpriteRect, m_pAssetsEditor->m_Path_Rect_GuiBox);
+		SpriteRect.RemoveMargin(8);
+		
+		const CAsset_Material* pMaterial = AssetsManager()->GetAsset<CAsset_Material>(m_pAssetsEditor->GetEditedAssetPath());
+		if(!pMaterial)
+			return;
+		
+		if(m_pAssetsEditor->GetEditedSubPath().GetType() != CAsset_Material::TYPE_LAYER_SPRITE || !pMaterial->IsValidLayerSprite(m_pAssetsEditor->GetEditedSubPath()))
+			return;
+		
+		const CAsset_Material::CSprite& Sprite = pMaterial->GetLayerSprite(m_pAssetsEditor->GetEditedSubPath());
+		
+		CSpriteInfo SpriteInfo;
+		GenerateMaterialQuads_GetSpriteInfo(AssetsManager(), &Sprite, SpriteInfo);
+		
+		float Ratio = static_cast<float>(SpriteInfo.m_Width)/static_cast<float>(SpriteInfo.m_Height);
+		float WindowRatio = static_cast<float>(SpriteRect.w)/static_cast<float>(SpriteRect.h);
+		float SizeX;
+		float SizeY;
+		if(Ratio > WindowRatio)
+		{
+			SizeX = SpriteRect.w;
+			SizeY = SpriteRect.w/Ratio;
+		}
+		else
+		{
+			SizeX = SpriteRect.h*Ratio;
+			SizeY = SpriteRect.h;
+		}
+		
+		{
+			AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
+			Graphics()->QuadsBegin();
+			Graphics()->SetColor(1.0f, true);
+			
+			Graphics()->QuadsSetSubsetFree(
+				SpriteInfo.m_UMin, SpriteInfo.m_VMin,
+				SpriteInfo.m_UMin, SpriteInfo.m_VMax,
+				SpriteInfo.m_UMax, SpriteInfo.m_VMin,
+				SpriteInfo.m_UMax, SpriteInfo.m_VMax
+			);
+			
+			CGraphics::CFreeformItem Freeform(
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2)
+			);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+			Graphics()->QuadsEnd();
+		}
+		
+		float LabelOpacity = 0.5f;
+		vec4 aLabelColors[8];
+		aLabelColors[0] = vec4(1.0f, 0.0f, 0.0f, LabelOpacity);
+		aLabelColors[1] = vec4(0.0f, 1.0f, 0.0f, LabelOpacity);
+		aLabelColors[2] = vec4(0.0f, 0.0f, 1.0f, LabelOpacity);
+		aLabelColors[3] = vec4(1.0f, 1.0f, 0.0f, LabelOpacity);
+		aLabelColors[4] = vec4(0.0f, 1.0f, 1.0f, LabelOpacity);
+		aLabelColors[5] = vec4(1.0f, 0.0f, 1.0f, LabelOpacity);
+		aLabelColors[6] = vec4(1.0f, 0.6f, 1.0f, LabelOpacity);
+		aLabelColors[7] = vec4(0.6f, 0.0f, 1.0f, LabelOpacity);
+		int nbLabelColors = sizeof(aLabelColors)/sizeof(vec4);
+		
+		Graphics()->TextureClear();
+		Graphics()->QuadsBegin();
+		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE)
+		{
+			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+			
+			CGraphics::CFreeformItem Freeform(
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2-16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2)
+			);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+		}
+		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+		{
+			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+			
+			CGraphics::CFreeformItem Freeform(
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2+SizeY/2-16),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2-16, SpriteRect.y+SpriteRect.h/2+SizeY/2-16),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2)
+			);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+		}
+		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CAP_START || Sprite.GetTileType() == CAsset_Material::SPRITETILE_LINE)
+		{
+			if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CAP_START)
+				Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel0()%nbLabelColors], true);
+			else
+				Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+			
+			CGraphics::CFreeformItem Freeform(
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2-16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2-16, SpriteRect.y+SpriteRect.h/2+SizeY/2-16),
+				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2)
+			);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+		}
+		if(
+			Sprite.GetTileType() == CAsset_Material::SPRITETILE_CAP_END ||
+			Sprite.GetTileType() == CAsset_Material::SPRITETILE_LINE ||
+			Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE ||
+			Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX
+		)
+		{
+			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel0()%nbLabelColors], true);
+			
+			CGraphics::CFreeformItem Freeform(
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2+SizeY/2-16),
+				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2)
+			);
+			Graphics()->QuadsDrawFreeform(&Freeform, 1);
+		}
+		Graphics()->QuadsEnd();
+	}
+};
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 {
@@ -1240,14 +1390,6 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	pTab->Add(pLayerEditor, false);
 	
 	AddField(pLayerEditor, new CNewSubItemButton_Material_Sprite(AssetsEditor()));
-	AddField_Float(pLayerEditor, CAsset_Material::LAYER_SPACING, _LSTRING("Spacing"));
-	
-	{
-		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_REPEATTYPE);
-		pComboBox->Add(_LSTRING("Repeated"), AssetsEditor()->m_Path_Sprite_IconMatLayerRepeat);
-		pComboBox->Add(_LSTRING("Stretched"), AssetsEditor()->m_Path_Sprite_IconMatLayerStretch);
-		AddField(pLayerEditor, pComboBox, _LSTRING("Sprite arrangment"));
-	}
 	
 	gui::CVListLayout* pSpriteEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER_SPRITE);
 	pTab->Add(pSpriteEditor, false);	
@@ -1259,14 +1401,39 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	
 	{
 		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_SPRITE_ALIGNMENT);
-		pComboBox->Add(_LSTRING("Line"));
-		pComboBox->Add(_LSTRING("World"));
+		pComboBox->Add(_LSTRING("Line"), AssetsEditor()->m_Path_Sprite_IconMatSpriteAlignLine);
+		pComboBox->Add(_LSTRING("Object"), AssetsEditor()->m_Path_Sprite_IconMatSpriteAlignObject);
+		pComboBox->Add(_LSTRING("Stretched"), AssetsEditor()->m_Path_Sprite_IconMatSpriteAlignStretched);
 		AddField(pSpriteEditor, pComboBox, _LSTRING("Alignment"));
+	}
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_SPRITE_FILLING);
+		pComboBox->Add(_LSTRING("Scaling"), AssetsEditor()->m_Path_Sprite_IconFillingScaling);
+		pComboBox->Add(_LSTRING("Stretching"), AssetsEditor()->m_Path_Sprite_IconFillingStretching);
+		pComboBox->Add(_LSTRING("Spacing"), AssetsEditor()->m_Path_Sprite_IconFillingSpacing);
+		AddField(pSpriteEditor, pComboBox, _LSTRING("Filling"));
 	}
 	
 	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_VFLIP, _LSTRING("Horizontal Flip"));
 	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_HFLIP, _LSTRING("Vertical Flip"));
 	AddField_Flag(pSpriteEditor, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION, _LSTRING("Rotation of 90°"));
+	
+	{
+		pSpriteEditor->Add(new CMaterialSpritePreview(AssetsEditor()), false);
+	}
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_Material::LAYER_SPRITE_TILETYPE);
+		pComboBox->Add(_LSTRING("Line"), AssetsEditor()->m_Path_Sprite_IconLineTileLine);
+		pComboBox->Add(_LSTRING("Left Cap"), AssetsEditor()->m_Path_Sprite_IconLineTileCapBegin);
+		pComboBox->Add(_LSTRING("Right Cap"), AssetsEditor()->m_Path_Sprite_IconLineTileCapEnd);
+		pComboBox->Add(_LSTRING("Convex Corner"), AssetsEditor()->m_Path_Sprite_IconLineTileCornerConvex);
+		pComboBox->Add(_LSTRING("Concave Corner"), AssetsEditor()->m_Path_Sprite_IconLineTileCornerConcave);
+		AddField(pSpriteEditor, pComboBox, _LSTRING("Type"));
+	}
+	AddField_Integer(pSpriteEditor, CAsset_Material::LAYER_SPRITE_TILELABEL0, _LSTRING("First Label"));
+	AddField_Integer(pSpriteEditor, CAsset_Material::LAYER_SPRITE_TILELABEL1, _LSTRING("Second Label"));
 	
 	return pTab;
 }

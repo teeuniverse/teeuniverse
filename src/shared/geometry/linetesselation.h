@@ -23,9 +23,23 @@
 #include <shared/tl/array.h>
 #include <shared/geometry/quad.h>
 #include <generated/assets/maplayerobjects.h>
+#include <generated/assets/material.h>
 
 void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
 
+class CSpriteInfo
+{
+public:
+	CAssetPath m_ImagePath;
+	float m_Width;
+	float m_Height;
+	float m_UMin;
+	float m_UMax;
+	float m_VMin;
+	float m_VMax;
+};
+
+void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo);
 void GenerateMaterialQuads(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, CAssetPath MaterialPath, bool Closed);
 void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
 void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);

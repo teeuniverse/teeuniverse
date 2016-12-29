@@ -84,18 +84,6 @@ void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVerte
 	}
 }
 
-class CSpriteInfo
-{
-public:
-	CAssetPath m_ImagePath;
-	float m_Width;
-	float m_Height;
-	float m_UMin;
-	float m_UMax;
-	float m_VMin;
-	float m_VMax;
-};
-
 void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo)
 {
 	SpriteInfo.m_UMin = 0.0f;
@@ -159,228 +147,714 @@ void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, c
 	SpriteInfo.m_Height = std::abs(SpriteInfo.m_Height);
 }
 
-void GenerateMaterialQuads_RepeatedSprites(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer)
+class CLineIterator
 {
-	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
-	if(Sprites.size() <= 0)
-		return;
-	
-	int SpriteId = 0;
-	const CAsset_Material::CSprite* pSprite = &Sprites[SpriteId];
-	
-	CSpriteInfo SpriteInfo;
-	GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
-	
-	float LengthIter = 0.0;
-	float LengthCutPos = 0.0;
-	for(int i=1; i<Vertices.size(); i++)
+public:
+	class CSegment
 	{
-		vec2 Position0 = Vertices[i-1].m_Position;			
-		vec2 Position1 = Vertices[i].m_Position;
-		
-		vec2 Dir0 = normalize(Vertices[i-1].m_Thickness);
-		vec2 Dir1 = normalize(Vertices[i].m_Thickness);
-		vec4 Color0 = Vertices[i-1].m_Color * pSprite->GetColor();
-		vec4 Color1 = Vertices[i].m_Color * pSprite->GetColor();
-		float Weight0 = Vertices[i-1].m_Weight;
-		float Weight1 = Vertices[i].m_Weight;
-		
-		float Length = distance(Position0, Position1)/((Weight0 + Weight1)/2.0f);
-		float NextLengthIter = LengthIter + Length;
-		
-		bool EndOfSegment = false;
-		while(!EndOfSegment)
+	public:
+		int m_StartVert;
+		int m_EndVert;
+		bool m_Closed;
+	};
+	
+protected:
+	const array<CLineVertex>& m_Vertices;
+	array<CSegment> m_Segments;
+	bool m_Closed;
+	int m_CurrSegment;
+	int m_CurrVert;
+	float m_VertexAlpha;
+	
+public:
+	CLineIterator(const array<CLineVertex>& Vertices, bool Closed) :
+		m_Vertices(Vertices),
+		m_Closed(Closed),
+		m_CurrSegment(-1),
+		m_CurrVert(0),
+		m_VertexAlpha(0.0f)
+	{
+		if(Vertices.size() > 1)
 		{
-			float SegmentLength = SpriteInfo.m_Width + pLayer->GetSpacing();
-			
-			if(LengthCutPos + SegmentLength > NextLengthIter)
+			//Get the first broken vertex
+			int FirstVert = 0;
+			if(m_Closed)
 			{
-				EndOfSegment = true;
-				LengthIter = NextLengthIter;
+				do
+				{
+					if(IsBrokenVertex(FirstVert))
+						break;
+					GetPrevVertex(FirstVert);
+				}
+				while(FirstVert > 0);
 			}
+			
+			//Create the list of segments
+			int CurrVert = FirstVert;
+			bool ContinueSegementGeneration = true;
+			while(ContinueSegementGeneration)
+			{
+				ContinueSegementGeneration = false;
+				
+				CSegment& Segment = m_Segments.increment();
+				Segment.m_StartVert = CurrVert;
+				Segment.m_EndVert = CurrVert;
+				Segment.m_Closed = false;
+				
+				while(GetNextVertex(Segment.m_EndVert))
+				{
+					if(Segment.m_EndVert == FirstVert)
+					{
+						if(Segment.m_StartVert == Segment.m_EndVert && IsBrokenVertex(Segment.m_StartVert))
+							Segment.m_Closed = true;
+						break;
+					}
+					
+					if(IsBrokenVertex(Segment.m_EndVert))
+					{
+						ContinueSegementGeneration = true;
+						break;
+					}
+				}
+				
+				CurrVert = Segment.m_EndVert;
+			}
+		}
+	}
+	
+	inline bool GetPrevVertex(int& CurrId) const
+	{
+		if(m_Closed)
+		{
+			if(CurrId == 0)
+				CurrId = m_Vertices.size()-2;
+			else
+				CurrId--;
+		}
+		else
+		{
+			if(CurrId == 0)
+				return false;
+			else
+				CurrId--;
+		}
+		
+		return true;
+	}
+	
+	inline bool GetNextVertex(int& CurrId) const
+	{
+		if(m_Closed)
+		{
+			if(CurrId >= m_Vertices.size()-2)
+				CurrId = 0;
+			else
+				CurrId++;
+		}
+		else
+		{
+			if(CurrId >= m_Vertices.size()-1)
+				return false;
+			else
+				CurrId++;
+		}
+		
+		return true;
+	}
+	
+	inline bool IsBrokenVertex(int CurrId) const
+	{
+		int PrevId = CurrId;
+		int NextId = CurrId;
+		
+		if(!GetPrevVertex(PrevId) || !GetNextVertex(NextId))
+			return false;
+		
+		vec2 LineDir0 = normalize(m_Vertices[CurrId].m_Position - m_Vertices[PrevId].m_Position);
+		vec2 LineDir1 = normalize(m_Vertices[NextId].m_Position - m_Vertices[CurrId].m_Position);
+		return (dot(LineDir0, LineDir1) < std::cos(Pi/5.0f));
+	}
+	
+	inline bool NextSegment()
+	{
+		m_CurrSegment++;
+		if(m_CurrSegment >= m_Segments.size())
+			return false;
+		
+		m_CurrVert = m_Segments[m_CurrSegment].m_StartVert;
+		m_VertexAlpha = 0.0f;
+		
+		return true;
+	}
+	
+	inline const CSegment* GetNextSegment() const
+	{
+		if(m_CurrSegment+1 < m_Segments.size())
+			return &m_Segments[m_CurrSegment+1];
+		else
+			return NULL;
+	}
+	
+	inline float GetSegmentLength() const
+	{
+		assert(m_CurrSegment >= 0);
+		
+		float Length = 0.0f;
+		
+		int StartVert = m_Segments[m_CurrSegment].m_StartVert;
+		int EndVert = m_Segments[m_CurrSegment].m_EndVert;
+		
+		int PrevVert = StartVert;
+		int NextVert = PrevVert;
+		while(GetNextVertex(NextVert))
+		{
+			vec2 Pos0 = m_Vertices[PrevVert].m_Position;
+			vec2 Pos1 = m_Vertices[NextVert].m_Position;
+			Length += distance(Pos0, Pos1);
+			
+			if(NextVert == EndVert)
+				break;
+			
+			PrevVert = NextVert;
+		}
+		
+		return Length;
+	}
+	
+	inline bool IsStartVertex(int Vert) const
+	{
+		return Vert == m_Segments[m_CurrSegment].m_StartVert;
+	}
+	
+	inline bool IsEndVertex(int Vert) const
+	{
+		return Vert == m_Segments[m_CurrSegment].m_EndVert;
+	}
+	
+	inline bool IsClosedSegment() const
+	{
+		return m_Segments[m_CurrSegment].m_Closed;
+	}
+	
+	enum
+	{
+		LINECURSORSTATE_END=0,
+		LINECURSORSTATE_VERTEX,
+		LINECURSORSTATE_ERROR,
+	};
+	
+	int MoveLineCursor_Forward(float WantedDistance, float& WalkedDistance, int& PrevVert, int& NextVert, float& PrevAlpha, float& NextAlpha, bool StopOnVertex)
+	{
+		assert(m_CurrSegment >= 0);
+		
+		WalkedDistance = 0.0f;
+		PrevVert = m_CurrVert;
+		NextVert = m_CurrVert;
+		if(!GetNextVertex(NextVert))
+			return LINECURSORSTATE_ERROR;
+		
+		//1024 is just to make sure that we can go out of this loop in any case.
+		for(int i=0; i<1024; i++)
+		{
+			PrevAlpha = m_VertexAlpha;
+			
+			vec2 Pos0 = m_Vertices[PrevVert].m_Position;
+			vec2 Pos1 = m_Vertices[NextVert].m_Position;
+			float Length = distance(Pos0, Pos1);
+			float LengthLeft = Length*(1.0f - m_VertexAlpha);
+			
+			//There is enough distance to finish the walk
+			if(LengthLeft > WantedDistance)
+			{
+				WalkedDistance += WantedDistance;
+				m_VertexAlpha = 1.0f - (LengthLeft - WantedDistance)/Length;
+				NextAlpha = m_VertexAlpha;
+				return LINECURSORSTATE_END;
+			}
+			//This is the last part of the segment, we extropolate to finish the walk
+			else if(NextVert == m_Segments[m_CurrSegment].m_EndVert)
+			{
+				WalkedDistance += WantedDistance;
+				m_VertexAlpha = (Length*m_VertexAlpha + WantedDistance)/Length;
+				NextAlpha = m_VertexAlpha;
+				return LINECURSORSTATE_END;
+			}
+			//If needed, we stop the walk because we reach a vertex
+			else if(StopOnVertex)
+			{
+				WalkedDistance += LengthLeft;
+				WantedDistance -= LengthLeft;
+				NextAlpha = 1.0f;
+				
+				m_CurrVert = NextVert;
+				m_VertexAlpha = 0.0f;
+				
+				return LINECURSORSTATE_VERTEX;
+			}
+			//Go to the next vertex and continue
 			else
 			{
-				LengthCutPos += SegmentLength;
-				LengthIter = LengthCutPos;
-			}
-			
-			if(!EndOfSegment)
-			{
-				CTexturedQuad& Quad = OutputQuads.increment();
+				WalkedDistance += LengthLeft;
+				WantedDistance -= LengthLeft;
+				NextAlpha = 1.0f;
 				
-				float Alpha = (NextLengthIter - LengthIter)/Length;
+				m_CurrVert = NextVert;
+				m_VertexAlpha = 0.0f;
 				
-				vec2 Pos = Position0 * Alpha + Position1 * (1.0f - Alpha);
-				vec4 SpriteColor = Color0 * Alpha + Color1 * (1.0f - Alpha);
-				
-				//Add position shift
-				vec2 DirX = vec2(-1.0f, 0.0f);
-				vec2 DirY = vec2(0.0f, -1.0f);
-				if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_LINE)
-				{
-					DirY = normalize(Dir0 * Alpha + Dir1 * (1.0f - Alpha)) * (Weight0 * Alpha + Weight1 * (1.0f - Alpha));
-					DirX = -ortho(DirY);
-				}
-				Pos += DirY * pSprite->GetPosition().x;
-				Pos += DirY * pSprite->GetPosition().y;
-				
-				Quad.m_ImagePath = SpriteInfo.m_ImagePath;
-				
-				Quad.m_Color[0] = SpriteColor;
-				Quad.m_Color[1] = SpriteColor;
-				Quad.m_Color[2] = SpriteColor;
-				Quad.m_Color[3] = SpriteColor;
-								
-				if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
-				{
-					Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
-					Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax);
-					Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMin);
-					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
-				}
-				else
-				{
-					Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
-					Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMin);
-					Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax);
-					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
-				}
-				
-				Quad.m_Position[0] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
-				Quad.m_Position[1] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
-				Quad.m_Position[2] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
-				Quad.m_Position[3] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
-				
-				//Switch to the next sprite
-				if(Sprites.size() > 1)
-				{
-					SpriteId = (SpriteId+1)%Sprites.size();
-					pSprite = &Sprites[SpriteId];
-					GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
-				}
+				PrevVert = NextVert;
+				if(!GetNextVertex(NextVert))
+					return LINECURSORSTATE_ERROR;
 			}
 		}
 		
-		LengthIter = NextLengthIter;
+		return LINECURSORSTATE_ERROR;
 	}
-}
+	
+	int MoveLineCursor_Backward(float WantedDistance, float& WalkedDistance, int& PrevVert, int& NextVert, float& PrevAlpha, float& NextAlpha, bool StopOnVertex)
+	{
+		assert(m_CurrSegment >= 0);
+		
+		WalkedDistance = 0.0f;
+		PrevVert = m_CurrVert;
+		NextVert = m_CurrVert;
+		if(!GetNextVertex(NextVert))
+			return LINECURSORSTATE_ERROR;
+		
+		//1024 is just to make sure that we can go out of this loop in any case.
+		for(int i=0; i<1024; i++)
+		{
+			NextAlpha = m_VertexAlpha;
+			
+			vec2 Pos0 = m_Vertices[PrevVert].m_Position;
+			vec2 Pos1 = m_Vertices[NextVert].m_Position;
+			float Length = distance(Pos0, Pos1);
+			float LengthLeft = Length*m_VertexAlpha;
+			
+			//There is enough distance to finish the walk
+			if(LengthLeft > WantedDistance)
+			{
+				WalkedDistance += WantedDistance;
+				m_VertexAlpha = (LengthLeft - WantedDistance)/Length;
+				PrevAlpha = m_VertexAlpha;
+				return LINECURSORSTATE_END;
+			}
+			//This is the last part of the segment, we extropolate to finish the walk
+			else if(PrevVert == m_Segments[m_CurrSegment].m_StartVert)
+			{
+				WalkedDistance += WantedDistance;
+				m_VertexAlpha = (Length*(m_VertexAlpha) - WantedDistance)/Length;
+				PrevAlpha = m_VertexAlpha;
+				return LINECURSORSTATE_END;
+			}
+			//If needed, we stop the walk because we reach a vertex
+			else if(StopOnVertex)
+			{
+				WalkedDistance += LengthLeft;
+				WantedDistance -= LengthLeft;
+				PrevAlpha = 0.0f;
+				
+				m_CurrVert = PrevVert;
+				m_VertexAlpha = 1.0f;
+				
+				return LINECURSORSTATE_VERTEX;
+			}
+			//Go to the next vertex and continue
+			else
+			{
+				WalkedDistance += LengthLeft;
+				WantedDistance -= LengthLeft;
+				PrevAlpha = 0.0f;
+				
+				m_CurrVert = PrevVert;
+				m_VertexAlpha = 1.0f;
+				
+				NextVert = PrevVert;
+				if(!GetPrevVertex(PrevVert))
+					return LINECURSORSTATE_ERROR;
+			}
+		}
+		
+		return LINECURSORSTATE_ERROR;
+	}
+	
+	int MoveLineCursor(float WantedDistance, float& WalkedDistance, int& PrevVert, int& NextVert, float& PrevAlpha, float& NextAlpha, bool StopOnVertex)
+	{
+		if(WantedDistance < 0.0f)
+		{
+			int Res = MoveLineCursor_Backward(-WantedDistance, WalkedDistance, PrevVert, NextVert, PrevAlpha, NextAlpha, StopOnVertex);
+			WalkedDistance = -WalkedDistance;
+			return Res;
+		}
+		else
+			return MoveLineCursor_Forward(WantedDistance, WalkedDistance, PrevVert, NextVert, PrevAlpha, NextAlpha, StopOnVertex);
+	}
+};
 
-void GenerateMaterialQuads_StretchedQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer)
+void GenerateMaterialQuads_Line(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer, bool Closed)
 {
 	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
 		return;
 	
-	int SpriteId = 0;
-	const CAsset_Material::CSprite* pSprite = &Sprites[SpriteId];
+	CLineIterator LineIterator(Vertices, Closed);
 	
-	CSpriteInfo SpriteInfo;
-	GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
-	
-	float LengthIter = 0.0;
-	float LengthCutPos = 0.0;
-	for(int i=1; i<Vertices.size(); i++)
+	int PrevCornerTile = -1;
+	while(LineIterator.NextSegment())
 	{
-		vec2 Position0 = Vertices[i-1].m_Position;			
-		vec2 Position1 = Vertices[i].m_Position;
-		vec2 Ortho0 = Vertices[i-1].m_Thickness;
-		vec2 Ortho1 = Vertices[i].m_Thickness;
-		vec4 Color0 = Vertices[i-1].m_Color;
-		vec4 Color1 = Vertices[i].m_Color;
-		float Weight0 = Vertices[i-1].m_Weight;
-		float Weight1 = Vertices[i].m_Weight;
+		CSpriteInfo SpriteInfo;
+		array<int> Tiling;
+		float SegmentShift = 0.0f;
+		float SegmentLength = LineIterator.GetSegmentLength();
+		float TiledLength = 0.0f;
 		
-		float Length = distance(Position0, Position1)/((Weight0 + Weight1)/2.0f);
-		float NextLengthIter = LengthIter + Length;
-		
-		vec2 PositionAlphaPrev = Position0;
-		vec2 OrthoAlphaPrev = Ortho0;
-		vec4 ColorAlphaPrev = Color0;
-		vec2 WeightAlphaPrev = Weight0;
-		
-		bool EndOfSegment = false;
-		while(!EndOfSegment)
+		//Step 1: Tiling generation
 		{
-			float SegmentLength = SpriteInfo.m_Width;
-			
-			float TextureBegin;
-			float TextureEnd;
-			if(LengthCutPos + SegmentLength > NextLengthIter)
+			int FirstTile = -1;
+			int LastTile = -1;
+			if(!LineIterator.IsClosedSegment())
 			{
-				EndOfSegment = true;
-				TextureBegin = (LengthIter - LengthCutPos)/SegmentLength;
-				TextureEnd = (NextLengthIter - LengthCutPos)/SegmentLength;
-				LengthIter = NextLengthIter;
-			}
-			else
-			{
-				TextureBegin = (LengthIter - LengthCutPos)/SegmentLength;
-				TextureEnd = 1.0f;
-				LengthCutPos += SegmentLength;
-				LengthIter = LengthCutPos;
-			}
-			
-			float Alpha = (NextLengthIter - LengthIter)/Length;
-			
-			vec2 PositionAlpha = Position0 * Alpha + Position1 * (1.0f - Alpha);
-			vec2 OrthoAlpha = Ortho0 * Alpha + Ortho1 * (1.0f - Alpha);
-			vec4 ColorAlpha = Color0 * Alpha + Color1 * (1.0f - Alpha);
-			vec2 WeightAlpha = Weight0 * Alpha + Weight1 * (1.0f - Alpha);
-			
-			int VerticalTesselation = 4;
-			if(SpriteInfo.m_ImagePath.IsNull())
-				VerticalTesselation = 1;
-			for(int k=0; k<VerticalTesselation; k++)
-			{
-				float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
-				float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
+				const CLineIterator::CSegment* pNextSegment = LineIterator.GetNextSegment();
 				
-				CTexturedQuad& Quad = OutputQuads.increment();
-				
-				float StepMin = -(2.0f * static_cast<float>(k)/VerticalTesselation - 1.0f);
-				float StepMax = -(2.0f * static_cast<float>(k+1)/VerticalTesselation - 1.0f);
-				float VMin = static_cast<float>(k)/VerticalTesselation;
-				float VMax = static_cast<float>(k+1)/VerticalTesselation;
-				
-				Quad.m_ImagePath = SpriteInfo.m_ImagePath;
-				
-				Quad.m_Color[0] = ColorAlphaPrev * pSprite->GetColor();
-				Quad.m_Color[1] = ColorAlpha * pSprite->GetColor();
-				Quad.m_Color[2] = ColorAlphaPrev * pSprite->GetColor();
-				Quad.m_Color[3] = ColorAlpha * pSprite->GetColor();
-				
-				if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+				//Try to find the first tile only if the previous one is not a corner
+				if(PrevCornerTile < 0)
 				{
-					Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * TextureBegin);
-					Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * TextureEnd);
-					Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * TextureBegin);
-					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * TextureEnd);
+					//Try to get a start tile
+					for(int i=0; i<Sprites.size(); i++)
+					{
+						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CAP_START)
+						{
+							FirstTile = i;
+							break;
+						}
+					}
+				}
+				else
+					FirstTile = PrevCornerTile;
+				
+				//There is a segment after the current one. Try to get a corner tile
+				if(pNextSegment)
+				{
+					for(int i=0; i<Sprites.size(); i++)
+					{
+						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+						{
+							LastTile = i;
+							break;
+						}
+					}
+					if(LastTile >= 0)
+						PrevCornerTile = LastTile;
+				}
+				//No corner tiles was found, try the get a end tile
+				if(LastTile < 0)
+				{
+					PrevCornerTile = -1;
+					for(int i=0; i<Sprites.size(); i++)
+					{
+						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CAP_END)
+						{
+							LastTile = i;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(FirstTile >= 0)
+			{
+				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[FirstTile], SpriteInfo);
+				if(Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+				{
+					SegmentShift -= Sprites[FirstTile].GetPosition().y;
+					SegmentLength += Sprites[FirstTile].GetPosition().y;
+					TiledLength += SpriteInfo.m_Height/2.0f;
+				}
+				else
+					TiledLength += SpriteInfo.m_Width;
+				Tiling.add_by_copy(FirstTile);
+			}
+			if(LastTile >= 0)
+			{
+				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[LastTile], SpriteInfo);
+				if(Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+				{
+					SegmentLength += Sprites[FirstTile].GetPosition().x;
+					TiledLength += SpriteInfo.m_Width/2.0f;
+				}
+				else
+					TiledLength += SpriteInfo.m_Width;
+			}
+			
+			//1024 is just to make sure that we can go out of this loop in any case.
+			for(int i=0; i<1024; i++)
+			{
+				int Tile = -1;
+				for(int i=0; i<Sprites.size(); i++)
+				{
+					if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_LINE)
+					{
+						Tile = i;
+						break;
+					}
+				}
+				
+				if(Tile >= 0)
+				{
+					GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[Tile], SpriteInfo);
+					if(TiledLength + SpriteInfo.m_Width < SegmentLength)
+					{
+						TiledLength += SpriteInfo.m_Width;
+						Tiling.add_by_copy(Tile);
+					}
+					else
+						break;
+				}
+				else
+					break;
+			}
+			
+			if(LastTile >= 0)
+				Tiling.add_by_copy(LastTile);
+		}
+		
+		//Step 2: Tiling rendering
+		if(Tiling.size())
+		{
+			float Distance_NoUse;
+			int PrevVert_NoUse;
+			int NextVert_NoUse;
+			float PrevAlpha_NoUse;
+			float NextAlpha_NoUse;
+			
+			LineIterator.MoveLineCursor(SegmentShift, Distance_NoUse, PrevVert_NoUse, NextVert_NoUse, PrevAlpha_NoUse, NextAlpha_NoUse, false);
+						
+			//GlobalSpacing represent the spacing from the left (or right) side. Not both in the same time.
+			float GlobalSpacing = 0.0f;
+			if(Tiling.size() > 2)
+				GlobalSpacing = ((SegmentLength - TiledLength)/(Tiling.size()-2))/2.0f;
+			
+			for(int i=0; i<Tiling.size(); i++)
+			{
+				const CAsset_Material::CSprite* pSprite = &Sprites[Tiling[i]];
+				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
+				
+				float SpriteWidth = SpriteInfo.m_Width;
+				
+				//Shift for corner tiles
+				if(i == 0)
+				{
+					if(Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+					{
+						SpriteWidth /= 2.0f;
+					}
+				}
+				else if(i == Tiling.size()-1)
+				{
+					if(Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+					{
+						SpriteWidth /= 2.0f;
+					}
 				}
 				else
 				{
-					Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * TextureBegin, SpriteInfo.m_VMin + VSize * VMin);
-					Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * TextureEnd, SpriteInfo.m_VMin + VSize * VMin);
-					Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * TextureBegin, SpriteInfo.m_VMin + VSize * VMax);
-					Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * TextureEnd, SpriteInfo.m_VMin + VSize * VMax);
+					if(pSprite->GetFilling() == CAsset_Material::SPRITEFILLING_STRETCHING)
+					{
+						SpriteWidth += 2.0f*GlobalSpacing;
+					}
 				}
 				
-				Quad.m_Position[0] = ObjPosition + Transform*(PositionAlphaPrev + OrthoAlphaPrev * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-				Quad.m_Position[1] = ObjPosition + Transform*(PositionAlpha + OrthoAlpha * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-				Quad.m_Position[2] = ObjPosition + Transform*(PositionAlphaPrev + OrthoAlphaPrev * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-				Quad.m_Position[3] = ObjPosition + Transform*(PositionAlpha + OrthoAlpha * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-			}
-			
-			PositionAlphaPrev = PositionAlpha;
-			OrthoAlphaPrev = OrthoAlpha;
-			ColorAlphaPrev = ColorAlpha;
-			WeightAlphaPrev = WeightAlpha;
-			
-			//Switch to the next sprite
-			if(!EndOfSegment && Sprites.size() > 1)
-			{
-				SpriteId = (SpriteId+1)%Sprites.size();
-				pSprite = &Sprites[SpriteId];
-				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
+				float WantedDistance = SpriteWidth;
+				
+				float PrevU = 0.0f;
+				float NextU = 0.0f;
+				
+				float Distance;
+				int PrevVert;
+				int NextVert;
+				float PrevAlpha;
+				float NextAlpha;
+				
+				bool BreakOnVertex = (pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED);
+				while(WantedDistance > 0.0f)
+				{
+					int Stop = LineIterator.MoveLineCursor(WantedDistance, Distance, PrevVert, NextVert, PrevAlpha, NextAlpha, BreakOnVertex);
+					if(Stop == CLineIterator::LINECURSORSTATE_ERROR)
+						break;
+					
+					PrevU = NextU;
+					NextU += (Distance / SpriteWidth);
+					
+					if(Distance > 0.0001f)
+					{
+						vec2 PositionVert0 = Vertices[PrevVert].m_Position;
+						vec2 PositionVert1 = Vertices[NextVert].m_Position;
+						vec2 OrthoVert0 = Vertices[PrevVert].m_Thickness;
+						vec2 OrthoVert1 = Vertices[NextVert].m_Thickness;
+						vec2 OrthoSeg = ortho(normalize(PositionVert1 - PositionVert0));
+						
+						vec2 Position0 = mix(PositionVert0, PositionVert1, PrevAlpha);
+						vec2 Position1 = mix(PositionVert0, PositionVert1, NextAlpha);
+						vec4 Color0 = mix(Vertices[PrevVert].m_Color, Vertices[NextVert].m_Color, PrevAlpha);
+						vec4 Color1 = mix(Vertices[PrevVert].m_Color, Vertices[NextVert].m_Color, NextAlpha);
+												
+						//float Weight0 = mix(Vertices[PrevVert].m_Weight, Vertices[NextVert].m_Weight, PrevAlpha);
+						//float Weight1 = mix(Vertices[PrevVert].m_Weight, Vertices[NextVert].m_Weight, NextAlpha);
+						
+						if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED)
+						{
+							int VerticalTesselation = 4;
+							if(SpriteInfo.m_ImagePath.IsNull())
+								VerticalTesselation = 1;
+							for(int k=0; k<VerticalTesselation; k++)
+							{
+								float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
+								float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
+								
+								CTexturedQuad& Quad = OutputQuads.increment();
+								
+								float StepMin = -(2.0f * static_cast<float>(k)/VerticalTesselation - 1.0f);
+								float StepMax = -(2.0f * static_cast<float>(k+1)/VerticalTesselation - 1.0f);
+								float VMin = static_cast<float>(k)/VerticalTesselation;
+								float VMax = static_cast<float>(k+1)/VerticalTesselation;
+								
+								Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+								
+								Quad.m_Color[0] = Color0 * pSprite->GetColor();
+								Quad.m_Color[1] = Color1 * pSprite->GetColor();
+								Quad.m_Color[2] = Color0 * pSprite->GetColor();
+								Quad.m_Color[3] = Color1 * pSprite->GetColor();
+								
+								if(
+									(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
+									i == 0
+								)
+								{
+									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMax - USize * (1.0f-PrevU) * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax - USize * (1.0f-NextU) * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax - USize * (1.0f-PrevU) * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax - USize * (1.0f-NextU) * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+									}
+									else
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMax - USize * VMin, SpriteInfo.m_VMax - VSize * (1.0f-PrevU) * (1.0f-VMin));
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax - USize * VMin, SpriteInfo.m_VMax - VSize * (1.0f-NextU) * (1.0f-VMin));
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax - USize * VMax, SpriteInfo.m_VMax - VSize * (1.0f-PrevU) * (1.0f-VMax));
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax - USize * VMax, SpriteInfo.m_VMax - VSize * (1.0f-NextU) * (1.0f-VMax));
+									}
+									
+									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoVert0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoVert0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+								}
+								else if(
+									(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
+									i == Tiling.size()-1
+								)
+								{
+									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMin));
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMin));
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMax));
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMax));
+									}
+									else
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+									}
+									
+									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+								}
+								else
+								{
+									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU);
+									}
+									else
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin + VSize * VMax);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin + VSize * VMax);
+									}
+							
+									vec2 Ortho0 = OrthoSeg;
+									vec2 Ortho1 = OrthoSeg;
+									if(NextAlpha == 1.0f)
+										Ortho1 = OrthoVert1;
+									if(PrevAlpha == 0.0f)
+										Ortho0 = OrthoVert0;
+									
+									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+								}
+							}
+						}
+						else if(Stop == CLineIterator::LINECURSORSTATE_END)
+						{
+							CTexturedQuad& Quad = OutputQuads.increment();
+							
+							//Add position shift
+							vec2 DirX = vec2(-1.0f, 0.0f);
+							vec2 DirY = vec2(0.0f, -1.0f);
+							if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_LINE)
+							{
+								DirY = normalize(OrthoSeg);
+								DirX = -ortho(DirY);
+							}
+							vec2 Pos = Position1;
+							Pos += DirX * pSprite->GetPosition().x;
+							Pos += DirY * pSprite->GetPosition().y;
+							
+							Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+							
+							Quad.m_Color[0] = Color1*pSprite->GetColor();
+							Quad.m_Color[1] = Quad.m_Color[0];
+							Quad.m_Color[2] = Quad.m_Color[0];
+							Quad.m_Color[3] = Quad.m_Color[0];
+											
+							if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+							{
+								Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
+								Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax);
+								Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMin);
+								Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
+							}
+							else
+							{
+								Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
+								Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMin);
+								Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax);
+								Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
+							}
+							
+							Quad.m_Position[0] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+							Quad.m_Position[1] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f + DirY * SpriteInfo.m_Height/2.0f);
+							Quad.m_Position[2] = ObjPosition + Transform*(Pos + DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
+							Quad.m_Position[3] = ObjPosition + Transform*(Pos - DirX * SpriteInfo.m_Width/2.0f - DirY * SpriteInfo.m_Height/2.0f);
+						}
+					}
+					
+					if(Stop == CLineIterator::LINECURSORSTATE_END)
+						break;
+					else
+						WantedDistance -= Distance;
+				}
 			}
 		}
 	}
@@ -446,10 +920,7 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 	{
 		const CAsset_Material::CLayer* pLayer = &pMaterial->GetLayer(*LayerIter);
 			
-		if(pLayer->GetRepeatType() == CAsset_Material::REPEATTYPE_STATIC)
-			GenerateMaterialQuads_RepeatedSprites(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer);
-		else if(pLayer->GetRepeatType() == CAsset_Material::REPEATTYPE_STRETCH)
-			GenerateMaterialQuads_StretchedQuads(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer);
+		GenerateMaterialQuads_Line(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer, Closed);
 	}
 }
 

@@ -47,7 +47,7 @@ public:
 		m_pPopup(pPopup),
 		m_pComboBox(pComboBox)
 	{
-		
+		NoTextClipping();
 	}
 };
 

@@ -26,6 +26,7 @@ class CViewMaterial : public CViewManager::CView
 {	
 protected:
 	bool m_ShowMeshes;
+	int m_ObjectShape;
 	
 	class CMapRenderer* m_pMapRenderer;
 	

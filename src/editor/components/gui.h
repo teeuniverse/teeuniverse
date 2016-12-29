@@ -65,6 +65,7 @@ public:
 	CAssetPath m_Path_Rect_TextSelection;
 	CAssetPath m_Path_Rect_Selection;
 	CAssetPath m_Path_Rect_Border;
+	CAssetPath m_Path_Rect_GuiBox;
 	
 	CAssetPath m_Path_Line_Separator;
 	
@@ -177,8 +178,30 @@ public:
 	CAssetPath m_Path_Sprite_IconVertexFree;
 	CAssetPath m_Path_Sprite_IconVertexAligned;
 	CAssetPath m_Path_Sprite_IconVertexSymetric;
-	CAssetPath m_Path_Sprite_IconMatLayerRepeat;
-	CAssetPath m_Path_Sprite_IconMatLayerStretch;
+	CAssetPath m_Path_Sprite_IconMatSpriteAlignLine;
+	CAssetPath m_Path_Sprite_IconMatSpriteAlignObject;
+	CAssetPath m_Path_Sprite_IconMatSpriteAlignStretched;
+	CAssetPath m_Path_Sprite_IconLineTileBg;
+	CAssetPath m_Path_Sprite_IconLineTileFg;
+	CAssetPath m_Path_Sprite_IconLineTileCapEnd;
+	CAssetPath m_Path_Sprite_IconLineTileCapBegin;
+	CAssetPath m_Path_Sprite_IconLineTileCornerConvex;
+	CAssetPath m_Path_Sprite_IconLineTileCornerConcave;
+	CAssetPath m_Path_Sprite_IconLineTileLine;
+	CAssetPath m_Path_Sprite_IconFillingScaling;
+	CAssetPath m_Path_Sprite_IconFillingStretching;
+	CAssetPath m_Path_Sprite_IconFillingSpacing;
+	
+	CAssetPath m_Path_Sprite_IconShapeStar;
+	CAssetPath m_Path_Sprite_IconShapeHexagon;
+	CAssetPath m_Path_Sprite_IconShapeHexagon2;
+	CAssetPath m_Path_Sprite_IconShapePentagon;
+	CAssetPath m_Path_Sprite_IconShapeTriangle;
+	CAssetPath m_Path_Sprite_IconShapeSquare;
+	CAssetPath m_Path_Sprite_IconShapeArcWeight;
+	CAssetPath m_Path_Sprite_IconShapeArc;
+	CAssetPath m_Path_Sprite_IconShapeBow;
+	CAssetPath m_Path_Sprite_IconShapeCircle;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

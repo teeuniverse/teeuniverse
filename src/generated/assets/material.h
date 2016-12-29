@@ -46,11 +46,19 @@ public:
 		SPRITEFLAG_HFLIP = 2,
 		SPRITEFLAG_ROTATION = 4,
 	
-		SPRITEALIGN_LINE = 0,
-		SPRITEALIGN_WORLD,
+		SPRITEFILLING_SCALING = 0,
+		SPRITEFILLING_STRETCHING,
+		SPRITEFILLING_SPACING,
 	
-		REPEATTYPE_STATIC = 0,
-		REPEATTYPE_STRETCH,
+		SPRITEALIGN_LINE = 0,
+		SPRITEALIGN_OBJECT,
+		SPRITEALIGN_STRETCHED,
+	
+		SPRITETILE_LINE = 0,
+		SPRITETILE_CAP_START,
+		SPRITETILE_CAP_END,
+		SPRITETILE_CORNER_CONVEX,
+		SPRITETILE_CORNER_CONCAVE,
 	};
 	
 	static const int TypeId = 28;
@@ -84,8 +92,10 @@ public:
 		LAYER_SPRITE_POSITION_X,
 		LAYER_SPRITE_POSITION_Y,
 		LAYER_SPRITE_ALIGNMENT,
-		LAYER_REPEATTYPE,
-		LAYER_SPACING,
+		LAYER_SPRITE_FILLING,
+		LAYER_SPRITE_TILETYPE,
+		LAYER_SPRITE_TILELABEL0,
+		LAYER_SPRITE_TILELABEL1,
 		LAYER,
 		TEXTUREPATH,
 		TEXTURECOLOR,
@@ -135,6 +145,10 @@ public:
 			tua_int32 m_Flags;
 			CTuaVec2 m_Position;
 			tua_int32 m_Alignment;
+			tua_int32 m_Filling;
+			tua_int32 m_TileType;
+			tua_int32 m_TileLabel0;
+			tua_int32 m_TileLabel1;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType);
 		};
@@ -147,6 +161,10 @@ public:
 		int m_Flags;
 		vec2 m_Position;
 		int m_Alignment;
+		int m_Filling;
+		int m_TileType;
+		int m_TileLabel0;
+		int m_TileLabel1;
 	
 	public:
 		CSprite();
@@ -158,6 +176,10 @@ public:
 			m_Flags = Item.m_Flags;
 			m_Position = Item.m_Position;
 			m_Alignment = Item.m_Alignment;
+			m_Filling = Item.m_Filling;
+			m_TileType = Item.m_TileType;
+			m_TileLabel0 = Item.m_TileLabel0;
+			m_TileLabel1 = Item.m_TileLabel1;
 		}
 		
 		void transfert(CAsset_Material::CSprite& Item)
@@ -168,6 +190,10 @@ public:
 			m_Flags = Item.m_Flags;
 			m_Position = Item.m_Position;
 			m_Alignment = Item.m_Alignment;
+			m_Filling = Item.m_Filling;
+			m_TileType = Item.m_TileType;
+			m_TileLabel0 = Item.m_TileLabel0;
+			m_TileLabel1 = Item.m_TileLabel1;
 		}
 		
 		inline CAssetPath GetPath() const { return m_Path; }
@@ -190,6 +216,14 @@ public:
 		
 		inline int GetAlignment() const { return m_Alignment; }
 		
+		inline int GetFilling() const { return m_Filling; }
+		
+		inline int GetTileType() const { return m_TileType; }
+		
+		inline int GetTileLabel0() const { return m_TileLabel0; }
+		
+		inline int GetTileLabel1() const { return m_TileLabel1; }
+		
 		inline void SetPath(const CAssetPath& Value) { m_Path = Value; }
 		
 		inline void SetSize(vec2 Value) { m_Size = Value; }
@@ -209,6 +243,14 @@ public:
 		inline void SetPositionY(float Value) { m_Position.y = Value; }
 		
 		inline void SetAlignment(int Value) { m_Alignment = Value; }
+		
+		inline void SetFilling(int Value) { m_Filling = Value; }
+		
+		inline void SetTileType(int Value) { m_TileType = Value; }
+		
+		inline void SetTileLabel0(int Value) { m_TileLabel0 = Value; }
+		
+		inline void SetTileLabel1(int Value) { m_TileLabel1 = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -230,8 +272,6 @@ public:
 		{
 		public:
 			CTuaArray m_Sprite;
-			tua_int32 m_RepeatType;
-			tua_float m_Spacing;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLayer& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType);
 		};
@@ -239,23 +279,16 @@ public:
 	
 	private:
 		array< CSprite, allocator_copy<CSprite> > m_Sprite;
-		int m_RepeatType;
-		float m_Spacing;
 	
 	public:
-		CLayer();
 		void copy(const CAsset_Material::CLayer& Item)
 		{
 			m_Sprite.copy(Item.m_Sprite);
-			m_RepeatType = Item.m_RepeatType;
-			m_Spacing = Item.m_Spacing;
 		}
 		
 		void transfert(CAsset_Material::CLayer& Item)
 		{
 			m_Sprite.transfert(Item.m_Sprite);
-			m_RepeatType = Item.m_RepeatType;
-			m_Spacing = Item.m_Spacing;
 		}
 		
 		inline int GetSpriteArraySize() const { return m_Sprite.size(); }
@@ -341,9 +374,33 @@ public:
 			else return 0;
 		}
 		
-		inline int GetRepeatType() const { return m_RepeatType; }
+		inline int GetSpriteFilling(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetFilling();
+			else return 0;
+		}
 		
-		inline float GetSpacing() const { return m_Spacing; }
+		inline int GetSpriteTileType(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetTileType();
+			else return 0;
+		}
+		
+		inline int GetSpriteTileLabel0(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetTileLabel0();
+			else return 0;
+		}
+		
+		inline int GetSpriteTileLabel1(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				return m_Sprite[SubPath.GetId()].GetTileLabel1();
+			else return 0;
+		}
 		
 		inline void SetSpriteArraySize(int Value) { m_Sprite.resize(Value); }
 		
@@ -415,9 +472,29 @@ public:
 				m_Sprite[SubPath.GetId()].SetAlignment(Value);
 		}
 		
-		inline void SetRepeatType(int Value) { m_RepeatType = Value; }
+		inline void SetSpriteFilling(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetFilling(Value);
+		}
 		
-		inline void SetSpacing(float Value) { m_Spacing = Value; }
+		inline void SetSpriteTileType(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetTileType(Value);
+		}
+		
+		inline void SetSpriteTileLabel0(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetTileLabel0(Value);
+		}
+		
+		inline void SetSpriteTileLabel1(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_Sprite.size())
+				m_Sprite[SubPath.GetId()].SetTileLabel1(Value);
+		}
 		
 		inline int AddSprite()
 		{
@@ -634,18 +711,32 @@ public:
 		else return 0;
 	}
 	
-	inline int GetLayerRepeatType(const CSubPath& SubPath) const
+	inline int GetLayerSpriteFilling(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()].GetRepeatType();
+			return m_Layer[SubPath.GetId()].GetSpriteFilling(SubPath.PopId());
 		else return 0;
 	}
 	
-	inline float GetLayerSpacing(const CSubPath& SubPath) const
+	inline int GetLayerSpriteTileType(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_Layer.size())
-			return m_Layer[SubPath.GetId()].GetSpacing();
-		else return 0.0f;
+			return m_Layer[SubPath.GetId()].GetSpriteTileType(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int GetLayerSpriteTileLabel0(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpriteTileLabel0(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int GetLayerSpriteTileLabel1(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Layer.size())
+			return m_Layer[SubPath.GetId()].GetSpriteTileLabel1(SubPath.PopId());
+		else return 0;
 	}
 	
 	inline CAssetPath GetTexturePath() const { return m_TexturePath; }
@@ -746,16 +837,28 @@ public:
 			m_Layer[SubPath.GetId()].SetSpriteAlignment(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLayerRepeatType(const CSubPath& SubPath, int Value)
+	inline void SetLayerSpriteFilling(const CSubPath& SubPath, int Value)
 	{
 		if(SubPath.GetId() < m_Layer.size())
-			m_Layer[SubPath.GetId()].SetRepeatType(Value);
+			m_Layer[SubPath.GetId()].SetSpriteFilling(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLayerSpacing(const CSubPath& SubPath, float Value)
+	inline void SetLayerSpriteTileType(const CSubPath& SubPath, int Value)
 	{
 		if(SubPath.GetId() < m_Layer.size())
-			m_Layer[SubPath.GetId()].SetSpacing(Value);
+			m_Layer[SubPath.GetId()].SetSpriteTileType(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpriteTileLabel0(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpriteTileLabel0(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerSpriteTileLabel1(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Layer.size())
+			m_Layer[SubPath.GetId()].SetSpriteTileLabel1(SubPath.PopId(), Value);
 	}
 	
 	inline void SetTexturePath(const CAssetPath& Value) { m_TexturePath = Value; }

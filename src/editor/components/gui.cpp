@@ -81,7 +81,7 @@ public:
 		}
 		else
 		{
-			if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(Filename.buffer(), m_pAssetsEditor->GetEditedPackageId(), Type))
+			if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(Filename.buffer(), Type, m_pAssetsEditor->GetEditedPackageId()))
 				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
 		}
 		
@@ -1685,6 +1685,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Rect_TextSelection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "textSelection");
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
+		m_Path_Rect_GuiBox = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "guiBox");
 		
 		m_Path_Line_Separator = AssetsManager()->FindAsset<CAsset_GuiLineStyle>(PackageId, "separator");
 		
@@ -1797,9 +1798,32 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconVertexFree = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexFree");
 		m_Path_Sprite_IconVertexSymetric = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexSymetric");
 		m_Path_Sprite_IconVertexAligned = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertexAligned");
-		m_Path_Sprite_IconMatLayerRepeat = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatLayerRepeat");
-		m_Path_Sprite_IconMatLayerStretch = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatLayerStretch");
+		m_Path_Sprite_IconMatSpriteAlignLine = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignLine");
+		m_Path_Sprite_IconMatSpriteAlignObject = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignObject");
+		m_Path_Sprite_IconMatSpriteAlignStretched = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignStretched");
+		
+		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
+		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");
+		m_Path_Sprite_IconLineTileCapEnd = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileCapEnd");
+		m_Path_Sprite_IconLineTileCapBegin = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileCapBegin");
+		m_Path_Sprite_IconLineTileCornerConvex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileCornerConvex");
+		m_Path_Sprite_IconLineTileCornerConcave = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileCornerConcave");
+		m_Path_Sprite_IconLineTileLine = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileLine");
+		m_Path_Sprite_IconFillingScaling = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillingScaling");
+		m_Path_Sprite_IconFillingStretching = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillingStretching");
+		m_Path_Sprite_IconFillingSpacing = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillingSpacing");
 	
+		m_Path_Sprite_IconShapeStar = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeStar");
+		m_Path_Sprite_IconShapeHexagon = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeHexagon");
+		m_Path_Sprite_IconShapeHexagon2 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeHexagon2");
+		m_Path_Sprite_IconShapePentagon = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapePentagon");
+		m_Path_Sprite_IconShapeTriangle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeTriangle");
+		m_Path_Sprite_IconShapeSquare = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeSquare");
+		m_Path_Sprite_IconShapeArcWeight = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeArcWeight");
+		m_Path_Sprite_IconShapeArc = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeArc");
+		m_Path_Sprite_IconShapeBow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeBow");
+		m_Path_Sprite_IconShapeCircle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeCircle");
+		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
 		m_Path_Sprite_GizmoPivot = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoPivot");
