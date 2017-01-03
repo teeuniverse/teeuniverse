@@ -845,7 +845,7 @@ protected:
 		
 		virtual void SetValue(bool Value)
 		{
-			AssetsManager()->SetAssetValue<bool>(m_AssetPath, CSubPath::Null(), m_Member, Value);
+			AssetsManager()->SetAssetValue_Hard<bool>(m_AssetPath, CSubPath::Null(), m_Member, Value);
 		}
 
 	public:

@@ -1906,6 +1906,10 @@ _map.addMember("0.1.0", "BgGroup", TypeArray(TypeAssetPath()))
 _map.addMember("0.1.0", "FgGroup", TypeArray(TypeAssetPath()))
 _map.addMember("0.1.0", "ZoneLayer", TypeArray(TypeAssetPath()))
 _map.addMember("0.1.0", "EntityLayer", TypeArray(TypeAssetPath()))
+_map.addMember("0.2.0", "CameraPosition", TypeVec2())
+_map.addMember("0.2.0", "CameraZoom", TypeFloat(), "1.0f")
+_map.addMember("0.2.0", "ShowEntities", TypeBool(), "true")
+_map.addMember("0.2.0", "ShowZones", TypeBool(), "true")
 
 assetsList.append(_map)
 

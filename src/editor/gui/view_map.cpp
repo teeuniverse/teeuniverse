@@ -103,8 +103,6 @@ public:
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
-	m_CameraZoom(1.0f),
-	m_CameraPos(0.0f, 0.0f),
 	m_CameraDraged(false),
 	m_ZoneOpacity(0.5f),
 	m_ShowGrid(false),
@@ -290,10 +288,13 @@ void CViewMap::RenderView()
 {
 	CAssetPath MapPath = GetMapPath();
 	
+	vec2 CameraPosition = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
+	float CameraZoom = AssetsManager()->GetAssetValue<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+	
 	MapRenderer()->SetTime(0.0f);
 	MapRenderer()->SetLocalTime((double)time_get()/(double)time_freq());
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
-	MapRenderer()->SetCamera(m_CameraPos, m_CameraZoom);
+	MapRenderer()->SetCamera(CameraPosition, CameraZoom);
 	
 	vec4 Color = 1.0f;
 	if(m_ZoneOpacity > 0.5f)
@@ -314,7 +315,7 @@ void CViewMap::RenderView()
 	//Draw grid
 	if(m_ShowGrid)
 	{
-		float Log = log((1.0/m_CameraZoom)*32.0)/log(2.0);
+		float Log = log((1.0/CameraZoom)*32.0)/log(2.0);
 		float Int = floor(Log);
 		float Frac = Log - Int;
 		float Alpha = 1.f-Frac;
@@ -426,13 +427,18 @@ void CViewMap::OnButtonClick(int Button)
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
 	{
+		CAssetPath MapPath = GetMapPath();
+		float CameraZoom = AssetsManager()->GetAssetValue<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+		
 		if(Button == KEY_MOUSE_WHEEL_UP)
 		{
-			m_CameraZoom *= 1.1f;
+			CameraZoom *= 1.1f;
+			AssetsManager()->SetAssetValue_Hard<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, CameraZoom);
 		}
 		if(Button == KEY_MOUSE_WHEEL_DOWN)
 		{
-			m_CameraZoom /= 1.1f;
+			CameraZoom /= 1.1f;
+			AssetsManager()->SetAssetValue_Hard<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, CameraZoom);
 		}
 		else if(Button == KEY_MOUSE_3 || (Button == KEY_MOUSE_1 && Input()->KeyIsPressed(KEY_LCTRL)))
 		{
@@ -470,8 +476,14 @@ void CViewMap::OnMouseMove()
 	
 	if(m_CameraDraged)
 	{
+		CAssetPath MapPath = GetMapPath();
+		float CameraZoom = AssetsManager()->GetAssetValue<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+		vec2 CameraPos = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
+		
 		ivec2 MouseRelPos = Context()->GetMouseRelPos();
-		m_CameraPos -= vec2(MouseRelPos.x, MouseRelPos.y)/m_CameraZoom;
+		CameraPos -= vec2(MouseRelPos.x, MouseRelPos.y)/CameraZoom;
+		
+		AssetsManager()->SetAssetValue_Hard<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, CameraPos);
 		return;
 	}
 	

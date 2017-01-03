@@ -1196,6 +1196,7 @@ protected:
 				if(!pMap)
 					break;
 				AssetsManager()->TryChangeAssetName(AssetPath, "map", Tokken);
+				pMap->SetCameraPosition(vec2(64*32.0f, 64*32.0f)/2.0f);
 				
 				CAssetPath GroupPath;
 				CAssetPath SubAssetPath;

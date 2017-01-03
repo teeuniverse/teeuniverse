@@ -33,6 +33,12 @@
 #include <shared/assets/assetssaveloadcontext.h>
 #include <shared/archivefile.h>
 
+CAsset_Map::CAsset_Map()
+{
+	m_CameraZoom = 1.0f;
+	m_ShowEntities = true;
+	m_ShowZones = true;
+}
 
 void CAsset_Map::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Map& SysType)
 {
@@ -171,6 +177,11 @@ void CAsset_Map::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, c
 		}
 	}
 	
+	SysType.m_CameraPosition.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraPosition.m_X);
+	SysType.m_CameraPosition.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraPosition.m_Y);
+	SysType.m_CameraZoom = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraZoom);
+	SysType.m_ShowEntities = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowEntities);
+	SysType.m_ShowZones = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowZones);
 }
 
 
@@ -218,6 +229,11 @@ void CAsset_Map::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 		TuaType.m_EntityLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_EntityLayer.size());
 		delete[] pData;
 	}
+	TuaType.m_CameraPosition.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraPosition.x);
+	TuaType.m_CameraPosition.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraPosition.y);
+	TuaType.m_CameraZoom = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraZoom);
+	TuaType.m_ShowEntities = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowEntities);
+	TuaType.m_ShowZones = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowZones);
 }
 
 template<>
@@ -256,6 +272,90 @@ bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+bool CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case SHOWENTITIES:
+			return GetShowEntities();
+		case SHOWZONES:
+			return GetShowZones();
+	}
+	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, bool Value)
+{
+	switch(ValueType)
+	{
+		case SHOWENTITIES:
+			SetShowEntities(Value);
+			return true;
+		case SHOWZONES:
+			SetShowZones(Value);
+			return true;
+	}
+	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
+}
+
+template<>
+float CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case CAMERAPOSITION_X:
+			return GetCameraPositionX();
+		case CAMERAPOSITION_Y:
+			return GetCameraPositionY();
+		case CAMERAZOOM:
+			return GetCameraZoom();
+	}
+	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, float Value)
+{
+	switch(ValueType)
+	{
+		case CAMERAPOSITION_X:
+			SetCameraPositionX(Value);
+			return true;
+		case CAMERAPOSITION_Y:
+			SetCameraPositionY(Value);
+			return true;
+		case CAMERAZOOM:
+			SetCameraZoom(Value);
+			return true;
+	}
+	return CAsset::SetValue<float>(ValueType, SubPath, Value);
+}
+
+template<>
+vec2 CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case CAMERAPOSITION:
+			return GetCameraPosition();
+	}
+	return CAsset::GetValue<vec2>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value)
+{
+	switch(ValueType)
+	{
+		case CAMERAPOSITION:
+			SetCameraPosition(Value);
+			return true;
+	}
+	return CAsset::SetValue<vec2>(ValueType, SubPath, Value);
 }
 
 template<>

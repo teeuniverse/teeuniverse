@@ -34,6 +34,7 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+#include <shared/math/vector.h>
 
 class CAsset_Map : public CAsset
 {
@@ -72,6 +73,12 @@ public:
 		ENTITYLAYER_PTR,
 		ENTITYLAYER_ARRAY,
 		ENTITYLAYER,
+		CAMERAPOSITION_X,
+		CAMERAPOSITION_Y,
+		CAMERAPOSITION,
+		CAMERAZOOM,
+		SHOWENTITIES,
+		SHOWZONES,
 	};
 	
 	class CIteratorBgGroup
@@ -168,6 +175,10 @@ public:
 		CTuaArray m_FgGroup;
 		CTuaArray m_ZoneLayer;
 		CTuaArray m_EntityLayer;
+		CTuaVec2 m_CameraPosition;
+		tua_float m_CameraZoom;
+		tua_uint8 m_ShowEntities;
+		tua_uint8 m_ShowZones;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Map& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_2_0& TuaType);
 	};
@@ -178,6 +189,10 @@ private:
 	array< CAssetPath, allocator_default<CAssetPath> > m_FgGroup;
 	array< CAssetPath, allocator_default<CAssetPath> > m_ZoneLayer;
 	array< CAssetPath, allocator_default<CAssetPath> > m_EntityLayer;
+	vec2 m_CameraPosition;
+	float m_CameraZoom;
+	bool m_ShowEntities;
+	bool m_ShowZones;
 
 public:
 	template<typename T>
@@ -200,6 +215,7 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
+	CAsset_Map();
 	void copy(const CAsset_Map& Item)
 	{
 		CAsset::copy(Item);
@@ -207,6 +223,10 @@ public:
 		m_FgGroup.copy(Item.m_FgGroup);
 		m_ZoneLayer.copy(Item.m_ZoneLayer);
 		m_EntityLayer.copy(Item.m_EntityLayer);
+		m_CameraPosition = Item.m_CameraPosition;
+		m_CameraZoom = Item.m_CameraZoom;
+		m_ShowEntities = Item.m_ShowEntities;
+		m_ShowZones = Item.m_ShowZones;
 	}
 	
 	void transfert(CAsset_Map& Item)
@@ -216,6 +236,10 @@ public:
 		m_FgGroup.transfert(Item.m_FgGroup);
 		m_ZoneLayer.transfert(Item.m_ZoneLayer);
 		m_EntityLayer.transfert(Item.m_EntityLayer);
+		m_CameraPosition = Item.m_CameraPosition;
+		m_CameraZoom = Item.m_CameraZoom;
+		m_ShowEntities = Item.m_ShowEntities;
+		m_ShowZones = Item.m_ShowZones;
 	}
 	
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
@@ -270,6 +294,18 @@ public:
 		return m_EntityLayer[SubPath.GetId()];
 	}
 	
+	inline vec2 GetCameraPosition() const { return m_CameraPosition; }
+	
+	inline float GetCameraPositionX() const { return m_CameraPosition.x; }
+	
+	inline float GetCameraPositionY() const { return m_CameraPosition.y; }
+	
+	inline float GetCameraZoom() const { return m_CameraZoom; }
+	
+	inline bool GetShowEntities() const { return m_ShowEntities; }
+	
+	inline bool GetShowZones() const { return m_ShowZones; }
+	
 	inline void SetBgGroupArraySize(int Value) { m_BgGroup.resize(Value); }
 	
 	inline void SetBgGroup(const CSubPath& SubPath, const CAssetPath& Value)
@@ -309,6 +345,18 @@ public:
 			m_EntityLayer[SubPath.GetId()] = Value;
 		}
 	}
+	
+	inline void SetCameraPosition(vec2 Value) { m_CameraPosition = Value; }
+	
+	inline void SetCameraPositionX(float Value) { m_CameraPosition.x = Value; }
+	
+	inline void SetCameraPositionY(float Value) { m_CameraPosition.y = Value; }
+	
+	inline void SetCameraZoom(float Value) { m_CameraZoom = Value; }
+	
+	inline void SetShowEntities(bool Value) { m_ShowEntities = Value; }
+	
+	inline void SetShowZones(bool Value) { m_ShowZones = Value; }
 	
 	inline int AddBgGroup()
 	{
@@ -438,6 +486,12 @@ public:
 
 template<> int CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
+template<> float CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> vec2 CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
+template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
 template<> CAssetPath CAsset_Map::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
 template<> bool CAsset_Map::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
 

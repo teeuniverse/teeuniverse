@@ -504,6 +504,8 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							int Width = pTilemapItem->m_Width;
 							int Height = pTilemapItem->m_Height;
 							
+							pMap->SetCameraPosition(vec2(Width*32.0f, Height*32.0f)/2.0f);
+							
 							bool UnknownTileIndex = false;
 							
 							CAssetPath TeeWorldsZonePath;
@@ -536,6 +538,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									
 									switch(pTiles[j*Width+i].m_Index)
 									{
+										case tw07::TILE_AIR:
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											break;
 										case tw07::TILE_SOLID:
 											pTeeWorldsZone->SetTileIndex(TilePath, 1);
 											break;

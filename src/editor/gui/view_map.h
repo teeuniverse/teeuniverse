@@ -42,8 +42,6 @@ public:
 	};
 	
 protected:
-	float m_CameraZoom;
-	vec2 m_CameraPos;
 	bool m_CameraDraged;
 	float m_ZoneOpacity;
 	bool m_ShowGrid;
