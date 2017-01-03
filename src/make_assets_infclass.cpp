@@ -49,56 +49,64 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
+	CAssetPath ImageZonesDamagePath = CreateNewImage(pKernel, PackageId, "damage", "datasrc/images/univ_infclass/damage.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
+	CAssetPath ImageZonesTeleportationPath = CreateNewImage(pKernel, PackageId, "teleportation", "datasrc/images/univ_infclass/teleportation.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", CStorage::TYPE_ABSOLUTE, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
-	
-	//InfClass Physics
+		
+	//Zone, damage
 	{
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("infcPhysics");
+		pAsset->SetName("infcDamage");
+		pAsset->SetImagePath(ImageZonesDamagePath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Air");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 0.0f));
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Hookable Ground");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
-		pAsset->SetIndexColor(SubPath, vec4(228.0f/255.0f, 255.0f/255.0f, 0.0f/255.0f, 1.0f));
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Water");
-		pAsset->SetIndexColor(SubPath, vec4(0.3f, 0.3f, 1.0f, 1.0f));
-	}
-	
-	//InfClass zones
-	{
-		CAssetPath AssetPath;
-		CSubPath SubPath;
-		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("infcZones");
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexUsed(SubPath, false);
+		pAsset->SetIndexDescription(SubPath, "No damage");
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Death");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Death, execpt Undead");
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 164.0f/255.0f, 0.0f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "Death, infected-only");
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(157.0f/255.0f, 0.0f, 1.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Infected area");
-		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.7f, 0.0f, 1.0f));
+		pAsset->SetIndexBorderIndex(SubPath, 2);
+		pAsset->SetIndexBorderColor(SubPath, vec4(11.0f/255.0f, 173.0f/255.0f, 0.0f, 1.0f));
+	}	
+	//Zone, teleportation
+	{
+		CAssetPath AssetPath;
+		CSubPath SubPath;
+		
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
+		pAsset->SetName("infcTeleportation");
+		pAsset->SetImagePath(ImageZonesTeleportationPath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "No spawn");
-		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.3f, 1.0f, 0.3f));
+		pAsset->SetIndexDescription(SubPath, "All accepted");
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "No witch spawn");
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexDescription(SubPath, "No scientist spawn");
+		pAsset->SetIndexBorderIndex(SubPath, 2);
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 164.0f/255.0f, 0.0f, 1.0f));
 	}
 	//EntityType, Spawn
 	{

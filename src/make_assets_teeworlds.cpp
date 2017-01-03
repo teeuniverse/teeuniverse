@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 		pAsset->SetIndexDescription(SubPath, "Death");
 		pAsset->SetIndexColor(SubPath, 1.0f);
 		pAsset->SetIndexBorderIndex(SubPath, 2);
-		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
