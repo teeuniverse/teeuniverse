@@ -292,9 +292,9 @@ function(make_assets progname)
 endfunction()
 
 make_assets(gui_editor)
-make_assets(univ_teeworlds)
-make_assets(univ_infclass)
-make_assets(univ_openfng)
+make_assets(teeworlds)
+make_assets(infclass)
+make_assets(openfng)
 
 message(STATUS " * tools ready for compilation")
 

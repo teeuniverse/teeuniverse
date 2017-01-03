@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 	
-	int PackageId = pKernel->AssetsManager()->NewPackage("univ_infclass");
+	int PackageId = pKernel->AssetsManager()->NewPackage("infclass");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");

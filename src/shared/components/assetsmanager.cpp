@@ -675,7 +675,7 @@ void CAssetsManager::Load_UnivTeeWorlds()
 {
 	if(m_PackageId_UnivTeeWorlds < 0)
 	{
-		m_PackageId_UnivTeeWorlds = Load_AssetsFile("univ_teeworlds", CStorage::TYPE_ALL);
+		m_PackageId_UnivTeeWorlds = Load_AssetsFile("teeworlds", CStorage::TYPE_ALL);
 		if(m_PackageId_UnivTeeWorlds >= 0)
 		{
 			m_Path_ZoneType_TeeWorlds = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "teeworlds");

@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	int PackageId = -1;
 	
 	/* UNIV TEEWORLDS */
-	PackageId = pKernel->AssetsManager()->NewPackage("univ_teeworlds");
+	PackageId = pKernel->AssetsManager()->NewPackage("teeworlds");
 	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
