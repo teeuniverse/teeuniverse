@@ -1474,12 +1474,6 @@ void CGuiEditor::CMainWidget::Render()
 
 void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 {
-	if(Event.m_Key == KEY_ESCAPE && (Event.m_Flags & CInput::FLAG_RELEASE))
-	{
-		m_pAssetsEditor->Quit();
-		return;
-	}
-	
 	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_Z && (Event.m_Flags & CInput::FLAG_RELEASE))
 	{
 		AssetsManager()->Undo();
