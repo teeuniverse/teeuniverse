@@ -185,22 +185,23 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	########################################################################
 
 	# Sources
-	file(GLOB teeuniverse_game_src
-		"${PROJECT_SOURCE_DIR}/src/game/gui/*.cpp"
-		"${PROJECT_SOURCE_DIR}/src/game/components/*.cpp"
-		"${PROJECT_SOURCE_DIR}/src/game/*.cpp"
-	)
+	#file(GLOB teeuniverse_game_src
+	#	"${PROJECT_SOURCE_DIR}/src/game/gui/*.cpp"
+	#	"${PROJECT_SOURCE_DIR}/src/game/components/*.cpp"
+	#	"${PROJECT_SOURCE_DIR}/src/game/*.cpp"
+	#)
 
 	# Libraries
-	set(teeuniverse_game_libraries
-		teeuniverse_client
-	)
+	#set(teeuniverse_game_libraries
+	#	teeuniverse_client
+	#)
 
-	# Build Editor
-	add_executable(${TU_EXECNAME_GAME} "${PROJECT_SOURCE_DIR}/src/game.cpp" ${teeuniverse_game_src})
-	target_link_libraries (${TU_EXECNAME_GAME} ${teeuniverse_game_libraries})
-	install(TARGETS ${TU_EXECNAME_GAME} DESTINATION bin)
-	message(STATUS " * client ready for compilation")
+	# Build Game
+	#add_executable(${TU_EXECNAME_GAME} "${PROJECT_SOURCE_DIR}/src/game.cpp" ${teeuniverse_game_src})
+	#target_link_libraries (${TU_EXECNAME_GAME} ${teeuniverse_game_libraries})
+	#install(TARGETS ${TU_EXECNAME_GAME} DESTINATION bin)
+	#message(STATUS " * client ready for compilation")
+	message(STATUS " * client not yet implemented")
 
 	########################################################################
 	# EDITOR
@@ -225,7 +226,7 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	message(STATUS " * editor ready for compilation")
 	
 else()
-	message(STATUS " * client can't be compiled")
+	#message(STATUS " * client can't be compiled")
 	message(STATUS " * editor can't be compiled")
 endif()
 
@@ -234,21 +235,22 @@ endif()
 ########################################################################
 
 # Sources
-file(GLOB teeuniverse_server_src
-    "${PROJECT_SOURCE_DIR}/src/server/*.cpp"
-)
+#file(GLOB teeuniverse_server_src
+#    "${PROJECT_SOURCE_DIR}/src/server/*.cpp"
+#)
 
 # Libraries
-set(teeuniverse_server_libraries
-	teeuniverse_shared
-)
+#set(teeuniverse_server_libraries
+#	teeuniverse_shared
+#)
 
 # Build
-add_executable(${TU_EXECNAME_SERVER} "${PROJECT_SOURCE_DIR}/src/server.cpp" ${teeuniverse_server_src})
-set_target_properties(${TU_EXECNAME_SERVER} PROPERTIES COMPILE_FLAGS "-DKERNEL_TYPE=KERNEL_SERVER")
-target_link_libraries (${TU_EXECNAME_SERVER} ${teeuniverse_server_libraries})
-install(TARGETS ${TU_EXECNAME_SERVER} DESTINATION bin)
-message(STATUS " * server ready for compilation")
+#add_executable(${TU_EXECNAME_SERVER} "${PROJECT_SOURCE_DIR}/src/server.cpp" ${teeuniverse_server_src})
+#set_target_properties(${TU_EXECNAME_SERVER} PROPERTIES COMPILE_FLAGS "-DKERNEL_TYPE=KERNEL_SERVER")
+#target_link_libraries (${TU_EXECNAME_SERVER} ${teeuniverse_server_libraries})
+#install(TARGETS ${TU_EXECNAME_SERVER} DESTINATION bin)
+#message(STATUS " * server ready for compilation")
+message(STATUS " * server not yet implemented")
 
 ########################################################################
 # TOOLS
