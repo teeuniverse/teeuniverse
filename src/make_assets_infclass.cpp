@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("infcDamage");
+		pAsset->SetName("icDamage");
 		pAsset->SetImagePath(ImageZonesDamagePath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("infcTeleportation");
+		pAsset->SetName("icTele");
 		pAsset->SetImagePath(ImageZonesTeleportationPath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHumanSpawn", ImageEntitiesPath, 0, 3, 1, 1);
 		
 		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("humanSpawn");
+		pAsset->SetName("icHuman");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
 	}
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoInfectedSpawn", ImageEntitiesPath, 1, 3, 1, 1);
 		
 		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("infectedSpawn");
+		pAsset->SetName("icInfected");
 		pAsset->SetCollisionRadius(64.0f);
 		pAsset->SetGizmoPath(GizmoPath);
 	}
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeroFlag", ImageEntitiesPath, 3, 2, 1, 2);
 		
 		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("heroFlag");
+		pAsset->SetName("icHeroFlag");
 		pAsset->SetCollisionRadius(42.0f);
 		pAsset->SetGizmoPath(GizmoPath);
 	}
