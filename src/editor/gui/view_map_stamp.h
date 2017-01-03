@@ -37,6 +37,9 @@ protected:
 	gui::CHListLayout* m_pOptions;
 	
 public:
+	bool m_GridAligned;
+	
+public:
 	CCursorTool_MapStamp(CViewMap* pViewMap);
 	virtual void UpdateToolbar();
 	virtual void OnViewButtonClick(int Button);

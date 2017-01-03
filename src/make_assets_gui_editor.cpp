@@ -184,6 +184,7 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconFillingStretching", ImageEditorPath, 12*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconFillingSpacing", ImageEditorPath, 13*2, 3*2, 2, 2);
 	
+	CREATE_SPRITE(PackageId, "iconGridAligned", ImageEditorPath, 61, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconShapeStar", ImageEditorPath, 40, 23, 3, 3);
 	CREATE_SPRITE(PackageId, "iconShapeHexagon", ImageEditorPath, 43, 23, 3, 3);
 	CREATE_SPRITE(PackageId, "iconShapeHexagon2", ImageEditorPath, 46, 23, 3, 3);

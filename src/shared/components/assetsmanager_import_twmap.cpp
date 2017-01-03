@@ -1210,6 +1210,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	array<CAssetPath> Images;
 	bool ZoneGroupNeeded = false;
 	bool EntityGroupNeeded = false;
+	array<CAsset_MapEntities::CEntity> PTUMTeeWorldsEntities;
 	
 	//Map version
 	tw07::CMapItemVersion VerItem;
@@ -1324,9 +1325,23 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f;
 				
 				if(X < 0 || X >= Width || Y < 0 || Y >= Height)
+				{
+					EntityGroupNeeded = true;
+					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
 					continue;
+				}
 				if(pTiles[Y*Width+X].m_Index == tw07::TILE_SOLID || pTiles[Y*Width+X].m_Index == tw07::TILE_NOHOOK)
+				{
+					EntityGroupNeeded = true;
+					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
 					continue;
+				}
+				if(distance(pEntities->GetEntityPosition(SubPath), vec2(X*32.0f+16.0f, Y*32.0f+16.0f)) > 0.01f)
+				{
+					EntityGroupNeeded = true;
+					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
+					continue;
+				}
 				
 				if(EntityTypePath == m_Path_EntityType_TWSpawn)
 					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN;
@@ -1493,6 +1508,53 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		
 		array<CAssetPath> EntityTypeList;
 		array< array<tw07::CQuad>, allocator_copy< array<tw07::CQuad> > > EntityQuads;
+		
+		for(int i=0; i<PTUMTeeWorldsEntities.size(); i++)
+		{
+			CAsset_MapEntities::CEntity& Entity = PTUMTeeWorldsEntities[i];
+			CAssetPath EntityTypePath = Entity.GetTypePath();
+			
+			//Search in previous layers
+			int eId;
+			for(eId=0; eId<EntityTypeList.size(); eId++)
+			{
+				if(EntityTypeList[eId] == EntityTypePath)
+					break;
+			}
+			if(eId == EntityTypeList.size())
+			{
+				EntityTypeList.add_by_copy(EntityTypePath);
+				EntityQuads.increment();
+			}
+			
+			tw07::CQuad& Quad = EntityQuads[eId].increment();
+			
+			Quad.m_aPoints[0].x = f2fx(Entity.GetPositionX()-16.0f);
+			Quad.m_aPoints[0].y = f2fx(Entity.GetPositionY()-16.0f);
+			Quad.m_aPoints[1].x = f2fx(Entity.GetPositionX()+16.0f);
+			Quad.m_aPoints[1].y = f2fx(Entity.GetPositionY()-16.0f);
+			Quad.m_aPoints[2].x = f2fx(Entity.GetPositionX()-16.0f);
+			Quad.m_aPoints[2].y = f2fx(Entity.GetPositionY()+16.0f);
+			Quad.m_aPoints[3].x = f2fx(Entity.GetPositionX()+16.0f);
+			Quad.m_aPoints[3].y = f2fx(Entity.GetPositionY()+16.0f);
+			Quad.m_aPoints[4].x = f2fx(Entity.GetPositionX());
+			Quad.m_aPoints[4].y = f2fx(Entity.GetPositionY());
+			
+			for(int j=0; j<4; j++)
+			{
+				Quad.m_aTexcoords[j].x = 0.0f;
+				Quad.m_aTexcoords[j].y = 0.0f;
+				Quad.m_aColors[j].r = 255.0f;
+				Quad.m_aColors[j].g = 255.0f;
+				Quad.m_aColors[j].b = 255.0f;
+				Quad.m_aColors[j].a = 255.0f;
+			}
+			
+			Quad.m_PosEnv = -1;
+			Quad.m_PosEnvOffset = 0;
+			Quad.m_ColorEnv = -1;
+			Quad.m_ColorEnvOffset = 0;
+		}
 		
 		CAsset_Map::CIteratorEntityLayer EntityLayerIter;
 		for(EntityLayerIter = pMap->BeginEntityLayer(); EntityLayerIter != pMap->EndEntityLayer(); ++EntityLayerIter)

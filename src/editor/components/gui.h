@@ -200,6 +200,7 @@ public:
 	CAssetPath m_Path_Sprite_IconShapeArc;
 	CAssetPath m_Path_Sprite_IconShapeBow;
 	CAssetPath m_Path_Sprite_IconShapeCircle;
+	CAssetPath m_Path_Sprite_IconGridAligned;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

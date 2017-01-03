@@ -1713,6 +1713,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconShapeArc = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeArc");
 		m_Path_Sprite_IconShapeBow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeBow");
 		m_Path_Sprite_IconShapeCircle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeCircle");
+		m_Path_Sprite_IconGridAligned = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGridAligned");
 		
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
