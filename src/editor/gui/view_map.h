@@ -46,6 +46,7 @@ protected:
 	float m_ZoneOpacity;
 	bool m_ShowGrid;
 	bool m_ShowMeshes;
+	int m_ShowEntities;
 	
 	class CMapRenderer* m_pMapRenderer;
 	
@@ -74,6 +75,9 @@ public:
 	
 	inline float GetZoneOpacity() const { return m_ZoneOpacity; }
 	inline void SetZoneOpacity(float Value) { m_ZoneOpacity = Value; }
+	
+	inline int GetShowEntites() const { return m_ShowEntities; }
+	inline void SetShowEntites(int Value) { m_ShowEntities = Value; }
 };
 
 #endif

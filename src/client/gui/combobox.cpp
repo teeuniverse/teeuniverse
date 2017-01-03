@@ -54,9 +54,7 @@ public:
 class CComboBoxPopup : public CPopup
 {
 public:
-	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< 
-CComboBox::CItem, allocator_copy<
-CComboBox::CItem> >& EnumDescriptions, CAssetPath ButtonStyle) :
+	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< CComboBox::CItem, allocator_copy<CComboBox::CItem> >& EnumDescriptions, CAssetPath ButtonStyle) :
 		CPopup(pContext, CreatorRect, CreatorRect.w, -1, CPopup::ALIGNMENT_BOTTOM)
 	{
 		CVListLayout* pLayout = new CVListLayout(Context());

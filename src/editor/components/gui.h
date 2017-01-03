@@ -201,6 +201,16 @@ public:
 	CAssetPath m_Path_Sprite_IconShapeBow;
 	CAssetPath m_Path_Sprite_IconShapeCircle;
 	CAssetPath m_Path_Sprite_IconGridAligned;
+	CAssetPath m_Path_Sprite_IconDisplaySettings;
+	CAssetPath m_Path_Sprite_IconZoneRatio0;
+	CAssetPath m_Path_Sprite_IconZoneRatio1;
+	CAssetPath m_Path_Sprite_IconZoneRatio2;
+	CAssetPath m_Path_Sprite_IconZoneRatio3;
+	CAssetPath m_Path_Sprite_IconZoneRatio4;
+	CAssetPath m_Path_Sprite_IconEntityRatio0;
+	CAssetPath m_Path_Sprite_IconEntityRatio1;
+	CAssetPath m_Path_Sprite_IconEntityRatio2;
+	CAssetPath m_Path_Sprite_IconEntityRatio3;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;

@@ -1359,7 +1359,6 @@ protected:
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
-		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CQuitButton(m_pAssetsEditor, pMenu));
@@ -1709,7 +1708,17 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconShapeBow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeBow");
 		m_Path_Sprite_IconShapeCircle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconShapeCircle");
 		m_Path_Sprite_IconGridAligned = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGridAligned");
-		
+		m_Path_Sprite_IconDisplaySettings = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconDisplaySettings");
+		m_Path_Sprite_IconZoneRatio0 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneRatio0");
+		m_Path_Sprite_IconZoneRatio1 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneRatio1");
+		m_Path_Sprite_IconZoneRatio2 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneRatio2");
+		m_Path_Sprite_IconZoneRatio3 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneRatio3");
+		m_Path_Sprite_IconZoneRatio4 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneRatio4");
+		m_Path_Sprite_IconEntityRatio0 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityRatio0");
+		m_Path_Sprite_IconEntityRatio1 = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityRatio1");
+		m_Path_Sprite_IconEntityRatio2= AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityRatio2");
+		m_Path_Sprite_IconEntityRatio3= AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityRatio3");
+	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
 		m_Path_Sprite_GizmoPivot = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoPivot");

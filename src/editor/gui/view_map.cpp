@@ -28,8 +28,7 @@
 #include <client/gui/slider.h>
 #include <client/gui/toggle.h>
 #include <client/gui/filler.h>
-
-/* VIEW MAP ***********************************************************/
+#include <client/gui/listlayout.h>
 
 class CSimpleToggle : public gui::CToggle
 {
@@ -68,25 +67,111 @@ public:
 	}
 };
 
-class CZoneOpacitySlider : public gui::CHSlider
+class CDisplaySettingsButton : public gui::CButton
 {
+protected:
+	class CZoneOpacityButton : public gui::CButton
+	{
+	protected:
+		CViewMap* m_pViewMap;
+		float m_Opacity;
+	
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pViewMap->SetZoneOpacity(m_Opacity);
+		}
+	
+	public:
+		CZoneOpacityButton(CViewMap* pViewMap, CAssetPath IconPath, float Opacity) :
+			gui::CButton(pViewMap->Context(), IconPath),
+			m_pViewMap(pViewMap),
+			m_Opacity(Opacity)
+		{ }
+	};
+	
+	class CEntityStyleButton : public gui::CButton
+	{
+	protected:
+		CViewMap* m_pViewMap;
+		int m_Value;
+	
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pViewMap->SetShowEntites(m_Value);
+		}
+	
+	public:
+		CEntityStyleButton(CViewMap* pViewMap, CAssetPath IconPath, int Value) :
+			gui::CButton(pViewMap->Context(), IconPath),
+			m_pViewMap(pViewMap),
+			m_Value(Value)
+		{ }
+	};
+
+	class CPopup : public gui::CPopup
+	{
+	protected:
+		CViewMap* m_pViewMap;
+		
+	public:
+		CPopup(CViewMap* pViewMap, const gui::CRect& CreatorRect) :
+			gui::CPopup(pViewMap->Context(), CreatorRect, 280, -1, CPopup::ALIGNMENT_BOTTOM),
+			m_pViewMap(pViewMap)
+		{
+			gui::CVListLayout* pLayout = new gui::CVListLayout(Context());
+			Add(pLayout);
+			
+			{
+				gui::CLabelHeader* pLabel = new gui::CLabelHeader(Context(), _LSTRING("Zones"));
+				pLabel->NoTextClipping();
+				pLayout->Add(pLabel, false);
+			}
+			
+			{
+				gui::CHListLayout* pLayout2 = new gui::CHListLayout(Context());
+				pLayout->Add(pLayout2);
+				
+				pLayout2->Add(new CZoneOpacityButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconZoneRatio0, 0.0f), true);
+				pLayout2->Add(new CZoneOpacityButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconZoneRatio1, 0.25f), true);
+				pLayout2->Add(new CZoneOpacityButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconZoneRatio2, 0.5f), true);
+				pLayout2->Add(new CZoneOpacityButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconZoneRatio3, 0.85f), true);
+				pLayout2->Add(new CZoneOpacityButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconZoneRatio4, 1.0f), true);
+			}
+			
+			pLayout->AddSeparator();
+			
+			{
+				gui::CLabelHeader* pLabel = new gui::CLabelHeader(Context(), _LSTRING("Entities"));
+				pLabel->NoTextClipping();
+				pLayout->Add(pLabel, false);
+			}
+			
+			{
+				gui::CHListLayout* pLayout2 = new gui::CHListLayout(Context());
+				pLayout->Add(pLayout2);
+				
+				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio0, 0), true);
+				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio1, 1), true);
+				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio2, 2), true);
+				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio3, 3), true);
+			}
+		}
+	};
+	
 protected:
 	CViewMap* m_pViewMap;	
 	
 protected:
-	virtual int GetValue() const
+	virtual void MouseClickAction()
 	{
-		return m_pViewMap->GetZoneOpacity()*100.0f;
-	}
-	
-	virtual void SetValue(int Value)
-	{
-		m_pViewMap->SetZoneOpacity(Value/100.0f);
+		Context()->DisplayPopup(new CPopup(m_pViewMap, m_DrawRect));
 	}
 	
 public:
-	CZoneOpacitySlider(CViewMap* pViewMap) :
-		gui::CHSlider(pViewMap->Context(), 0, 100),
+	CDisplaySettingsButton(CViewMap* pViewMap) :
+		gui::CButton(pViewMap->Context(), pViewMap->AssetsEditor()->m_Path_Sprite_IconDisplaySettings),
 		m_pViewMap(pViewMap)
 	{
 		
@@ -95,11 +180,13 @@ public:
 	virtual void OnMouseMove()
 	{
 		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pViewMap->AssetsEditor()->SetHint(_LSTRING("Zones visibility: Change the visibility of zones from \"invisible\" to \"emphasis\""));
+			m_pViewMap->AssetsEditor()->SetHint(_LSTRING("Show map view options"));
 		
-		gui::CHSlider::OnMouseMove();
+		gui::CButton::OnMouseMove();
 	}
 };
+
+/* VIEW MAP ***********************************************************/
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
@@ -107,6 +194,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_ZoneOpacity(0.5f),
 	m_ShowGrid(false),
 	m_ShowMeshes(false),
+	m_ShowEntities(3),
 	m_pMapRenderer(NULL),
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
@@ -152,7 +240,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(new gui::CFiller(Context()), true);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
-	m_pToolbar->Add(new CZoneOpacitySlider(this), false, 200);
+	m_pToolbar->Add(new CDisplaySettingsButton(this), false);
 	
 	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
 }
@@ -343,10 +431,56 @@ void CViewMap::RenderView()
 				
 				if(!pEntities->GetVisibility())
 					continue;
-				
+								
 				vec4 Color = 1.0f;
 				if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId && EntitiesPath != AssetsEditor()->GetEditedAssetPath())
-					Color = vec4(1.0f, 1.0f, 1.0f, 0.5f);
+				{
+					if(m_ShowEntities > 0)
+						Color = vec4(1.0f, 1.0f, 1.0f, 0.5f);
+					else
+						continue;
+				}
+				
+				if(m_ShowEntities == 1 || m_ShowEntities == 2)
+				{
+					Graphics()->TextureClear();
+					Graphics()->QuadsBegin();
+					Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.75f), true);
+					CAsset_MapEntities::CIteratorEntity IterEntity;
+					for(IterEntity = pEntities->BeginEntity(); IterEntity != pEntities->EndEntity(); ++IterEntity)
+					{
+						vec2 Pos = MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*IterEntity));
+						CAssetPath TypePath = pEntities->GetEntityTypePath(*IterEntity);
+						
+						const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
+						if(!pEntityType)
+							continue;
+						
+						int i=0;
+						while(i<32)
+						{
+							float Angle0 = 2.0f*Pi*static_cast<float>(i)/32.0f;
+							float Angle1 = 2.0f*Pi*static_cast<float>(i+1)/32.0f;
+							float Angle2 = 2.0f*Pi*static_cast<float>(i+2)/32.0f;
+							
+							vec2 P0 = MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*IterEntity) + vec2(std::cos(Angle0), std::sin(Angle0)) * pEntityType->GetCollisionRadius());
+							vec2 P1 = MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*IterEntity) + vec2(std::cos(Angle1), std::sin(Angle1)) * pEntityType->GetCollisionRadius());
+							vec2 P2 = MapRenderer()->MapPosToScreenPos(pEntities->GetEntityPosition(*IterEntity) + vec2(std::cos(Angle2), std::sin(Angle2)) * pEntityType->GetCollisionRadius());
+							
+							CGraphics::CFreeformItem Freeform(
+								P1.x, P1.y,
+								P2.x, P2.y,
+								P0.x, P0.y,
+								Pos.x, Pos.y
+							);
+							Graphics()->QuadsDrawFreeform(&Freeform, 1);
+							
+							i += 2;
+						}
+					}
+					
+					Graphics()->QuadsEnd();
+				}
 				
 				CAsset_MapEntities::CIteratorEntity IterEntity;
 				for(IterEntity = pEntities->BeginEntity(); IterEntity != pEntities->EndEntity(); ++IterEntity)
@@ -356,7 +490,16 @@ void CViewMap::RenderView()
 					
 					const CAsset_EntityType* pEntityType = AssetsManager()->GetAsset<CAsset_EntityType>(TypePath);
 					if(pEntityType)
-						AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, Color);
+					{
+						if(m_ShowEntities >= 2)
+						{
+							AssetsRenderer()->DrawSprite(pEntityType->GetGizmoPath(), Pos, 1.0f, 0.0f, 0x0, Color);
+						}
+						else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId && EntitiesPath == AssetsEditor()->GetEditedAssetPath())
+						{
+							AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, Color);
+						}
+					}
 					else
 						AssetsRenderer()->DrawSprite(AssetsEditor()->m_Path_Sprite_GizmoPivot, Pos, 1.0f, 0.0f, 0x0, Color);
 				}

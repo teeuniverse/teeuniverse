@@ -184,6 +184,16 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconFillingStretching", ImageEditorPath, 12*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconFillingSpacing", ImageEditorPath, 13*2, 3*2, 2, 2);
 	
+	CREATE_SPRITE(PackageId, "iconEntityRatio0", ImageEditorPath, 52, 17, 3, 3);
+	CREATE_SPRITE(PackageId, "iconEntityRatio1", ImageEditorPath, 55, 17, 3, 3);
+	CREATE_SPRITE(PackageId, "iconEntityRatio2", ImageEditorPath, 58, 17, 3, 3);
+	CREATE_SPRITE(PackageId, "iconEntityRatio3", ImageEditorPath, 61, 17, 3, 3);
+	CREATE_SPRITE(PackageId, "iconDisplaySettings", ImageEditorPath, 43, 20, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoneRatio0", ImageEditorPath, 46, 20, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoneRatio1", ImageEditorPath, 49, 20, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoneRatio2", ImageEditorPath, 52, 20, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoneRatio3", ImageEditorPath, 55, 20, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoneRatio4", ImageEditorPath, 58, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconGridAligned", ImageEditorPath, 61, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconShapeStar", ImageEditorPath, 40, 23, 3, 3);
 	CREATE_SPRITE(PackageId, "iconShapeHexagon", ImageEditorPath, 43, 23, 3, 3);
@@ -565,7 +575,7 @@ int main(int argc, char* argv[])
 		pAsset->SetName("header");
 		pAsset->SetPadding(2);
 		pAsset->SetSpacing(4);
-		pAsset->SetFontSize(16);
+		pAsset->SetFontSize(14);
 		pAsset->SetTextColor(vec4(1.0f, 1.0f, 0.5f, 1.0f));
 		pAsset->SetTextAlignment(CAsset_GuiLabelStyle::TEXTALIGNMENT_CENTER);
 	}
