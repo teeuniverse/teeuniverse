@@ -13,12 +13,21 @@
 - Text selection with copy/paste
 - Automatic scrolling during text editing
 - Statusbar to display map coordinates
+- Confirmation dialog during saving
+- Ctrl+S to save the current package
+- Import/Export in PTU map format
+- Option to align entities with on the grid
+- Camera position and zoom saved in the package
+- Settings in map view
 
 ### Changed
 - Bigger toolbar in the view
 - New icons for tools in the view
 - Better appearence for focused boxes
 - Better appearence for separators
+
+### Removed
+- Import/Export in the old InfClass map format
 
 ### Fixed
 - Fix non-loaded images after deletion of an image
