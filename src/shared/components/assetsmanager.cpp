@@ -28,8 +28,6 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
 	m_pHistory(0),
 	m_PackageId_UnivTeeWorlds(-1),
-	m_PackageId_UnivInfClass(-1),
-	m_PackageId_UnivOpenFNG(-1),
 	m_PackageId_EnvClouds(-1),
 	m_PackageId_EnvDesert(-1),
 	m_PackageId_EnvGeneric(-1),
@@ -680,51 +678,19 @@ void CAssetsManager::Load_UnivTeeWorlds()
 		m_PackageId_UnivTeeWorlds = Load_AssetsFile("univ_teeworlds", CStorage::TYPE_ALL);
 		if(m_PackageId_UnivTeeWorlds >= 0)
 		{
-			m_Path_ZoneType_TWPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "physics");
-			m_Path_ZoneType_TWDamage = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "damage");
+			m_Path_ZoneType_TeeWorlds = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "teeworlds");
 			
 			m_Path_EntityType_TWSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "spawn");
 			m_Path_EntityType_TWSpawnRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "redSpawn");
 			m_Path_EntityType_TWSpawnBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "blueSpawn");
 			m_Path_EntityType_TWGrenade = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "grenade");
-			m_Path_EntityType_TWLaserRifle = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "laserRifle");
+			m_Path_EntityType_TWLaserRifle = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "rifle");
 			m_Path_EntityType_TWShotgun = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "shotgun");
 			m_Path_EntityType_TWNinja = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "ninja");
-			m_Path_EntityType_TWHeart = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "heart");
+			m_Path_EntityType_TWHeart = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "health");
 			m_Path_EntityType_TWArmor = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "armor");
 			m_Path_EntityType_TWFlagBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "blueFlag");
 			m_Path_EntityType_TWFlagRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "redFlag");
-		}
-	}
-}
-
-void CAssetsManager::Load_UnivInfClass()
-{
-	if(m_PackageId_UnivInfClass < 0)
-	{
-		m_PackageId_UnivInfClass = Load_AssetsFile("univ_infclass", CStorage::TYPE_ALL);
-		if(m_PackageId_UnivInfClass >= 0)
-		{
-			m_Path_ZoneType_InfClassPhysics = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "infcPhysics");
-			m_Path_ZoneType_InfClassZones = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "infcZones");
-			
-			m_Path_EntityType_InfClassHumanSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "humanSpawn");
-			m_Path_EntityType_InfClassInfectedSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "infectedSpawn");
-			m_Path_EntityType_InfClassHeroFlag = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "heroFlag");
-		}
-	}
-}
-
-void CAssetsManager::Load_UnivOpenFNG()
-{
-	if(m_PackageId_UnivOpenFNG < 0)
-	{
-		m_PackageId_UnivOpenFNG = Load_AssetsFile("univ_openfng", CStorage::TYPE_ALL);
-		if(m_PackageId_UnivOpenFNG >= 0)
-		{
-			m_Path_ZoneType_OpenFNGShrine = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "shrine");
-			m_Path_EntityType_OpenFNGRedScore = FindAsset<CAsset_EntityType>(m_PackageId_UnivOpenFNG, "redTeamScore");
-			m_Path_EntityType_OpenFNGBlueScore = FindAsset<CAsset_EntityType>(m_PackageId_UnivOpenFNG, "blueTeamScore");
 		}
 	}
 }

@@ -63,8 +63,8 @@ public:
 	void RenderGrid(float Step, vec4 Color);
 	void RenderGrid_LayerTiles(CAssetPath LayerPath);
 	void RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat);
-	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat);
-	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat);
+	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat);
+	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat);
 	void RenderQuads(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads, vec2 Pos, CAssetPath ImagePath, vec4 Color);
 	void RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads);
 	void RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh);
@@ -74,7 +74,7 @@ public:
 	void RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh = false);
 	void RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh = false);
 	
-	void RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, vec4 Color);
+	void RenderMap_Zones(CAssetPath MapPath, vec4 Color);
 };
 
 #endif

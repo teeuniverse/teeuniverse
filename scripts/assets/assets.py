@@ -2032,11 +2032,15 @@ zoneType_index = Class("Index")
 zoneType_index.addMember("0.1.0", "Used", TypeBool(), "true")
 zoneType_index.addMember("0.1.0", "Description", TypeString(128))
 zoneType_index.addMember("0.1.0", "Color", TypeColor(), "1.0f")
+zoneType_index.addMember("0.2.0", "Title", TypeString(128))
+zoneType_index.addMember("0.2.0", "BorderIndex", TypeInt32(), "0")
+zoneType_index.addMember("0.2.0", "BorderColor", TypeColor(), "1.0f")
 
 zoneType = ClassAsset("ZoneType", len(assetsList))
 zoneType.setInheritance(mainAsset)
 zoneType.addClass(zoneType_index)
 zoneType.addMember("0.1.0", "Index", TypeArray(zoneType_index))
+zoneType.addMember("0.2.0", "ImagePath", TypeAssetPath())
 
 assetsList.append(zoneType)
 

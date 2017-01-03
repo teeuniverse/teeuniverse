@@ -49,8 +49,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
-	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_openfng/entities.png", CStorage::TYPE_ABSOLUTE, 8, 4);
-	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
+	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_openfng/zones.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
 	
 	//Shrine
 	{
@@ -58,48 +57,60 @@ int main(int argc, char* argv[])
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("shrine");
+		pAsset->SetName("openfng");
+		pAsset->SetImagePath(ImageZonesPath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexUsed(SubPath, false);
 		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Shrine");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+		for(int i=0; i<7; i++)
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexUsed(SubPath, false);
+		}
 		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Red Team Shrine");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexDescription(SubPath, "Shrine");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 1);
+			pAsset->SetIndexBorderColor(SubPath, vec4(98.0f/255.0f, 188.0f/255.0f, 0.0f/255.0f, 1.0f));
+		}
 		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Blue Team Shrine");
-		pAsset->SetIndexColor(SubPath, vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	}
-	
-	//EntityType, Red Team Score
-	{
-		CAssetPath GizmoPath;
-		CAssetPath AssetPath;
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexDescription(SubPath, "Red Team Shrine");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 1);
+			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
 		
-		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoScoreRed", ImageEntitiesPath, 0, 1, 3, 3);
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexDescription(SubPath, "Blue Team Shrine");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 1);
+			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		}
 		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("redTeamScore");
-		pAsset->SetCollisionRadius(64.0f);
-		pAsset->SetGizmoPath(GizmoPath);
-	}
-	
-	//EntityType, Blue Team Score
-	{
-		CAssetPath GizmoPath;
-		CAssetPath AssetPath;
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexDescription(SubPath, "Red Team Score");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 0);
+		}
 		
-		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoScoreBlue", ImageEntitiesPath, 3, 1, 3, 3);
-		
-		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("blueTeamScore");
-		pAsset->SetCollisionRadius(64.0f);
-		pAsset->SetGizmoPath(GizmoPath);
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexDescription(SubPath, "Blue Team Score");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 0);
+		}
 	}
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);

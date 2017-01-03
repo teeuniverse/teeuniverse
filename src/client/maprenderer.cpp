@@ -96,11 +96,27 @@ vec2 CMapRenderer::TilePosToScreenPos(vec2 TilePos) const
 }
 
 template<class TILE>
-void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, vec4 LayerColor, CAssetPath ZoneTexture, bool Repeat)
+void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, vec4 LayerColor, bool Repeat)
 {	
 	const CAsset_ZoneType* pZoneType = pMapRenderer->AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 	
-	pMapRenderer->AssetsRenderer()->TextureSet(ZoneTexture);
+	float USpacing = 0.0f;
+	float VSpacing = 0.0f;
+	
+	if(pZoneType)
+	{
+		pMapRenderer->AssetsRenderer()->TextureSet(pZoneType->GetImagePath());
+		
+		const CAsset_Image* pImage = pMapRenderer->AssetsManager()->GetAsset<CAsset_Image>(pZoneType->GetImagePath());
+		if(pImage)
+		{
+			USpacing = pImage->GetGridSpacing() * pImage->GetGridWidth() / static_cast<float>(pImage->GetDataWidth());
+			VSpacing = pImage->GetGridSpacing() * pImage->GetGridHeight() / static_cast<float>(pImage->GetDataHeight());
+		}
+	}
+	else
+		pMapRenderer->Graphics()->TextureClear();
+	
 	pMapRenderer->Graphics()->QuadsBegin();
 
 	float TileSize = 32.0f*pMapRenderer->m_CameraZoom;
@@ -145,8 +161,11 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 		{
 			const TILE& Tile = Tiles.get_clamp(i, j);
 			
-			if(Tile.GetIndex() < 1)
+			int Index = Tile.GetIndex();
+			if(!Index)
 				continue;
+			
+			vec2 TilePos = pMapRenderer->MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
 			
 			float Fading = 1.0f;
 			if(FadingEnabled)
@@ -166,38 +185,35 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 			}
 			
 			bool IndexFound = false;
-			vec4 Color = 1.0f;
+			vec4 TileColor = 1.0f;
 			if(pZoneType)
 			{
 				CSubPath IndexPath = CAsset_ZoneType::SubPath_Index(Tile.GetIndex());
 				if(pZoneType->IsValidIndex(IndexPath))
 				{
-					Color = pZoneType->GetIndexColor(IndexPath);
+					TileColor = pZoneType->GetIndexColor(IndexPath);
 					IndexFound = true;
 				}
 			}
 			
 			if(!IndexFound)
-				continue;
+				TileColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			
-			Color.a *= 0.5f * Fading;
-			pMapRenderer->Graphics()->SetColor(LayerColor * Color, true);
+			TileColor.a *= Fading;
 			
-			vec2 TilePos = pMapRenderer->MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
+			pMapRenderer->Graphics()->SetColor(LayerColor * TileColor, true);
 			
-			float Shift = fmod(pMapRenderer->m_LocalTime/4.0f, 1.0f);
+			float x0 = USpacing;
+			float y0 = VSpacing;
+			float x1 = 1.0f-USpacing;
+			float y1 = VSpacing;
+			float x2 = 1.0f-USpacing;
+			float y2 = 1.0f-VSpacing;
+			float x3 = USpacing;
+			float y3 = 1.0f-VSpacing;
 			
-			float x0 = (TilePos.x/TileSize)/16.0f + Shift;
-			float y0 = (TilePos.y/TileSize)/16.0f + Shift;
-			float x2 = (TilePos.x/TileSize+1.0f)/16.0f + Shift;
-			float y2 = (TilePos.y/TileSize+1.0f)/16.0f + Shift;
-			float x1 = x2;
-			float y1 = y0;
-			float x3 = x0;
-			float y3 = y2;
-			
-			pMapRenderer->Graphics()->QuadsSetSubsetFree(x0, y0, x1, y1, x2, y2, x3, y3);
-			CGraphics::CQuadItem QuadItem(TilePos.x, TilePos.y, TileSize, TileSize);
+			pMapRenderer->Graphics()->QuadsSetSubsetFree(x0, y0, x1, y1, x2, y2, x3, y3, Index);
+			CGraphics::CQuadItem QuadItem(TilePos.x, TilePos.y, 32.0f*pMapRenderer->m_CameraZoom, 32.0f*pMapRenderer->m_CameraZoom);
 			pMapRenderer->Graphics()->QuadsDrawTL(&QuadItem, 1);
 		}
 	}
@@ -233,6 +249,7 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 				Fading = GeneralFading + (1.0f - GeneralFading)*Fading;
 			}
 			
+			int BorderIndex = 0;
 			bool IndexFound = false;
 			vec4 Color = 1.0f;
 			if(pZoneType)
@@ -240,29 +257,83 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 				CSubPath IndexPath = CAsset_ZoneType::SubPath_Index(Tile.GetIndex());
 				if(pZoneType->IsValidIndex(IndexPath))
 				{
-					Color = pZoneType->GetIndexColor(IndexPath);
+					BorderIndex = pZoneType->GetIndexBorderIndex(IndexPath);
+					Color = pZoneType->GetIndexBorderColor(IndexPath);
 					IndexFound = true;
 				}
 			}
 			
-			Color.a *= Fading;
+			if(!BorderIndex)
+				continue;
 			
 			if(!IndexFound)
-				continue;
+				Color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			
+			Color.a *= Fading;
 			
 			pMapRenderer->Graphics()->SetColor(LayerColor * Color, true);
 			
 			vec2 TilePos = pMapRenderer->MapPosToScreenPos(Pos + vec2(i*32.0f, j*32.0f));
 			
-			bool AirL = (Tiles.get_clamp(i-1, j).GetIndex() != Tile.GetIndex());
-			bool AirR = (Tiles.get_clamp(i+1, j).GetIndex() != Tile.GetIndex());
-			bool AirT = (Tiles.get_clamp(i, j-1).GetIndex() != Tile.GetIndex());
-			bool AirB = (Tiles.get_clamp(i, j+1).GetIndex() != Tile.GetIndex());
+			bool AirL = false;
+			bool AirR = false;
+			bool AirT = false;
+			bool AirB = false;
+			bool AirTL = false;
+			bool AirTR = false;
+			bool AirBL = false;
+			bool AirBR = false;
 			
-			bool AirTL = (Tiles.get_clamp(i-1, j-1).GetIndex() != Tile.GetIndex());
-			bool AirTR = (Tiles.get_clamp(i+1, j-1).GetIndex() != Tile.GetIndex());
-			bool AirBL = (Tiles.get_clamp(i-1, j+1).GetIndex() != Tile.GetIndex());
-			bool AirBR = (Tiles.get_clamp(i+1, j+1).GetIndex() != Tile.GetIndex());
+			CSubPath OtherSubPath;
+			int OtherBorderIndex;
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i-1, j).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirL = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i+1, j).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirR = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i, j-1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirT = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i, j+1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirB = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i-1, j-1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirTL = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i+1, j-1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirTR = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i-1, j+1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirBL = (OtherBorderIndex != BorderIndex);
+			
+			OtherBorderIndex = 0;
+			OtherSubPath = CAsset_ZoneType::SubPath_Index(Tiles.get_clamp(i+1, j+1).GetIndex());
+			if(pZoneType && pZoneType->IsValidIndex(OtherSubPath))
+				OtherBorderIndex = pZoneType->GetIndexBorderIndex(OtherSubPath);
+			AirBR = (OtherBorderIndex != BorderIndex);
 			
 			if(AirT)
 			{
@@ -351,14 +422,14 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 	pMapRenderer->Graphics()->QuadsEnd();
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat)
 {
-	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, ZoneTexture, Repeat);
+	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, Repeat);
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, CAssetPath ZoneTexture, bool Repeat)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat)
 {
-	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, ZoneTexture, Repeat);
+	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, Repeat);
 }
 
 void CMapRenderer::RenderGrid(float Step, vec4 Color)
@@ -862,7 +933,7 @@ void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh)
 	UnsetGroup();
 }
 
-void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, vec4 Color)
+void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, vec4 Color)
 {
 	const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
 	if(!pMap)
@@ -879,6 +950,6 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, CAssetPath ZoneTexture, v
 		if(!pZone->GetVisibility())
 			continue;
 		
-		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, ZoneTexture, true);
+		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, true);
 	}
 }

@@ -38,8 +38,6 @@ public:
 	enum
 	{
 		MAPFORMAT_TW=0,
-		MAPFORMAT_INFCLASS,
-		MAPFORMAT_OPENFNG,
 	};
 	
 private:
@@ -49,8 +47,7 @@ private:
 
 public:
 	int m_PackageId_UnivTeeWorlds;
-	CAssetPath m_Path_ZoneType_TWPhysics;
-	CAssetPath m_Path_ZoneType_TWDamage;
+	CAssetPath m_Path_ZoneType_TeeWorlds;
 	CAssetPath m_Path_EntityType_TWSpawn;
 	CAssetPath m_Path_EntityType_TWSpawnRed;
 	CAssetPath m_Path_EntityType_TWSpawnBlue;
@@ -62,18 +59,6 @@ public:
 	CAssetPath m_Path_EntityType_TWArmor;
 	CAssetPath m_Path_EntityType_TWFlagBlue;
 	CAssetPath m_Path_EntityType_TWFlagRed;
-	
-	int m_PackageId_UnivInfClass;
-	CAssetPath m_Path_ZoneType_InfClassPhysics;
-	CAssetPath m_Path_ZoneType_InfClassZones;
-	CAssetPath m_Path_EntityType_InfClassHumanSpawn;
-	CAssetPath m_Path_EntityType_InfClassInfectedSpawn;
-	CAssetPath m_Path_EntityType_InfClassHeroFlag;
-	
-	int m_PackageId_UnivOpenFNG;
-	CAssetPath m_Path_ZoneType_OpenFNGShrine;
-	CAssetPath m_Path_EntityType_OpenFNGRedScore;
-	CAssetPath m_Path_EntityType_OpenFNGBlueScore;
 	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;
@@ -177,8 +162,6 @@ public:
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	
 	void Load_UnivTeeWorlds();
-	void Load_UnivInfClass();
-	void Load_UnivOpenFNG();
 	
 	void Load_EnvClouds();
 	void Load_EnvDesert();

@@ -53,16 +53,18 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
+	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones", "datasrc/images/univ_teeworlds/zones.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_teeworlds/entities.png", CStorage::TYPE_ABSOLUTE, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
-	//Physics
+	//Zones
 	{
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("physics");
+		pAsset->SetName("teeworlds");
+		pAsset->SetImagePath(ImageZonesPath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Air");
@@ -70,15 +72,20 @@ int main(int argc, char* argv[])
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Hookable Ground");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		pAsset->SetIndexColor(SubPath, 1.0f);
+		pAsset->SetIndexBorderIndex(SubPath, 1);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Death");
-		pAsset->SetIndexColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
+		pAsset->SetIndexColor(SubPath, 1.0f);
+		pAsset->SetIndexBorderIndex(SubPath, 2);
+		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.5f, 0.5f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
-		pAsset->SetIndexColor(SubPath, vec4(228.0f/255.0f, 255.0f/255.0f, 0.0f/255.0f, 1.0f));
+		pAsset->SetIndexColor(SubPath, 1.0f);
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(149.0f/255.0f, 190.0f/255.0f, 222.0f/255.0f, 1.0f));
 	}
 	
 	//EntityType, Spawn
@@ -149,7 +156,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRifle", ImageEntitiesPath, 2, 2, 1, 1);
 		
 		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("laserRifle");
+		pAsset->SetName("rifle");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
 	}
@@ -221,7 +228,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeart", ImageEntitiesPath, 0, 0, 1, 1);
 		
 		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
-		pAsset->SetName("heart");
+		pAsset->SetName("health");
 		pAsset->SetCollisionRadius(20.0f);
 		pAsset->SetGizmoPath(GizmoPath);
 	}

@@ -34,6 +34,7 @@
 
 #include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+#include <shared/assets/assetpath.h>
 
 class CAsset_ZoneType : public CAsset
 {
@@ -56,7 +57,11 @@ public:
 		INDEX_USED,
 		INDEX_DESCRIPTION,
 		INDEX_COLOR,
+		INDEX_TITLE,
+		INDEX_BORDERINDEX,
+		INDEX_BORDERCOLOR,
 		INDEX,
+		IMAGEPATH,
 	};
 	
 	class CIteratorIndex
@@ -97,6 +102,9 @@ public:
 			tua_uint8 m_Used;
 			tua_stringid m_Description;
 			tua_uint32 m_Color;
+			tua_stringid m_Title;
+			tua_int32 m_BorderIndex;
+			tua_uint32 m_BorderColor;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIndex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_0& TuaType);
 		};
@@ -106,6 +114,9 @@ public:
 		bool m_Used;
 		string< _fixed_string_core<128> > m_Description;
 		vec4 m_Color;
+		string< _fixed_string_core<128> > m_Title;
+		int m_BorderIndex;
+		vec4 m_BorderColor;
 	
 	public:
 		CIndex();
@@ -114,6 +125,9 @@ public:
 			m_Used = Item.m_Used;
 			m_Description.copy(Item.m_Description);
 			m_Color = Item.m_Color;
+			m_Title.copy(Item.m_Title);
+			m_BorderIndex = Item.m_BorderIndex;
+			m_BorderColor = Item.m_BorderColor;
 		}
 		
 		void transfert(CAsset_ZoneType::CIndex& Item)
@@ -121,6 +135,9 @@ public:
 			m_Used = Item.m_Used;
 			m_Description.transfert(Item.m_Description);
 			m_Color = Item.m_Color;
+			m_Title.transfert(Item.m_Title);
+			m_BorderIndex = Item.m_BorderIndex;
+			m_BorderColor = Item.m_BorderColor;
 		}
 		
 		inline bool GetUsed() const { return m_Used; }
@@ -129,11 +146,23 @@ public:
 		
 		inline vec4 GetColor() const { return m_Color; }
 		
+		inline const char* GetTitle() const { return m_Title.buffer(); }
+		
+		inline int GetBorderIndex() const { return m_BorderIndex; }
+		
+		inline vec4 GetBorderColor() const { return m_BorderColor; }
+		
 		inline void SetUsed(bool Value) { m_Used = Value; }
 		
 		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
+		
+		inline void SetTitle(const char* Value) { m_Title.copy(Value); }
+		
+		inline void SetBorderIndex(int Value) { m_BorderIndex = Value; }
+		
+		inline void SetBorderColor(vec4 Value) { m_BorderColor = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -152,6 +181,7 @@ public:
 	{
 	public:
 		CTuaArray m_Index;
+		CAssetPath::CTuaType m_ImagePath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_0& TuaType);
 	};
@@ -159,6 +189,7 @@ public:
 
 private:
 	array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> > m_Index;
+	CAssetPath m_ImagePath;
 
 public:
 	template<typename T>
@@ -185,12 +216,14 @@ public:
 	{
 		CAsset::copy(Item);
 		m_Index.copy(Item.m_Index);
+		m_ImagePath = Item.m_ImagePath;
 	}
 	
 	void transfert(CAsset_ZoneType& Item)
 	{
 		CAsset::transfert(Item);
 		m_Index.transfert(Item.m_Index);
+		m_ImagePath = Item.m_ImagePath;
 	}
 	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
@@ -227,6 +260,29 @@ public:
 		else return 1.0f;
 	}
 	
+	inline const char* GetIndexTitle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetTitle();
+		else return NULL;
+	}
+	
+	inline int GetIndexBorderIndex(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetBorderIndex();
+		else return 0;
+	}
+	
+	inline vec4 GetIndexBorderColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetBorderColor();
+		else return 1.0f;
+	}
+	
+	inline CAssetPath GetImagePath() const { return m_ImagePath; }
+	
 	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
 	
 	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value)
@@ -255,6 +311,26 @@ public:
 			m_Index[SubPath.GetId()].SetColor(Value);
 	}
 	
+	inline void SetIndexTitle(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetTitle(Value);
+	}
+	
+	inline void SetIndexBorderIndex(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetBorderIndex(Value);
+	}
+	
+	inline void SetIndexBorderColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetBorderColor(Value);
+	}
+	
+	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
+	
 	inline int AddIndex()
 	{
 		int Id = m_Index.size();
@@ -276,6 +352,7 @@ public:
 		{
 			m_Index[i].AssetPathOperation(Operation);
 		}
+		Operation.Apply(m_ImagePath);
 	}
 	
 };
@@ -288,5 +365,7 @@ template<> const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& 
 template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
 template<> vec4 CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
 template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
 
 #endif

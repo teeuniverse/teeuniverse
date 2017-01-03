@@ -88,14 +88,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 		case MAPFORMAT_TW:
 			Load_UnivTeeWorlds();
 			break;
-		case MAPFORMAT_INFCLASS:
-			Load_UnivTeeWorlds();
-			Load_UnivInfClass();
-			break;
-		case MAPFORMAT_OPENFNG:
-			Load_UnivTeeWorlds();
-			Load_UnivOpenFNG();
-			break;
 	}
 	
 	char aBuf[128];
@@ -341,32 +333,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			if(pGItem->m_Version < 1 || pGItem->m_Version > tw07::CMapItemGroup::CURRENT_VERSION)
 				continue;
 
-			CAssetPath MapGroupPath;
-			CAsset_MapGroup* pMapGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
-
-			if(Background)
-			{
-				CSubPath MapSubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
-				pMap->SetBgGroup(MapSubPath, MapGroupPath);
-			}
-			else
-			{
-				CSubPath MapSubPath = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
-				pMap->SetFgGroup(MapSubPath, MapGroupPath);
-			}
-			pMapGroup->SetParentPath(MapPath);
-			
-			//Don't forget to add parameters when the game group is splitted
-			pMapGroup->SetPosition(vec2(pGItem->m_OffsetX, pGItem->m_OffsetY));
-			pMapGroup->SetHardParallax(vec2(pGItem->m_ParallaxX/100.0f, pGItem->m_ParallaxY/100.0f));
-
-			if(pGItem->m_Version >= 2)
-			{
-				pMapGroup->SetClipping(pGItem->m_UseClipping);
-				pMapGroup->SetClipPosition(vec2(pGItem->m_ClipX, pGItem->m_ClipY));
-				pMapGroup->SetClipSize(vec2(pGItem->m_ClipW, pGItem->m_ClipH));
-			}
-
 			// load group name
 			aBuf[0] = 0;
 
@@ -374,220 +340,193 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				IntsToStr(pGItem->m_aName, sizeof(pGItem->m_aName)/sizeof(int), aBuf);
 
 			if(!aBuf[0])
-				str_format(aBuf, sizeof(aBuf), "group%d", MapGroupPath.GetId());
-
-			AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, aBuf);
-
-			for(int l = 0; l < pGItem->m_NumLayers; l++)
+				str_copy(aBuf, "group", sizeof(aBuf));
+			
+			if(str_comp("#Entities", aBuf) == 0)
 			{
-				tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
-				if(!pLayerItem)
-					continue;
-
-				if(pLayerItem->m_Type == tw07::LAYERTYPE_TILES)
+				for(int l = 0; l < pGItem->m_NumLayers; l++)
 				{
-					tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
+					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					if(!pLayerItem)
+						continue;
+					
+					if(pLayerItem->m_Type != tw07::LAYERTYPE_QUADS)
+						continue;
+					
+					tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
+					
+					//Name
+					aBuf[0] = 0;
 
-					if(pTilemapItem->m_Flags&tw07::TILESLAYERFLAG_GAME)
+					if(pQuadsItem->m_Version >= 2)
+						IntsToStr(pQuadsItem->m_aName, sizeof(pQuadsItem->m_aName)/sizeof(int), aBuf);
+
+					//Search the name in all assets
+					CAssetPath EntityTypePath;
+					for(int p=0; p<GetNumPackages(); p++)
 					{
-						Background = false;
+						if(!IsValidPackage(p))
+							continue;
+						
+						EntityTypePath = FindAsset<CAsset_EntityType>(p, aBuf);
+						if(EntityTypePath.IsNotNull())
+							break;
+					}
+					
+					if(EntityTypePath.IsNull())
+						continue;
+						
+					CAssetPath EntitiesPath;
+					CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
+					AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, aBuf);
+					CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+					pMap->SetEntityLayer(MapSubPath, EntitiesPath);
+					pEntities->SetParentPath(MapPath);
+					
+					//Quads
+					tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
+					for(int i=0; i<pQuadsItem->m_NumQuads; i++)
+					{
+						vec2 P0(fx2f(pQuads[i].m_aPoints[0].x), fx2f(pQuads[i].m_aPoints[0].y));
+						vec2 P1(fx2f(pQuads[i].m_aPoints[1].x), fx2f(pQuads[i].m_aPoints[1].y));
+						vec2 P2(fx2f(pQuads[i].m_aPoints[2].x), fx2f(pQuads[i].m_aPoints[2].y));
+						vec2 P3(fx2f(pQuads[i].m_aPoints[3].x), fx2f(pQuads[i].m_aPoints[3].y));
+						vec2 Pos = (P0+P1+P2+P3)/4.0f;
+						CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+						pEntities->SetEntityTypePath(EntityPath, EntityTypePath);
+						pEntities->SetEntityPosition(EntityPath, Pos);
+					}
+				}
+			}
+			else if(str_comp("#Zones", aBuf) == 0)
+			{
+				for(int l = 0; l < pGItem->m_NumLayers; l++)
+				{
+					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					if(!pLayerItem)
+						continue;
+					
+					if(pLayerItem->m_Type == tw07::LAYERTYPE_TILES)
+					{
+						tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
 							
+						//Name
+						aBuf[0] = 0;
+
+						if(pTilemapItem->m_Version >= 3)
+							IntsToStr(pTilemapItem->m_aName, sizeof(pTilemapItem->m_aName)/sizeof(int), aBuf);
+
+						//Search the name in all assets
+						CAssetPath ZoneTypePath;
+						for(int p=0; p<GetNumPackages(); p++)
+						{
+							if(!IsValidPackage(p))
+								continue;
+							
+							ZoneTypePath = FindAsset<CAsset_ZoneType>(p, aBuf);
+							if(ZoneTypePath.IsNotNull())
+								break;
+						}
+						
+						CAssetPath ZonePath;
+						CAsset_MapZoneTiles* pZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ZonePath, PackageId);
+						AssetsManager()->TryChangeAssetName_Hard(ZonePath, aBuf);
+						CSubPath MapSubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
+						pMap->SetZoneLayer(MapSubPath, ZonePath);
+						pZone->SetParentPath(MapPath);
+						pZone->SetZoneTypePath(ZoneTypePath);
+						
 						//Tiles
 						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 						int Width = pTilemapItem->m_Width;
 						int Height = pTilemapItem->m_Height;
 						
-						CAssetPath PhysicsZonePath;
-						CAsset_MapZoneTiles* pPhysicsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
-						AssetsManager()->TryChangeAssetName_Hard(PhysicsZonePath, "Physics");
-						pPhysicsZone->SetParentPath(MapPath);
-						
-						if(Format == MAPFORMAT_INFCLASS)
-							pPhysicsZone->SetZoneTypePath(m_Path_ZoneType_InfClassPhysics);
-						else
-							pPhysicsZone->SetZoneTypePath(m_Path_ZoneType_TWPhysics);
-						
-						{
-							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pPhysicsZone->GetTileArray();
-							Data.resize(Width, Height);
-							
-							CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-							pMap->SetZoneLayer(ZoneLayer, PhysicsZonePath);
-						}
-						
-						CAsset_MapEntities* pEntities = NULL;
-						if(Format != MAPFORMAT_INFCLASS)
-						{
-							CAssetPath EntitiesPath;
-							pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-							AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Entities");
-							pEntities->SetParentPath(MapPath);
-					
-							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
-							pMap->SetEntityLayer(MapSubPath, EntitiesPath);	
-						}			
+						array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pZone->GetTileArray();
+						Data.resize(Width, Height);
 						
 						for(int j=0; j<Height; j++)
 						{
 							for(int i=0; i<Width; i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								
-								if(Format == MAPFORMAT_INFCLASS)
-								{
-									switch(pTiles[j*Width+i].m_Index)
-									{
-										case 1:
-											pPhysicsZone->SetTileIndex(TilePath, 1);
-											break;
-										case 3:
-											pPhysicsZone->SetTileIndex(TilePath, 2);
-											break;
-										case 4:
-											pPhysicsZone->SetTileIndex(TilePath, 3);
-											break;
-										default:
-											pPhysicsZone->SetTileIndex(TilePath, 0);
-											break;
-									}
-								}
-								else
-								{
-									switch(pTiles[j*Width+i].m_Index)
-									{
-										case tw07::TILE_SOLID:
-											pPhysicsZone->SetTileIndex(TilePath, 1);
-											break;
-										case tw07::TILE_DEATH:
-											pPhysicsZone->SetTileIndex(TilePath, 2);
-											break;
-										case tw07::TILE_NOHOOK:
-											pPhysicsZone->SetTileIndex(TilePath, 3);
-											break;
-										default:
-											pPhysicsZone->SetTileIndex(TilePath, 0);
-											break;
-									}
-								}
-								
-								if(pEntities)
-								{
-									switch(pTiles[j*Width+i].m_Index)
-									{
-										case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-									}
-								}
-								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								for(int s=0; s<Skip; s++)
-								{
-									pPhysicsZone->SetTileIndex(TilePath, 0);
-									i++;
-									
-									TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								}
+								pZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
 							}
-						}
-						
-						if(Format == MAPFORMAT_OPENFNG)
+						}						
+					}
+				}					
+			}
+			else
+			{
+				CAssetPath MapGroupPath;
+				CAsset_MapGroup* pMapGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
+
+				if(Background)
+				{
+					CSubPath MapSubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
+					pMap->SetBgGroup(MapSubPath, MapGroupPath);
+				}
+				else
+				{
+					CSubPath MapSubPath = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
+					pMap->SetFgGroup(MapSubPath, MapGroupPath);
+				}
+				pMapGroup->SetParentPath(MapPath);
+				
+				//Don't forget to add parameters when the game group is splitted
+				pMapGroup->SetPosition(vec2(pGItem->m_OffsetX, pGItem->m_OffsetY));
+				pMapGroup->SetHardParallax(vec2(pGItem->m_ParallaxX/100.0f, pGItem->m_ParallaxY/100.0f));
+
+				if(pGItem->m_Version >= 2)
+				{
+					pMapGroup->SetClipping(pGItem->m_UseClipping);
+					pMapGroup->SetClipPosition(vec2(pGItem->m_ClipX, pGItem->m_ClipY));
+					pMapGroup->SetClipSize(vec2(pGItem->m_ClipW, pGItem->m_ClipH));
+				}
+				
+				AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, aBuf);
+
+				for(int l = 0; l < pGItem->m_NumLayers; l++)
+				{
+					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					if(!pLayerItem)
+						continue;
+
+					if(pLayerItem->m_Type == tw07::LAYERTYPE_TILES)
+					{
+						tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
+
+						if(pTilemapItem->m_Flags&tw07::TILESLAYERFLAG_GAME)
 						{
-							CAssetPath ShrineZonePath;
-							CAsset_MapZoneTiles* pShrineZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ShrineZonePath, PackageId);
-							AssetsManager()->TryChangeAssetName_Hard(ShrineZonePath, "Shrines");
-							pShrineZone->SetZoneTypePath(m_Path_ZoneType_OpenFNGShrine);
-							pShrineZone->SetParentPath(MapPath);
+							Background = false;
+								
+							//Tiles
+							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+							int Width = pTilemapItem->m_Width;
+							int Height = pTilemapItem->m_Height;
+							
+							bool UnknownTileIndex = false;
+							
+							CAssetPath TeeWorldsZonePath;
+							CAsset_MapZoneTiles* pTeeWorldsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&TeeWorldsZonePath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(TeeWorldsZonePath, "teeworlds");
+							pTeeWorldsZone->SetParentPath(MapPath);
+							pTeeWorldsZone->SetZoneTypePath(m_Path_ZoneType_TeeWorlds);
 							
 							{
-								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pShrineZone->GetTileArray();
+								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pTeeWorldsZone->GetTileArray();
 								Data.resize(Width, Height);
 								
 								CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-								pMap->SetZoneLayer(ZoneLayer, ShrineZonePath);
+								pMap->SetZoneLayer(ZoneLayer, TeeWorldsZonePath);
 							}
 							
-							CAssetPath OpenFNGEntitiesPath;
-							CAsset_MapEntities* pOpenFNGEntities = NewAsset_Hard<CAsset_MapEntities>(&OpenFNGEntitiesPath, PackageId);
-							AssetsManager()->TryChangeAssetName_Hard(OpenFNGEntitiesPath, "ScoreDisplay");
-							pOpenFNGEntities->SetParentPath(MapPath);	
+							CAssetPath EntitiesPath;
+							CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "entities");
+							pEntities->SetParentPath(MapPath);
 					
 							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
-							pMap->SetEntityLayer(MapSubPath, OpenFNGEntitiesPath);		
+							pMap->SetEntityLayer(MapSubPath, EntitiesPath);			
 							
 							for(int j=0; j<Height; j++)
 							{
@@ -597,34 +536,118 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									
 									switch(pTiles[j*Width+i].m_Index)
 									{
-										case 8:
-											pShrineZone->SetTileIndex(TilePath, 1);
+										case tw07::TILE_SOLID:
+											pTeeWorldsZone->SetTileIndex(TilePath, 1);
 											break;
-										case 9:
-											pShrineZone->SetTileIndex(TilePath, 2);
+										case tw07::TILE_DEATH:
+											pTeeWorldsZone->SetTileIndex(TilePath, 2);
 											break;
-										case 10:
-											pShrineZone->SetTileIndex(TilePath, 3);
+										case tw07::TILE_NOHOOK:
+											pTeeWorldsZone->SetTileIndex(TilePath, 3);
 											break;
-										default:
-											pShrineZone->SetTileIndex(TilePath, 0);
-											break;
-									}
-									
-									switch(pTiles[j*Width+i].m_Index)
-									{
-										case 11:
+										case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
 										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pOpenFNGEntities->AddEntity());
-											pOpenFNGEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_OpenFNGRedScore);
-											pOpenFNGEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case 12:
+										case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
 										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pOpenFNGEntities->AddEntity());
-											pOpenFNGEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_OpenFNGBlueScore);
-											pOpenFNGEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
+										{
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											
+											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
+											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+											break;
+										}
+										default:
+										{
+											UnknownTileIndex = true;
+											pTeeWorldsZone->SetTileIndex(TilePath, 0);
 											break;
 										}
 									}
@@ -632,163 +655,161 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									int Skip = pTiles[j*Width+i].m_Skip;
 									for(int s=0; s<Skip; s++)
 									{
-										pShrineZone->SetTileIndex(TilePath, 0);
+										pTeeWorldsZone->SetTileIndex(TilePath, 0);
 										i++;
 										
 										TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 									}
 								}
 							}
-						}
-						
-						//Create a new group to separate background/foreground
-						{
-							CAsset_MapGroup* pNewGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
 							
-							CSubPath FgGroup = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
-							pMap->SetFgGroup(FgGroup, MapGroupPath);
-							
-							AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, pMapGroup->GetName());
-							pNewGroup->SetPosition(pMapGroup->GetPosition());
-							pNewGroup->SetHardParallax(pMapGroup->GetHardParallax());
-							pNewGroup->SetParentPath(MapPath);
-							pMapGroup = pNewGroup;
-						}
-					}
-					else if(Format == MAPFORMAT_INFCLASS && pTilemapItem->m_Flags&(tw07::TILESLAYERFLAG_GAME << 1))
-					{
-						//Tiles
-						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
-						int Width = pTilemapItem->m_Width;
-						int Height = pTilemapItem->m_Height;
-						
-						CAssetPath EntitiesPath;
-						CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Spawn");
-						pEntities->SetParentPath(MapPath);
-					
-						CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
-						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
-						
-						for(int j=0; j<Height; j++)
-						{
-							for(int i=0; i<Width; i++)
+							if(UnknownTileIndex)
 							{
-								switch(pTiles[j*Width+i].m_Index)
+								CAssetPath UnknwonZonePath;
+								CAsset_MapZoneTiles* pUnknownZone = NewAsset_Hard<CAsset_MapZoneTiles>(&UnknwonZonePath, PackageId);
+								AssetsManager()->TryChangeAssetName_Hard(UnknwonZonePath, "unknown");
+								pUnknownZone->SetParentPath(MapPath);
+								
 								{
-									case 1:
-									{
-										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassInfectedSpawn);
-										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-										break;
-									}
-									case 2:
-									{
-										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassHumanSpawn);
-										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-										break;
-									}
+									array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pUnknownZone->GetTileArray();
+									Data.resize(Width, Height);
+									
+									CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
+									pMap->SetZoneLayer(ZoneLayer, UnknwonZonePath);
 								}
 								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								for(int s=0; s<Skip; s++)
-									i++;
-							}
-						}
-						
-						//Tiles
-						pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
-						Width = pTilemapItem->m_Width;
-						Height = pTilemapItem->m_Height;
-						
-						pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-						AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "Flags");
-						pEntities->SetParentPath(MapPath);	
-					
-						MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
-						pMap->SetEntityLayer(MapSubPath, EntitiesPath);				
-						
-						for(int j=0; j<Height; j++)
-						{
-							for(int i=0; i<Width; i++)
-							{
-								switch(pTiles[j*Width+i].m_Index)
+								for(int j=0; j<Height; j++)
 								{
-									case 4:
+									for(int i=0; i<Width; i++)
 									{
-										CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-										pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_InfClassHeroFlag);
-										pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-										break;
+										CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+										
+										switch(pTiles[j*Width+i].m_Index)
+										{
+											case tw07::TILE_SOLID:
+											case tw07::TILE_DEATH:
+											case tw07::TILE_NOHOOK:
+											case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
+											case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
+												break;
+											default:
+											{
+												pUnknownZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												break;
+											}
+										}
+										
+										int Skip = pTiles[j*Width+i].m_Skip;
+										for(int s=0; s<Skip; s++)
+										{
+											pUnknownZone->SetTileIndex(TilePath, 0);
+											i++;
+											
+											TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+										}
 									}
 								}
+							}
+							
+							//Create a new group to separate background/foreground
+							{
+								CAsset_MapGroup* pNewGroup = NewAsset_Hard<CAsset_MapGroup>(&MapGroupPath, PackageId);
 								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								for(int s=0; s<Skip; s++)
-									i++;
+								CSubPath FgGroup = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
+								pMap->SetFgGroup(FgGroup, MapGroupPath);
+								
+								AssetsManager()->TryChangeAssetName_Hard(MapGroupPath, pMapGroup->GetName());
+								pNewGroup->SetPosition(pMapGroup->GetPosition());
+								pNewGroup->SetHardParallax(pMapGroup->GetHardParallax());
+								pNewGroup->SetParentPath(MapPath);
+								pMapGroup = pNewGroup;
 							}
 						}
-					}
-					else if(Format == MAPFORMAT_INFCLASS && pTilemapItem->m_Flags&(tw07::TILESLAYERFLAG_GAME << 2))
-					{
-						//Tiles
-						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
-						int Width = pTilemapItem->m_Width;
-						int Height = pTilemapItem->m_Height;
-						
-						CAssetPath PhysicsZonePath;
-						CAsset_MapZoneTiles* pInfClassZone = NewAsset_Hard<CAsset_MapZoneTiles>(&PhysicsZonePath, PackageId);
-						AssetsManager()->TryChangeAssetName_Hard(PhysicsZonePath, "Zones");
-						pInfClassZone->SetZoneTypePath(m_Path_ZoneType_InfClassZones);
-						pInfClassZone->SetParentPath(MapPath);
-						
+						else
 						{
-							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pInfClassZone->GetTileArray();
+							CAssetPath MapLayerPath;
+							CAsset_MapLayerTiles* pMapLayer = NewAsset_Hard<CAsset_MapLayerTiles>(&MapLayerPath, PackageId);
+							
+							CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
+							pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
+							pMapLayer->SetParentPath(MapGroupPath);
+							
+							//Name
+							aBuf[0] = 0;
+							
+							if(pTilemapItem->m_Version >= 3)
+								IntsToStr(pTilemapItem->m_aName, sizeof(pTilemapItem->m_aName)/sizeof(int), aBuf);
+							
+							if(!aBuf[0])
+								str_format(aBuf, sizeof(aBuf), "tilelayer%d", MapLayerPath.GetId());
+							
+							AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
+											
+							//Tiles
+							int Width = pTilemapItem->m_Width;
+							int Height = pTilemapItem->m_Height;
+							
+							array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Data = pMapLayer->GetTileArray();
 							Data.resize(Width, Height);
 							
-							CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-							pMap->SetZoneLayer(ZoneLayer, PhysicsZonePath);
-						}
+							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 							
-						for(int j=0; j<Height; j++)
-						{
-							for(int i=0; i<Width; i++)
+							for(int j=0; j<Height; j++)
 							{
-								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								
-								switch(pTiles[j*Width+i].m_Index)
+								for(int i=0; i<Width; i++)
 								{
-									case 1:
-										pInfClassZone->SetTileIndex(TilePath, 1);
-										break;
-									case 2:
-										pInfClassZone->SetTileIndex(TilePath, 2);
-										break;
-									case 3:
-										pInfClassZone->SetTileIndex(TilePath, 3);
-										break;
-									default:
-										pInfClassZone->SetTileIndex(TilePath, 0);
-										break;
-								}
-								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								for(int s=0; s<Skip; s++)
-								{
-									pInfClassZone->SetTileIndex(TilePath, 0);
-									i++;
+									CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
 									
-									TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									int Skip = pTiles[j*Width+i].m_Skip;
+									pMapLayer->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+									pMapLayer->SetTileFlags(TilePath, pTiles[j*Width+i].m_Flags);
+									
+									for(int s=0; s<Skip; s++)
+									{
+										pMapLayer->SetTileIndex(TilePath, 0);
+										pMapLayer->SetTileFlags(TilePath, 0);
+										i++;
+										
+										TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
+									}
 								}
 							}
+							
+							//Image
+							if(pTilemapItem->m_Image >= 0)
+							{
+								pMapLayer->SetImagePath(pImagePath[pTilemapItem->m_Image]);
+								
+								SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDWIDTH, 16);
+								SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDHEIGHT, 16);
+								SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDSPACING, 1);
+								SetAssetValue_Hard<bool>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::TILINGENABLED, true);
+							}
+							
+							//Color
+							vec4 Color;
+							Color.r = static_cast<float>(pTilemapItem->m_Color.r)/255.0f;
+							Color.g = static_cast<float>(pTilemapItem->m_Color.g)/255.0f;
+							Color.b = static_cast<float>(pTilemapItem->m_Color.b)/255.0f;
+							Color.a = static_cast<float>(pTilemapItem->m_Color.a)/255.0f;
+							pMapLayer->SetColor(Color);
 						}
 					}
-					else
+					else if(pLayerItem->m_Type == tw07::LAYERTYPE_QUADS)
 					{
+						tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
+
 						CAssetPath MapLayerPath;
-						CAsset_MapLayerTiles* pMapLayer = NewAsset_Hard<CAsset_MapLayerTiles>(&MapLayerPath, PackageId);
+						CAsset_MapLayerQuads* pMapLayer = NewAsset_Hard<CAsset_MapLayerQuads>(&MapLayerPath, PackageId);
 						
 						CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 						pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
@@ -796,117 +817,46 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						
 						//Name
 						aBuf[0] = 0;
-						
-						if(pTilemapItem->m_Version >= 3)
-							IntsToStr(pTilemapItem->m_aName, sizeof(pTilemapItem->m_aName)/sizeof(int), aBuf);
-						
+
+						if(pQuadsItem->m_Version >= 2)
+							IntsToStr(pQuadsItem->m_aName, sizeof(pQuadsItem->m_aName)/sizeof(int), aBuf);
+
 						if(!aBuf[0])
-							str_format(aBuf, sizeof(aBuf), "tilelayer%d", MapLayerPath.GetId());
-						
+							str_format(aBuf, sizeof(aBuf), "quadlayer%d", MapLayerPath.GetId());
+
 						AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
-										
-						//Tiles
-						int Width = pTilemapItem->m_Width;
-						int Height = pTilemapItem->m_Height;
 						
-						array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Data = pMapLayer->GetTileArray();
-						Data.resize(Width, Height);
-						
-						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
-						
-						for(int j=0; j<Height; j++)
+						//Quads
+						tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
+						for(int i=0; i<pQuadsItem->m_NumQuads; i++)
 						{
-							for(int i=0; i<Width; i++)
-							{
-								CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
-								
-								int Skip = pTiles[j*Width+i].m_Skip;
-								pMapLayer->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-								pMapLayer->SetTileFlags(TilePath, pTiles[j*Width+i].m_Flags);
-								
-								for(int s=0; s<Skip; s++)
-								{
-									pMapLayer->SetTileIndex(TilePath, 0);
-									pMapLayer->SetTileFlags(TilePath, 0);
-									i++;
-									
-									TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
-								}
-							}
+							CSubPath QuadPath = CAsset_MapLayerQuads::SubPath_Quad(pMapLayer->AddQuad());
+							
+							vec2 Pivot;
+							Pivot.x = fx2f(pQuads[i].m_aPoints[4].x);
+							Pivot.y = fx2f(pQuads[i].m_aPoints[4].y);
+							pMapLayer->SetQuadPivot(QuadPath, Pivot);
+							
+							pMapLayer->SetQuadVertex0(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[0].x), fx2f(pQuads[i].m_aPoints[0].y)) - Pivot);
+							pMapLayer->SetQuadVertex1(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[1].x), fx2f(pQuads[i].m_aPoints[1].y)) - Pivot);
+							pMapLayer->SetQuadVertex2(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[2].x), fx2f(pQuads[i].m_aPoints[2].y)) - Pivot);
+							pMapLayer->SetQuadVertex3(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[3].x), fx2f(pQuads[i].m_aPoints[3].y)) - Pivot);
+							
+							pMapLayer->SetQuadUV0(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[0].x), fx2f(pQuads[i].m_aTexcoords[0].y)));
+							pMapLayer->SetQuadUV1(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[1].x), fx2f(pQuads[i].m_aTexcoords[1].y)));
+							pMapLayer->SetQuadUV2(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[2].x), fx2f(pQuads[i].m_aTexcoords[2].y)));
+							pMapLayer->SetQuadUV3(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[3].x), fx2f(pQuads[i].m_aTexcoords[3].y)));
+							
+							pMapLayer->SetQuadColor0(QuadPath, IntsToColor(pQuads[i].m_aColors[0].r, pQuads[i].m_aColors[0].g, pQuads[i].m_aColors[0].b, pQuads[i].m_aColors[0].a));
+							pMapLayer->SetQuadColor1(QuadPath, IntsToColor(pQuads[i].m_aColors[1].r, pQuads[i].m_aColors[1].g, pQuads[i].m_aColors[1].b, pQuads[i].m_aColors[1].a));
+							pMapLayer->SetQuadColor2(QuadPath, IntsToColor(pQuads[i].m_aColors[2].r, pQuads[i].m_aColors[2].g, pQuads[i].m_aColors[2].b, pQuads[i].m_aColors[2].a));
+							pMapLayer->SetQuadColor3(QuadPath, IntsToColor(pQuads[i].m_aColors[3].r, pQuads[i].m_aColors[3].g, pQuads[i].m_aColors[3].b, pQuads[i].m_aColors[3].a));
 						}
 						
 						//Image
-						if(pTilemapItem->m_Image >= 0)
-						{
-							pMapLayer->SetImagePath(pImagePath[pTilemapItem->m_Image]);
-							
-							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDWIDTH, 16);
-							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDHEIGHT, 16);
-							SetAssetValue_Hard<int>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::GRIDSPACING, 1);
-							SetAssetValue_Hard<bool>(pImagePath[pTilemapItem->m_Image], CSubPath::Null(), CAsset_Image::TILINGENABLED, true);
-						}
-						
-						//Color
-						vec4 Color;
-						Color.r = static_cast<float>(pTilemapItem->m_Color.r)/255.0f;
-						Color.g = static_cast<float>(pTilemapItem->m_Color.g)/255.0f;
-						Color.b = static_cast<float>(pTilemapItem->m_Color.b)/255.0f;
-						Color.a = static_cast<float>(pTilemapItem->m_Color.a)/255.0f;
-						pMapLayer->SetColor(Color);
+						if(pQuadsItem->m_Image >= 0)
+							pMapLayer->SetImagePath(pImagePath[pQuadsItem->m_Image]);
 					}
-				}
-				else if(pLayerItem->m_Type == tw07::LAYERTYPE_QUADS)
-				{
-					tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
-
-					CAssetPath MapLayerPath;
-					CAsset_MapLayerQuads* pMapLayer = NewAsset_Hard<CAsset_MapLayerQuads>(&MapLayerPath, PackageId);
-					
-					CSubPath MapGroupSubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
-					pMapGroup->SetLayer(MapGroupSubPath, MapLayerPath);
-					pMapLayer->SetParentPath(MapGroupPath);
-					
-					//Name
-					aBuf[0] = 0;
-
-					if(pQuadsItem->m_Version >= 2)
-						IntsToStr(pQuadsItem->m_aName, sizeof(pQuadsItem->m_aName)/sizeof(int), aBuf);
-
-					if(!aBuf[0])
-						str_format(aBuf, sizeof(aBuf), "quadlayer%d", MapLayerPath.GetId());
-
-					AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
-					
-					//Quads
-					tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
-					for(int i=0; i<pQuadsItem->m_NumQuads; i++)
-					{
-						CSubPath QuadPath = CAsset_MapLayerQuads::SubPath_Quad(pMapLayer->AddQuad());
-						
-						vec2 Pivot;
-						Pivot.x = fx2f(pQuads[i].m_aPoints[4].x);
-						Pivot.y = fx2f(pQuads[i].m_aPoints[4].y);
-						pMapLayer->SetQuadPivot(QuadPath, Pivot);
-						
-						pMapLayer->SetQuadVertex0(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[0].x), fx2f(pQuads[i].m_aPoints[0].y)) - Pivot);
-						pMapLayer->SetQuadVertex1(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[1].x), fx2f(pQuads[i].m_aPoints[1].y)) - Pivot);
-						pMapLayer->SetQuadVertex2(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[2].x), fx2f(pQuads[i].m_aPoints[2].y)) - Pivot);
-						pMapLayer->SetQuadVertex3(QuadPath, vec2(fx2f(pQuads[i].m_aPoints[3].x), fx2f(pQuads[i].m_aPoints[3].y)) - Pivot);
-						
-						pMapLayer->SetQuadUV0(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[0].x), fx2f(pQuads[i].m_aTexcoords[0].y)));
-						pMapLayer->SetQuadUV1(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[1].x), fx2f(pQuads[i].m_aTexcoords[1].y)));
-						pMapLayer->SetQuadUV2(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[2].x), fx2f(pQuads[i].m_aTexcoords[2].y)));
-						pMapLayer->SetQuadUV3(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[3].x), fx2f(pQuads[i].m_aTexcoords[3].y)));
-						
-						pMapLayer->SetQuadColor0(QuadPath, IntsToColor(pQuads[i].m_aColors[0].r, pQuads[i].m_aColors[0].g, pQuads[i].m_aColors[0].b, pQuads[i].m_aColors[0].a));
-						pMapLayer->SetQuadColor1(QuadPath, IntsToColor(pQuads[i].m_aColors[1].r, pQuads[i].m_aColors[1].g, pQuads[i].m_aColors[1].b, pQuads[i].m_aColors[1].a));
-						pMapLayer->SetQuadColor2(QuadPath, IntsToColor(pQuads[i].m_aColors[2].r, pQuads[i].m_aColors[2].g, pQuads[i].m_aColors[2].b, pQuads[i].m_aColors[2].a));
-						pMapLayer->SetQuadColor3(QuadPath, IntsToColor(pQuads[i].m_aColors[3].r, pQuads[i].m_aColors[3].g, pQuads[i].m_aColors[3].b, pQuads[i].m_aColors[3].a));
-					}
-					
-					//Image
-					if(pQuadsItem->m_Image >= 0)
-						pMapLayer->SetImagePath(pImagePath[pQuadsItem->m_Image]);
 				}
 			}
 		}
@@ -1255,7 +1205,10 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		return false;
 	}
 	
+	Load_UnivTeeWorlds();
+	
 	array<CAssetPath> Images;
+	bool ZoneGroupNeeded = false;
 	
 	//Map version
 	tw07::CMapItemVersion VerItem;
@@ -1265,15 +1218,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	//Map info
 	tw07::CMapItemInfo InfoItem;
 	InfoItem.m_Version = 1;
-	InfoItem.m_MapVersion = -1;
-	InfoItem.m_Author = ArchiveFile.AddData(str_length("TeeUniverse editor")+1, (char*) "TeeUniverse editor");
-	InfoItem.m_Credits = -1;
-	InfoItem.m_License = -1;
+	InfoItem.m_MapVersion = ArchiveFile.AddData(str_length(GetPackageVersion(PackageId))+1, (char*) GetPackageVersion(PackageId));
+	InfoItem.m_Author = ArchiveFile.AddData(str_length(GetPackageAuthor(PackageId))+1, (char*) GetPackageAuthor(PackageId));
+	InfoItem.m_Credits = ArchiveFile.AddData(str_length(GetPackageCredits(PackageId))+1, (char*) GetPackageCredits(PackageId));
+	InfoItem.m_License = ArchiveFile.AddData(str_length(GetPackageLicense(PackageId))+1, (char*) GetPackageLicense(PackageId));
 	ArchiveFile.AddItem(tw07::MAPITEMTYPE_INFO, 0, sizeof(tw07::CMapItemInfo), &InfoItem);
 	
 	int GroupId = 0;
 	int LayerId = 0;
 	
+	//Step1: Save background layers
 	{
 		CAsset_Map::CIteratorBgGroup Iter;
 		for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
@@ -1282,15 +1236,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 	}
 	
-	//Zones
-	if(Format == MAPFORMAT_INFCLASS)
+	//Step2: Save the game layer
 	{
-		Load_UnivInfClass();
-		Load_UnivTeeWorlds();
-		
 		int StartLayer = LayerId;
 		
-		//Get layer size
+		//Get game layer size
 		int Width = 0;
 		int Height = 0;
 		
@@ -1299,286 +1249,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
 			{
 				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-				if(!pZone)
-					continue;
-				
-				Width = max(pZone->GetTileWidth(), Width);
-				Height = max(pZone->GetTileHeight(), Height);
-			}
-		}
-		
-		tw07::CTile* pTiles = new tw07::CTile[Width*Height];
-		tw07::CMapItemLayerTilemap LItem;
-		CAsset_Map::CIteratorZoneLayer ZoneIter;
-		
-		//Physics
-		for(int j=0; j<Height; j++)
-		{
-			for(int i=0; i<Width; i++)
-			{
-				pTiles[j*Width+i].m_Index = 0;
-				pTiles[j*Width+i].m_Flags = 0;
-				pTiles[j*Width+i].m_Skip = 0;
-				pTiles[j*Width+i].m_Reserved = 0;
-			}
-		}
-		
-		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
-		{
-			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-			if(!pZone)
-				continue;
-			
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_InfClassPhysics)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
-						{
-							case 1:
-								pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
-								break;
-							case 2:
-								pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
-								break;
-							case 3:
-								pTiles[j*Width+i].m_Index = 2;
-								break;
-						}
-					}
-				}
-			}
-			else if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
-						{
-							case 1:
-								pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
-								break;
-							case 3:
-								pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
-								break;
-						}
-					}
-				}
-			}
-		}
-		
-		LItem.m_Version = 3;
-		LItem.m_Flags = 1;
-		LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
-		LItem.m_Layer.m_Flags = 0;
-		LItem.m_Width = Width;
-		LItem.m_Height = Height;
-		LItem.m_Color.r = 255;
-		LItem.m_Color.g = 255;
-		LItem.m_Color.b = 255;
-		LItem.m_Color.a = 255;
-		LItem.m_ColorEnv = -1;
-		LItem.m_ColorEnvOffset = 0;
-		LItem.m_Image = -1;
-		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
-		StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Physics");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
-		
-		//Death, infection, nospawn
-		for(int j=0; j<Height; j++)
-		{
-			for(int i=0; i<Width; i++)
-			{
-				pTiles[j*Width+i].m_Index = 0;
-				pTiles[j*Width+i].m_Flags = 0;
-				pTiles[j*Width+i].m_Skip = 0;
-				pTiles[j*Width+i].m_Reserved = 0;
-			}
-		}
-		
-		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
-		{
-			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-			if(!pZone)
-				continue;
-			
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						if(pZone->GetTileIndex(TilePath) == tw07::TILE_DEATH)
-							pTiles[j*Width+i].m_Index = 1;
-					}
-				}
-			}
-			else if(pZone->GetZoneTypePath() == m_Path_ZoneType_InfClassZones)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
-						{
-							case 1:
-							case 2:
-							case 3:
-								pTiles[j*Width+i].m_Index = pZone->GetTileIndex(TilePath);
-								break;
-						}
-					}
-				}
-			}
-			else if(pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNGShrine)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
-						{
-							case 8:
-							case 9:
-							case 10:
-								pTiles[j*Width+i].m_Index = 1;
-								break;
-						}
-					}
-				}
-			}
-		}
-		
-		LItem.m_Version = 3;
-		LItem.m_Flags = 4;
-		LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
-		LItem.m_Layer.m_Flags = 0;
-		LItem.m_Width = Width;
-		LItem.m_Height = Height;
-		LItem.m_Color.r = 255;
-		LItem.m_Color.g = 255;
-		LItem.m_Color.b = 255;
-		LItem.m_Color.a = 255;
-		LItem.m_ColorEnv = -1;
-		LItem.m_ColorEnvOffset = 0;
-		LItem.m_Image = -1;
-		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
-		StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Zones");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
-		
-		//Entities
-		for(int j=0; j<Height; j++)
-		{
-			for(int i=0; i<Width; i++)
-			{
-				pTiles[j*Width+i].m_Index = 0;
-				pTiles[j*Width+i].m_Flags = 0;
-				pTiles[j*Width+i].m_Skip = 0;
-				pTiles[j*Width+i].m_Reserved = 0;
-			}
-		}
-		
-		CAsset_Map::CIteratorEntityLayer EntityLayerIter;
-		for(EntityLayerIter = pMap->BeginEntityLayer(); EntityLayerIter != pMap->EndEntityLayer(); ++EntityLayerIter)
-		{
-			const CAsset_MapEntities* pEntities = GetAsset<CAsset_MapEntities>(pMap->GetEntityLayer(*EntityLayerIter));
-			if(!pEntities)
-				continue;
-			
-			for(int i=0; i<pEntities->GetEntityArraySize(); i++)
-			{
-				CSubPath SubPath = CAsset_MapEntities::SubPath_Entity(i);
-				CAssetPath EntityTypePath = pEntities->GetEntityTypePath(SubPath);
-				int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f;
-				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f;
-				
-				if(X < 0 || X >= Width || Y < 0 || Y >= Height)
-					continue;
-				if(pTiles[Y*Width+X].m_Index == tw07::TILE_SOLID || pTiles[Y*Width+X].m_Index == tw07::TILE_NOHOOK)
-					continue;
-				
-				if(EntityTypePath == m_Path_EntityType_TWSpawn)
-					pTiles[Y*Width+X].m_Index = 2;
-				else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
-					pTiles[Y*Width+X].m_Index = 1;
-				else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
-					pTiles[Y*Width+X].m_Index = 2;
-				else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
-					pTiles[Y*Width+X].m_Index = 4;
-				else if(EntityTypePath == m_Path_EntityType_InfClassHumanSpawn)
-					pTiles[Y*Width+X].m_Index = 2;
-				else if(EntityTypePath == m_Path_EntityType_InfClassInfectedSpawn)
-					pTiles[Y*Width+X].m_Index = 1;
-				else if(EntityTypePath == m_Path_EntityType_InfClassHeroFlag)
-					pTiles[Y*Width+X].m_Index = 4;
-			}
-		}
-		
-		LItem.m_Version = 3;
-		LItem.m_Flags = 2;
-		LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
-		LItem.m_Layer.m_Flags = 0;
-		LItem.m_Width = Width;
-		LItem.m_Height = Height;
-		LItem.m_Color.r = 255;
-		LItem.m_Color.g = 255;
-		LItem.m_Color.b = 255;
-		LItem.m_Color.a = 255;
-		LItem.m_ColorEnv = -1;
-		LItem.m_ColorEnvOffset = 0;
-		LItem.m_Image = -1;
-		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
-		StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Entities");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
-		
-		tw07::CMapItemGroup GItem;
-		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
-		GItem.m_OffsetX = 0;
-		GItem.m_OffsetY = 0;
-		GItem.m_ParallaxX = 100;
-		GItem.m_ParallaxY = 100;
-		GItem.m_StartLayer = StartLayer;
-		GItem.m_NumLayers = LayerId-StartLayer;
-		GItem.m_UseClipping = 0;
-		GItem.m_ClipX = 0;
-		GItem.m_ClipY = 0;
-		GItem.m_ClipW = 0;
-		GItem.m_ClipH = 0;
-		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "Game");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
-		
-		delete[] pTiles;
-	}
-	else
-	{
-		Load_UnivTeeWorlds();
-		Load_UnivOpenFNG();
-		
-		int StartLayer = LayerId;
-		
-		//Get layer size
-		int Width = 0;
-		int Height = 0;
-		
-		{
-			CAsset_Map::CIteratorZoneLayer ZoneIter;
-			for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
-			{
-				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-				if(!pZone)
+				if(!pZone || pZone->GetZoneTypePath() != m_Path_ZoneType_TeeWorlds)
 					continue;
 				
 				Width = max(pZone->GetTileWidth(), Width);
@@ -1598,7 +1269,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				pTiles[j*Width+i].m_Reserved = 0;
 			}
 		}
-		
+	
 		//Game layer
 		CAsset_Map::CIteratorZoneLayer ZoneIter;
 		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
@@ -1607,82 +1278,36 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			if(!pZone)
 				continue;
 			
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TWPhysics)
+			if(pZone->GetZoneTypePath() != m_Path_ZoneType_TeeWorlds)
 			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
-						{
-							case 1:
-								pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
-								break;
-							case 2:
-								if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-									pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
-								break;
-							case 3:
-								pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
-								break;
-						}
-					}
-				}
+				ZoneGroupNeeded = true;
+				continue;
 			}
-			else if(pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNGShrine)
+				
+			for(int j=0; j<pZone->GetTileHeight(); j++)
 			{
-				if(Format == MAPFORMAT_OPENFNG)
+				for(int i=0; i<pZone->GetTileWidth(); i++)
 				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
+					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+					
+					switch(pZone->GetTileIndex(TilePath))
 					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							
-							switch(pZone->GetTileIndex(TilePath))
-							{
-								case 1:
-									if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-										pTiles[j*Width+i].m_Index = 8;
-									break;
-								case 2:
-									if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-										pTiles[j*Width+i].m_Index = 9;
-									break;
-								case 3:
-									if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-										pTiles[j*Width+i].m_Index = 10;
-									break;
-									
-							}
-						}
-					}
-				}
-				else
-				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
-					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							
-							switch(pZone->GetTileIndex(TilePath))
-							{
-								case 1:
-								case 2:
-								case 3:
-									if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-										pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
-									break;
-							}
-						}
+						case 1:
+							pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
+							break;
+						case 2:
+							if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
+								pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
+							break;
+						case 3:
+							pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
+							break;
 					}
 				}
 			}
 		}
-		
+	
+		//TeeWorlds entities
 		CAsset_Map::CIteratorEntityLayer EntityLayerIter;
 		for(EntityLayerIter = pMap->BeginEntityLayer(); EntityLayerIter != pMap->EndEntityLayer(); ++EntityLayerIter)
 		{
@@ -1724,16 +1349,9 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_BLUE;
 				else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
 					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_RED;
-				else if(Format == MAPFORMAT_OPENFNG)
-				{
-					if(EntityTypePath == m_Path_EntityType_OpenFNGRedScore)
-						pTiles[Y*Width+X].m_Index = 11;
-					else if(EntityTypePath == m_Path_EntityType_OpenFNGBlueScore)
-						pTiles[Y*Width+X].m_Index = 12;
-				}
 			}
 		}
-		
+	
 		tw07::CMapItemLayerTilemap LItem;
 		
 		LItem.m_Version = 3;
@@ -1772,6 +1390,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		delete[] pTiles;
 	}
 	
+	//Step3: Save forground layers
 	{
 		CAsset_Map::CIteratorFgGroup Iter;
 		for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
@@ -1780,7 +1399,91 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 	}
 	
-	//Images
+	//Step4: Save other zones in PTUM format
+	if(ZoneGroupNeeded)
+	{
+		int StartLayer = LayerId;
+		
+		CAsset_Map::CIteratorZoneLayer ZoneIter;
+		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+		{
+			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+			if(!pZone || pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+				continue;
+			
+			int Width = pZone->GetTileWidth();
+			int Height = pZone->GetTileHeight();
+	
+			tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+			
+			for(int j=0; j<Height; j++)
+			{
+				for(int i=0; i<Width; i++)
+				{
+					pTiles[j*Width+i].m_Index = 0;
+					pTiles[j*Width+i].m_Flags = 0;
+					pTiles[j*Width+i].m_Skip = 0;
+					pTiles[j*Width+i].m_Reserved = 0;
+				}
+			}
+			
+			for(int j=0; j<pZone->GetTileHeight(); j++)
+			{
+				for(int i=0; i<pZone->GetTileWidth(); i++)
+				{
+					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+					pTiles[j*Width+i].m_Index = pZone->GetTileIndex(TilePath);
+				}
+			}
+	
+			tw07::CMapItemLayerTilemap LItem;
+			
+			LItem.m_Version = 3;
+			LItem.m_Flags = 0;
+			LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Width = Width;
+			LItem.m_Height = Height;
+			LItem.m_Color.r = 255;
+			LItem.m_Color.g = 255;
+			LItem.m_Color.b = 255;
+			LItem.m_Color.a = 255;
+			LItem.m_ColorEnv = -1;
+			LItem.m_ColorEnvOffset = 0;
+			LItem.m_Image = -1;
+			LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+			
+			{
+				const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
+				if(pZoneName)
+					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pZoneName);
+				else
+					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
+			}
+			
+			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+			
+			delete[] pTiles;
+		}
+			
+		tw07::CMapItemGroup GItem;
+		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		GItem.m_OffsetX = 0;
+		GItem.m_OffsetY = 0;
+		GItem.m_ParallaxX = 100;
+		GItem.m_ParallaxY = 100;
+		GItem.m_StartLayer = StartLayer;
+		GItem.m_NumLayers = LayerId-StartLayer;
+		GItem.m_UseClipping = 1;
+		GItem.m_ClipX = 0;
+		GItem.m_ClipY = 0;
+		GItem.m_ClipW = 0;
+		GItem.m_ClipH = 0;
+		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "#Zones");
+		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+	}
+	
+	//Step5: Save images
 	{
 		for(int i=0; i<Images.size(); i++)
 		{

@@ -1082,6 +1082,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	AddTab(pTab, _LSTRING("Zone Type"), AssetsEditor()->m_Path_Sprite_IconZoneType);
 	
 	AddField_AssetProperties(pTab);
+	AddField_ImageTiles(pTab, CAsset_ZoneType::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
 	
 	pTab->Add(new CSubItemList_ZoneTypeIndices(AssetsEditor()), true);
 	
@@ -1090,7 +1091,9 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	
 	AddField_Bool(pEditor, CAsset_ZoneType::INDEX_USED, _LSTRING("Is used"));
 	AddField_Text(pEditor, CAsset_ZoneType::INDEX_DESCRIPTION, _LSTRING("Description"));
-	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _LSTRING("Color"));
+	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _LSTRING("Background Color"));
+	AddField_Color(pEditor, CAsset_ZoneType::INDEX_BORDERCOLOR, _LSTRING("Border Color"));
+	AddField_Integer(pEditor, CAsset_ZoneType::INDEX_BORDERINDEX, _LSTRING("Border Index"));
 	
 	return pTab;
 }

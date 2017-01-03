@@ -37,6 +37,8 @@ CAsset_ZoneType::CIndex::CIndex()
 {
 	m_Used = true;
 	m_Color = 1.0f;
+	m_BorderIndex = 0;
+	m_BorderColor = 1.0f;
 }
 
 
@@ -93,6 +95,9 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoad
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
 	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
+	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
+	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
 }
 
 
@@ -110,6 +115,7 @@ void CAsset_ZoneType::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 		}
 	}
 	
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 }
 
 
@@ -118,6 +124,9 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoa
 	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
 	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+	TuaType.m_BorderIndex = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_BorderIndex);
+	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
 }
 
 void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_0& TuaType)
@@ -134,6 +143,7 @@ void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_0)*SysType.m_Index.size());
 		delete[] pData;
 	}
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 }
 
 template<>
@@ -143,6 +153,8 @@ int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int Defaul
 	{
 		case INDEX_ARRAYSIZE:
 			return GetIndexArraySize();
+		case INDEX_BORDERINDEX:
+			return GetIndexBorderIndex(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -154,6 +166,9 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value
 	{
 		case INDEX_ARRAYSIZE:
 			SetIndexArraySize(Value);
+			return true;
+		case INDEX_BORDERINDEX:
+			SetIndexBorderIndex(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
@@ -189,6 +204,8 @@ const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, co
 	{
 		case INDEX_DESCRIPTION:
 			return GetIndexDescription(SubPath);
+		case INDEX_TITLE:
+			return GetIndexTitle(SubPath);
 	}
 	return CAsset::GetValue<const char*>(ValueType, SubPath, DefaultValue);
 }
@@ -201,6 +218,9 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const cha
 		case INDEX_DESCRIPTION:
 			SetIndexDescription(SubPath, Value);
 			return true;
+		case INDEX_TITLE:
+			SetIndexTitle(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<const char*>(ValueType, SubPath, Value);
 }
@@ -212,6 +232,8 @@ vec4 CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, vec4 Defa
 	{
 		case INDEX_COLOR:
 			return GetIndexColor(SubPath);
+		case INDEX_BORDERCOLOR:
+			return GetIndexBorderColor(SubPath);
 	}
 	return CAsset::GetValue<vec4>(ValueType, SubPath, DefaultValue);
 }
@@ -224,8 +246,34 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, vec4 Valu
 		case INDEX_COLOR:
 			SetIndexColor(SubPath, Value);
 			return true;
+		case INDEX_BORDERCOLOR:
+			SetIndexBorderColor(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<vec4>(ValueType, SubPath, Value);
+}
+
+template<>
+CAssetPath CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case IMAGEPATH:
+			return GetImagePath();
+	}
+	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value)
+{
+	switch(ValueType)
+	{
+		case IMAGEPATH:
+			SetImagePath(Value);
+			return true;
+	}
+	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
 
 int CAsset_ZoneType::AddSubItem(int Type, const CSubPath& SubPath)

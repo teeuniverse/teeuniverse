@@ -309,7 +309,7 @@ void CViewMap::RenderView()
 	if(m_ZoneOpacity < 0.5f)
 		Color.a = 2.0f*m_ZoneOpacity;
 	
-	MapRenderer()->RenderMap_Zones(MapPath, AssetsEditor()->m_Path_Image_ZoneTexture, Color);
+	MapRenderer()->RenderMap_Zones(MapPath, Color);
 	
 	//Draw grid
 	if(m_ShowGrid)

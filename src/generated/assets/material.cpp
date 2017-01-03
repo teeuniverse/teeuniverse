@@ -40,7 +40,7 @@ CAsset_Material::CSprite::CSprite()
 	m_Flags = 0x0;
 	m_Position = 0.0f;
 	m_Alignment = SPRITEALIGN_LINE;
-	m_Filling = SPRITEFILLING_STRETCHING;
+	m_Filling = SPRITEFILLING_SCALING;
 	m_TileType = SPRITETILE_LINE;
 	m_TileLabel0 = 0;
 	m_TileLabel1 = 0;

@@ -361,8 +361,6 @@ public:
 	{
 		FORMAT_PACKAGE=0,
 		FORMAT_MAP_TW,
-		FORMAT_MAP_INFCLASS,
-		FORMAT_MAP_OPENFNG,
 		FORMAT_IMAGE,
 	};
 	
@@ -425,8 +423,6 @@ protected:
 					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconImage);
 					break;
 				case FORMAT_MAP_TW:
-				case FORMAT_MAP_INFCLASS:
-				case FORMAT_MAP_OPENFNG:
 					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
 					break;
 				default:
@@ -554,18 +550,6 @@ public:
 				else
 					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import TeeWorlds Map")), false);
 				break;
-			case FORMAT_MAP_INFCLASS:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export InfClass Map")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import InfClass Map")), false);
-				break;
-			case FORMAT_MAP_OPENFNG:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export OpenFNG Map")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import OpenFNG Map")), false);
-				break;
 			default:
 				if(m_Save)
 					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Save Package")), false);
@@ -670,12 +654,6 @@ public:
 			case FORMAT_MAP_TW:
 				SelectDirectory("maps", CStorage::TYPE_SAVE);
 				break;
-			case FORMAT_MAP_INFCLASS:
-				SelectDirectory("maps", CStorage::TYPE_SAVE);
-				break;
-			case FORMAT_MAP_OPENFNG:
-				SelectDirectory("maps", CStorage::TYPE_SAVE);
-				break;
 			default:
 				SelectDirectory("assets", CStorage::TYPE_SAVE);
 				break;
@@ -745,8 +723,6 @@ public:
 						}
 						break;
 					case FORMAT_MAP_TW:
-					case FORMAT_MAP_INFCLASS:
-					case FORMAT_MAP_OPENFNG:
 						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
 						{
 							Found = true;
@@ -842,30 +818,6 @@ public:
 				}
 				break;
 			}
-			case FORMAT_MAP_INFCLASS:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_INFCLASS))
-				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
-				}
-				break;
-			}
-			case FORMAT_MAP_OPENFNG:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_OPENFNG))
-				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
-				}
-				break;
-			}
 		}
 			
 		m_pAssetsEditor->RefreshPackageTree();
@@ -921,50 +873,6 @@ public:
 					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
 						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
 					
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
-					m_pAssetsEditor->RefreshAssetsTree();
-				}
-				break;
-			}
-			case FORMAT_MAP_INFCLASS:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_INFCLASS);
-				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
-				else
-				{
-					m_pAssetsEditor->SetEditedPackage(PackageId);
-					
-					//Search for maps
-					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
-						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
-					
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
-					m_pAssetsEditor->RefreshAssetsTree();
-				}
-				break;
-			}
-			case FORMAT_MAP_OPENFNG:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_OPENFNG);
-				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
-				else
-				{
-					m_pAssetsEditor->SetEditedPackage(PackageId);
-					
-					//Search for maps
-					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
-						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
-						
 					AssetsManager()->SetPackageReadOnly(PackageId, false);
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
@@ -1127,12 +1035,6 @@ public:
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetText(_LSTRING("Import TeeWorlds Map"));
 				break;
-			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
-				SetText(_LSTRING("Import InfClass Map"));
-				break;
-			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText(_LSTRING("Import OpenFNG Map"));
-				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
@@ -1177,12 +1079,6 @@ public:
 		{
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetText(_LSTRING("Export TeeWorlds Map"));
-				break;
-			case COpenSavePackageDialog::FORMAT_MAP_INFCLASS:
-				SetText(_LSTRING("Export InfClass Map"));
-				break;
-			case COpenSavePackageDialog::FORMAT_MAP_OPENFNG:
-				SetText(_LSTRING("Export OpenFNG Map"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -1311,7 +1207,7 @@ protected:
 				
 				//Zone, Physics
 				pMapZoneTiles = AssetsManager()->NewAsset<CAsset_MapZoneTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "physics", Tokken);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "teeworlds", Tokken);
 				SubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
 				pMap->SetZoneLayer(SubPath, SubAssetPath);
 				
@@ -1319,7 +1215,7 @@ protected:
 					array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pMapZoneTiles->GetTileArray();
 					Data.resize(64, 64);
 					
-					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TWPhysics);
+					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TeeWorlds);
 					pMapZoneTiles->SetParentPath(AssetPath);
 				}
 				
@@ -1462,12 +1358,8 @@ protected:
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
-		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
-		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
-		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_INFCLASS));
-		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_OPENFNG));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CQuitButton(m_pAssetsEditor, pMenu));
 		
@@ -1680,8 +1572,6 @@ void CGuiEditor::LoadAssets()
 	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
 	if(PackageId >= 0)
 	{
-		m_Path_Image_ZoneTexture = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "zoneTexture");
-		
 		m_Path_Rect_TextSelection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "textSelection");
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");
