@@ -542,7 +542,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					if(m_GridAligned)
 					{
 						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + 16.0f;
+						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
 					}
 					
 					m_Token = AssetsManager()->GenerateToken();
@@ -590,7 +590,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					if(m_GridAligned)
 					{
 						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + 16.0f;
+						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
 					}
 					
 					m_Token = AssetsManager()->GenerateToken();
@@ -962,7 +962,7 @@ void CCursorTool_MapStamp::RenderView()
 			if(m_GridAligned)
 			{
 				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + 16.0f;
+				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);
 			}
 			
 			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
@@ -989,7 +989,7 @@ void CCursorTool_MapStamp::RenderView()
 			if(m_GridAligned)
 			{
 				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + 16.0f;
+				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);
 			}
 			
 			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
