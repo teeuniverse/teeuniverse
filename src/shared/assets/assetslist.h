@@ -101,7 +101,7 @@ public:
 		if(Path.GetType() != ASSET::TypeId)
 			return 0;
 			
-		if(Path.GetId() >= 0 && Path.GetId() < m_Assets.size())
+		if(Path.GetId() >= 0 && Path.GetId() < (uint32) m_Assets.size())
 			return &m_Assets[Path.GetId()].m_Asset;
 		else
 			return 0;
