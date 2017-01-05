@@ -40,7 +40,17 @@ public:
 };
 
 void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo);
-void GenerateMaterialQuads(const class CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, CAssetPath MaterialPath, bool Closed);
+void GenerateMaterialQuads(
+	const class CAssetsManager* pAssetsManager,
+	array<CTexturedQuad>& OutputQuads,
+	const array<CLineVertex>& Vertices,
+	const matrix2x2& Transform,
+	vec2 ObjPosition,
+	CAssetPath MaterialPath,
+	bool Closed,
+	bool ShowLine,
+	int OrthoTesselation
+);
 void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
 void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
 

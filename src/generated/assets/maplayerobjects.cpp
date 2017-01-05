@@ -49,6 +49,8 @@ CAsset_MapLayerObjects::CObject::CObject()
 	m_Size = 1.0f;
 	m_Angle = 0.0f;
 	m_ClosedPath = false;
+	m_ShowLine = true;
+	m_OrthoTesselation = 1;
 }
 
 CAsset_MapLayerObjects::CAsset_MapLayerObjects()
@@ -120,6 +122,8 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Read(CAssetsSaveLoadContex
 	}
 	
 	SysType.m_ClosedPath = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ClosedPath);
+	SysType.m_ShowLine = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowLine);
+	SysType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_OrthoTesselation);
 }
 
 
@@ -174,6 +178,8 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Write(CAssetsSaveLoadConte
 		delete[] pData;
 	}
 	TuaType.m_ClosedPath = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ClosedPath);
+	TuaType.m_ShowLine = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowLine);
+	TuaType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_OrthoTesselation);
 }
 
 void CAsset_MapLayerObjects::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_0& TuaType)
@@ -205,6 +211,8 @@ int CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, int
 			return GetObjectVertexArraySize(SubPath);
 		case OBJECT_VERTEX_SMOOTHNESS:
 			return GetObjectVertexSmoothness(SubPath);
+		case OBJECT_ORTHOTESSELATION:
+			return GetObjectOrthoTesselation(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -223,6 +231,9 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, in
 		case OBJECT_VERTEX_SMOOTHNESS:
 			SetObjectVertexSmoothness(SubPath, Value);
 			return true;
+		case OBJECT_ORTHOTESSELATION:
+			SetObjectOrthoTesselation(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
 }
@@ -234,6 +245,8 @@ bool CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, bo
 	{
 		case OBJECT_CLOSEDPATH:
 			return GetObjectClosedPath(SubPath);
+		case OBJECT_SHOWLINE:
+			return GetObjectShowLine(SubPath);
 		case VISIBILITY:
 			return GetVisibility();
 	}
@@ -247,6 +260,9 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, bo
 	{
 		case OBJECT_CLOSEDPATH:
 			SetObjectClosedPath(SubPath, Value);
+			return true;
+		case OBJECT_SHOWLINE:
+			SetObjectShowLine(SubPath, Value);
 			return true;
 		case VISIBILITY:
 			SetVisibility(Value);

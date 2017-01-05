@@ -2255,6 +2255,8 @@ mapLayerObjects_object.addMember("0.2.0", "Angle", TypeFloat(), "0.0f")
 mapLayerObjects_object.addMember("0.2.0", "StylePath", TypeAssetPath())
 mapLayerObjects_object.addMember("0.2.0", "Vertex", TypeArray(mapLayerObjects_vertex))
 mapLayerObjects_object.addMember("0.2.0", "ClosedPath", TypeBool(), "false")
+mapLayerObjects_object.addMember("0.2.0", "ShowLine", TypeBool(), "true")
+mapLayerObjects_object.addMember("0.2.0", "OrthoTesselation", TypeInt32(), "1")
 mapLayerObjects_object.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"

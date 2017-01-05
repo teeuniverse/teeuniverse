@@ -938,6 +938,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SIZE_X, CAsset_MapLayerObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
 	AddField_Angle(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANGLE, _LSTRING("Angle"));
 	AddField_Bool(pObjectEditor, CAsset_MapLayerObjects::OBJECT_CLOSEDPATH, _LSTRING("Closed"));
+	AddField_Bool(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SHOWLINE, _LSTRING("Show line"));
+	AddField_Integer(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ORTHOTESSELATION, _LSTRING("Orthogonal tesselation"));
 	
 	gui::CVListLayout* pVertexEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX);
 	pTab->Add(pVertexEditor, false);

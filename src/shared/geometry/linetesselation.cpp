@@ -490,7 +490,16 @@ public:
 	}
 };
 
-void GenerateMaterialQuads_Line(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, const CAsset_Material::CLayer* pLayer, bool Closed)
+void GenerateMaterialQuads_Line(
+	const CAssetsManager* pAssetsManager,
+	array<CTexturedQuad>& OutputQuads,
+	const array<CLineVertex>& Vertices,
+	const matrix2x2& Transform,
+	vec2 ObjPosition,
+	const CAsset_Material::CLayer* pLayer,
+	bool Closed,
+	int OrthoTesselation
+)
 {
 	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
@@ -702,7 +711,7 @@ void GenerateMaterialQuads_Line(const CAssetsManager* pAssetsManager, array<CTex
 						
 						if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED)
 						{
-							int VerticalTesselation = 4;
+							int VerticalTesselation = OrthoTesselation;
 							if(SpriteInfo.m_ImagePath.IsNull())
 								VerticalTesselation = 1;
 							for(int k=0; k<VerticalTesselation; k++)
@@ -860,7 +869,17 @@ void GenerateMaterialQuads_Line(const CAssetsManager* pAssetsManager, array<CTex
 	}
 }
 
-void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTexturedQuad>& OutputQuads, const array<CLineVertex>& Vertices, const matrix2x2& Transform, vec2 ObjPosition, CAssetPath MaterialPath, bool Closed)
+void GenerateMaterialQuads(
+	const CAssetsManager* pAssetsManager,
+	array<CTexturedQuad>& OutputQuads,
+	const array<CLineVertex>& Vertices,
+	const matrix2x2& Transform,
+	vec2 ObjPosition,
+	CAssetPath MaterialPath,
+	bool Closed,
+	bool ShowLine,
+	int OrthoTesselation
+)
 {
 	const CAsset_Material* pMaterial = pAssetsManager->GetAsset<CAsset_Material>(MaterialPath);
 	if(!pMaterial)
@@ -915,12 +934,15 @@ void GenerateMaterialQuads(const CAssetsManager* pAssetsManager, array<CTextured
 	}
 	
 	//Render line layers
-	CAsset_Material::CIteratorLayer LayerIter;
-	for(LayerIter = pMaterial->BeginLayer(); LayerIter != pMaterial->EndLayer(); ++LayerIter)
+	if(ShowLine)
 	{
-		const CAsset_Material::CLayer* pLayer = &pMaterial->GetLayer(*LayerIter);
-			
-		GenerateMaterialQuads_Line(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer, Closed);
+		CAsset_Material::CIteratorLayer LayerIter;
+		for(LayerIter = pMaterial->BeginLayer(); LayerIter != pMaterial->EndLayer(); ++LayerIter)
+		{
+			const CAsset_Material::CLayer* pLayer = &pMaterial->GetLayer(*LayerIter);
+				
+			GenerateMaterialQuads_Line(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer, Closed, OrthoTesselation);
+		}
 	}
 }
 
@@ -967,5 +989,5 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	array<CLineVertex> LineVertices;
 	GenerateMaterialCurve_Object(pAssetsManager, Time, LineVertices, Object);
 	
-	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed);
+	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed, Object.GetShowLine(), Object.GetOrthoTesselation());
 }

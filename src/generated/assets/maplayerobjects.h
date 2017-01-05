@@ -83,6 +83,8 @@ public:
 		OBJECT_VERTEX_CONTROLPOINT1_X,
 		OBJECT_VERTEX_CONTROLPOINT1_Y,
 		OBJECT_CLOSEDPATH,
+		OBJECT_SHOWLINE,
+		OBJECT_ORTHOTESSELATION,
 		OBJECT,
 		VISIBILITY,
 	};
@@ -232,6 +234,8 @@ public:
 			CAssetPath::CTuaType m_StylePath;
 			CTuaArray m_Vertex;
 			tua_uint8 m_ClosedPath;
+			tua_uint8 m_ShowLine;
+			tua_int32 m_OrthoTesselation;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_0& TuaType);
 		};
@@ -244,6 +248,8 @@ public:
 		CAssetPath m_StylePath;
 		array< CVertex, allocator_copy<CVertex> > m_Vertex;
 		bool m_ClosedPath;
+		bool m_ShowLine;
+		int m_OrthoTesselation;
 	
 	public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -257,6 +263,8 @@ public:
 			m_StylePath = Item.m_StylePath;
 			m_Vertex.copy(Item.m_Vertex);
 			m_ClosedPath = Item.m_ClosedPath;
+			m_ShowLine = Item.m_ShowLine;
+			m_OrthoTesselation = Item.m_OrthoTesselation;
 		}
 		
 		void transfert(CAsset_MapLayerObjects::CObject& Item)
@@ -267,6 +275,8 @@ public:
 			m_StylePath = Item.m_StylePath;
 			m_Vertex.transfert(Item.m_Vertex);
 			m_ClosedPath = Item.m_ClosedPath;
+			m_ShowLine = Item.m_ShowLine;
+			m_OrthoTesselation = Item.m_OrthoTesselation;
 		}
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -384,6 +394,10 @@ public:
 		
 		inline bool GetClosedPath() const { return m_ClosedPath; }
 		
+		inline bool GetShowLine() const { return m_ShowLine; }
+		
+		inline int GetOrthoTesselation() const { return m_OrthoTesselation; }
+		
 		inline void SetPosition(vec2 Value) { m_Position = Value; }
 		
 		inline void SetPositionX(float Value) { m_Position.x = Value; }
@@ -483,6 +497,10 @@ public:
 		}
 		
 		inline void SetClosedPath(bool Value) { m_ClosedPath = Value; }
+		
+		inline void SetShowLine(bool Value) { m_ShowLine = Value; }
+		
+		inline void SetOrthoTesselation(int Value) { m_OrthoTesselation = Value; }
 		
 		inline int AddVertex()
 		{
@@ -765,6 +783,20 @@ public:
 		else return false;
 	}
 	
+	inline bool GetObjectShowLine(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetShowLine();
+		else return false;
+	}
+	
+	inline int GetObjectOrthoTesselation(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetOrthoTesselation();
+		else return 0;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
@@ -915,6 +947,18 @@ public:
 	{
 		if(SubPath.GetId() < m_Object.size())
 			m_Object[SubPath.GetId()].SetClosedPath(Value);
+	}
+	
+	inline void SetObjectShowLine(const CSubPath& SubPath, bool Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetShowLine(Value);
+	}
+	
+	inline void SetObjectOrthoTesselation(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetOrthoTesselation(Value);
 	}
 	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
