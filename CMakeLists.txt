@@ -295,6 +295,7 @@ endfunction()
 
 make_assets(gui_editor)
 make_assets(teeworlds)
+make_assets(ddnet)
 make_assets(infclass)
 make_assets(openfng)
 

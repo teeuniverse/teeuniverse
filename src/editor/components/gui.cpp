@@ -26,6 +26,7 @@
 #include <client/gui/filler.h>
 #include <client/gui/text-edit.h>
 #include <client/gui/toggle.h>
+#include <client/gui/combobox.h>
 #include <client/keys.h>
 #include <client/components/input.h>
 #include <client/gui/panellayout.h>
@@ -513,6 +514,33 @@ protected:
 			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
 		}
 	};
+	
+	class CFormatToggle : public gui::CToggle
+	{
+	protected:
+		int* m_pValueContainer;
+		int m_Value;
+		
+	protected:
+		virtual bool GetValue()
+		{
+			return (*m_pValueContainer == m_Value);
+		}
+		
+		virtual void SetValue(bool Value)
+		{
+			*m_pValueContainer = m_Value;
+		}
+		
+	public:
+		CFormatToggle(CGui* pContext, const CLocalizableString& LString, int* pValueContainer, int Value) :
+			gui::CToggle(pContext, LString),
+			m_pValueContainer(pValueContainer),
+			m_Value(Value)
+		{
+			
+		}
+	};
 
 protected:
 	CGuiEditor* m_pAssetsEditor;
@@ -522,6 +550,7 @@ protected:
 	int m_Format;
 	bool m_Save;
 	bool m_RefreshList;
+	int m_CompatibilityMode;
 	
 public:
 	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, bool Save, int Format) :
@@ -530,7 +559,8 @@ public:
 		m_pFilelist(NULL),
 		m_Format(Format),
 		m_Save(Save),
-		m_RefreshList(true)
+		m_RefreshList(true),
+		m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET)
 	{
 		gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 		pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
@@ -631,6 +661,22 @@ public:
 		}
 		
 		pLayout->AddSeparator();
+		
+		if(!m_Save && m_Format == FORMAT_MAP_TW)
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pLayout->Add(pHList, false);
+			
+			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Compatibility mode:"));
+			pLabel->NoTextClipping();
+			pHList->Add(pLabel, false);
+			
+			pHList->Add(new CFormatToggle(Context(), _LSTRING("TeeWorlds"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_TW), true);
+			pHList->Add(new CFormatToggle(Context(), _LSTRING("DDNet"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_DDNET), true);
+			pHList->Add(new CFormatToggle(Context(), _LSTRING("OpenFNG"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_OPENFNG), true);
+		
+			pLayout->AddSeparator();
+		}
 		
 		//Buttonlist
 		{
@@ -862,7 +908,7 @@ public:
 				TextIter = Buffer.append_at(TextIter, "/");
 				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 				TextIter = Buffer.append_at(TextIter, ".map");
-				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, CAssetsManager::MAPFORMAT_TW);
+				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_CompatibilityMode);
 				if(PackageId < 0)
 					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
 				else

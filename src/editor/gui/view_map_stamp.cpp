@@ -232,7 +232,7 @@ protected:
 			{
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 				if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath) && pZoneType->GetIndexUsed(m_IndexSubPath))
-					SetText(pZoneType->GetIndexDescription(m_IndexSubPath));
+					SetText(pZoneType->GetIndexTitle(m_IndexSubPath));
 			}
 				
 			

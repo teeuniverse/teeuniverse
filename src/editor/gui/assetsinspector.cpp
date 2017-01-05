@@ -1065,7 +1065,19 @@ public:
 					CAsset_ZoneType::CIteratorIndex Iter;
 					for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
 					{
-						Add(new CSubItem(m_pAssetsEditor, *Iter, pZoneType->GetIndexDescription(*Iter), m_pAssetsEditor->m_Path_Sprite_IconZoneTiles), false);
+						if(pZoneType->GetIndexUsed(*Iter))
+						{
+							CLocalizableString LString(_("#{int:Index} - {str:Title}"));
+							LString.AddInteger("Index", (*Iter).GetId());
+							LString.AddString("Title", pZoneType->GetIndexTitle(*Iter));
+							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconZoneTiles), false);
+						}
+						else
+						{
+							CLocalizableString LString(_("#{int:Index} - No used"));
+							LString.AddInteger("Index", (*Iter).GetId());
+							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+						}
 					}
 					
 					m_UpdateNeeded = false;
@@ -1092,6 +1104,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	pTab->Add(pEditor);
 	
 	AddField_Bool(pEditor, CAsset_ZoneType::INDEX_USED, _LSTRING("Is used"));
+	AddField_Text(pEditor, CAsset_ZoneType::INDEX_TITLE, _LSTRING("Title"));
 	AddField_Text(pEditor, CAsset_ZoneType::INDEX_DESCRIPTION, _LSTRING("Description"));
 	AddField_Color(pEditor, CAsset_ZoneType::INDEX_COLOR, _LSTRING("Background Color"));
 	AddField_Color(pEditor, CAsset_ZoneType::INDEX_BORDERCOLOR, _LSTRING("Border Color"));

@@ -25,6 +25,68 @@
 
 /* ASSETS MANAGER *****************************************************/
 
+class CLoadMap_ZoneList
+{
+public:
+	CAssetsManager* m_pAssetsManager;
+	CAsset_Map* m_pMap;
+	CAssetPath m_MapPath;
+	
+	CAssetPath m_TeeWorldsPath;
+	CAssetPath m_DDGamePath;
+	CAssetPath m_DDFreezePath;
+	CAssetPath m_OpenFNGPath;
+	CAssetPath m_UnknownPath;
+	
+	CAsset_MapZoneTiles* m_pTeeWorldsZone;
+	CAsset_MapZoneTiles* m_pDDGameZone;
+	CAsset_MapZoneTiles* m_pDDFreezeZone;
+	CAsset_MapZoneTiles* m_pOpenFNGZone;
+	CAsset_MapZoneTiles* m_pUnknownZone;
+	
+	CLoadMap_ZoneList(CAssetsManager* pAssetsManager, CAsset_Map* pMap, CAssetPath MapPath) :
+		m_pAssetsManager(pAssetsManager),
+		m_pMap(pMap),
+		m_MapPath(MapPath),
+		m_pTeeWorldsZone(NULL),
+		m_pDDGameZone(NULL),
+		m_pDDFreezeZone(NULL),
+		m_pOpenFNGZone(NULL),
+		m_pUnknownZone(NULL)
+	{
+		
+	}
+	
+	void CreateZone(CAsset_MapZoneTiles** ppZone, CAssetPath& ZonePath, const char* pName, CAssetPath ZoneType, int Width, int Height)
+	{
+		if(*ppZone != NULL)
+			return;
+		
+		*ppZone = m_pAssetsManager->NewAsset_Hard<CAsset_MapZoneTiles>(&ZonePath, m_MapPath.GetPackageId());
+		
+		m_pAssetsManager->TryChangeAssetName_Hard(ZonePath, pName);
+		(*ppZone)->SetParentPath(m_MapPath);
+		(*ppZone)->SetZoneTypePath(ZoneType);
+
+		array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = (*ppZone)->GetTileArray();
+		Data.resize(Width, Height);
+		
+		CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(m_pMap->AddZoneLayer());
+		m_pMap->SetZoneLayer(ZoneLayer, ZonePath);
+		
+		if(m_pTeeWorldsZone && &m_pTeeWorldsZone != ppZone)
+			m_pTeeWorldsZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_TeeWorldsPath);
+		if(m_pDDGameZone && &m_pDDGameZone != ppZone)
+			m_pDDGameZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDGamePath);
+		if(m_pDDFreezeZone && &m_pDDFreezeZone != ppZone)
+			m_pDDFreezeZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDFreezePath);
+		if(m_pOpenFNGZone && &m_pOpenFNGZone != ppZone)
+			m_pOpenFNGZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_OpenFNGPath);
+		if(m_pUnknownZone && &m_pUnknownZone != ppZone)
+			m_pUnknownZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_UnknownPath);
+	}
+};
+
 int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc)
 {
 	dynamic_string PackageName;
@@ -83,18 +145,16 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	if(pItem->m_Version != tw07::CMapItemVersion::CURRENT_VERSION)
 		return -1;
 
-	switch(Format)
-	{
-		case MAPFORMAT_TW:
-			Load_UnivTeeWorlds();
-			break;
-	}
+	Load_UnivTeeWorlds();
 	
 	char aBuf[128];
 
 	CAssetPath MapPath;
 	CAsset_Map* pMap = NewAsset_Hard<CAsset_Map>(&MapPath, PackageId);
 	AssetsManager()->TryChangeAssetName_Hard(MapPath, "map");
+	
+	//Create the TeeWorlds layer
+	CLoadMap_ZoneList Zones(this, pMap, MapPath);
 	
 	CAssetPath* pImagePath;
 	//Load images
@@ -495,7 +555,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					{
 						tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
 
-						if(pTilemapItem->m_Flags&tw07::TILESLAYERFLAG_GAME)
+						if(pTilemapItem->m_Flags == tw07::TILESLAYERFLAG_GAME)
 						{
 							Background = false;
 								
@@ -505,22 +565,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							int Height = pTilemapItem->m_Height;
 							
 							pMap->SetCameraPosition(vec2(Width*32.0f, Height*32.0f)/2.0f);
-							
-							bool UnknownTileIndex = false;
-							
-							CAssetPath TeeWorldsZonePath;
-							CAsset_MapZoneTiles* pTeeWorldsZone = NewAsset_Hard<CAsset_MapZoneTiles>(&TeeWorldsZonePath, PackageId);
-							AssetsManager()->TryChangeAssetName_Hard(TeeWorldsZonePath, "teeworlds");
-							pTeeWorldsZone->SetParentPath(MapPath);
-							pTeeWorldsZone->SetZoneTypePath(m_Path_ZoneType_TeeWorlds);
-							
-							{
-								array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pTeeWorldsZone->GetTileArray();
-								Data.resize(Width, Height);
-								
-								CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-								pMap->SetZoneLayer(ZoneLayer, TeeWorldsZonePath);
-							}
 							
 							CAssetPath EntitiesPath;
 							CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
@@ -536,24 +580,12 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								{
 									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 									
+									bool WriteInUnknown = false;
+									
 									switch(pTiles[j*Width+i].m_Index)
 									{
-										case tw07::TILE_AIR:
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											break;
-										case tw07::TILE_SOLID:
-											pTeeWorldsZone->SetTileIndex(TilePath, 1);
-											break;
-										case tw07::TILE_DEATH:
-											pTeeWorldsZone->SetTileIndex(TilePath, 2);
-											break;
-										case tw07::TILE_NOHOOK:
-											pTeeWorldsZone->SetTileIndex(TilePath, 3);
-											break;
 										case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -561,8 +593,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -570,8 +600,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -579,8 +607,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -588,8 +614,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -597,8 +621,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -606,8 +628,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -615,8 +635,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -624,8 +642,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -633,8 +649,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
@@ -642,86 +656,141 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										}
 										case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
 										{
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
-											
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										default:
+										case tw07::TILE_AIR:
+										case tw07::TILE_SOLID:
+										case tw07::TILE_DEATH:
+										case tw07::TILE_NOHOOK:
 										{
-											UnknownTileIndex = true;
-											pTeeWorldsZone->SetTileIndex(TilePath, 0);
+											Zones.CreateZone(&Zones.m_pTeeWorldsZone, Zones.m_TeeWorldsPath, "teeworlds", m_Path_ZoneType_TeeWorlds, Width, Height);
+											if(Zones.m_pTeeWorldsZone)
+												Zones.m_pTeeWorldsZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+											else
+												WriteInUnknown = true;
 											break;
+										}
+										//OpenFNG and DDNet
+										case 8:
+										{
+											if(Format == MAPFORMAT_OPENFNG)
+											{
+												Load_UnivOpenFNG();
+												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+												if(Zones.m_pOpenFNGZone)
+													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+											}
+											else
+												WriteInUnknown = true;
+											break;
+										}
+										case 9:
+										{
+											if(Format == MAPFORMAT_DDNET)
+											{
+												Load_UnivDDNet();
+												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
+												if(Zones.m_pDDFreezeZone)
+													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, 1);
+												else
+													WriteInUnknown = true;
+											}
+											else if(Format == MAPFORMAT_OPENFNG)
+											{
+												Load_UnivOpenFNG();
+												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+												if(Zones.m_pOpenFNGZone)
+													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+											}
+											else
+												WriteInUnknown = true;
+											break;
+										}
+										case 10:
+										{
+											if(Format == MAPFORMAT_OPENFNG)
+											{
+												Load_UnivOpenFNG();
+												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+												if(Zones.m_pOpenFNGZone)
+													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+											}
+											else
+												WriteInUnknown = true;
+											break;
+										}
+										case 11:
+										case 12:
+										{
+											if(Format == MAPFORMAT_DDNET)
+											{
+												Load_UnivDDNet();
+												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
+												if(Zones.m_pDDFreezeZone)
+													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index-9);
+												else
+													WriteInUnknown = true;
+											}
+											else if(Format == MAPFORMAT_OPENFNG)
+											{
+												Load_UnivOpenFNG();
+												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+												if(Zones.m_pOpenFNGZone)
+													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+											}
+											else
+												WriteInUnknown = true;
+											break;
+										}
+										case 13:
+										{
+											if(Format == MAPFORMAT_DDNET)
+											{
+												Load_UnivDDNet();
+												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
+												if(Zones.m_pDDFreezeZone)
+													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index-9);
+												else
+													WriteInUnknown = true;
+											}
+											else
+												WriteInUnknown = true;
+											break;
+										}
+										default:
+											WriteInUnknown = true;
+									}
+									
+									if(WriteInUnknown)
+									{
+										if(Format == MAPFORMAT_DDNET)
+										{
+											Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+											if(Zones.m_pDDGameZone)
+												Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+										}
+										else
+										{
+											Zones.CreateZone(&Zones.m_pUnknownZone, Zones.m_UnknownPath, "unknown", CAssetPath::Null(), Width, Height);
+											if(Zones.m_pUnknownZone)
+												Zones.m_pUnknownZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
 										}
 									}
 									
 									int Skip = pTiles[j*Width+i].m_Skip;
 									for(int s=0; s<Skip; s++)
-									{
-										pTeeWorldsZone->SetTileIndex(TilePath, 0);
 										i++;
-										
-										TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-									}
-								}
-							}
-							
-							if(UnknownTileIndex)
-							{
-								CAssetPath UnknwonZonePath;
-								CAsset_MapZoneTiles* pUnknownZone = NewAsset_Hard<CAsset_MapZoneTiles>(&UnknwonZonePath, PackageId);
-								AssetsManager()->TryChangeAssetName_Hard(UnknwonZonePath, "unknown");
-								pUnknownZone->SetParentPath(MapPath);
-								
-								{
-									array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pUnknownZone->GetTileArray();
-									Data.resize(Width, Height);
-									
-									CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-									pMap->SetZoneLayer(ZoneLayer, UnknwonZonePath);
-								}
-								
-								for(int j=0; j<Height; j++)
-								{
-									for(int i=0; i<Width; i++)
-									{
-										CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-										
-										switch(pTiles[j*Width+i].m_Index)
-										{
-											case tw07::TILE_SOLID:
-											case tw07::TILE_DEATH:
-											case tw07::TILE_NOHOOK:
-											case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
-											case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
-												break;
-											default:
-											{
-												pUnknownZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												break;
-											}
-										}
-										
-										int Skip = pTiles[j*Width+i].m_Skip;
-										for(int s=0; s<Skip; s++)
-										{
-											pUnknownZone->SetTileIndex(TilePath, 0);
-											i++;
-											
-											TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-										}
-									}
 								}
 							}
 							
@@ -739,7 +808,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								pMapGroup = pNewGroup;
 							}
 						}
-						else
+						else if(pTilemapItem->m_Flags == 0x0)
 						{
 							CAssetPath MapLayerPath;
 							CAsset_MapLayerTiles* pMapLayer = NewAsset_Hard<CAsset_MapLayerTiles>(&MapLayerPath, PackageId);
@@ -807,6 +876,32 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							Color.b = static_cast<float>(pTilemapItem->m_Color.b)/255.0f;
 							Color.a = static_cast<float>(pTilemapItem->m_Color.a)/255.0f;
 							pMapLayer->SetColor(Color);
+						}
+						else //Layers that are unknown flags (DDNet, old InfClass, ...)
+						{
+							CAssetPath ZonePath;
+							CAsset_MapZoneTiles* pZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ZonePath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(ZonePath, "unknown");
+							CSubPath MapSubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
+							pMap->SetZoneLayer(MapSubPath, ZonePath);
+							pZone->SetParentPath(MapPath);
+							
+							//Tiles
+							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+							int Width = pTilemapItem->m_Width;
+							int Height = pTilemapItem->m_Height;
+							
+							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pZone->GetTileArray();
+							Data.resize(Width, Height);
+							
+							for(int j=0; j<Height; j++)
+							{
+								for(int i=0; i<Width; i++)
+								{
+									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									pZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+								}
+							}
 						}
 					}
 					else if(pLayerItem->m_Type == tw07::LAYERTYPE_QUADS)

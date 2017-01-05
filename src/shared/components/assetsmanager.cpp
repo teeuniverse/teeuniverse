@@ -28,6 +28,8 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
 	m_pHistory(0),
 	m_PackageId_UnivTeeWorlds(-1),
+	m_PackageId_UnivDDNet(-1),
+	m_PackageId_UnivOpenFNG(-1),
 	m_PackageId_EnvClouds(-1),
 	m_PackageId_EnvDesert(-1),
 	m_PackageId_EnvGeneric(-1),
@@ -691,6 +693,31 @@ void CAssetsManager::Load_UnivTeeWorlds()
 			m_Path_EntityType_TWArmor = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "armor");
 			m_Path_EntityType_TWFlagBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "blueFlag");
 			m_Path_EntityType_TWFlagRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivTeeWorlds, "redFlag");
+		}
+	}
+}
+
+void CAssetsManager::Load_UnivDDNet()
+{
+	if(m_PackageId_UnivDDNet < 0)
+	{
+		m_PackageId_UnivDDNet = Load_AssetsFile("ddnet", CStorage::TYPE_ALL);
+		if(m_PackageId_UnivDDNet >= 0)
+		{
+			m_Path_ZoneType_DDGame = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddGame");
+			m_Path_ZoneType_DDFreeze = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddFreeze");
+		}
+	}
+}
+
+void CAssetsManager::Load_UnivOpenFNG()
+{
+	if(m_PackageId_UnivOpenFNG < 0)
+	{
+		m_PackageId_UnivOpenFNG = Load_AssetsFile("openfng", CStorage::TYPE_ALL);
+		if(m_PackageId_UnivOpenFNG >= 0)
+		{
+			m_Path_ZoneType_OpenFNG = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "openfng");
 		}
 	}
 }

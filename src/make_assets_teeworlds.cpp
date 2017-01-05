@@ -67,22 +67,22 @@ int main(int argc, char* argv[])
 		pAsset->SetImagePath(ImageZonesPath);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Air");
+		pAsset->SetIndexTitle(SubPath, "Air");
 		pAsset->SetIndexColor(SubPath, vec4(1.0f, 1.0f, 1.0f, 0.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Hookable Ground");
+		pAsset->SetIndexTitle(SubPath, "Hookable Ground");
 		pAsset->SetIndexColor(SubPath, 1.0f);
 		pAsset->SetIndexBorderIndex(SubPath, 1);
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Death");
+		pAsset->SetIndexTitle(SubPath, "Death");
 		pAsset->SetIndexColor(SubPath, 1.0f);
 		pAsset->SetIndexBorderIndex(SubPath, 2);
 		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexDescription(SubPath, "Unhookable Ground");
+		pAsset->SetIndexTitle(SubPath, "Unhookable Ground");
 		pAsset->SetIndexColor(SubPath, 1.0f);
 		pAsset->SetIndexBorderIndex(SubPath, 1);
 		pAsset->SetIndexBorderColor(SubPath, vec4(149.0f/255.0f, 190.0f/255.0f, 222.0f/255.0f, 1.0f));

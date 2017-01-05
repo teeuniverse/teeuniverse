@@ -38,6 +38,8 @@ public:
 	enum
 	{
 		MAPFORMAT_TW=0,
+		MAPFORMAT_DDNET,
+		MAPFORMAT_OPENFNG,
 	};
 	
 private:
@@ -59,6 +61,13 @@ public:
 	CAssetPath m_Path_EntityType_TWArmor;
 	CAssetPath m_Path_EntityType_TWFlagBlue;
 	CAssetPath m_Path_EntityType_TWFlagRed;
+	
+	int m_PackageId_UnivDDNet;
+	CAssetPath m_Path_ZoneType_DDGame;
+	CAssetPath m_Path_ZoneType_DDFreeze;
+	
+	int m_PackageId_UnivOpenFNG;
+	CAssetPath m_Path_ZoneType_OpenFNG;
 	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;
@@ -162,6 +171,8 @@ public:
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	
 	void Load_UnivTeeWorlds();
+	void Load_UnivDDNet();
+	void Load_UnivOpenFNG();
 	
 	void Load_EnvClouds();
 	void Load_EnvDesert();

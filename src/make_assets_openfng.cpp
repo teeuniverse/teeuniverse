@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexDescription(SubPath, "Shrine");
+			pAsset->SetIndexTitle(SubPath, "Shrine");
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexDescription(SubPath, "Red Team Shrine");
+			pAsset->SetIndexTitle(SubPath, "Red Team Shrine");
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexDescription(SubPath, "Blue Team Shrine");
+			pAsset->SetIndexTitle(SubPath, "Blue Team Shrine");
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexDescription(SubPath, "Red Team Score");
+			pAsset->SetIndexTitle(SubPath, "Red Team Score");
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 0);
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexDescription(SubPath, "Blue Team Score");
+			pAsset->SetIndexTitle(SubPath, "Blue Team Score");
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 0);
