@@ -1693,9 +1693,6 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			{
 				IItem.m_Width = pImage->GetDataWidth();
 				IItem.m_Height = pImage->GetDataHeight();
-				IItem.m_External = 0;
-				IItem.m_ImageName = ArchiveFile.AddData(str_length(pImage->GetName())+1, (char*) pImage->GetName());
-				IItem.m_ImageData = ArchiveFile.AddData(pImage->GetDataArray().get_linear_size(), (char*) pImage->GetDataPtr());
 				switch(pImage->GetDataArray().get_depth())
 				{
 					case 1:
@@ -1707,6 +1704,103 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					case 4:
 						IItem.m_Format = CImageInfo::FORMAT_RGBA;
 						break;
+				}
+				
+				if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_clouds") == 0)
+				{
+					if(str_comp(pImage->GetName(), "cloud1") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("bg_cloud1")+1, (char*) "bg_cloud1");
+					if(str_comp(pImage->GetName(), "cloud2") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("bg_cloud2")+1, (char*) "bg_cloud2");
+					if(str_comp(pImage->GetName(), "cloud3") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("bg_cloud3")+1, (char*) "bg_cloud3");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_desert") == 0)
+				{
+					if(str_comp(pImage->GetName(), "desertMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("desert_main")+1, (char*) "desert_main");
+					if(str_comp(pImage->GetName(), "desertDoodads") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("desert_doodads")+1, (char*) "desert_doodads");
+					if(str_comp(pImage->GetName(), "desertMountains1") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("desert_mountains")+1, (char*) "desert_mountains");
+					if(str_comp(pImage->GetName(), "desertMountains2") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("desert_mountains2")+1, (char*) "desert_mountains2");
+					if(str_comp(pImage->GetName(), "desertSun") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("desert_sun")+1, (char*) "desert_sun");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_generic") == 0)
+				{
+					if(str_comp(pImage->GetName(), "genericSpikes") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("generic_deathtiles")+1, (char*) "generic_deathtiles");
+					if(str_comp(pImage->GetName(), "genericUnhookable") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("generic_unhookable")+1, (char*) "generic_unhookable");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_grass") == 0)
+				{
+					if(str_comp(pImage->GetName(), "grassMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("grass_main")+1, (char*) "grass_main");
+					if(str_comp(pImage->GetName(), "grassDoodads") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("grass_doodads")+1, (char*) "grass_doodads");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_jungle") == 0)
+				{
+					if(str_comp(pImage->GetName(), "jungleMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_main")+1, (char*) "jungle_main");
+					if(str_comp(pImage->GetName(), "jungleDoodads") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_doodads")+1, (char*) "jungle_doodads");
+					if(str_comp(pImage->GetName(), "jungleSpikes") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_deathtiles")+1, (char*) "jungle_deathtiles");
+					if(str_comp(pImage->GetName(), "jungleUnhookable") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_unhookables")+1, (char*) "jungle_unhookables");
+					if(str_comp(pImage->GetName(), "jungleBackground") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_background")+1, (char*) "jungle_background");
+					if(str_comp(pImage->GetName(), "jungleMidground") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("jungle_midground")+1, (char*) "jungle_midground");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_moon") == 0)
+				{
+					if(str_comp(pImage->GetName(), "moon") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("moon")+1, (char*) "moon");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_mountains") == 0)
+				{
+					if(str_comp(pImage->GetName(), "mountains") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("mountains")+1, (char*) "mountains");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_snow") == 0)
+				{
+					if(str_comp(pImage->GetName(), "snow") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("snow")+1, (char*) "snow");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_stars") == 0)
+				{
+					if(str_comp(pImage->GetName(), "stars") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("stars")+1, (char*) "stars");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_sun") == 0)
+				{
+					if(str_comp(pImage->GetName(), "sun") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("sun")+1, (char*) "sun");
+				}
+				else if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_winter") == 0)
+				{
+					if(str_comp(pImage->GetName(), "winterMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_main")+1, (char*) "winter_main");
+					if(str_comp(pImage->GetName(), "winterDoodads") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_doodads")+1, (char*) "winter_doodads");
+					if(str_comp(pImage->GetName(), "winterMountains1") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_mountains")+1, (char*) "winter_mountains");
+					if(str_comp(pImage->GetName(), "winterMountains2") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_mountains2")+1, (char*) "winter_mountains2");
+					if(str_comp(pImage->GetName(), "winterMountains3") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_mountains3")+1, (char*) "winter_mountains3");
+				}
+				
+				if(IItem.m_ImageName == -1)
+				{
+					IItem.m_External = 0;
+					IItem.m_ImageName = ArchiveFile.AddData(str_length(pImage->GetName())+1, (char*) pImage->GetName());
+					IItem.m_ImageData = ArchiveFile.AddData(pImage->GetDataArray().get_linear_size(), (char*) pImage->GetDataPtr());
 				}
 			}
 			

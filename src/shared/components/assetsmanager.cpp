@@ -638,7 +638,7 @@ void CAssetsManager::Load_EnvStars()
 		m_PackageId_EnvStars = Load_AssetsFile("env_stars", CStorage::TYPE_ALL);
 		if(m_PackageId_EnvStars >= 0)
 		{
-			m_Path_Image_Stars = FindAsset<CAsset_Image>(m_PackageId_EnvSnow, "stars");
+			m_Path_Image_Stars = FindAsset<CAsset_Image>(m_PackageId_EnvStars, "stars");
 		}
 	}
 }
