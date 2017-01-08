@@ -287,8 +287,8 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(UndergroundCablePath, PackageId, "undergroundCable", MainImagePath, 7, 7, 1, 1);
 		CREATE_SPRITE_PATH(UndergroundCable2Path, PackageId, "undergroundCable2", MainImagePath, 8, 5, 1, 1);
 		CREATE_SPRITE_PATH(UndergroundCableCap, PackageId, "undergroundCableCap", MainImagePath, 9, 5, 1, 1);
-		CREATE_SPRITE_PATH(UndergroundCableCornerConvex, PackageId, "undergroundCableCornerConcave", MainImagePath, 9, 6, 1, 1);
-		CREATE_SPRITE_PATH(UndergroundCableCornerConcave, PackageId, "undergroundCableCornerConvex", MainImagePath, 9, 7, 1, 1);
+		CREATE_SPRITE_PATH(UndergroundCableCornerConvex, PackageId, "undergroundCableCornerConvex", MainImagePath, 8, 6, 1, 1);
+		CREATE_SPRITE_PATH(UndergroundCableCornerConcave, PackageId, "undergroundCableCornerConcave", MainImagePath, 9, 7, 1, 1);
 		
 		//Material: RedRock
 		{
@@ -415,6 +415,7 @@ int main(int argc, char* argv[])
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCableCornerConvex);
 				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_VFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
@@ -479,7 +480,7 @@ int main(int argc, char* argv[])
 			pAsset->SetName("grassAndDirt");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(161.0f/255.0f, 110.0f/255.0f, 54.0f/255.0f, 1.0f));
-			pAsset->SetTextureSpacing(-16.0f);
+			pAsset->SetTextureSpacing(16.0f);
 			
 			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
 			
@@ -527,6 +528,7 @@ int main(int argc, char* argv[])
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassCornerConvexPath);
 				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
@@ -539,6 +541,7 @@ int main(int argc, char* argv[])
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassCornerConcavePath);
 				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONCAVE);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);

@@ -155,6 +155,8 @@ public:
 	public:
 		int m_StartVert;
 		int m_EndVert;
+		float m_StartAngle;
+		float m_EndAngle;
 		bool m_Closed;
 	};
 	
@@ -199,6 +201,8 @@ public:
 				CSegment& Segment = m_Segments.increment();
 				Segment.m_StartVert = CurrVert;
 				Segment.m_EndVert = CurrVert;
+				Segment.m_StartAngle = 0.0f;
+				Segment.m_EndAngle = 0.0f;
 				Segment.m_Closed = false;
 				
 				while(GetNextVertex(Segment.m_EndVert))
@@ -214,6 +218,29 @@ public:
 					{
 						ContinueSegementGeneration = true;
 						break;
+					}
+				}
+				
+				{
+					int PrevId = Segment.m_EndVert;
+					int NextId = Segment.m_EndVert;
+					
+					if(GetPrevVertex(PrevId) && GetNextVertex(NextId))
+					{
+						vec2 LineDir0 = normalize(m_Vertices[Segment.m_EndVert].m_Position - m_Vertices[PrevId].m_Position);
+						vec2 LineDir1 = normalize(m_Vertices[NextId].m_Position - m_Vertices[Segment.m_EndVert].m_Position);
+						Segment.m_EndAngle = angle(LineDir0, LineDir1);
+					}
+				}
+				{
+					int PrevId = Segment.m_StartVert;
+					int NextId = Segment.m_StartVert;
+					
+					if(GetPrevVertex(PrevId) && GetNextVertex(NextId))
+					{
+						vec2 LineDir0 = normalize(m_Vertices[Segment.m_StartVert].m_Position - m_Vertices[PrevId].m_Position);
+						vec2 LineDir1 = normalize(m_Vertices[NextId].m_Position - m_Vertices[Segment.m_StartVert].m_Position);
+						Segment.m_StartAngle = angle(LineDir0, LineDir1);
 					}
 				}
 				
@@ -272,7 +299,8 @@ public:
 		
 		vec2 LineDir0 = normalize(m_Vertices[CurrId].m_Position - m_Vertices[PrevId].m_Position);
 		vec2 LineDir1 = normalize(m_Vertices[NextId].m_Position - m_Vertices[CurrId].m_Position);
-		return (dot(LineDir0, LineDir1) < std::cos(Pi/5.0f));
+		float Angle = angle(LineDir0, LineDir1);
+		return fabs(Angle) > (Pi/5.0f);
 	}
 	
 	inline bool NextSegment()
@@ -285,6 +313,11 @@ public:
 		m_VertexAlpha = 0.0f;
 		
 		return true;
+	}
+	
+	inline const CSegment* GetSegment() const
+	{
+		return &m_Segments[m_CurrSegment];
 	}
 	
 	inline const CSegment* GetNextSegment() const
@@ -512,7 +545,6 @@ void GenerateMaterialQuads_Line(
 	{
 		CSpriteInfo SpriteInfo;
 		array<int> Tiling;
-		float SegmentShift = 0.0f;
 		float SegmentLength = LineIterator.GetSegmentLength();
 		float TiledLength = 0.0f;
 		
@@ -554,7 +586,7 @@ void GenerateMaterialQuads_Line(
 					if(LastTile >= 0)
 						PrevCornerTile = LastTile;
 				}
-				//No corner tiles was found, try the get a end tile
+				//No corner tiles was found, try the get an end tile
 				if(LastTile < 0)
 				{
 					PrevCornerTile = -1;
@@ -574,9 +606,9 @@ void GenerateMaterialQuads_Line(
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[FirstTile], SpriteInfo);
 				if(Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 				{
-					SegmentShift -= Sprites[FirstTile].GetPosition().y;
-					SegmentLength += Sprites[FirstTile].GetPosition().y;
-					TiledLength += SpriteInfo.m_Height/2.0f;
+					float Angle = (Pi - LineIterator.GetSegment()->m_StartAngle)/2.0f;
+					float Height = (SpriteInfo.m_Height/2.0f - Sprites[FirstTile].GetPosition().y);
+					TiledLength += Height/std::tan(Angle);
 				}
 				else
 					TiledLength += SpriteInfo.m_Width;
@@ -587,8 +619,9 @@ void GenerateMaterialQuads_Line(
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[LastTile], SpriteInfo);
 				if(Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 				{
-					SegmentLength += Sprites[FirstTile].GetPosition().x;
-					TiledLength += SpriteInfo.m_Width/2.0f;
+					float Angle = (Pi - LineIterator.GetSegment()->m_EndAngle)/2.0f;
+					float Height = (SpriteInfo.m_Width/2.0f - Sprites[LastTile].GetPosition().x);
+					TiledLength += Height/std::tan(Angle);
 				}
 				else
 					TiledLength += SpriteInfo.m_Width;
@@ -629,14 +662,6 @@ void GenerateMaterialQuads_Line(
 		//Step 2: Tiling rendering
 		if(Tiling.size())
 		{
-			float Distance_NoUse;
-			int PrevVert_NoUse;
-			int NextVert_NoUse;
-			float PrevAlpha_NoUse;
-			float NextAlpha_NoUse;
-			
-			LineIterator.MoveLineCursor(SegmentShift, Distance_NoUse, PrevVert_NoUse, NextVert_NoUse, PrevAlpha_NoUse, NextAlpha_NoUse, false);
-						
 			//GlobalSpacing represent the spacing from the left (or right) side. Not both in the same time.
 			float GlobalSpacing = 0.0f;
 			if(Tiling.size() > 2)
@@ -654,14 +679,18 @@ void GenerateMaterialQuads_Line(
 				{
 					if(Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 					{
-						SpriteWidth /= 2.0f;
+						float Angle = (Pi - LineIterator.GetSegment()->m_StartAngle)/2.0f;
+						float Height = (SpriteInfo.m_Height/2.0f - pSprite->GetPosition().y);
+						SpriteWidth = Height/std::tan(Angle);
 					}
 				}
 				else if(i == Tiling.size()-1)
 				{
 					if(Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 					{
-						SpriteWidth /= 2.0f;
+						float Angle = (Pi - LineIterator.GetSegment()->m_EndAngle)/2.0f;
+						float Height = (SpriteInfo.m_Width/2.0f - pSprite->GetPosition().x);
+						SpriteWidth = Height/std::tan(Angle);
 					}
 				}
 				else
@@ -710,7 +739,7 @@ void GenerateMaterialQuads_Line(
 						//float Weight1 = mix(Vertices[PrevVert].m_Weight, Vertices[NextVert].m_Weight, NextAlpha);
 						
 						if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED)
-						{
+						{							
 							int VerticalTesselation = OrthoTesselation;
 							if(SpriteInfo.m_ImagePath.IsNull())
 								VerticalTesselation = 1;
@@ -728,16 +757,42 @@ void GenerateMaterialQuads_Line(
 								
 								Quad.m_ImagePath = SpriteInfo.m_ImagePath;
 								
-								Quad.m_Color[0] = Color0 * pSprite->GetColor();
-								Quad.m_Color[1] = Color1 * pSprite->GetColor();
-								Quad.m_Color[2] = Color0 * pSprite->GetColor();
-								Quad.m_Color[3] = Color1 * pSprite->GetColor();
-								
 								if(
 									(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
 									i == 0
 								)
 								{
+									//Coordinates must be corrected if the corner is distorded.
+									//In particular, the intersection of diagonals no more fit the intersection between lines.
+									vec2 DiagonalMin =  OrthoVert0 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f);
+									vec2 DiagonalMax = OrthoVert0 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
+									vec2 DiagonalVect = DiagonalMax - DiagonalMin;
+									vec2 DiagonalDir = normalize(DiagonalVect);
+									float DiagonalLength = length(DiagonalMax - DiagonalMin);
+									
+									vec2 DiagonalCorner = OrthoSeg * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
+									float DiagonalCornerLength = dot(DiagonalDir, (DiagonalCorner - DiagonalMin));
+									float DiagonalCornerRatio = 1.0f - DiagonalCornerLength / DiagonalLength;
+									
+									vec2 DiagonalPMin = OrthoVert0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f);
+									float DiagonalPMinLength = dot(DiagonalDir, (DiagonalPMin - DiagonalMin));
+									float DiagonalPMinRatio = DiagonalPMinLength / DiagonalLength;
+									vec2 PMin;
+									if(DiagonalPMinRatio < 0.5) PMin = DiagonalMin + DiagonalVect*(DiagonalPMinRatio*2.0f)*DiagonalCornerRatio;
+									else PMin = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMinRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
+									
+									vec2 DiagonalPMax = OrthoVert0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f);
+									float DiagonalPMaxLength = dot(DiagonalDir, (DiagonalPMax - DiagonalMin));
+									float DiagonalPMaxRatio = DiagonalPMaxLength / DiagonalLength;
+									vec2 PMax;
+									if(DiagonalPMaxRatio < 0.5) PMax = DiagonalMin + DiagonalVect*(DiagonalPMaxRatio*2.0f)*DiagonalCornerRatio;
+									else PMax = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMaxRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
+									
+									Quad.m_Color[0] = Color0 * pSprite->GetColor();
+									Quad.m_Color[1] = Color1 * pSprite->GetColor();
+									Quad.m_Color[2] = Color0 * pSprite->GetColor();
+									Quad.m_Color[3] = Color1 * pSprite->GetColor();
+									
 									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
 									{
 										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMax - USize * (1.0f-PrevU) * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
@@ -753,9 +808,9 @@ void GenerateMaterialQuads_Line(
 										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax - USize * VMax, SpriteInfo.m_VMax - VSize * (1.0f-NextU) * (1.0f-VMax));
 									}
 									
-									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoVert0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + PMin);
 									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoVert0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + PMax);
 									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
 								}
 								else if(
@@ -763,28 +818,64 @@ void GenerateMaterialQuads_Line(
 									i == Tiling.size()-1
 								)
 								{
+									//Coordinates must be corrected if the corner is distorded.
+									//In particular, the intersection of diagonals no more fit the intersection between lines.
+									vec2 DiagonalMin =  OrthoVert1 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f);
+									vec2 DiagonalMax = OrthoVert1 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
+									vec2 DiagonalVect = DiagonalMax - DiagonalMin;
+									vec2 DiagonalDir = normalize(DiagonalVect);
+									float DiagonalLength = length(DiagonalMax - DiagonalMin);
+									
+									vec2 DiagonalCorner = OrthoSeg * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
+									float DiagonalCornerLength = dot(DiagonalDir, (DiagonalCorner - DiagonalMin));
+									float DiagonalCornerRatio = 1.0f - DiagonalCornerLength / DiagonalLength;
+									
+									vec2 DiagonalPMin = OrthoVert1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f);
+									float DiagonalPMinLength = dot(DiagonalDir, (DiagonalPMin - DiagonalMin));
+									float DiagonalPMinRatio = DiagonalPMinLength / DiagonalLength;
+									vec2 PMin;
+									if(DiagonalPMinRatio < 0.5) PMin = DiagonalMin + DiagonalVect*(DiagonalPMinRatio*2.0f)*DiagonalCornerRatio;
+									else PMin = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMinRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
+									
+									vec2 DiagonalPMax = OrthoVert1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f);
+									float DiagonalPMaxLength = dot(DiagonalDir, (DiagonalPMax - DiagonalMin));
+									float DiagonalPMaxRatio = DiagonalPMaxLength / DiagonalLength;
+									vec2 PMax;
+									if(DiagonalPMaxRatio < 0.5) PMax = DiagonalMin + DiagonalVect*(DiagonalPMaxRatio*2.0f)*DiagonalCornerRatio;
+									else PMax = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMaxRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
+									
+									Quad.m_Color[2] = Color0 * pSprite->GetColor();
+									Quad.m_Color[3] = Color1 * pSprite->GetColor();
+									Quad.m_Color[0] = Color0 * pSprite->GetColor();
+									Quad.m_Color[1] = Color1 * pSprite->GetColor();
+									
 									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
 									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMin));
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMin));
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMax));
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMax));
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMin));
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMin));
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMax));
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMax));
 									}
 									else
 									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
 									}
 									
-									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + PMin);
+									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + PMax);
 								}
 								else
 								{
+									Quad.m_Color[0] = Color0 * pSprite->GetColor();
+									Quad.m_Color[1] = Color1 * pSprite->GetColor();
+									Quad.m_Color[2] = Color0 * pSprite->GetColor();
+									Quad.m_Color[3] = Color1 * pSprite->GetColor();
+									
 									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
 									{
 										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU);

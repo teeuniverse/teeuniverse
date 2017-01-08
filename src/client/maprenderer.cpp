@@ -805,9 +805,10 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 				CGraphics::CLineItem(P00.x, P00.y, P10.x, P10.y),
 				CGraphics::CLineItem(P01.x, P01.y, P11.x, P11.y),
 				CGraphics::CLineItem(P00.x, P00.y, P01.x, P01.y),
-				CGraphics::CLineItem(P10.x, P10.y, P11.x, P11.y)
+				CGraphics::CLineItem(P10.x, P10.y, P11.x, P11.y),
+				CGraphics::CLineItem(P10.x, P10.y, P01.x, P01.y)
 			};
-			Graphics()->LinesDraw(aLineItem, 4);
+			Graphics()->LinesDraw(aLineItem, sizeof(aLineItem)/sizeof(CGraphics::CLineItem));
 		}
 		Graphics()->LinesEnd();
 	}
