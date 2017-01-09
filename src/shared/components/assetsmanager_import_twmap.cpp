@@ -1279,7 +1279,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 	GItem.m_ClipX = pGroup->GetClipPositionX();
 	GItem.m_ClipY = pGroup->GetClipPositionY();
 	GItem.m_ClipW = pGroup->GetClipSizeX();
-	GItem.m_ClipH = pGroup->GetClipSizeX();
+	GItem.m_ClipH = pGroup->GetClipSizeY();
 	StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
 	ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
 }
