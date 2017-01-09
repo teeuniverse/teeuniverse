@@ -2278,6 +2278,11 @@ mapLayerObjects.addPublicFunc([
 assetsList.append(mapLayerObjects)
 
 # MATERIAL #############################################################
+material_label = Class("Label")
+material_label.addMember("0.2.0", "Color", TypeColor(), "1.0f")
+material_label.addMember("0.2.0", "AngleStart", TypeFloat(), "0.0f")
+material_label.addMember("0.2.0", "AngleEnd", TypeFloat(), "2.0f*Pi")
+
 material_sprite = Class("Sprite")
 material_sprite.addMember("0.2.0", "Path", TypeAssetPath())
 material_sprite.addMember("0.2.0", "Size", TypeVec2(), "1.0f")
@@ -2295,8 +2300,10 @@ material_layer.addMember("0.2.0", "Sprite", TypeArray(material_sprite))
 
 material = ClassAsset("Material", len(assetsList))
 material.setInheritance(mainAsset)
+material.addClass(material_label)
 material.addClass(material_sprite)
 material.addClass(material_layer)
+material.addMember("0.2.0", "Label", TypeArray(material_label))
 material.addMember("0.2.0", "Layer", TypeArray(material_layer))
 material.addMember("0.2.0", "TexturePath", TypeAssetPath())
 material.addMember("0.2.0", "TextureColor", TypeColor())

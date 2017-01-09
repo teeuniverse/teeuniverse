@@ -155,6 +155,7 @@ public:
 	public:
 		int m_StartVert;
 		int m_EndVert;
+		float m_MeanAngle;
 		float m_StartAngle;
 		float m_EndAngle;
 		bool m_Closed;
@@ -205,8 +206,13 @@ public:
 				Segment.m_EndAngle = 0.0f;
 				Segment.m_Closed = false;
 				
+				vec2 Angle = vec2(0.0f, 0.0f);
+				
 				while(GetNextVertex(Segment.m_EndVert))
 				{
+					//Sum up all directions with a weight (the length) 
+					Angle += m_Vertices[Segment.m_EndVert].m_Position - m_Vertices[Segment.m_StartVert].m_Position;
+					
 					if(Segment.m_EndVert == FirstVert)
 					{
 						if(Segment.m_StartVert == Segment.m_EndVert && IsBrokenVertex(Segment.m_StartVert))
@@ -220,6 +226,8 @@ public:
 						break;
 					}
 				}
+				
+				Segment.m_MeanAngle = angle(normalize(Angle));
 				
 				{
 					int PrevId = Segment.m_EndVert;
@@ -322,7 +330,12 @@ public:
 	
 	inline const CSegment* GetNextSegment() const
 	{
-		if(m_CurrSegment+1 < m_Segments.size())
+		if(!m_Segments.size())
+			return NULL;
+		
+		if(m_Closed)
+			return &m_Segments[(m_CurrSegment+1)%m_Segments.size()];
+		else if(m_CurrSegment+1 < m_Segments.size())
 			return &m_Segments[m_CurrSegment+1];
 		else
 			return NULL;
@@ -371,7 +384,8 @@ public:
 	
 	enum
 	{
-		LINECURSORSTATE_END=0,
+		LINECURSORSTATE_START=0,
+		LINECURSORSTATE_END,
 		LINECURSORSTATE_VERTEX,
 		LINECURSORSTATE_ERROR,
 	};
@@ -523,12 +537,95 @@ public:
 	}
 };
 
+struct CLineTile
+{
+	int m_ErrorLevel;
+	int m_Id;
+	float m_Width;
+	bool m_FillingEnabled;
+};
+
+int FindSprite(const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites, int Type, const array<int>& AcceptedLabels0, const array<int>& AcceptedLabels1)
+{
+	//Try to get a start tile
+	for(int t=0; t<3; t++)
+	{
+		for(int i=0; i<Sprites.size(); i++)
+		{
+			if(Sprites[i].GetTileType() != Type)
+				continue;
+			
+			if(t <= 0)
+			{
+				bool Found = false;
+				for(int l=0; l<AcceptedLabels1.size(); l++)
+				{
+					if(Sprites[i].GetTileLabel1() == AcceptedLabels1[l])
+					{
+						Found = true;
+						break;
+					}
+				}
+				if(!Found)
+					continue;
+			}
+			
+			if(t == 1)
+			{
+				bool Found = false;
+				for(int l=0; l<AcceptedLabels0.size(); l++)
+				{
+					if(Sprites[i].GetTileLabel0() == AcceptedLabels0[l])
+					{
+						Found = true;
+						break;
+					}
+				}
+				if(!Found)
+					continue;
+			}
+			
+			return i;
+		}
+	}
+	
+	return -1;
+}
+
+void GetAcceptableLabels(const CAsset_Material* pMaterial, float MeanAngle, array<int>& AcceptedLabels)
+{
+	CAsset_Material::CIteratorLabel LabelIter;
+	for(LabelIter = pMaterial->BeginLabel(); LabelIter != pMaterial->EndLabel(); ++LabelIter)
+	{
+		float AngleRange0 = pMaterial->GetLabelAngleStart(*LabelIter);
+		float AngleRange1 = pMaterial->GetLabelAngleEnd(*LabelIter);
+		if(AngleRange0 > AngleRange1)
+		{
+			float Tmp = AngleRange0;
+			AngleRange0 = AngleRange1;
+			AngleRange1 = Tmp;
+		}
+		
+		float AngleTest = MeanAngle;
+		while(AngleTest < AngleRange1)
+		{
+			if(AngleTest >= AngleRange0)
+			{
+				AcceptedLabels.add_by_copy((*LabelIter).GetId());
+				break;
+			}
+			AngleTest += 2.0f*Pi;
+		}
+	}
+}
+
 void GenerateMaterialQuads_Line(
 	const CAssetsManager* pAssetsManager,
 	array<CTexturedQuad>& OutputQuads,
 	const array<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
+	const CAsset_Material* pMaterial,
 	const CAsset_Material::CLayer* pLayer,
 	bool Closed,
 	int OrthoTesselation
@@ -540,16 +637,22 @@ void GenerateMaterialQuads_Line(
 	
 	CLineIterator LineIterator(Vertices, Closed);
 	
-	int PrevCornerTile = -1;
+	int FirstTileFromLastSegment = -1;
+	float TiledLengthFromLastSegment = 0.0f;
+	array<int> PreviousLabel;
 	while(LineIterator.NextSegment())
 	{
 		CSpriteInfo SpriteInfo;
-		array<int> Tiling;
+		array<CLineTile> Tiling;
 		float SegmentLength = LineIterator.GetSegmentLength();
-		float TiledLength = 0.0f;
+		float TiledLength = TiledLengthFromLastSegment;
 		
 		//Step 1: Tiling generation
 		{
+			array<int> AcceptedLabels;
+			GetAcceptableLabels(pMaterial, LineIterator.GetSegment()->m_MeanAngle, AcceptedLabels);
+			
+			//Find tiles with the appropriate label
 			int FirstTile = -1;
 			int LastTile = -1;
 			if(!LineIterator.IsClosedSegment())
@@ -557,96 +660,97 @@ void GenerateMaterialQuads_Line(
 				const CLineIterator::CSegment* pNextSegment = LineIterator.GetNextSegment();
 				
 				//Try to find the first tile only if the previous one is not a corner
-				if(PrevCornerTile < 0)
+				if(FirstTileFromLastSegment < 0)
 				{
 					//Try to get a start tile
-					for(int i=0; i<Sprites.size(); i++)
-					{
-						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CAP_START)
-						{
-							FirstTile = i;
-							break;
-						}
-					}
+					FirstTile = FindSprite(Sprites, CAsset_Material::SPRITETILE_CAP_START, PreviousLabel, AcceptedLabels);
 				}
-				else
-					FirstTile = PrevCornerTile;
 				
 				//There is a segment after the current one. Try to get a corner tile
 				if(pNextSegment)
 				{
-					for(int i=0; i<Sprites.size(); i++)
-					{
-						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
-						{
-							LastTile = i;
-							break;
-						}
-					}
+					array<int> NextAcceptedLabels;
+					GetAcceptableLabels(pMaterial, pNextSegment->m_MeanAngle, NextAcceptedLabels);
+					
+					int TileType = CAsset_Material::SPRITETILE_CORNER_CONVEX;
+					if(LineIterator.GetSegment()->m_EndAngle < 0.0f)
+						TileType = CAsset_Material::SPRITETILE_CORNER_CONCAVE;
+					LastTile = FindSprite(Sprites, TileType, AcceptedLabels, NextAcceptedLabels);
+					
 					if(LastTile >= 0)
-						PrevCornerTile = LastTile;
+						FirstTileFromLastSegment = LastTile;
 				}
 				//No corner tiles was found, try the get an end tile
 				if(LastTile < 0)
 				{
-					PrevCornerTile = -1;
-					for(int i=0; i<Sprites.size(); i++)
-					{
-						if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_CAP_END)
-						{
-							LastTile = i;
-							break;
-						}
-					}
+					FirstTileFromLastSegment = -1;
+					LastTile = FindSprite(Sprites, CAsset_Material::SPRITETILE_CAP_END, AcceptedLabels, AcceptedLabels);
 				}
 			}
 			
 			if(FirstTile >= 0)
 			{
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[FirstTile], SpriteInfo);
-				if(Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[FirstTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
-				{
-					float Angle = (Pi - LineIterator.GetSegment()->m_StartAngle)/2.0f;
-					float Height = (SpriteInfo.m_Height/2.0f - Sprites[FirstTile].GetPosition().y);
-					TiledLength += Height/std::tan(Angle);
-				}
-				else
-					TiledLength += SpriteInfo.m_Width;
-				Tiling.add_by_copy(FirstTile);
+				TiledLength += SpriteInfo.m_Width;
+				
+				CLineTile& LineTile = Tiling.increment();
+				LineTile.m_Id = FirstTile;
+				LineTile.m_Width = SpriteInfo.m_Width;
+				LineTile.m_FillingEnabled = false;
+				
+				PreviousLabel.clear();
+				PreviousLabel.add_by_copy(Sprites[FirstTile].GetTileLabel1());
 			}
+			
+			CLineTile LastLineTile;
 			if(LastTile >= 0)
 			{
+				LastLineTile.m_Id = LastTile;
+				LastLineTile.m_FillingEnabled = false;
+				
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[LastTile], SpriteInfo);
-				if(Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
+				if(Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 				{
 					float Angle = (Pi - LineIterator.GetSegment()->m_EndAngle)/2.0f;
 					float Height = (SpriteInfo.m_Width/2.0f - Sprites[LastTile].GetPosition().x);
-					TiledLength += Height/std::tan(Angle);
+					LastLineTile.m_Width = Height/std::tan(Angle);
+				}
+				else if(Sprites[LastTile].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE)
+				{
+					float Angle = (Pi + LineIterator.GetSegment()->m_EndAngle)/2.0f;
+					float Height = (SpriteInfo.m_Width/2.0f + Sprites[LastTile].GetPosition().x);
+					LastLineTile.m_Width = Height/std::tan(Angle);
 				}
 				else
-					TiledLength += SpriteInfo.m_Width;
+					LastLineTile.m_Width = SpriteInfo.m_Width;
+				
+				TiledLength += LastLineTile.m_Width;
 			}
 			
 			//1024 is just to make sure that we can go out of this loop in any case.
 			for(int i=0; i<1024; i++)
 			{
-				int Tile = -1;
-				for(int i=0; i<Sprites.size(); i++)
-				{
-					if(Sprites[i].GetTileType() == CAsset_Material::SPRITETILE_LINE)
-					{
-						Tile = i;
-						break;
-					}
-				}
-				
+				int Tile = FindSprite(Sprites, CAsset_Material::SPRITETILE_LINE, PreviousLabel, AcceptedLabels);
 				if(Tile >= 0)
 				{
 					GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[Tile], SpriteInfo);
-					if(TiledLength + SpriteInfo.m_Width < SegmentLength)
+					
+					if(
+						(i == 0 && (SegmentLength - TiledLength > 0.0f)) ||
+						(TiledLength + SpriteInfo.m_Width/2.0f < SegmentLength)
+					)
 					{
 						TiledLength += SpriteInfo.m_Width;
-						Tiling.add_by_copy(Tile);
+						
+						CLineTile& LineTile = Tiling.increment();
+						LineTile.m_Id = Tile;
+						LineTile.m_Width = SpriteInfo.m_Width;
+						LineTile.m_FillingEnabled = false;
+						if(Sprites[LineTile.m_Id].GetFilling() == CAsset_Material::SPRITEFILLING_STRETCHING)
+							LineTile.m_FillingEnabled = true;
+						
+						PreviousLabel.clear();
+						PreviousLabel.add_by_copy(Sprites[Tile].GetTileLabel1());
 					}
 					else
 						break;
@@ -656,50 +760,49 @@ void GenerateMaterialQuads_Line(
 			}
 			
 			if(LastTile >= 0)
-				Tiling.add_by_copy(LastTile);
+			{
+				Tiling.add_by_copy(LastLineTile);
+				PreviousLabel.clear();
+				PreviousLabel.add_by_copy(Sprites[LastTile].GetTileLabel1());
+			}
 		}
+		
+		//Move the iterator if the previous segment already tile a part of the current segment
+		{
+			float Distance_NoUse;
+			int PrevVert_NoUse;
+			int NextVert_NoUse;
+			float PrevAlpha_NoUse;
+			float NextAlpha_NoUse;
+			LineIterator.MoveLineCursor(TiledLengthFromLastSegment, Distance_NoUse, PrevVert_NoUse, NextVert_NoUse, PrevAlpha_NoUse, NextAlpha_NoUse, false);
+		}
+		
+		TiledLengthFromLastSegment = 0.0f;
 		
 		//Step 2: Tiling rendering
 		if(Tiling.size())
 		{
 			//GlobalSpacing represent the spacing from the left (or right) side. Not both in the same time.
 			float GlobalSpacing = 0.0f;
-			if(Tiling.size() > 2)
-				GlobalSpacing = ((SegmentLength - TiledLength)/(Tiling.size()-2))/2.0f;
+			int NumResizableTiles = 0;
 			
 			for(int i=0; i<Tiling.size(); i++)
 			{
-				const CAsset_Material::CSprite* pSprite = &Sprites[Tiling[i]];
+				if(Tiling[i].m_FillingEnabled)
+					NumResizableTiles++;
+			}
+			
+			if(NumResizableTiles)
+				GlobalSpacing = ((SegmentLength - TiledLength)/NumResizableTiles)/2.0f;
+			
+			for(int i=0; i<Tiling.size(); i++)
+			{
+				const CAsset_Material::CSprite* pSprite = &Sprites[Tiling[i].m_Id];
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
 				
-				float SpriteWidth = SpriteInfo.m_Width;
-				
-				//Shift for corner tiles
-				if(i == 0)
-				{
-					if(Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[0]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
-					{
-						float Angle = (Pi - LineIterator.GetSegment()->m_StartAngle)/2.0f;
-						float Height = (SpriteInfo.m_Height/2.0f - pSprite->GetPosition().y);
-						SpriteWidth = Height/std::tan(Angle);
-					}
-				}
-				else if(i == Tiling.size()-1)
-				{
-					if(Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || Sprites[Tiling[Tiling.size()-1]].GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
-					{
-						float Angle = (Pi - LineIterator.GetSegment()->m_EndAngle)/2.0f;
-						float Height = (SpriteInfo.m_Width/2.0f - pSprite->GetPosition().x);
-						SpriteWidth = Height/std::tan(Angle);
-					}
-				}
-				else
-				{
-					if(pSprite->GetFilling() == CAsset_Material::SPRITEFILLING_STRETCHING)
-					{
-						SpriteWidth += 2.0f*GlobalSpacing;
-					}
-				}
+				float SpriteWidth = Tiling[i].m_Width;
+				if(Tiling[i].m_FillingEnabled)
+					SpriteWidth += 2.0f*GlobalSpacing;
 				
 				float WantedDistance = SpriteWidth;
 				
@@ -712,23 +815,33 @@ void GenerateMaterialQuads_Line(
 				float PrevAlpha;
 				float NextAlpha;
 				
-				bool BreakOnVertex = (pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED);
-				while(WantedDistance > 0.0f)
+				bool BreakOnVertex = false;
+				if(
+					pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED &&
+						((pSprite->GetTileType() != CAsset_Material::SPRITETILE_CORNER_CONCAVE &&
+						pSprite->GetTileType() != CAsset_Material::SPRITETILE_CORNER_CONVEX) ||
+						i == Tiling.size()-1)
+				)
+					BreakOnVertex = true;
+				
+				int Stop = CLineIterator::LINECURSORSTATE_START;
+				do
 				{
-					int Stop = LineIterator.MoveLineCursor(WantedDistance, Distance, PrevVert, NextVert, PrevAlpha, NextAlpha, BreakOnVertex);
+					Stop = LineIterator.MoveLineCursor(WantedDistance, Distance, PrevVert, NextVert, PrevAlpha, NextAlpha, BreakOnVertex);
 					if(Stop == CLineIterator::LINECURSORSTATE_ERROR)
 						break;
 					
 					PrevU = NextU;
 					NextU += (Distance / SpriteWidth);
 					
-					if(Distance > 0.0001f)
+					//~ if(Distance > 0.0001f)
 					{
 						vec2 PositionVert0 = Vertices[PrevVert].m_Position;
 						vec2 PositionVert1 = Vertices[NextVert].m_Position;
 						vec2 OrthoVert0 = Vertices[PrevVert].m_Thickness;
 						vec2 OrthoVert1 = Vertices[NextVert].m_Thickness;
-						vec2 OrthoSeg = ortho(normalize(PositionVert1 - PositionVert0));
+						vec2 SegDir = normalize(PositionVert1 - PositionVert0);
+						vec2 OrthoSeg = ortho(SegDir);
 						
 						vec2 Position0 = mix(PositionVert0, PositionVert1, PrevAlpha);
 						vec2 Position1 = mix(PositionVert0, PositionVert1, NextAlpha);
@@ -739,172 +852,110 @@ void GenerateMaterialQuads_Line(
 						//float Weight1 = mix(Vertices[PrevVert].m_Weight, Vertices[NextVert].m_Weight, NextAlpha);
 						
 						if(pSprite->GetAlignment() == CAsset_Material::SPRITEALIGN_STRETCHED)
-						{							
-							int VerticalTesselation = OrthoTesselation;
-							if(SpriteInfo.m_ImagePath.IsNull())
-								VerticalTesselation = 1;
-							for(int k=0; k<VerticalTesselation; k++)
+						{
+							float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
+							float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
+							
+							//Stretched corner
+							if(
+								(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
+								i == Tiling.size()-1
+							)
+							{								
+								if(LineIterator.GetNextSegment())
+								{
+									TiledLengthFromLastSegment = SpriteWidth;
+									
+									int PrevVert_2 = LineIterator.GetNextSegment()->m_StartVert;
+									int NextVert_2 = PrevVert_2;
+									LineIterator.GetNextVertex(NextVert_2);
+									
+									vec2 PositionVert0_2 = Vertices[PrevVert_2].m_Position;
+									vec2 PositionVert1_2 = Vertices[NextVert_2].m_Position;
+									vec2 SegDir_2 = normalize(PositionVert1_2 - PositionVert0_2);
+									vec2 OrthoSeg_2 = ortho(SegDir_2);
+									
+									CTexturedQuad Quad;
+									Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+									
+									Quad.m_Color[0] = Color0 * pSprite->GetColor();
+									Quad.m_Color[1] = Color1 * pSprite->GetColor();
+									Quad.m_Color[2] = Color0 * pSprite->GetColor();
+									Quad.m_Color[3] = Color1 * pSprite->GetColor();
+									
+									if(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE)
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMin);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin + VSize);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMin + VSize);
+										
+										Quad.m_Position[0] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f));
+										Quad.m_Position[1] = ObjPosition + Transform*(Position1 + SegDir_2 * SpriteWidth + OrthoSeg_2 * (pSprite->GetPosition().x - SpriteInfo.m_Width/2.0f));
+										Quad.m_Position[2] = ObjPosition + Transform*(Position1 - SegDir * SpriteWidth + OrthoSeg * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f));
+										Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f));
+									}
+									else
+									{
+										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMin);
+										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMin + VSize);
+										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
+										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin + VSize);
+										
+										Quad.m_Position[0] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f));
+										Quad.m_Position[1] = ObjPosition + Transform*(Position1 + SegDir_2 * SpriteWidth + OrthoSeg_2 * (pSprite->GetPosition().x + SpriteInfo.m_Width/2.0f));
+										Quad.m_Position[2] = ObjPosition + Transform*(Position1 - SegDir * SpriteWidth + OrthoSeg * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f));
+										Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoVert1 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f));
+									}
+										
+									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+										RotateQuadTexture(Quad);
+																
+									TesselateQuad(Quad, OutputQuads, OrthoTesselation, OrthoTesselation);
+								}
+							}
+							//Stretched line
+							else
 							{
-								float USize = SpriteInfo.m_UMax - SpriteInfo.m_UMin;
-								float VSize = SpriteInfo.m_VMax - SpriteInfo.m_VMin;
-								
-								CTexturedQuad& Quad = OutputQuads.increment();
-								
-								float StepMin = -(2.0f * static_cast<float>(k)/VerticalTesselation - 1.0f);
-								float StepMax = -(2.0f * static_cast<float>(k+1)/VerticalTesselation - 1.0f);
-								float VMin = static_cast<float>(k)/VerticalTesselation;
-								float VMax = static_cast<float>(k+1)/VerticalTesselation;
-								
+								CTexturedQuad Quad;
 								Quad.m_ImagePath = SpriteInfo.m_ImagePath;
 								
-								if(
-									(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
-									i == 0
-								)
+								Quad.m_Color[0] = Color0 * pSprite->GetColor();
+								Quad.m_Color[1] = Color1 * pSprite->GetColor();
+								Quad.m_Color[2] = Color0 * pSprite->GetColor();
+								Quad.m_Color[3] = Color1 * pSprite->GetColor();
+								
+								if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
 								{
-									//Coordinates must be corrected if the corner is distorded.
-									//In particular, the intersection of diagonals no more fit the intersection between lines.
-									vec2 DiagonalMin =  OrthoVert0 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f);
-									vec2 DiagonalMax = OrthoVert0 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
-									vec2 DiagonalVect = DiagonalMax - DiagonalMin;
-									vec2 DiagonalDir = normalize(DiagonalVect);
-									float DiagonalLength = length(DiagonalMax - DiagonalMin);
-									
-									vec2 DiagonalCorner = OrthoSeg * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
-									float DiagonalCornerLength = dot(DiagonalDir, (DiagonalCorner - DiagonalMin));
-									float DiagonalCornerRatio = 1.0f - DiagonalCornerLength / DiagonalLength;
-									
-									vec2 DiagonalPMin = OrthoVert0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f);
-									float DiagonalPMinLength = dot(DiagonalDir, (DiagonalPMin - DiagonalMin));
-									float DiagonalPMinRatio = DiagonalPMinLength / DiagonalLength;
-									vec2 PMin;
-									if(DiagonalPMinRatio < 0.5) PMin = DiagonalMin + DiagonalVect*(DiagonalPMinRatio*2.0f)*DiagonalCornerRatio;
-									else PMin = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMinRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
-									
-									vec2 DiagonalPMax = OrthoVert0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f);
-									float DiagonalPMaxLength = dot(DiagonalDir, (DiagonalPMax - DiagonalMin));
-									float DiagonalPMaxRatio = DiagonalPMaxLength / DiagonalLength;
-									vec2 PMax;
-									if(DiagonalPMaxRatio < 0.5) PMax = DiagonalMin + DiagonalVect*(DiagonalPMaxRatio*2.0f)*DiagonalCornerRatio;
-									else PMax = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMaxRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
-									
-									Quad.m_Color[0] = Color0 * pSprite->GetColor();
-									Quad.m_Color[1] = Color1 * pSprite->GetColor();
-									Quad.m_Color[2] = Color0 * pSprite->GetColor();
-									Quad.m_Color[3] = Color1 * pSprite->GetColor();
-									
-									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
-									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMax - USize * (1.0f-PrevU) * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax - USize * (1.0f-NextU) * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax - USize * (1.0f-PrevU) * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax - USize * (1.0f-NextU) * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
-									}
-									else
-									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMax - USize * VMin, SpriteInfo.m_VMax - VSize * (1.0f-PrevU) * (1.0f-VMin));
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMax - USize * VMin, SpriteInfo.m_VMax - VSize * (1.0f-NextU) * (1.0f-VMin));
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax - USize * VMax, SpriteInfo.m_VMax - VSize * (1.0f-PrevU) * (1.0f-VMax));
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax - USize * VMax, SpriteInfo.m_VMax - VSize * (1.0f-NextU) * (1.0f-VMax));
-									}
-									
-									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + PMin);
-									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + PMax);
-									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-								}
-								else if(
-									(pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE || pSprite->GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX) &&
-									i == Tiling.size()-1
-								)
-								{
-									//Coordinates must be corrected if the corner is distorded.
-									//In particular, the intersection of diagonals no more fit the intersection between lines.
-									vec2 DiagonalMin =  OrthoVert1 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f);
-									vec2 DiagonalMax = OrthoVert1 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
-									vec2 DiagonalVect = DiagonalMax - DiagonalMin;
-									vec2 DiagonalDir = normalize(DiagonalVect);
-									float DiagonalLength = length(DiagonalMax - DiagonalMin);
-									
-									vec2 DiagonalCorner = OrthoSeg * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f);
-									float DiagonalCornerLength = dot(DiagonalDir, (DiagonalCorner - DiagonalMin));
-									float DiagonalCornerRatio = 1.0f - DiagonalCornerLength / DiagonalLength;
-									
-									vec2 DiagonalPMin = OrthoVert1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f);
-									float DiagonalPMinLength = dot(DiagonalDir, (DiagonalPMin - DiagonalMin));
-									float DiagonalPMinRatio = DiagonalPMinLength / DiagonalLength;
-									vec2 PMin;
-									if(DiagonalPMinRatio < 0.5) PMin = DiagonalMin + DiagonalVect*(DiagonalPMinRatio*2.0f)*DiagonalCornerRatio;
-									else PMin = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMinRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
-									
-									vec2 DiagonalPMax = OrthoVert1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f);
-									float DiagonalPMaxLength = dot(DiagonalDir, (DiagonalPMax - DiagonalMin));
-									float DiagonalPMaxRatio = DiagonalPMaxLength / DiagonalLength;
-									vec2 PMax;
-									if(DiagonalPMaxRatio < 0.5) PMax = DiagonalMin + DiagonalVect*(DiagonalPMaxRatio*2.0f)*DiagonalCornerRatio;
-									else PMax = DiagonalMin + DiagonalVect*(1.0f - ((1.0f - DiagonalPMaxRatio)*2.0f)*(1.0f - DiagonalCornerRatio));
-									
-									Quad.m_Color[2] = Color0 * pSprite->GetColor();
-									Quad.m_Color[3] = Color1 * pSprite->GetColor();
-									Quad.m_Color[0] = Color0 * pSprite->GetColor();
-									Quad.m_Color[1] = Color1 * pSprite->GetColor();
-									
-									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
-									{
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMin));
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMin));
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU * (1.0f-VMax));
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU * (1.0f-VMax));
-									}
-									else
-									{
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMin), SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU * (1.0f-VMax), SpriteInfo.m_VMin + VSize * VMax);
-									}
-									
-									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + PMin);
-									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + OrthoSeg * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + PMax);
+									Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax - VSize * PrevU);
+									Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax - VSize * NextU);
+									Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMax - VSize * PrevU);
+									Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize, SpriteInfo.m_VMax - VSize * NextU);
 								}
 								else
 								{
-									Quad.m_Color[0] = Color0 * pSprite->GetColor();
-									Quad.m_Color[1] = Color1 * pSprite->GetColor();
-									Quad.m_Color[2] = Color0 * pSprite->GetColor();
-									Quad.m_Color[3] = Color1 * pSprite->GetColor();
-									
-									if(pSprite->GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
-									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * PrevU);
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * VMin, SpriteInfo.m_VMax - VSize * NextU);
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * PrevU);
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * VMax, SpriteInfo.m_VMax - VSize * NextU);
-									}
-									else
-									{
-										Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin + VSize * VMin);
-										Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin + VSize * VMax);
-										Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin + VSize * VMax);
-									}
-							
-									vec2 Ortho0 = OrthoSeg;
-									vec2 Ortho1 = OrthoSeg;
-									if(NextAlpha == 1.0f)
-										Ortho1 = OrthoVert1;
-									if(PrevAlpha == 0.0f)
-										Ortho0 = OrthoVert0;
-									
-									Quad.m_Position[0] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[1] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y + StepMin * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[2] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
-									Quad.m_Position[3] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y + StepMax * SpriteInfo.m_Height/2.0f));
+									Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin);
+									Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin);
+									Quad.m_Texture[2] = vec2(SpriteInfo.m_UMin + USize * PrevU, SpriteInfo.m_VMin + VSize);
+									Quad.m_Texture[3] = vec2(SpriteInfo.m_UMin + USize * NextU, SpriteInfo.m_VMin + VSize);
 								}
+								
+								vec2 Ortho0 = OrthoSeg;
+								vec2 Ortho1 = OrthoSeg;
+								if(Stop == CLineIterator::LINECURSORSTATE_VERTEX && !LineIterator.IsEndVertex(NextVert))
+									Ortho1 = OrthoVert1;
+								if(PrevAlpha == 0.0f && !LineIterator.IsStartVertex(PrevVert))
+									Ortho0 = OrthoVert0;
+								
+								Quad.m_Position[0] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f));
+								Quad.m_Position[1] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y + SpriteInfo.m_Height/2.0f));
+								Quad.m_Position[2] = ObjPosition + Transform*(Position0 + Ortho0 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f));
+								Quad.m_Position[3] = ObjPosition + Transform*(Position1 + Ortho1 * (pSprite->GetPosition().y - SpriteInfo.m_Height/2.0f));
+								
+								TesselateQuad(Quad, OutputQuads, 1, OrthoTesselation);
 							}
 						}
+						//Sprites along the line
 						else if(Stop == CLineIterator::LINECURSORSTATE_END)
 						{
 							CTexturedQuad& Quad = OutputQuads.increment();
@@ -950,11 +1001,10 @@ void GenerateMaterialQuads_Line(
 						}
 					}
 					
-					if(Stop == CLineIterator::LINECURSORSTATE_END)
-						break;
-					else
+					if(Stop != CLineIterator::LINECURSORSTATE_END)
 						WantedDistance -= Distance;
 				}
+				while(Stop != CLineIterator::LINECURSORSTATE_END && Stop != CLineIterator::LINECURSORSTATE_ERROR);
 			}
 		}
 	}
@@ -981,32 +1031,30 @@ void GenerateMaterialQuads(
 	{
 		if(Vertices.size() >= 3)
 		{
+			vec2 Barycenter = vec2(0.0f, 0.0f);
+			for(int i=0; i<Vertices.size(); i++)
+				Barycenter += Vertices[i].m_Position;
+			Barycenter = ObjPosition + Transform*(Barycenter / Vertices.size());
+			
 			float TextureSize = 1.0f;
 			
 			const CAsset_Image* pImage = pAssetsManager->GetAsset<CAsset_Image>(pMaterial->GetTexturePath());
 			if(pImage)
 				TextureSize = pImage->GetDataWidth() * pImage->GetTexelSize() / 1024.0f;
 			
-			int V0 = 0%Vertices.size();
-			int V1 = 1%Vertices.size();
-			int V2 = 3%Vertices.size();
-			int V3 = 2%Vertices.size();
-			
-			int VerticesLeft = Vertices.size() - 2;
+			int i=0;
 			do
 			{
-				V1 = V0;
-				V3 = V2;
-				V0 = (V0 + Vertices.size() - 1)%Vertices.size();
-				V2 = (V2 + 1)%Vertices.size();
-				VerticesLeft = VerticesLeft-2;
+				int V0 = i;
+				int V1 = i+1;
+				int V2 = min(i+2, Vertices.size()-1);
 				
 				CTexturedQuad& Quad = OutputQuads.increment();
 				
 				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position + normalize(Vertices[V0].m_Thickness) * pMaterial->GetTextureSpacing());
 				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position + normalize(Vertices[V1].m_Thickness) * pMaterial->GetTextureSpacing());
-				Quad.m_Position[2] = ObjPosition + Transform*(Vertices[V2].m_Position + normalize(Vertices[V2].m_Thickness) * pMaterial->GetTextureSpacing());
-				Quad.m_Position[3] = ObjPosition + Transform*(Vertices[V3].m_Position + normalize(Vertices[V3].m_Thickness) * pMaterial->GetTextureSpacing());
+				Quad.m_Position[2] = Barycenter;
+				Quad.m_Position[3] = ObjPosition + Transform*(Vertices[V2].m_Position + normalize(Vertices[V2].m_Thickness) * pMaterial->GetTextureSpacing());
 				
 				Quad.m_Texture[0] = rotate(Quad.m_Position[0]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
 				Quad.m_Texture[1] = rotate(Quad.m_Position[1]/(pMaterial->GetTextureSize() * TextureSize), pMaterial->GetTextureAngle());
@@ -1019,8 +1067,10 @@ void GenerateMaterialQuads(
 				Quad.m_Color[3] = pMaterial->GetTextureColor();
 				
 				Quad.m_ImagePath = pMaterial->GetTexturePath();
+				
+				i += 2;
 			}
-			while(VerticesLeft > 0);
+			while(i < Vertices.size()-1);
 		}
 	}
 	
@@ -1032,7 +1082,7 @@ void GenerateMaterialQuads(
 		{
 			const CAsset_Material::CLayer* pLayer = &pMaterial->GetLayer(*LayerIter);
 				
-			GenerateMaterialQuads_Line(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pLayer, Closed, OrthoTesselation);
+			GenerateMaterialQuads_Line(pAssetsManager, OutputQuads, Vertices, Transform, ObjPosition, pMaterial, pLayer, Closed, OrthoTesselation);
 		}
 	}
 }

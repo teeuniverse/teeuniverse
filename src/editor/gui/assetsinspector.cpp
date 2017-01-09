@@ -1198,8 +1198,23 @@ protected:
 		const CAsset_Material* pLayer = AssetsManager()->GetAsset<CAsset_Material>(m_pAssetsEditor->GetEditedAssetPath());
 		if(pLayer)
 		{
+			CLocalizableString LString_Label(_("Label {int:Id}"));
 			CLocalizableString LString_Layer(_("Layer {int:Id}"));
 			CLocalizableString LString_Sprite(_("Sprite {int:Id}"));
+			
+			CAsset_Material::CIteratorLabel LabelIter;
+			int LabelCounter = 1;
+			for(LabelIter = pLayer->BeginLabel(); LabelIter != pLayer->EndLabel(); ++LabelIter)
+			{
+				LString_Label.ClearParameters();
+				LString_Label.AddInteger("Id", LabelCounter);
+				Add(new CSubItem(m_pAssetsEditor, *LabelIter, LString_Label, m_pAssetsEditor->m_Path_Sprite_IconLabel));
+				
+				LabelCounter++;
+			}
+			
+			if(LabelCounter > 1)
+				AddSeparator();
 			
 			CAsset_Material::CIteratorLayer LayerIter;
 			int LayerCounter = 1;
@@ -1285,45 +1300,76 @@ public:
 			SizeY = SpriteRect.h;
 		}
 		
-		{
-			AssetsRenderer()->TextureSet(SpriteInfo.m_ImagePath);
+		{			
+			//Generate the quad
+			CTexturedQuad Quad;
+			
+			Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+			
+			Quad.m_Color[0] = 1.0f;
+			Quad.m_Color[1] = 1.0f;
+			Quad.m_Color[2] = 1.0f;
+			Quad.m_Color[3] = 1.0f;
+			
+			Quad.m_Texture[0] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMin);
+			Quad.m_Texture[1] = vec2(SpriteInfo.m_UMin, SpriteInfo.m_VMax);
+			Quad.m_Texture[2] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMin);
+			Quad.m_Texture[3] = vec2(SpriteInfo.m_UMax, SpriteInfo.m_VMax);
+			
+			if(Sprite.GetFlags() & CAsset_Material::SPRITEFLAG_ROTATION)
+				RotateQuadTexture(Quad);
+			
+			Quad.m_Position[0] = vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2);
+			Quad.m_Position[1] = vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2);
+			Quad.m_Position[2] = vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2);
+			Quad.m_Position[3] = vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2);
+			
+			//Render the quad
+			AssetsRenderer()->TextureSet(Quad.m_ImagePath);
 			Graphics()->QuadsBegin();
-			Graphics()->SetColor(1.0f, true);
+			
+			Graphics()->SetColor4(
+				Quad.m_Color[0],
+				Quad.m_Color[1],
+				Quad.m_Color[2],
+				Quad.m_Color[3],
+				true
+			);
 			
 			Graphics()->QuadsSetSubsetFree(
-				SpriteInfo.m_UMin, SpriteInfo.m_VMin,
-				SpriteInfo.m_UMin, SpriteInfo.m_VMax,
-				SpriteInfo.m_UMax, SpriteInfo.m_VMin,
-				SpriteInfo.m_UMax, SpriteInfo.m_VMax
+				Quad.m_Texture[0].x, Quad.m_Texture[0].y,
+				Quad.m_Texture[1].x, Quad.m_Texture[1].y,
+				Quad.m_Texture[2].x, Quad.m_Texture[2].y,
+				Quad.m_Texture[3].x, Quad.m_Texture[3].y
 			);
 			
 			CGraphics::CFreeformItem Freeform(
-				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
-				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2),
-				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2-SizeY/2),
-				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2, SpriteRect.y+SpriteRect.h/2+SizeY/2)
+				Quad.m_Position[0],
+				Quad.m_Position[1],
+				Quad.m_Position[2],
+				Quad.m_Position[3]
 			);
 			Graphics()->QuadsDrawFreeform(&Freeform, 1);
 			Graphics()->QuadsEnd();
 		}
 		
-		float LabelOpacity = 0.5f;
-		vec4 aLabelColors[8];
-		aLabelColors[0] = vec4(1.0f, 0.0f, 0.0f, LabelOpacity);
-		aLabelColors[1] = vec4(0.0f, 1.0f, 0.0f, LabelOpacity);
-		aLabelColors[2] = vec4(0.0f, 0.0f, 1.0f, LabelOpacity);
-		aLabelColors[3] = vec4(1.0f, 1.0f, 0.0f, LabelOpacity);
-		aLabelColors[4] = vec4(0.0f, 1.0f, 1.0f, LabelOpacity);
-		aLabelColors[5] = vec4(1.0f, 0.0f, 1.0f, LabelOpacity);
-		aLabelColors[6] = vec4(1.0f, 0.6f, 1.0f, LabelOpacity);
-		aLabelColors[7] = vec4(0.6f, 0.0f, 1.0f, LabelOpacity);
-		int nbLabelColors = sizeof(aLabelColors)/sizeof(vec4);
+		vec4 LabelColor0 = vec4(0.0f, 0.0f, 0.0f, 0.5f);
+		vec4 LabelColor1 = vec4(0.0f, 0.0f, 0.0f, 0.5f);
+		
+		CSubPath LabelPath0 = CAsset_Material::SubPath_Label(Sprite.GetTileLabel0());
+		CSubPath LabelPath1 = CAsset_Material::SubPath_Label(Sprite.GetTileLabel1());
+		
+		if(pMaterial->IsValidLabel(LabelPath0))
+			LabelColor0 = pMaterial->GetLabelColor(LabelPath0);
+		
+		if(pMaterial->IsValidLabel(LabelPath1))
+			LabelColor1 = pMaterial->GetLabelColor(LabelPath1);
 		
 		Graphics()->TextureClear();
 		Graphics()->QuadsBegin();
 		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONCAVE)
 		{
-			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+			Graphics()->SetColor(LabelColor1, true);
 			
 			CGraphics::CFreeformItem Freeform(
 				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
@@ -1335,7 +1381,7 @@ public:
 		}
 		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX)
 		{
-			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+			Graphics()->SetColor(LabelColor1, true);
 			
 			CGraphics::CFreeformItem Freeform(
 				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2+SizeY/2-16),
@@ -1348,9 +1394,9 @@ public:
 		if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CAP_START || Sprite.GetTileType() == CAsset_Material::SPRITETILE_LINE)
 		{
 			if(Sprite.GetTileType() == CAsset_Material::SPRITETILE_CAP_START)
-				Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel0()%nbLabelColors], true);
+				Graphics()->SetColor(LabelColor0, true);
 			else
-				Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel1()%nbLabelColors], true);
+				Graphics()->SetColor(LabelColor1, true);
 			
 			CGraphics::CFreeformItem Freeform(
 				vec2(SpriteRect.x+SpriteRect.w/2+SizeX/2-16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
@@ -1367,7 +1413,7 @@ public:
 			Sprite.GetTileType() == CAsset_Material::SPRITETILE_CORNER_CONVEX
 		)
 		{
-			Graphics()->SetColor(aLabelColors[Sprite.GetTileLabel0()%nbLabelColors], true);
+			Graphics()->SetColor(LabelColor0, true);
 			
 			CGraphics::CFreeformItem Freeform(
 				vec2(SpriteRect.x+SpriteRect.w/2-SizeX/2+16, SpriteRect.y+SpriteRect.h/2-SizeY/2+16),
@@ -1401,14 +1447,29 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Material_Asset()
 	
 	pTab->AddSeparator();
 	
-	pTab->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LAYER, CSubPath::Null(), _LSTRING("New Layer"), AssetsEditor()->m_Path_Sprite_IconLayer), false);
+	{
+		gui::CHListLayout* pButtons = new gui::CHListLayout(Context());
+		pTab->Add(pButtons, false);
+		pButtons->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LABEL, CSubPath::Null(), _LSTRING("New Label"), AssetsEditor()->m_Path_Sprite_IconLabel), true);
+		pButtons->Add(new CNewSubItemButton_Material_Layer(AssetsEditor(), CAsset_Material::TYPE_LAYER, CSubPath::Null(), _LSTRING("New Layer"), AssetsEditor()->m_Path_Sprite_IconLayer), true);
+	}
 	pTab->Add(new CSubItemList_Material_Layer(AssetsEditor()), true);
 	
+	//Label
+	gui::CVListLayout* pLabelEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LABEL);
+	pTab->Add(pLabelEditor, false);
+	
+	AddField_Color(pLabelEditor, CAsset_Material::LABEL_COLOR, _LSTRING("Color"));
+	AddField_Angle(pLabelEditor, CAsset_Material::LABEL_ANGLESTART, _LSTRING("Start Angle"));
+	AddField_Angle(pLabelEditor, CAsset_Material::LABEL_ANGLEEND, _LSTRING("End Angle"));
+	
+	//Layer
 	gui::CVListLayout* pLayerEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER);
 	pTab->Add(pLayerEditor, false);
 	
 	AddField(pLayerEditor, new CNewSubItemButton_Material_Sprite(AssetsEditor()));
 	
+	//Sprite
 	gui::CVListLayout* pSpriteEditor = new CSubItemEditor(AssetsEditor(), CAsset_Material::TYPE_LAYER_SPRITE);
 	pTab->Add(pSpriteEditor, false);	
 	

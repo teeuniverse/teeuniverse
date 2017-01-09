@@ -189,6 +189,7 @@ public:
 	CAssetPath m_Path_Sprite_IconFillingScaling;
 	CAssetPath m_Path_Sprite_IconFillingStretching;
 	CAssetPath m_Path_Sprite_IconFillingSpacing;
+	CAssetPath m_Path_Sprite_IconLabel;
 	
 	CAssetPath m_Path_Sprite_IconShapeStar;
 	CAssetPath m_Path_Sprite_IconShapeHexagon;

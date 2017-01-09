@@ -1731,6 +1731,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconMatSpriteAlignLine = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignLine");
 		m_Path_Sprite_IconMatSpriteAlignObject = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignObject");
 		m_Path_Sprite_IconMatSpriteAlignStretched = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignStretched");
+		m_Path_Sprite_IconLabel = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLabel");
 		
 		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
 		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");

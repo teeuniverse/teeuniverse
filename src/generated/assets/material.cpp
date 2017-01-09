@@ -33,6 +33,13 @@
 #include <shared/assets/assetssaveloadcontext.h>
 #include <shared/archivefile.h>
 
+CAsset_Material::CLabel::CLabel()
+{
+	m_Color = 1.0f;
+	m_AngleStart = 0.0f;
+	m_AngleEnd = 2.0f*Pi;
+}
+
 CAsset_Material::CSprite::CSprite()
 {
 	m_Size = 1.0f;
@@ -54,6 +61,11 @@ CAsset_Material::CAsset_Material()
 	m_TextureEnabled = false;
 }
 
+void CAsset_Material::CLabel::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLabel& SysType)
+{
+}
+
+
 void CAsset_Material::CSprite::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CSprite& SysType)
 {
 }
@@ -71,6 +83,10 @@ void CAsset_Material::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingConte
 }
 
 
+void CAsset_Material::CLabel::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
 void CAsset_Material::CSprite::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_1_0& TuaType)
 {
 }
@@ -84,6 +100,14 @@ void CAsset_Material::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 }
+
+void CAsset_Material::CLabel::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLabel& SysType)
+{
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_AngleStart = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_AngleStart);
+	SysType.m_AngleEnd = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_AngleEnd);
+}
+
 
 void CAsset_Material::CSprite::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType)
 {
@@ -122,6 +146,16 @@ void CAsset_Material::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
 	{
+		const CAsset_Material::CLabel::CTuaType_0_2_0* pData = (const CAsset_Material::CLabel::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Label.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Label.m_Size);
+		SysType.m_Label.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_Material::CLabel::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_Label[i]);
+		}
+	}
+	
+	{
 		const CAsset_Material::CLayer::CTuaType_0_2_0* pData = (const CAsset_Material::CLayer::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
 		SysType.m_Layer.resize(Size);
@@ -140,6 +174,13 @@ void CAsset_Material::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingConte
 	SysType.m_TextureEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TextureEnabled);
 }
 
+
+void CAsset_Material::CLabel::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_0& TuaType)
+{
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_AngleStart = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_AngleStart);
+	TuaType.m_AngleEnd = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_AngleEnd);
+}
 
 void CAsset_Material::CSprite::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType)
 {
@@ -176,6 +217,16 @@ void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	{
+		TuaType.m_Label.m_Size = SysType.m_Label.size();
+		CAsset_Material::CLabel::CTuaType_0_2_0* pData = new CAsset_Material::CLabel::CTuaType_0_2_0[SysType.m_Label.size()];
+		for(int i=0; i<SysType.m_Label.size(); i++)
+		{
+			CAsset_Material::CLabel::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
+		}
+		TuaType.m_Label.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_Material::CLabel::CTuaType_0_2_0)*SysType.m_Label.size());
+		delete[] pData;
+	}
+	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Material::CLayer::CTuaType_0_2_0* pData = new CAsset_Material::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
 		for(int i=0; i<SysType.m_Layer.size(); i++)
@@ -199,6 +250,8 @@ int CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, int Defaul
 {
 	switch(ValueType)
 	{
+		case LABEL_ARRAYSIZE:
+			return GetLabelArraySize();
 		case LAYER_ARRAYSIZE:
 			return GetLayerArraySize();
 		case LAYER_SPRITE_ARRAYSIZE:
@@ -224,6 +277,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, int Value
 {
 	switch(ValueType)
 	{
+		case LABEL_ARRAYSIZE:
+			SetLabelArraySize(Value);
+			return true;
 		case LAYER_ARRAYSIZE:
 			SetLayerArraySize(Value);
 			return true;
@@ -280,6 +336,10 @@ float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float De
 {
 	switch(ValueType)
 	{
+		case LABEL_ANGLESTART:
+			return GetLabelAngleStart(SubPath);
+		case LABEL_ANGLEEND:
+			return GetLabelAngleEnd(SubPath);
 		case LAYER_SPRITE_SIZE_X:
 			return GetLayerSpriteSizeX(SubPath);
 		case LAYER_SPRITE_SIZE_Y:
@@ -305,6 +365,12 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Val
 {
 	switch(ValueType)
 	{
+		case LABEL_ANGLESTART:
+			SetLabelAngleStart(SubPath, Value);
+			return true;
+		case LABEL_ANGLEEND:
+			SetLabelAngleEnd(SubPath, Value);
+			return true;
 		case LAYER_SPRITE_SIZE_X:
 			SetLayerSpriteSizeX(SubPath, Value);
 			return true;
@@ -371,6 +437,8 @@ vec4 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec4 Defa
 {
 	switch(ValueType)
 	{
+		case LABEL_COLOR:
+			return GetLabelColor(SubPath);
 		case LAYER_SPRITE_COLOR:
 			return GetLayerSpriteColor(SubPath);
 		case TEXTURECOLOR:
@@ -384,6 +452,9 @@ bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, vec4 Valu
 {
 	switch(ValueType)
 	{
+		case LABEL_COLOR:
+			SetLabelColor(SubPath, Value);
+			return true;
 		case LAYER_SPRITE_COLOR:
 			SetLayerSpriteColor(SubPath, Value);
 			return true;
@@ -426,6 +497,8 @@ int CAsset_Material::AddSubItem(int Type, const CSubPath& SubPath)
 {
 	switch(Type)
 	{
+		case TYPE_LABEL:
+			return AddLabel();
 		case TYPE_LAYER:
 			return AddLayer();
 		case TYPE_LAYER_SPRITE:
@@ -438,6 +511,9 @@ int CAsset_Material::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
 {
 	switch(Type)
 	{
+		case TYPE_LABEL:
+			AddAtLabel(Index);
+			return Index;
 		case TYPE_LAYER:
 			AddAtLayer(Index);
 			return Index;
@@ -452,6 +528,9 @@ void CAsset_Material::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
+		case TYPE_LABEL:
+			DeleteLabel(SubPath);
+			break;
 		case TYPE_LAYER:
 			DeleteLayer(SubPath);
 			break;
@@ -465,6 +544,9 @@ void CAsset_Material::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{
+		case TYPE_LABEL:
+			RelMoveLabel(SubPath, RelMove);
+			break;
 		case TYPE_LAYER:
 			RelMoveLayer(SubPath, RelMove);
 			break;

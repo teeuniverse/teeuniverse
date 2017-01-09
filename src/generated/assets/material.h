@@ -65,16 +65,25 @@ public:
 	
 	enum
 	{
+		TYPE_LABEL,
 		TYPE_LAYER_SPRITE,
 		TYPE_LAYER,
 	};
 	
+	static inline CSubPath SubPath_Label(int Id0) { return CSubPath(TYPE_LABEL, Id0, 0, 0); }
 	static inline CSubPath SubPath_LayerSprite(int Id0, int Id1) { return CSubPath(TYPE_LAYER_SPRITE, Id0, Id1, 0); }
 	static inline CSubPath SubPath_Layer(int Id0) { return CSubPath(TYPE_LAYER, Id0, 0, 0); }
 	
 	enum
 	{
 		NAME = CAsset::NAME,
+		LABEL_ARRAYSIZE,
+		LABEL_PTR,
+		LABEL_ARRAY,
+		LABEL_COLOR,
+		LABEL_ANGLESTART,
+		LABEL_ANGLEEND,
+		LABEL,
 		LAYER_ARRAYSIZE,
 		LAYER_PTR,
 		LAYER_ARRAY,
@@ -107,6 +116,25 @@ public:
 		TEXTUREENABLED,
 	};
 	
+	class CIteratorLabel
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorLabel() : m_Index(0), m_Reverse(false) {}
+		CIteratorLabel(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorLabel& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_Label(m_Index); }
+		bool operator==(const CIteratorLabel& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorLabel& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorLabel BeginLabel() const { return CIteratorLabel(0, false); }
+	CIteratorLabel EndLabel() const { return CIteratorLabel(m_Label.size(), false); }
+	CIteratorLabel ReverseBeginLabel() const { return CIteratorLabel(m_Label.size()-1, true); }
+	CIteratorLabel ReverseEndLabel() const { return CIteratorLabel(-1, true); }
+	
 	class CIteratorLayer
 	{
 	protected:
@@ -126,6 +154,65 @@ public:
 	CIteratorLayer ReverseBeginLayer() const { return CIteratorLayer(m_Layer.size()-1, true); }
 	CIteratorLayer ReverseEndLayer() const { return CIteratorLayer(-1, true); }
 	
+	class CLabel
+	{
+	public:
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			tua_uint32 m_Color;
+			tua_float m_AngleStart;
+			tua_float m_AngleEnd;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+	
+	private:
+		vec4 m_Color;
+		float m_AngleStart;
+		float m_AngleEnd;
+	
+	public:
+		CLabel();
+		void copy(const CAsset_Material::CLabel& Item)
+		{
+			m_Color = Item.m_Color;
+			m_AngleStart = Item.m_AngleStart;
+			m_AngleEnd = Item.m_AngleEnd;
+		}
+		
+		void transfert(CAsset_Material::CLabel& Item)
+		{
+			m_Color = Item.m_Color;
+			m_AngleStart = Item.m_AngleStart;
+			m_AngleEnd = Item.m_AngleEnd;
+		}
+		
+		inline vec4 GetColor() const { return m_Color; }
+		
+		inline float GetAngleStart() const { return m_AngleStart; }
+		
+		inline float GetAngleEnd() const { return m_AngleEnd; }
+		
+		inline void SetColor(vec4 Value) { m_Color = Value; }
+		
+		inline void SetAngleStart(float Value) { m_AngleStart = Value; }
+		
+		inline void SetAngleEnd(float Value) { m_AngleEnd = Value; }
+		
+		void AssetPathOperation(const CAssetPath::COperation& Operation)
+		{
+		}
+		
+	};
 	class CSprite
 	{
 	public:
@@ -530,6 +617,7 @@ public:
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
+		CTuaArray m_Label;
 		CTuaArray m_Layer;
 		CAssetPath::CTuaType m_TexturePath;
 		tua_uint32 m_TextureColor;
@@ -543,6 +631,7 @@ public:
 	
 
 private:
+	array< CAsset_Material::CLabel, allocator_copy<CAsset_Material::CLabel> > m_Label;
 	array< CAsset_Material::CLayer, allocator_copy<CAsset_Material::CLayer> > m_Layer;
 	CAssetPath m_TexturePath;
 	vec4 m_TextureColor;
@@ -576,6 +665,7 @@ public:
 	void copy(const CAsset_Material& Item)
 	{
 		CAsset::copy(Item);
+		m_Label.copy(Item.m_Label);
 		m_Layer.copy(Item.m_Layer);
 		m_TexturePath = Item.m_TexturePath;
 		m_TextureColor = Item.m_TextureColor;
@@ -588,6 +678,7 @@ public:
 	void transfert(CAsset_Material& Item)
 	{
 		CAsset::transfert(Item);
+		m_Label.transfert(Item.m_Label);
 		m_Layer.transfert(Item.m_Layer);
 		m_TexturePath = Item.m_TexturePath;
 		m_TextureColor = Item.m_TextureColor;
@@ -595,6 +686,40 @@ public:
 		m_TextureAngle = Item.m_TextureAngle;
 		m_TextureSpacing = Item.m_TextureSpacing;
 		m_TextureEnabled = Item.m_TextureEnabled;
+	}
+	
+	inline int GetLabelArraySize() const { return m_Label.size(); }
+	
+	inline const CAsset_Material::CLabel* GetLabelPtr() const { return m_Label.base_ptr(); }
+	
+	inline const array< CAsset_Material::CLabel, allocator_copy<CAsset_Material::CLabel> >& GetLabelArray() const { return m_Label; }
+	inline array< CAsset_Material::CLabel, allocator_copy<CAsset_Material::CLabel> >& GetLabelArray() { return m_Label; }
+	
+	inline const CAsset_Material::CLabel& GetLabel(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_Label.size());
+		return m_Label[SubPath.GetId()];
+	}
+	
+	inline vec4 GetLabelColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetColor();
+		else return 1.0f;
+	}
+	
+	inline float GetLabelAngleStart(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetAngleStart();
+		else return 0.0f;
+	}
+	
+	inline float GetLabelAngleEnd(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetAngleEnd();
+		else return 0.0f;
 	}
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
@@ -755,6 +880,34 @@ public:
 	
 	inline bool GetTextureEnabled() const { return m_TextureEnabled; }
 	
+	inline void SetLabelArraySize(int Value) { m_Label.resize(Value); }
+	
+	inline void SetLabel(const CSubPath& SubPath, const CAsset_Material::CLabel& Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+		{
+			m_Label[SubPath.GetId()].copy(Value);
+		}
+	}
+	
+	inline void SetLabelColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetColor(Value);
+	}
+	
+	inline void SetLabelAngleStart(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetAngleStart(Value);
+	}
+	
+	inline void SetLabelAngleEnd(const CSubPath& SubPath, float Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetAngleEnd(Value);
+	}
+	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
 	inline void SetLayer(const CSubPath& SubPath, const CAsset_Material::CLayer& Value)
@@ -877,6 +1030,13 @@ public:
 	
 	inline void SetTextureEnabled(bool Value) { m_TextureEnabled = Value; }
 	
+	inline int AddLabel()
+	{
+		int Id = m_Label.size();
+		m_Label.increment();
+		return Id;
+	}
+	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
@@ -886,17 +1046,25 @@ public:
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
 	
+	inline void AddAtLabel(int Index) { m_Label.insertat_and_init(Index); }
+	
 	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
 	
 	inline void AddAtLayerSprite(const CSubPath& SubPath, int Index) { m_Layer[SubPath.GetId()].AddAtSprite(Index); }
+	
+	inline void DeleteLabel(const CSubPath& SubPath) { m_Label.remove_index(SubPath.GetId()); }
 	
 	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
 	
 	inline void DeleteLayerSprite(const CSubPath& SubPath) { m_Layer[SubPath.GetId()].DeleteSprite(SubPath.PopId()); }
 	
+	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { m_Label.relative_move(SubPath.GetId(), RelMove); }
+	
 	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
+	
+	inline bool IsValidLabel(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Label.size()); }
 	
 	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size()); }
 	
@@ -904,6 +1072,10 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
+		for(int i=0; i<m_Label.size(); i++)
+		{
+			m_Label[i].AssetPathOperation(Operation);
+		}
 		for(int i=0; i<m_Layer.size(); i++)
 		{
 			m_Layer[i].AssetPathOperation(Operation);
