@@ -169,8 +169,8 @@ target_link_libraries (teeuniverse_shared
 	${ICU_LIBRARIES}
 )
 add_custom_command(TARGET teeuniverse_shared POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${DATA_OUTPUT_DIRECTORY})
-install(DIRECTORY $DATA_OUTPUT_DIRECTORY"/data/languages" DESTINATION "share/teeuniverse")
-install(DIRECTORY $DATA_OUTPUT_DIRECTORY"/data/assets" DESTINATION "share/teeuniverse")
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/languages" DESTINATION "share/teeuniverse")
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/assets" DESTINATION "share/teeuniverse")
 
 ########################################################################
 # CLIENT
@@ -201,8 +201,8 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	# Build
 	add_library(teeuniverse_client ${teeuniverse_client_src})
 	target_link_libraries (teeuniverse_client ${teeuniverse_client_libraries})
-	install(DIRECTORY $DATA_OUTPUT_DIRECTORY"/data/countryflags" DESTINATION "share/teeuniverse")
-	install(DIRECTORY $DATA_OUTPUT_DIRECTORY"/data/fonts" DESTINATION "share/teeuniverse")
+	install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/countryflags" DESTINATION "share/teeuniverse")
+	install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/fonts" DESTINATION "share/teeuniverse")
 
 	########################################################################
 	# GAME
