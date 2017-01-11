@@ -1,2 +1,5 @@
 datasrc/svg
 data/assets
+scripts/release/env
+scripts/release/cmake-build
+scripts/release/archives

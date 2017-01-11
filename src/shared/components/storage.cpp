@@ -55,7 +55,30 @@ bool CStorage::InitConfig(int argc, const char** argv)
 	{
 		for(int i=1; i<argc; i++)
 		{
-			if(str_comp(argv[i], "--save-dir") == 0)
+			if(str_comp(argv[i], "--data-dir") == 0)
+			{
+				if(i+1<argc)
+				{
+					if(fs_is_dir(argv[i+1]))
+					{
+						dynamic_string& DataDir = m_DataDirs.increment();
+						DataDir.copy(argv[i+1]);
+						dbg_msg("Storage", "Data directory: %s", argv[i+1]);
+						i++;
+					}
+					else
+					{
+						dbg_msg("Storage", "Value specified with the --data-dir parameter is not a valid directory: %s", argv[i+1]);
+						return false;
+					}
+				}
+				else
+				{
+					dbg_msg("Storage", "Missing value for --save-dir parameter");
+					return false;
+				}
+			}
+			else if(str_comp(argv[i], "--save-dir") == 0)
 			{
 				if(i+1<argc)
 				{
@@ -109,10 +132,13 @@ bool CStorage::Init()
 		return false;
 	}
 	
-	if(!m_DataDir.empty())
+	if(m_DataDirs.size())
 	{
-		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString.copy(m_DataDir);
+		for(int i=0; i<m_DataDirs.size(); i++)
+		{
+			dynamic_string& NewString = m_StoragePaths.increment();
+			NewString.copy(m_DataDirs[i]);
+		}
 	}
 	else
 	{
@@ -190,14 +216,16 @@ void CStorage::FindDatadir(const char *pArgv0)
 	// 1) use data-dir in PWD if present
 	if(fs_is_dir("data/languages"))
 	{
-		m_DataDir.copy("data");
+		dynamic_string& DataDir = m_DataDirs.increment();
+		DataDir.copy("data");
 		return;
 	}
 
 	// 2) use compiled-in data-dir if present
 	if(fs_is_dir(DATA_DIR"/languages"))
 	{
-		m_DataDir.copy(DATA_DIR);
+		dynamic_string& DataDir = m_DataDirs.increment();
+		DataDir.copy(DATA_DIR);
 		return;
 	}
 
@@ -220,7 +248,8 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				m_DataDir.copy(Path);
+				dynamic_string& DataDir = m_DataDirs.increment();
+				DataDir.copy(Path);
 				return;
 			}
 		}
@@ -249,7 +278,8 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				m_DataDir.copy(aDirs[i]);
+				dynamic_string& DataDir = m_DataDirs.increment();
+				DataDir.copy(aDirs[i]);
 				return;
 			}
 		}

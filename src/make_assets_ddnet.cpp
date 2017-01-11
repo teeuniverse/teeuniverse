@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
-	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones_game", "datasrc/images/univ_ddnet/zones_game.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
-	CAssetPath ImageFreezePath = CreateNewImage(pKernel, PackageId, "zones_freeze", "datasrc/images/univ_ddnet/zones_freeze.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
+	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones_game", "images/univ_ddnet/zones_game.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageFreezePath = CreateNewImage(pKernel, PackageId, "zones_freeze", "images/univ_ddnet/zones_freeze.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 	
 	//Game Layer
 	//Informations took from https://ddnet.tw/explain/explanations.json

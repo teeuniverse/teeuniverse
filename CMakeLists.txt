@@ -36,16 +36,36 @@ endif()
 find_package(ICU COMPONENTS i18n)
 
 ########################################################################
+# BUILD_TYPE, PLATFORM
+########################################################################
+
+if(NOT(CMAKE_BUILD_TYPE))
+	set(CMAKE_BUILD_TYPE Release)
+endif()
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+
+if(NOT(PLATFORM))
+	if(WIN32)
+		set(PLATFORM win)
+	else()
+		add_definitions(-DCONF_FAMILY_UNIX)
+		if(APPLE)
+			set(PLATFORM osx)
+		else()
+			set(PLATFORM linux)
+		endif()
+	endif()
+endif()
+
+########################################################################
 # OPTIONS
 ########################################################################
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/lib/debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/debug)
-
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/lib/release)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/release)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM})
+set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/data)
 
 set(TU_EXECNAME_GAME teeuniverse)
 set(TU_EXECNAME_EDITOR teeuniverse_editor)
@@ -69,11 +89,14 @@ if(HARFBUZZ_FOUND)
 	include_directories(${HARFBUZZ_INCLUDE_DIRS})
 endif()
 if(ICU_FOUND)
+	add_definitions(-DU_USING_ICU_NAMESPACE)
 	include_directories(${ICU_INCLUDE_DIRS})
 endif()
 
 message(STATUS "******** TeeUniverse ********")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Build type: ${BUILD_TYPE}")
+message(STATUS "Platform: ${PLATFORM}")
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 message(STATUS ${name} "Dependencies:")
@@ -95,7 +118,7 @@ if(NOT(ICU_FOUND))
 	message(FATAL_ERROR "You must install ICU to compile TeeUniverse")
 endif()
 
-if(NOT(HARFBUZZ_FOUND))
+if(NOT(HARFBUZZ_FOUND) AND NOT(WITHOUT_HARFBUZZ))
 	message(STATUS " ! Warning: Without Harfbuzz, the text rendering")
 	message(STATUS "            quality is reduced. In particular,")
 	message(STATUS "            arabic and farsi can't be displayed")
@@ -145,6 +168,7 @@ add_library(teeuniverse_shared ${teeuniverse_shared_src})
 target_link_libraries (teeuniverse_shared
 	${ICU_LIBRARIES}
 )
+add_custom_command(TARGET teeuniverse_shared POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${DATA_OUTPUT_DIRECTORY})
 install(DIRECTORY "data/languages" DESTINATION "share/teeuniverse")
 install(DIRECTORY "data/assets" DESTINATION "share/teeuniverse")
 
@@ -277,19 +301,16 @@ function(make_assets progname)
 	set_target_properties(
 		make_assets_${progname}
 		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/make_assets"
-		ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/make_assets"
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/make_assets"
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/make_assets"
+		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/make_assets"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/make_assets"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_assets"
 	)
 	target_link_libraries(
 		make_assets_${progname}
 		teeuniverse_tools
 	)
-	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "data/assets")
-	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --save-dir "data" --save-dir-noinit)
+	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${DATA_OUTPUT_DIRECTORY}/assets")
+	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --data-dir "${CMAKE_SOURCE_DIR}/datasrc" --data-dir "${CMAKE_SOURCE_DIR}/data" --save-dir "${DATA_OUTPUT_DIRECTORY}" --save-dir-noinit)
 
 endfunction()
 
@@ -312,12 +333,9 @@ function(make_test testname)
 	set_target_properties(
 		test_${testname}
 		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG}/test"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG}/test"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/test"
-		ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE}/test"
-		LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE}/test"
-		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}/test"
+		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/test"
+		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/test"
+		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test"
 	)
 	target_link_libraries(
 		test_${testname}

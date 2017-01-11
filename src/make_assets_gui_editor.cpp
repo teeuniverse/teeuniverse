@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
 	vec4 ColorFocusHL = vec4(0.0f, 172.0f/255.0f, 1.0f, 83.0f/255.0f);
 	
 	//Images
-	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "datasrc/images/gui_editor.png", CStorage::TYPE_ABSOLUTE, 64, 32);
-	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "datasrc/images/gui_editor_box.png", CStorage::TYPE_ABSOLUTE, 16, 16);
+	CAssetPath ImageEditorPath = CreateNewImage(pKernel, PackageId, "editor", "images/gui_editor.png", CStorage::TYPE_ALL, 64, 32);
+	CAssetPath ImageBoxesPath = CreateNewImage(pKernel, PackageId, "boxes", "images/gui_editor_box.png", CStorage::TYPE_ALL, 16, 16);
 	
 	//Sprites
 	CAssetPath IconDecreasePath;

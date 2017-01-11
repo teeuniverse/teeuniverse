@@ -49,9 +49,9 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
-	CAssetPath ImageZonesDamagePath = CreateNewImage(pKernel, PackageId, "damage", "datasrc/images/univ_infclass/damage.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
-	CAssetPath ImageZonesTeleportationPath = CreateNewImage(pKernel, PackageId, "teleportation", "datasrc/images/univ_infclass/teleportation.png", CStorage::TYPE_ABSOLUTE, 16, 16, true, 0);
-	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "datasrc/images/univ_infclass/entities.png", CStorage::TYPE_ABSOLUTE, 4, 4);
+	CAssetPath ImageZonesDamagePath = CreateNewImage(pKernel, PackageId, "damage", "images/univ_infclass/damage.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageZonesTeleportationPath = CreateNewImage(pKernel, PackageId, "teleportation", "images/univ_infclass/teleportation.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_infclass/entities.png", CStorage::TYPE_ALL, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 		
 	//Zone, damage
