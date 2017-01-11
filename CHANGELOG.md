@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.2.0]
 ### Added
 - Object layers in maps
 - Materials
@@ -19,6 +19,7 @@
 - Option to align entities with on the grid
 - Camera position and zoom saved in the package
 - Settings in map view
+- Game layer of DDNet maps support
 
 ### Changed
 - Bigger toolbar in the view
@@ -34,7 +35,9 @@
 - Fix unusable crop tool for map layers (the tool is now disabled for layers)
 - Fix incoherent behaviour for sliders
 - Fix visible gui_editor package in the asset selector
-- Fix InfClass map export
+- Fix wrong clipping values for exported maps
+- Fix internal images exported as external
+- Fix env_snow package
 
 ## [0.1.0] - 2016-11-30
 - The first version of TeeUniverse
