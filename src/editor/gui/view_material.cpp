@@ -163,7 +163,9 @@ void CViewMaterial::RenderView()
 	switch(m_ObjectShape)
 	{
 		case SHAPE_CIRCLE:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 64;
 			for(int i=0; i<NumSegments; i++)
 			{
@@ -176,7 +178,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_HEXAGON:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 6;
 			for(int i=0; i<NumSegments; i++)
 			{
@@ -189,7 +193,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_PENTAGON:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 5;
 			for(int i=0; i<NumSegments; i++)
 			{
@@ -202,7 +208,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_SQUARE:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 4;
 			for(int i=0; i<NumSegments; i++)
 			{
@@ -215,7 +223,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_TRIANGLE:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 3;
 			for(int i=0; i<NumSegments; i++)
 			{
@@ -228,7 +238,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_BOW:
-			Object.SetClosedPath(true);
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_INSIDE);
 			NumSegments = 32;
 			for(int i=0; i<=NumSegments; i++)
 			{
@@ -241,6 +253,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_ARC:
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_OPEN);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_NONE);
 			NumSegments = 32;
 			for(int i=0; i<=NumSegments; i++)
 			{
@@ -253,6 +268,9 @@ void CViewMaterial::RenderView()
 			}
 			break;
 		case SHAPE_ARC_WEIGHT:
+			Object.SetPathType(CAsset_MapLayerObjects::PATHTYPE_OPEN);
+			Object.SetPathType(CAsset_MapLayerObjects::LINETYPE_SHOW);
+			Object.SetPathType(CAsset_MapLayerObjects::FILLTYPE_NONE);
 			NumSegments = 32;
 			for(int i=0; i<=NumSegments; i++)
 			{

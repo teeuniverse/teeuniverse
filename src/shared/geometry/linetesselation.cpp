@@ -1090,7 +1090,8 @@ void GenerateMaterialQuads(
 void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object)
 {
 	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
-	bool Closed = Object.GetClosedPath();
+	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+	
 	vec2 ObjPosition;
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
@@ -1122,7 +1123,8 @@ void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Ti
 
 void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
 {
-	bool Closed = Object.GetClosedPath();
+	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
+	bool ShowLine = (Object.GetLineType() == CAsset_MapLayerObjects::LINETYPE_SHOW);
 	vec2 ObjPosition;
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
@@ -1130,5 +1132,5 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	array<CLineVertex> LineVertices;
 	GenerateMaterialCurve_Object(pAssetsManager, Time, LineVertices, Object);
 	
-	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed, Object.GetShowLine(), Object.GetOrthoTesselation());
+	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed, ShowLine, Object.GetOrthoTesselation());
 }

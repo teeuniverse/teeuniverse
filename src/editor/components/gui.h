@@ -190,6 +190,14 @@ public:
 	CAssetPath m_Path_Sprite_IconFillingStretching;
 	CAssetPath m_Path_Sprite_IconFillingSpacing;
 	CAssetPath m_Path_Sprite_IconLabel;
+	CAssetPath m_Path_Sprite_IconPathOpen;
+	CAssetPath m_Path_Sprite_IconPathClosed;
+	CAssetPath m_Path_Sprite_IconPathInfinite;
+	CAssetPath m_Path_Sprite_IconFillNone;
+	CAssetPath m_Path_Sprite_IconFillInner;
+	CAssetPath m_Path_Sprite_IconFillOuter;
+	CAssetPath m_Path_Sprite_IconLineHide;
+	CAssetPath m_Path_Sprite_IconLineShow;
 	
 	CAssetPath m_Path_Sprite_IconShapeStar;
 	CAssetPath m_Path_Sprite_IconShapeHexagon;

@@ -184,6 +184,14 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconFillingScaling", ImageEditorPath, 11*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconFillingStretching", ImageEditorPath, 12*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconFillingSpacing", ImageEditorPath, 13*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconPathOpen", ImageEditorPath, 14*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconPathClosed", ImageEditorPath, 15*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconPathInfinite", ImageEditorPath, 16*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillNone", ImageEditorPath, 17*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillInner", ImageEditorPath, 18*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconFillOuter", ImageEditorPath, 19*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineShow", ImageEditorPath, 20*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconLineHide", ImageEditorPath, 21*2, 3*2, 2, 2);
 	
 	CREATE_SPRITE(PackageId, "iconEntityRatio0", ImageEditorPath, 52, 17, 3, 3);
 	CREATE_SPRITE(PackageId, "iconEntityRatio1", ImageEditorPath, 55, 17, 3, 3);

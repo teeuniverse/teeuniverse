@@ -48,8 +48,9 @@ CAsset_MapLayerObjects::CObject::CObject()
 	m_Position = 0.0f;
 	m_Size = 1.0f;
 	m_Angle = 0.0f;
-	m_ClosedPath = false;
-	m_ShowLine = true;
+	m_PathType = PATHTYPE_OPEN;
+	m_FillType = FILLTYPE_NONE;
+	m_LineType = LINETYPE_SHOW;
 	m_OrthoTesselation = 1;
 }
 
@@ -121,8 +122,9 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Read(CAssetsSaveLoadContex
 		}
 	}
 	
-	SysType.m_ClosedPath = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ClosedPath);
-	SysType.m_ShowLine = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowLine);
+	SysType.m_PathType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PathType);
+	SysType.m_FillType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FillType);
+	SysType.m_LineType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_LineType);
 	SysType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_OrthoTesselation);
 }
 
@@ -177,8 +179,9 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Write(CAssetsSaveLoadConte
 		TuaType.m_Vertex.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0)*SysType.m_Vertex.size());
 		delete[] pData;
 	}
-	TuaType.m_ClosedPath = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ClosedPath);
-	TuaType.m_ShowLine = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowLine);
+	TuaType.m_PathType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PathType);
+	TuaType.m_FillType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FillType);
+	TuaType.m_LineType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LineType);
 	TuaType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_OrthoTesselation);
 }
 
@@ -211,6 +214,12 @@ int CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, int
 			return GetObjectVertexArraySize(SubPath);
 		case OBJECT_VERTEX_SMOOTHNESS:
 			return GetObjectVertexSmoothness(SubPath);
+		case OBJECT_PATHTYPE:
+			return GetObjectPathType(SubPath);
+		case OBJECT_FILLTYPE:
+			return GetObjectFillType(SubPath);
+		case OBJECT_LINETYPE:
+			return GetObjectLineType(SubPath);
 		case OBJECT_ORTHOTESSELATION:
 			return GetObjectOrthoTesselation(SubPath);
 	}
@@ -231,6 +240,15 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, in
 		case OBJECT_VERTEX_SMOOTHNESS:
 			SetObjectVertexSmoothness(SubPath, Value);
 			return true;
+		case OBJECT_PATHTYPE:
+			SetObjectPathType(SubPath, Value);
+			return true;
+		case OBJECT_FILLTYPE:
+			SetObjectFillType(SubPath, Value);
+			return true;
+		case OBJECT_LINETYPE:
+			SetObjectLineType(SubPath, Value);
+			return true;
 		case OBJECT_ORTHOTESSELATION:
 			SetObjectOrthoTesselation(SubPath, Value);
 			return true;
@@ -243,10 +261,6 @@ bool CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, bo
 {
 	switch(ValueType)
 	{
-		case OBJECT_CLOSEDPATH:
-			return GetObjectClosedPath(SubPath);
-		case OBJECT_SHOWLINE:
-			return GetObjectShowLine(SubPath);
 		case VISIBILITY:
 			return GetVisibility();
 	}
@@ -258,12 +272,6 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, bo
 {
 	switch(ValueType)
 	{
-		case OBJECT_CLOSEDPATH:
-			SetObjectClosedPath(SubPath, Value);
-			return true;
-		case OBJECT_SHOWLINE:
-			SetObjectShowLine(SubPath, Value);
-			return true;
 		case VISIBILITY:
 			SetVisibility(Value);
 			return true;

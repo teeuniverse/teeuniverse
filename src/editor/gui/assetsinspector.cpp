@@ -937,8 +937,30 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_POSITION_X, CAsset_MapLayerObjects::OBJECT_POSITION_Y, _LSTRING("Position"));	
 	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SIZE_X, CAsset_MapLayerObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
 	AddField_Angle(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANGLE, _LSTRING("Angle"));
-	AddField_Bool(pObjectEditor, CAsset_MapLayerObjects::OBJECT_CLOSEDPATH, _LSTRING("Closed"));
-	AddField_Bool(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SHOWLINE, _LSTRING("Show line"));
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerObjects::OBJECT_PATHTYPE);
+		pComboBox->Add(_LSTRING("Open"), AssetsEditor()->m_Path_Sprite_IconPathOpen);
+		pComboBox->Add(_LSTRING("Closed"), AssetsEditor()->m_Path_Sprite_IconPathClosed);
+		pComboBox->Add(_LSTRING("Infinite"), AssetsEditor()->m_Path_Sprite_IconPathInfinite);
+		AddField(pObjectEditor, pComboBox, _LSTRING("Path type"));
+	}
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerObjects::OBJECT_LINETYPE);
+		pComboBox->Add(_LSTRING("Hidden"), AssetsEditor()->m_Path_Sprite_IconLineHide);
+		pComboBox->Add(_LSTRING("Rendered"), AssetsEditor()->m_Path_Sprite_IconLineShow);
+		AddField(pObjectEditor, pComboBox, _LSTRING("Line type"));
+	}
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerObjects::OBJECT_FILLTYPE);
+		pComboBox->Add(_LSTRING("None"), AssetsEditor()->m_Path_Sprite_IconFillNone);
+		pComboBox->Add(_LSTRING("Inner"), AssetsEditor()->m_Path_Sprite_IconFillInner);
+		pComboBox->Add(_LSTRING("Outer"), AssetsEditor()->m_Path_Sprite_IconFillOuter);
+		AddField(pObjectEditor, pComboBox, _LSTRING("Fill type"));
+	}
+	
 	AddField_Integer(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ORTHOTESSELATION, _LSTRING("Orthogonal tesselation"));
 	
 	gui::CVListLayout* pVertexEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX);

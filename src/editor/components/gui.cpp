@@ -1732,7 +1732,15 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconMatSpriteAlignObject = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignObject");
 		m_Path_Sprite_IconMatSpriteAlignStretched = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconMatSpriteAlignStretched");
 		m_Path_Sprite_IconLabel = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLabel");
-		
+		m_Path_Sprite_IconPathOpen = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPathOpen");
+		m_Path_Sprite_IconPathClosed = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPathClosed");
+		m_Path_Sprite_IconPathInfinite = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPathInfinite");
+		m_Path_Sprite_IconFillNone = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillNone");
+		m_Path_Sprite_IconFillInner = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillInner");
+		m_Path_Sprite_IconFillOuter = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillOuter");
+		m_Path_Sprite_IconLineHide = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineHide");
+		m_Path_Sprite_IconLineShow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineShow");
+	
 		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
 		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");
 		m_Path_Sprite_IconLineTileCapEnd = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileCapEnd");

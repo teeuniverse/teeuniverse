@@ -40,6 +40,18 @@
 class CAsset_MapLayerObjects : public CAsset
 {
 public:
+	enum
+	{
+		LINETYPE_HIDE = 0,
+		LINETYPE_SHOW,
+		FILLTYPE_NONE = 0,
+		FILLTYPE_INSIDE,
+		FILLTYPE_OUTSIDE,
+		PATHTYPE_OPEN = 0,
+		PATHTYPE_CLOSED,
+		PATHTYPE_INFINITE,
+	};
+	
 	static const int TypeId = 27;
 	
 	enum
@@ -82,8 +94,9 @@ public:
 		OBJECT_VERTEX_CONTROLPOINT1,
 		OBJECT_VERTEX_CONTROLPOINT1_X,
 		OBJECT_VERTEX_CONTROLPOINT1_Y,
-		OBJECT_CLOSEDPATH,
-		OBJECT_SHOWLINE,
+		OBJECT_PATHTYPE,
+		OBJECT_FILLTYPE,
+		OBJECT_LINETYPE,
 		OBJECT_ORTHOTESSELATION,
 		OBJECT,
 		VISIBILITY,
@@ -233,8 +246,9 @@ public:
 			tua_float m_Angle;
 			CAssetPath::CTuaType m_StylePath;
 			CTuaArray m_Vertex;
-			tua_uint8 m_ClosedPath;
-			tua_uint8 m_ShowLine;
+			tua_int32 m_PathType;
+			tua_int32 m_FillType;
+			tua_int32 m_LineType;
 			tua_int32 m_OrthoTesselation;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_0& TuaType);
@@ -247,8 +261,9 @@ public:
 		float m_Angle;
 		CAssetPath m_StylePath;
 		array< CVertex, allocator_copy<CVertex> > m_Vertex;
-		bool m_ClosedPath;
-		bool m_ShowLine;
+		int m_PathType;
+		int m_FillType;
+		int m_LineType;
 		int m_OrthoTesselation;
 	
 	public:
@@ -262,8 +277,9 @@ public:
 			m_Angle = Item.m_Angle;
 			m_StylePath = Item.m_StylePath;
 			m_Vertex.copy(Item.m_Vertex);
-			m_ClosedPath = Item.m_ClosedPath;
-			m_ShowLine = Item.m_ShowLine;
+			m_PathType = Item.m_PathType;
+			m_FillType = Item.m_FillType;
+			m_LineType = Item.m_LineType;
 			m_OrthoTesselation = Item.m_OrthoTesselation;
 		}
 		
@@ -274,8 +290,9 @@ public:
 			m_Angle = Item.m_Angle;
 			m_StylePath = Item.m_StylePath;
 			m_Vertex.transfert(Item.m_Vertex);
-			m_ClosedPath = Item.m_ClosedPath;
-			m_ShowLine = Item.m_ShowLine;
+			m_PathType = Item.m_PathType;
+			m_FillType = Item.m_FillType;
+			m_LineType = Item.m_LineType;
 			m_OrthoTesselation = Item.m_OrthoTesselation;
 		}
 		
@@ -392,9 +409,11 @@ public:
 			else return 0.0f;
 		}
 		
-		inline bool GetClosedPath() const { return m_ClosedPath; }
+		inline int GetPathType() const { return m_PathType; }
 		
-		inline bool GetShowLine() const { return m_ShowLine; }
+		inline int GetFillType() const { return m_FillType; }
+		
+		inline int GetLineType() const { return m_LineType; }
 		
 		inline int GetOrthoTesselation() const { return m_OrthoTesselation; }
 		
@@ -496,9 +515,11 @@ public:
 				m_Vertex[SubPath.GetId()].SetControlPoint1Y(Value);
 		}
 		
-		inline void SetClosedPath(bool Value) { m_ClosedPath = Value; }
+		inline void SetPathType(int Value) { m_PathType = Value; }
 		
-		inline void SetShowLine(bool Value) { m_ShowLine = Value; }
+		inline void SetFillType(int Value) { m_FillType = Value; }
+		
+		inline void SetLineType(int Value) { m_LineType = Value; }
 		
 		inline void SetOrthoTesselation(int Value) { m_OrthoTesselation = Value; }
 		
@@ -776,18 +797,25 @@ public:
 		else return 0.0f;
 	}
 	
-	inline bool GetObjectClosedPath(const CSubPath& SubPath) const
+	inline int GetObjectPathType(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()].GetClosedPath();
-		else return false;
+			return m_Object[SubPath.GetId()].GetPathType();
+		else return 0;
 	}
 	
-	inline bool GetObjectShowLine(const CSubPath& SubPath) const
+	inline int GetObjectFillType(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_Object.size())
-			return m_Object[SubPath.GetId()].GetShowLine();
-		else return false;
+			return m_Object[SubPath.GetId()].GetFillType();
+		else return 0;
+	}
+	
+	inline int GetObjectLineType(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetLineType();
+		else return 0;
 	}
 	
 	inline int GetObjectOrthoTesselation(const CSubPath& SubPath) const
@@ -943,16 +971,22 @@ public:
 			m_Object[SubPath.GetId()].SetVertexControlPoint1Y(SubPath.PopId(), Value);
 	}
 	
-	inline void SetObjectClosedPath(const CSubPath& SubPath, bool Value)
+	inline void SetObjectPathType(const CSubPath& SubPath, int Value)
 	{
 		if(SubPath.GetId() < m_Object.size())
-			m_Object[SubPath.GetId()].SetClosedPath(Value);
+			m_Object[SubPath.GetId()].SetPathType(Value);
 	}
 	
-	inline void SetObjectShowLine(const CSubPath& SubPath, bool Value)
+	inline void SetObjectFillType(const CSubPath& SubPath, int Value)
 	{
 		if(SubPath.GetId() < m_Object.size())
-			m_Object[SubPath.GetId()].SetShowLine(Value);
+			m_Object[SubPath.GetId()].SetFillType(Value);
+	}
+	
+	inline void SetObjectLineType(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetLineType(Value);
 	}
 	
 	inline void SetObjectOrthoTesselation(const CSubPath& SubPath, int Value)

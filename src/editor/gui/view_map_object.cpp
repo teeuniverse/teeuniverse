@@ -52,7 +52,7 @@ void CCursorTool_MapObjectVertexPicker::RenderPivots()
 		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
 		//Iterate over all edges
-		int FirstVertex = Object.GetClosedPath() ? 0 : 1;
+		int FirstVertex = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED) ? 0 : 1;
 		for(int i=FirstVertex; i<Object.GetVertexArraySize(); i++)
 		{
 			CSubPath Vertex0Path;
@@ -228,7 +228,7 @@ bool CCursorTool_MapObjectVertexPicker::PickNewVertex(vec2 PickPosition, vec2& V
 		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
 		//Iterate over all edges
-		int FirstVertex = Object.GetClosedPath() ? 0 : 1;
+		int FirstVertex = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED) ? 0 : 1;
 		for(int i=FirstVertex; i<Object.GetVertexArraySize(); i++)
 		{
 			CSubPath Vertex0Path;
@@ -388,7 +388,7 @@ void CCursorTool_MapObjectAddVertex::OnViewButtonClick(int Button)
 		
 		if(ClosePath)
 		{
-			AssetsManager()->SetAssetValue<bool>(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject, CAsset_MapLayerObjects::OBJECT_CLOSEDPATH, true, Token);
+			AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), m_CurrentObject, CAsset_MapLayerObjects::OBJECT_PATHTYPE, CAsset_MapLayerObjects::PATHTYPE_CLOSED, Token);
 			m_CurrentObject = CSubPath::Null();
 			m_CurrentAssetPath = CAssetPath::Null(); 
 		}

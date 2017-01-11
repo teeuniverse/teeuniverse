@@ -2254,8 +2254,9 @@ mapLayerObjects_object.addMember("0.2.0", "Size", TypeVec2(), "1.0f")
 mapLayerObjects_object.addMember("0.2.0", "Angle", TypeFloat(), "0.0f")
 mapLayerObjects_object.addMember("0.2.0", "StylePath", TypeAssetPath())
 mapLayerObjects_object.addMember("0.2.0", "Vertex", TypeArray(mapLayerObjects_vertex))
-mapLayerObjects_object.addMember("0.2.0", "ClosedPath", TypeBool(), "false")
-mapLayerObjects_object.addMember("0.2.0", "ShowLine", TypeBool(), "true")
+mapLayerObjects_object.addMember("0.2.0", "PathType", TypeInt32(), "PATHTYPE_OPEN")
+mapLayerObjects_object.addMember("0.2.0", "FillType", TypeInt32(), "FILLTYPE_NONE")
+mapLayerObjects_object.addMember("0.2.0", "LineType", TypeInt32(), "LINETYPE_SHOW")
 mapLayerObjects_object.addMember("0.2.0", "OrthoTesselation", TypeInt32(), "1")
 mapLayerObjects_object.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
@@ -2273,6 +2274,22 @@ mapLayerObjects.addMember("0.2.0", "Visibility", TypeBool(), "true")
 mapLayerObjects.addPublicFunc([
 	"void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
+])
+mapLayerObjects.addPublicLines([
+	"enum",
+	"{",
+	"	LINETYPE_HIDE = 0,",
+	"	LINETYPE_SHOW,",
+	
+	"	FILLTYPE_NONE = 0,",
+	"	FILLTYPE_INSIDE,",
+	"	FILLTYPE_OUTSIDE,",
+	
+	"	PATHTYPE_OPEN = 0,",
+	"	PATHTYPE_CLOSED,",
+	"	PATHTYPE_INFINITE,",
+	"};",
+	""
 ])
 
 assetsList.append(mapLayerObjects)
