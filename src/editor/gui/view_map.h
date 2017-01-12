@@ -78,6 +78,9 @@ public:
 	
 	inline int GetShowEntites() const { return m_ShowEntities; }
 	inline void SetShowEntites(int Value) { m_ShowEntities = Value; }
+	
+	float GetCameraZoom();
+	void SetCameraZoom(float Value);
 };
 
 #endif

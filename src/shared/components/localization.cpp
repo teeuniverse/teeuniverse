@@ -652,7 +652,7 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 						}
 						else if(str_comp_num("percent:", pText+ParamTypeStart, 8) == 0)
 						{
-							AppendPercent(Buffer, BufferIter, pLanguage, Parameters[PIter].m_Percent.m_Value);
+							AppendPercent(Buffer, BufferIter, pLanguage, Parameters[PIter].m_Float.m_Value);
 						}
 						else if(str_comp_num("float:", pText+ParamTypeStart, 6) == 0)
 						{
@@ -774,4 +774,30 @@ float CLocalization::ParseFloat(const char* pLanguageCode, const char* pText)
 	int Length = ucnv_toUChars(m_pUtf8Converter, aBufUtf16, sizeof(aBufUtf16), pText, -1, &Status);
 	
 	return unum_parseDouble(pLanguage->m_pNumberFormater, aBufUtf16, Length, NULL, &Status);
+}
+
+float CLocalization::ParsePercent(const char* pLanguageCode, const char* pText)
+{
+	CLanguage* pLanguage = m_pMainLanguage;	
+	if(pLanguageCode)
+	{
+		for(int i=0; i<m_pLanguages.size(); i++)
+		{
+			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
+			{
+				pLanguage = m_pLanguages[i];
+				break;
+			}
+		}
+	}
+	
+	if(!pLanguage)
+		return 0.0f;
+	
+	UChar aBufUtf16[128];
+	
+	UErrorCode Status = U_ZERO_ERROR;
+	int Length = ucnv_toUChars(m_pUtf8Converter, aBufUtf16, sizeof(aBufUtf16), pText, -1, &Status);
+	
+	return unum_parseDouble(pLanguage->m_pPercentFormater, aBufUtf16, Length, NULL, &Status);
 }

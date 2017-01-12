@@ -37,7 +37,6 @@ public:
 		TYPE_STRING=0,
 		TYPE_INTEGER,
 		TYPE_FLOAT,
-		TYPE_PERCENT,
 		TYPE_SECONDS,
 	};
 	
@@ -57,10 +56,6 @@ public:
 			{
 				float m_Value;
 			} m_Float;
-			struct
-			{
-				float m_Value;
-			} m_Percent;
 			struct
 			{
 				float m_Value;
@@ -286,6 +281,7 @@ public:
 	
 	int ParseInteger(const char* pLanguageCode, const char* pText);
 	float ParseFloat(const char* pLanguageCode, const char* pText);
+	float ParsePercent(const char* pLanguageCode, const char* pText);
 };
 
 #endif

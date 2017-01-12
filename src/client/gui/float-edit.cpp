@@ -29,22 +29,34 @@ namespace gui
 /* ABSTRACT FLOAT EDIT ************************************************/
 
 CAbstractFloatEdit::CAbstractFloatEdit(CGui* pContext) :
-	CAbstractTextEdit(pContext)
+	CAbstractTextEdit(pContext),
+	m_Percent(false)
 {
 	SetLabelStyle(Context()->GetNumericEntryStyle());
 }
 
 void CAbstractFloatEdit::SaveFromTextBuffer()
 {
-	float Value = Localization()->ParseFloat(NULL, GetText());
-	SetValue(Value);
+	if(m_Percent)
+		SetValue(Localization()->ParsePercent(NULL, GetText()));
+	else
+		SetValue(Localization()->ParseFloat(NULL, GetText()));
 }
 
 void CAbstractFloatEdit::CopyToTextBuffer()
 {
-	CLocalizableString LString("{float:v}");
-	LString.AddFloat("v", GetValue());
-	SetText(LString);
+	if(m_Percent)
+	{
+		CLocalizableString LString("{percent:v}");
+		LString.AddFloat("v", GetValue());
+		SetText(LString);
+	}
+	else
+	{
+		CLocalizableString LString("{float:v}");
+		LString.AddFloat("v", GetValue());
+		SetText(LString);
+	}
 }
 
 /* FLOAT EDIT *********************************************************/

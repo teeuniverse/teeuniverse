@@ -28,6 +28,7 @@ class CAbstractFloatEdit : public CAbstractTextEdit
 {
 protected:
 	float m_FloatValue;
+	bool m_Percent;
 	
 	virtual void SaveFromTextBuffer();
 	virtual void CopyToTextBuffer();
@@ -37,6 +38,8 @@ protected:
 	
 public:
 	CAbstractFloatEdit(class CGui *pConfig);
+	
+	inline void Percent() { m_Percent = true; }
 };
 
 class CFloatEdit : public CAbstractFloatEdit

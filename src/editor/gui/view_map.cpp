@@ -28,7 +28,35 @@
 #include <client/gui/slider.h>
 #include <client/gui/toggle.h>
 #include <client/gui/filler.h>
+#include <client/gui/float-edit.h>
 #include <client/gui/listlayout.h>
+
+class CZoomEdit : public gui::CFloatEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CViewMap* m_pMapView;
+
+protected:
+	virtual float GetValue() const
+	{
+		return m_pMapView->GetCameraZoom();
+	}
+	
+	virtual void SetValue(float Value)
+	{
+		m_pMapView->SetCameraZoom(Value);
+	}
+	
+public:
+	CZoomEdit(CGuiEditor* pAssetsEditor, CViewMap* pMapView) :
+		gui::CFloatEdit(pAssetsEditor, 1.0f),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pMapView(pMapView)
+	{
+		Percent();
+	}
+};
 
 class CSimpleToggle : public gui::CToggle
 {
@@ -238,6 +266,8 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CFiller(Context()), true);
+	m_pToolbar->Add(new CZoomEdit(AssetsEditor(), this), false, 75);
+	m_pToolbar->AddSeparator();
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CDisplaySettingsButton(this), false);
@@ -631,4 +661,14 @@ void CViewMap::OnMouseMove()
 	}
 	
 	CView::OnMouseMove();
+}
+
+float CViewMap::GetCameraZoom()
+{
+	return AssetsManager()->GetAssetValue<float>(GetMapPath(), CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+}
+
+void CViewMap::SetCameraZoom(float Value)
+{
+	AssetsManager()->SetAssetValue_Hard<float>(GetMapPath(), CSubPath::Null(), CAsset_Map::CAMERAZOOM, Value);
 }
