@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
 	
 	CAssetPath ImageZonesDamagePath = CreateNewImage(pKernel, PackageId, "damage", "images/univ_infclass/damage.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 	CAssetPath ImageZonesTeleportationPath = CreateNewImage(pKernel, PackageId, "teleportation", "images/univ_infclass/teleportation.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageZonesBonusPath = CreateNewImage(pKernel, PackageId, "bonus", "images/univ_infclass/bonus.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_infclass/entities.png", CStorage::TYPE_ALL, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 		
@@ -107,6 +108,23 @@ int main(int argc, char* argv[])
 		pAsset->SetIndexTitle(SubPath, "No scientist spawn");
 		pAsset->SetIndexBorderIndex(SubPath, 2);
 		pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 164.0f/255.0f, 0.0f, 1.0f));
+	}
+	//Zone, bonus
+	{
+		CAssetPath AssetPath;
+		CSubPath SubPath;
+		
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
+		pAsset->SetName("icBonus");
+		pAsset->SetImagePath(ImageZonesBonusPath);
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexTitle(SubPath, "No bonus");
+		
+		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+		pAsset->SetIndexTitle(SubPath, "+5/min");
+		pAsset->SetIndexBorderIndex(SubPath, 1);
+		pAsset->SetIndexBorderColor(SubPath, vec4(148.0f/255.0f, 0.0f, 1.0f, 1.0f));
 	}
 	//EntityType, Spawn
 	{
