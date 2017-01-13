@@ -31,6 +31,34 @@
 #include <client/gui/float-edit.h>
 #include <client/gui/listlayout.h>
 
+class CZoomUnitButton : public gui::CButton
+{
+protected:
+	CViewMap* m_pViewMap;	
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pViewMap->SetCameraZoom(1.0f);
+	}
+	
+public:
+	CZoomUnitButton(CViewMap* pViewMap) :
+		gui::CButton(pViewMap->Context(), pViewMap->AssetsEditor()->m_Path_Sprite_IconZoomUnit),
+		m_pViewMap(pViewMap)
+	{
+		
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pViewMap->AssetsEditor()->SetHint(_LSTRING("Set the zoom to 100 %"));
+		
+		gui::CButton::OnMouseMove();
+	}
+};
+
 class CZoomEdit : public gui::CFloatEdit
 {
 protected:
@@ -268,6 +296,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CFiller(Context()), true);
+	m_pToolbar->Add(new CZoomUnitButton(this), false);
 	m_pToolbar->Add(new CZoomEdit(AssetsEditor(), this), false, 75);
 	m_pToolbar->AddSeparator();
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);

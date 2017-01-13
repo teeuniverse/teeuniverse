@@ -197,6 +197,7 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconEntityRatio1", ImageEditorPath, 55, 17, 3, 3);
 	CREATE_SPRITE(PackageId, "iconEntityRatio2", ImageEditorPath, 58, 17, 3, 3);
 	CREATE_SPRITE(PackageId, "iconEntityRatio3", ImageEditorPath, 61, 17, 3, 3);
+	CREATE_SPRITE(PackageId, "iconZoomUnit", ImageEditorPath, 40, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconDisplaySettings", ImageEditorPath, 43, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconZoneRatio0", ImageEditorPath, 46, 20, 3, 3);
 	CREATE_SPRITE(PackageId, "iconZoneRatio1", ImageEditorPath, 49, 20, 3, 3);
