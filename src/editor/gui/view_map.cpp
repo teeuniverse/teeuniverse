@@ -186,6 +186,8 @@ protected:
 				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio3, 3), true);
 			}
 		}
+	
+		virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 	};
 	
 protected:
