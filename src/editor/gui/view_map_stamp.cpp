@@ -569,6 +569,9 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					}
 					
 					m_Token = CAssetsHistory::NEW_TOKEN;
+		
+					CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+					pState->m_NumUpdates++;
 				}
 			}
 			else
@@ -603,6 +606,9 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					}
 					
 					m_Token = CAssetsHistory::NEW_TOKEN;
+		
+					CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+					pState->m_NumUpdates++;
 				}
 			}
 			else
