@@ -1745,9 +1745,57 @@ void CAssetsInspector::AddField(gui::CVListLayout* pList, gui::CWidget* pWidget)
 	pList->Add(pWidget, false);
 }
 
+class CAssetNameEdit : public gui::CAbstractTextEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+	virtual void SaveFromTextBuffer()
+	{
+		AssetsManager()->TryChangeAssetName(m_pAssetsEditor->GetEditedAssetPath(), GetText(), -1);
+	}
+	
+	virtual void CopyToTextBuffer()
+	{
+		const char* pName = AssetsManager()->GetAssetValue<const char*>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			CSubPath::Null(),
+			CAsset::NAME,
+			NULL
+		);
+		
+		if(pName)
+		{
+			if(m_Text != pName)
+				SetText(pName);
+		}
+		else
+			SetText("");
+	}
+	
+public:
+	CAssetNameEdit(CGuiEditor* pAssetsEditor) :
+		gui::CAbstractTextEdit(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CAbstractTextEdit::Update(ParentEnabled);
+	}
+};
+
 void CAssetsInspector::AddField_AssetProperties(gui::CVScrollLayout* pTab)
 {
-	AddField_Text(pTab, CAsset::NAME, _LSTRING("Name"));
+	AddField(pTab, new CAssetNameEdit(AssetsEditor()), _LSTRING("Name"));
 	
 	pTab->AddSeparator();
 }
