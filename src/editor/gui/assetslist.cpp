@@ -259,6 +259,7 @@ protected:
 		virtual void MouseClickAction()
 		{
 			array<CAssetPath> AssetsToDelete;
+			CAssetPath NextSelectedAsset = CAssetPath::Null();
 			
 			AssetsToDelete.increment() = m_AssetPath;
 			
@@ -315,18 +316,56 @@ protected:
 			}
 			else if(m_AssetPath.GetType() == CAsset_MapGroup::TypeId)
 			{
-				const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
-				if(pGroup)
+				const CAsset_MapGroup* pAssets = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+				if(pAssets)
 				{
+					NextSelectedAsset = pAssets->GetParentPath();
+					
 					CAsset_MapGroup::CIteratorLayer Iter;
-					for(Iter = pGroup->BeginLayer(); Iter != pGroup->EndLayer(); ++Iter)
-						AssetsToDelete.increment() = pGroup->GetLayer(*Iter);
+					for(Iter = pAssets->BeginLayer(); Iter != pAssets->EndLayer(); ++Iter)
+						AssetsToDelete.increment() = pAssets->GetLayer(*Iter);
 				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)
+			{
+				const CAsset_MapLayerTiles* pAssets = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetParentPath();
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerQuads::TypeId)
+			{
+				const CAsset_MapLayerQuads* pAssets = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetParentPath();
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerObjects::TypeId)
+			{
+				const CAsset_MapLayerObjects* pAssets = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetParentPath();
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapZoneTiles::TypeId)
+			{
+				const CAsset_MapZoneTiles* pAssets = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetParentPath();
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapEntities::TypeId)
+			{
+				const CAsset_MapEntities* pAssets = AssetsManager()->GetAsset<CAsset_MapEntities>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetParentPath();
+			}
+			else if(m_AssetPath.GetType() == CAsset_Sprite::TypeId)
+			{
+				const CAsset_Sprite* pAssets = AssetsManager()->GetAsset<CAsset_Sprite>(m_AssetPath);
+				if(pAssets)
+					NextSelectedAsset = pAssets->GetImagePath();
 			}
 			
 			AssetsManager()->DeleteAssets(AssetsToDelete);
 			
-			m_pAssetsEditor->SetEditedAsset(CAssetPath::Null(), CSubPath::Null());
+			m_pAssetsEditor->SetEditedAsset(NextSelectedAsset, CSubPath::Null());
 			m_pAssetsEditor->RefreshAssetsTree();
 			m_pContextMenu->Close();
 		}
