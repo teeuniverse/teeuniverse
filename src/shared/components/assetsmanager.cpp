@@ -1016,6 +1016,17 @@ void CAssetsManager::InitAssetState(int PackageId, const CAssetState& State)
 		m_pPackages[PackageId]->InitAssetState(State);
 }
 
+void CAssetsManager::SaveAssetInHistory(CAssetPath AssetPath)
+{
+	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
+		return;
+	
+	if(m_pHistory)
+		m_pHistory->AddOperation_EditAsset(AssetPath, -1);
+	
+	m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);
+}
+
 void CAssetsManager::EnableAssetsHistory()
 {
 	if(m_pHistory)

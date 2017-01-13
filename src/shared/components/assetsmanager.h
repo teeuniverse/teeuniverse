@@ -351,6 +351,8 @@ public:
 		return false;
 	}
 
+	void SaveAssetInHistory(CAssetPath AssetPath);
+
 	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
 	int AddSubItem_Hard(CAssetPath AssetPath, CSubPath SubPath, int Type);
 	int AddSubItemAt(CAssetPath AssetPath, CSubPath SubPath, int Type, int Index, int Token = -1);

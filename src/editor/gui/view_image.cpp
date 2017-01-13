@@ -22,34 +22,26 @@
 #include <client/components/assetsrenderer.h>
 #include <client/components/graphics.h>
 #include <editor/gui/view_image_spritecreator.h>
+#include <editor/gui/view_image_eraser.h>
 
-class CImagePicker_SpriteCreator : public CImagePicker
+class CImagePicker_ImageView : public CImagePicker
 {
+protected:
+	CViewImage* m_pImageView;
+	
 protected:
 	void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY)
 	{
-		if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_Image::TypeId)
-		{
-			int Token = AssetsManager()->GenerateToken();
-			CAssetPath SpritePath;
-			CAsset_Sprite* pSprite = AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, m_pAssetsEditor->GetEditedPackageId(), Token);
-			if(pSprite)
-			{
-				AssetsManager()->TryChangeAssetName(SpritePath, "sprite", Token);
-				pSprite->SetImagePath(m_pAssetsEditor->GetEditedAssetPath());
-				pSprite->SetX(MinX);
-				pSprite->SetY(MinY);
-				pSprite->SetWidth(MaxX - MinX);
-				pSprite->SetHeight(MaxY - MinY);
-				
-				m_pAssetsEditor->RefreshAssetsTree();
-			}
-		}
+		if(m_pImageView->GetCursorTool() == m_pImageView->m_pCursorTool_SpriteCreator)
+			m_pImageView->m_pCursorTool_SpriteCreator->OnImagePicked(MinX, MinY, MaxX, MaxY);
+		else if(m_pImageView->GetCursorTool() == m_pImageView->m_pCursorTool_Eraser)
+			m_pImageView->m_pCursorTool_Eraser->OnImagePicked(MinX, MinY, MaxX, MaxY);
 	}
 	
 public:
-	CImagePicker_SpriteCreator(CGuiEditor* pAssetsEditor, CAssetPath ImagePath) :
-		CImagePicker(pAssetsEditor, ImagePath)
+	CImagePicker_ImageView(CGuiEditor* pAssetsEditor, CViewImage* pImageView, CAssetPath ImagePath) :
+		CImagePicker(pAssetsEditor, ImagePath),
+		m_pImageView(pImageView)
 	{
 		EnableSelection();
 	}
@@ -60,14 +52,19 @@ public:
 CViewImage::CViewImage(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
 	m_pImageWidget(NULL),
-	m_pCursorTool_SpriteCreator(NULL)
+	m_pCursorTool_SpriteCreator(NULL),
+	m_pCursorTool_Eraser(NULL)
 {
-	m_pImageWidget = new CImagePicker_SpriteCreator(AssetsEditor(), AssetsEditor()->GetEditedAssetPath());
+	m_pImageWidget = new CImagePicker_ImageView(AssetsEditor(), this, AssetsEditor()->GetEditedAssetPath());
 	
 	m_pCursorTool_SpriteCreator = new CCursorTool_ImageSpriteCreator(this);
 	m_pToolbar->Add(m_pCursorTool_SpriteCreator);
 	
+	m_pCursorTool_Eraser = new CCursorTool_Eraser(this);
+	m_pToolbar->Add(m_pCursorTool_Eraser);
+	
 	m_pCursorTool_SpriteCreator->UpdateToolbar();
+	m_pCursorTool_Eraser->UpdateToolbar();
 }
 
 void CViewImage::Destroy()
@@ -91,7 +88,7 @@ void CViewImage::UpdatePosition(const gui::CRect& BoundingRect, const gui::CRect
 	CViewManager::CView::UpdatePosition(BoundingRect, VisibilityRect);
 	
 	if(m_pImageWidget)
-		m_pImageWidget->UpdatePosition(BoundingRect, m_VisibilityRect);
+		m_pImageWidget->UpdatePosition(m_ViewRect, m_VisibilityRect);
 }
 
 void CViewImage::Update(bool ParentEnabled)

@@ -40,12 +40,15 @@ public:
 		}
 		
 		inline CViewImage* ViewImage() { return m_pViewImage; }
+		
+		virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY) {};
 	};
 	
-protected:
+public:
 	CImagePicker* m_pImageWidget;
 	
-	CView::CCursorTool* m_pCursorTool_SpriteCreator;
+	CCursorTool* m_pCursorTool_SpriteCreator;
+	CCursorTool* m_pCursorTool_Eraser;
 	
 public:
 	CViewImage(CGuiEditor* pAssetsEditor);

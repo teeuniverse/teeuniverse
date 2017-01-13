@@ -28,3 +28,24 @@ CCursorTool_ImageSpriteCreator::CCursorTool_ImageSpriteCreator(CViewImage* pView
 {
 	
 }
+
+void CCursorTool_ImageSpriteCreator::OnImagePicked(int MinX, int MinY, int MaxX, int MaxY)
+{
+	if(ViewImage()->AssetsEditor()->GetEditedAssetPath().GetType() != CAsset_Image::TypeId)
+		return;
+	
+	int Token = AssetsManager()->GenerateToken();
+	CAssetPath SpritePath;
+	CAsset_Sprite* pSprite = AssetsManager()->NewAsset<CAsset_Sprite>(&SpritePath, ViewImage()->AssetsEditor()->GetEditedPackageId(), Token);
+	if(pSprite)
+	{
+		AssetsManager()->TryChangeAssetName(SpritePath, "sprite", Token);
+		pSprite->SetImagePath(ViewImage()->AssetsEditor()->GetEditedAssetPath());
+		pSprite->SetX(MinX);
+		pSprite->SetY(MinY);
+		pSprite->SetWidth(MaxX - MinX);
+		pSprite->SetHeight(MaxY - MinY);
+		
+		ViewImage()->AssetsEditor()->RefreshAssetsTree();
+	}
+}

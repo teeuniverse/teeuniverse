@@ -16,15 +16,15 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWIMAGE_SPIRTECREATOR__
-#define __CLIENT_ASSETSEDITOR_VIEWIMAGE_SPIRTECREATOR__
+#ifndef __CLIENT_ASSETSEDITOR_VIEWIMAGE_ERASER__
+#define __CLIENT_ASSETSEDITOR_VIEWIMAGE_ERASER__
 
 #include <editor/gui/view_image.h>
 
-class CCursorTool_ImageSpriteCreator : public CViewImage::CCursorTool
+class CCursorTool_Eraser : public CViewImage::CCursorTool
 {	
 public:
-	CCursorTool_ImageSpriteCreator(CViewImage* pViewMap);
+	CCursorTool_Eraser(CViewImage* pViewMap);
 	virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY);
 };
 
