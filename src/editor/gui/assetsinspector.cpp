@@ -243,7 +243,7 @@ public:
 	
 	virtual void OnButtonClick(int Button)
 	{
-		if(Button == KEY_MOUSE_2 && m_DrawRect.IsInside(Context()->GetMousePos()))
+		if(Button == KEY_MOUSE_2 && m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 		{
 			CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 			

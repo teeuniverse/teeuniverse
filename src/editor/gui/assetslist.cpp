@@ -172,7 +172,7 @@ public:
 	{
 		if(Button == KEY_MOUSE_2)
 		{
-			if(m_DrawRect.IsInside(Context()->GetMousePos()))
+			if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 			{
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 			
@@ -947,7 +947,9 @@ public:
 	{
 		if(Button == KEY_MOUSE_2 && AssetsManager()->IsValidPackage(m_AssetPath.GetPackageId()) && !AssetsManager()->IsReadOnlyPackage(m_AssetPath.GetPackageId()))
 		{
-			if(m_DrawRect.IsInside(Context()->GetMousePos()))
+			dbg_msg("DEBUG", "%d %d %d %d", m_VisibilityRect.x, m_VisibilityRect.y, m_VisibilityRect.w, m_VisibilityRect.h);
+			
+			if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 			{
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 				

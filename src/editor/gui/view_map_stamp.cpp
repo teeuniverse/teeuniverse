@@ -123,7 +123,7 @@ public:
 	
 	virtual void OnButtonClick(int Button)
 	{
-		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
 			Close();
 		
 		gui::CPopup::OnButtonClick(Button);
@@ -277,7 +277,7 @@ public:
 	
 	virtual void OnButtonClick(int Button)
 	{
-		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
 			Close();
 		
 		gui::CPopup::OnButtonClick(Button);
@@ -333,7 +333,7 @@ public:
 	
 	virtual void OnButtonClick(int Button)
 	{
-		if(m_DrawRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
 			Close();
 		
 		gui::CPopup::OnButtonClick(Button);

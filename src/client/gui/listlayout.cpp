@@ -199,7 +199,7 @@ void CHListLayout::UpdateBoundingSize()
 
 void CHListLayout::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRect)
 {
-	m_DrawRect.DRUpdatePosition(BoundingRect, m_BoundingSizeRect);
+	CAbstractListLayout::UpdatePosition(BoundingRect, VisibilityRect);
 	
 	m_ClipRect = m_DrawRect;
 	int Spacing = 0;
