@@ -355,535 +355,532 @@ CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& 
 	}
 }
 
-class COpenSavePackageDialog : public gui::CPopup
+class COpenSavePackageDialog_Item_Directory : public gui::CButton
 {
+protected:
+	COpenSavePackageDialog* m_pPopup;
+	CGuiEditor* m_pAssetsEditor;
+	dynamic_string m_Directory;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pPopup->SelectDirectory(m_Directory.buffer());
+	}
+	
 public:
-	enum
+	COpenSavePackageDialog_Item_Directory(COpenSavePackageDialog* pPopup, const char* pFilename, const char* pDir) :
+		gui::CButton(pPopup->Context(), pFilename, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
+		m_pPopup(pPopup),
+		m_pAssetsEditor(pPopup->m_pAssetsEditor)
 	{
-		FORMAT_PACKAGE=0,
-		FORMAT_MAP_TW,
-		FORMAT_IMAGE,
-	};
+		m_Directory.copy(pDir);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+	}
 	
-protected:
-	class CItem_Directory : public gui::CButton
+	COpenSavePackageDialog_Item_Directory(COpenSavePackageDialog* pPopup, const CLocalizableString& Title, const char* pDir) :
+		gui::CButton(pPopup->Context(), Title, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
+		m_pPopup(pPopup),
+		m_pAssetsEditor(pPopup->m_pAssetsEditor)
 	{
-	protected:
-		COpenSavePackageDialog* m_pPopup;
-		CGuiEditor* m_pAssetsEditor;
-		dynamic_string m_Directory;
-		
-	protected:
-		virtual void MouseClickAction()
-		{
-			m_pPopup->SelectDirectory(m_Directory.buffer());
-		}
-		
-	public:
-		CItem_Directory(COpenSavePackageDialog* pPopup, const char* pFilename, const char* pDir) :
-			gui::CButton(pPopup->Context(), pFilename, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
-			m_pPopup(pPopup),
-			m_pAssetsEditor(pPopup->m_pAssetsEditor)
-		{
-			m_Directory.copy(pDir);
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-		}
-		
-		CItem_Directory(COpenSavePackageDialog* pPopup, const CLocalizableString& Title, const char* pDir) :
-			gui::CButton(pPopup->Context(), Title, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
-			m_pPopup(pPopup),
-			m_pAssetsEditor(pPopup->m_pAssetsEditor)
-		{
-			m_Directory.copy(pDir);
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-		}
-	};
-	
-	class CItem_Load : public gui::CButton
-	{
-	protected:
-		COpenSavePackageDialog* m_pPopup;
-		CGuiEditor* m_pAssetsEditor;
-		dynamic_string m_Filename;
-		
-	protected:
-		virtual void MouseClickAction()
-		{
-			m_pPopup->SelectName(m_Filename.buffer());
-		}
-		
-	public:
-		CItem_Load(COpenSavePackageDialog* pPopup, const char* pFilename) :
-			gui::CButton(pPopup->Context(), pFilename),
-			m_pPopup(pPopup),
-			m_pAssetsEditor(pPopup->m_pAssetsEditor)
-		{
-			switch(m_pPopup->GetFormat())
-			{
-				case FORMAT_IMAGE:
-					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconImage);
-					break;
-				case FORMAT_MAP_TW:
-					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
-					break;
-				default:
-					SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
-					break;
-			}
-			m_Filename.copy(pFilename);
-		}
-		
-		virtual void Update(bool ParentEnabled)
-		{
-			if(m_Filename == m_pPopup->m_Filename)
-				SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
-			else
-				SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
-		}
-	};
-	
-	class COpen : public gui::CButton
-	{
-	protected:
-		COpenSavePackageDialog* m_pPopup;
-		
-	protected:
-		virtual void MouseClickAction()
-		{
-			m_pPopup->Open();
-		}
-		
-	public:
-		COpen(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _LSTRING("Open")),
-			m_pPopup(pPopup)
-		{
-			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
-		}
-		
-		virtual void Update(bool ParentEnabled)
-		{
-			if(ParentEnabled)
-			{
-				if(m_pPopup->m_Filename.empty())
-					Editable(false);
-				else
-					Editable(true);
-			}
-			
-			gui::CButton::Update(ParentEnabled);
-		}
-	};
-	
-	class CSave : public gui::CButton
-	{
-	protected:
-		COpenSavePackageDialog* m_pPopup;
-		
-	protected:
-		virtual void MouseClickAction()
-		{
-			m_pPopup->Save();
-		}
-		
-	public:
-		CSave(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _LSTRING("Save")),
-			m_pPopup(pPopup)
-		{
-			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
-		}
-	};
-	
-	class CCancel : public gui::CButton
-	{
-	protected:
-		COpenSavePackageDialog* m_pPopup;
-		
-	protected:
-		virtual void MouseClickAction()
-		{
-			m_pPopup->Close();
-		}
-		
-	public:
-		CCancel(COpenSavePackageDialog* pPopup) :
-			gui::CButton(pPopup->Context(), _LSTRING("Cancel")),
-			m_pPopup(pPopup)
-		{
-			SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
-		}
-	};
-	
-	class CFormatToggle : public gui::CToggle
-	{
-	protected:
-		int* m_pValueContainer;
-		int m_Value;
-		
-	protected:
-		virtual bool GetValue()
-		{
-			return (*m_pValueContainer == m_Value);
-		}
-		
-		virtual void SetValue(bool Value)
-		{
-			*m_pValueContainer = m_Value;
-		}
-		
-	public:
-		CFormatToggle(CGui* pContext, const CLocalizableString& LString, int* pValueContainer, int Value) :
-			gui::CToggle(pContext, LString),
-			m_pValueContainer(pValueContainer),
-			m_Value(Value)
-		{
-			
-		}
-	};
+		m_Directory.copy(pDir);
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+	}
+};
 
+class COpenSavePackageDialog_Item_Load : public gui::CButton
+{
 protected:
+	COpenSavePackageDialog* m_pPopup;
 	CGuiEditor* m_pAssetsEditor;
 	dynamic_string m_Filename;
-	dynamic_string m_Directory;
-	gui::CVScrollLayout* m_pFilelist;
-	int m_Format;
-	bool m_Save;
-	bool m_RefreshList;
-	int m_CompatibilityMode;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pPopup->SelectName(m_Filename.buffer());
+	}
 	
 public:
-	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, bool Save, int Format) :
-		gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 600, 450, gui::CPopup::ALIGNMENT_INNER),
-		m_pAssetsEditor(pAssetsEditor),
-		m_pFilelist(NULL),
-		m_Format(Format),
-		m_Save(Save),
-		m_RefreshList(true),
-		m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET)
+	COpenSavePackageDialog_Item_Load(COpenSavePackageDialog* pPopup, const char* pFilename) :
+		gui::CButton(pPopup->Context(), pFilename),
+		m_pPopup(pPopup),
+		m_pAssetsEditor(pPopup->m_pAssetsEditor)
 	{
-		gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
-		pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
-		Add(pLayout);
-		
-		switch(m_Format)
+		switch(m_pPopup->GetFormat())
 		{
-			case FORMAT_IMAGE:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export Image")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import Image")), false);
+			case COpenSavePackageDialog::FORMAT_IMAGE:
+				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconImage);
 				break;
-			case FORMAT_MAP_TW:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export TeeWorlds Map")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import TeeWorlds Map")), false);
+			case COpenSavePackageDialog::FORMAT_MAP_TW:
+				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
 				break;
 			default:
-				if(m_Save)
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Save Package")), false);
-				else
-					pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Open Package")), false);
+				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
 				break;
 		}
-		
-		{
-			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pLayout->Add(pHList, false);
-			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory"));
-			pLabel->NoTextClipping();
-			pHList->Add(pLabel, false);
-			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
-			
-		}
-		
-		{
-			gui::CHPanelLayout* pPanel = new gui::CHPanelLayout(Context());
-			pLayout->Add(pPanel, true);
-			
-			gui::CVScrollLayout* pPlaces = new gui::CVScrollLayout(Context());
-			pPanel->Add(pPlaces, 200);
-			pPlaces->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
-			
-			dynamic_string Buffer;
-			{
-				Buffer.clear();
-				Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
-				pPlaces->Add(new CItem_Directory(this, _LSTRING("My packages"), Buffer.buffer()), false);			
-			}
-			{
-				Buffer.clear();
-				Storage()->GetCompletePath(CStorage::TYPE_DATA, "assets", Buffer);
-				pPlaces->Add(new CItem_Directory(this, _LSTRING("Default packages"), Buffer.buffer()), false);			
-			}
-			for(int i=2; i<Storage()->GetNumPaths(); i++)
-			{
-				Buffer.clear();
-				Storage()->GetCompletePath(i, "assets", Buffer);
-				
-				CLocalizableString LString(_("Alternative Data Directory {int:Id}"));
-				LString.AddInteger("Id", i-1);
-				
-				pPlaces->Add(new CItem_Directory(this, LString, Buffer.buffer()), false);
-			}
-			pPlaces->AddSeparator();
-			{
-				Buffer.clear();
-				fs_storage_path("teeworlds", Buffer);
-				Buffer.append("/maps");
-				pPlaces->Add(new CItem_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer()), false);
-			}
-			{
-				Buffer.clear();
-				fs_storage_path("teeworlds", Buffer);
-				Buffer.append("/downloadedmaps");
-				pPlaces->Add(new CItem_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
-			}
-			
-			m_pFilelist = new gui::CVScrollLayout(Context());
-			m_pFilelist->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
-			pPanel->Add(m_pFilelist, -1);
-		}
-		
-		//Filename
-		if(m_Save)
-		{
-			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pLayout->Add(pHList, false);
-			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Filename"));
-			pLabel->NoTextClipping();
-			pHList->Add(pLabel, false);
-			pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Filename), true);
-			
-		}
-		
-		pLayout->AddSeparator();
-		
-		if(!m_Save && m_Format == FORMAT_MAP_TW)
-		{
-			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pLayout->Add(pHList, false);
-			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Compatibility mode:"));
-			pLabel->NoTextClipping();
-			pHList->Add(pLabel, false);
-			
-			pHList->Add(new CFormatToggle(Context(), _LSTRING("TeeWorlds"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_TW), true);
-			pHList->Add(new CFormatToggle(Context(), _LSTRING("DDNet"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_DDNET), true);
-			pHList->Add(new CFormatToggle(Context(), _LSTRING("OpenFNG"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_OPENFNG), true);
-		
-			pLayout->AddSeparator();
-		}
-		
-		//Buttonlist
-		{
-			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pLayout->Add(pHList, false);
-			
-			pHList->Add(new CCancel(this), false);
-			pHList->Add(new gui::CFiller(Context()), true);
-			
-			if(m_Save)
-				pHList->Add(new CSave(this), false);
-			else
-				pHList->Add(new COpen(this), false);
-		}
-		
-		switch(m_Format)
-		{
-			case FORMAT_IMAGE:
-				SelectDirectory("images", CStorage::TYPE_SAVE);
-				break;
-			case FORMAT_MAP_TW:
-				SelectDirectory("maps", CStorage::TYPE_SAVE);
-				break;
-			default:
-				SelectDirectory("assets", CStorage::TYPE_SAVE);
-				break;
-		}
+		m_Filename.copy(pFilename);
 	}
 	
 	virtual void Update(bool ParentEnabled)
 	{
-		if(m_RefreshList)
-		{
-			ListFiles();
-			m_RefreshList = false;
-		}
-		
-		gui::CPopup::Update(ParentEnabled);
+		if(m_Filename == m_pPopup->m_Filename)
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
+		else
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
+	}
+};
+
+class COpenSavePackageDialog_Open : public gui::CButton
+{
+protected:
+	COpenSavePackageDialog* m_pPopup;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pPopup->Open();
 	}
 	
-	void ListFiles()
+public:
+	COpenSavePackageDialog_Open(COpenSavePackageDialog* pPopup) :
+		gui::CButton(pPopup->Context(), _LSTRING("Open")),
+		m_pPopup(pPopup)
 	{
-		m_pFilelist->Clear();
+		SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled)
+		{
+			if(m_pPopup->m_Filename.empty())
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		gui::CButton::Update(ParentEnabled);
+	}
+};
+
+class COpenSavePackageDialog_Save : public gui::CButton
+{
+protected:
+	COpenSavePackageDialog* m_pPopup;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pPopup->Save();
+	}
+	
+public:
+	COpenSavePackageDialog_Save(COpenSavePackageDialog* pPopup) :
+		gui::CButton(pPopup->Context(), _LSTRING("Save")),
+		m_pPopup(pPopup)
+	{
+		SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+	}
+};
+
+class COpenSavePackageDialog_Cancel : public gui::CButton
+{
+protected:
+	COpenSavePackageDialog* m_pPopup;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pPopup->Close();
+	}
+	
+public:
+	COpenSavePackageDialog_Cancel(COpenSavePackageDialog* pPopup) :
+		gui::CButton(pPopup->Context(), _LSTRING("Cancel")),
+		m_pPopup(pPopup)
+	{
+		SetButtonStyle(pPopup->m_pAssetsEditor->m_Path_Button_Dialog);
+	}
+};
+
+class COpenSavePackageDialog_FormatToggle : public gui::CToggle
+{
+protected:
+	int* m_pValueContainer;
+	int m_Value;
+	
+protected:
+	virtual bool GetValue()
+	{
+		return (*m_pValueContainer == m_Value);
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		*m_pValueContainer = m_Value;
+	}
+	
+public:
+	COpenSavePackageDialog_FormatToggle(CGui* pContext, const CLocalizableString& LString, int* pValueContainer, int Value) :
+		gui::CToggle(pContext, LString),
+		m_pValueContainer(pValueContainer),
+		m_Value(Value)
+	{
+		
+	}
+};
+
+COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format) :
+	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 600, 450, gui::CPopup::ALIGNMENT_INNER),
+	m_pAssetsEditor(pAssetsEditor),
+	m_pFilelist(NULL),
+	m_Format(Format),
+	m_Mode(Mode),
+	m_RefreshList(true),
+	m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET)
+{
+	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+	Add(pLayout);
+	
+	switch(m_Format)
+	{
+		case FORMAT_IMAGE:
+			if(m_Mode == MODE_SAVE)
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export Image")), false);
+			else
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import Image")), false);
+			break;
+		case FORMAT_MAP_TW:
+			if(m_Mode == MODE_SAVE)
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export TeeWorlds Map")), false);
+			else
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import TeeWorlds Map")), false);
+			break;
+		default:
+			if(m_Mode == MODE_SAVE)
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Save Package")), false);
+			else
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Open Package")), false);
+			break;
+	}
+	
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory"));
+		pLabel->NoTextClipping();
+		pHList->Add(pLabel, false);
+		pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
+		
+	}
+	
+	{
+		gui::CHPanelLayout* pPanel = new gui::CHPanelLayout(Context());
+		pLayout->Add(pPanel, true);
+		
+		gui::CVScrollLayout* pPlaces = new gui::CVScrollLayout(Context());
+		pPanel->Add(pPlaces, 200);
+		pPlaces->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
 		
 		dynamic_string Buffer;
-		
-		fs_listdir_iterator* pIter = fs_create_listdir_iterator(m_Directory.buffer());
-		int PathSize = str_length(m_Directory.buffer());
-		
-		if(!pIter)
-			return;
-		
-		sorted_array< dynamic_string, allocator_copy<dynamic_string> > Directories;
-		sorted_array< dynamic_string, allocator_copy<dynamic_string> > Files;
-		bool ParentFolder = false;
-		
-		while(pIter->next())
 		{
-			const char* pFilename = pIter->get_filename();
+			Buffer.clear();
+			Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("My packages"), Buffer.buffer()), false);			
+		}
+		{
+			Buffer.clear();
+			Storage()->GetCompletePath(CStorage::TYPE_DATA, "assets", Buffer);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Default packages"), Buffer.buffer()), false);			
+		}
+		for(int i=2; i<Storage()->GetNumPaths(); i++)
+		{
+			Buffer.clear();
+			Storage()->GetCompletePath(i, "assets", Buffer);
 			
-			if(str_length(pFilename) > PathSize+1 && str_comp_num(pFilename, m_Directory.buffer(), PathSize) == 0)
-				Buffer.copy(pFilename + PathSize +1);
-			else
-				Buffer.copy(pFilename);
+			CLocalizableString LString(_("Alternative Data Directory {int:Id}"));
+			LString.AddInteger("Id", i-1);
 			
-			int Length = Buffer.length();
-			if(Length > 0 && Buffer.buffer()[0] == '.')
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Buffer.buffer()), false);
+		}
+		pPlaces->AddSeparator();
+		{
+			Buffer.clear();
+			fs_storage_path("teeworlds", Buffer);
+			Buffer.append("/maps");
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer()), false);
+		}
+		{
+			Buffer.clear();
+			fs_storage_path("teeworlds", Buffer);
+			Buffer.append("/downloadedmaps");
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
+		}
+		
+		m_pFilelist = new gui::CVScrollLayout(Context());
+		m_pFilelist->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+		pPanel->Add(m_pFilelist, -1);
+	}
+	
+	//Filename
+	if(m_Mode == MODE_SAVE)
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Filename"));
+		pLabel->NoTextClipping();
+		pHList->Add(pLabel, false);
+		pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Filename), true);
+		
+	}
+	
+	pLayout->AddSeparator();
+	
+	if(m_Format == FORMAT_MAP_TW && m_Mode != MODE_SAVE)
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Compatibility mode:"));
+		pLabel->NoTextClipping();
+		pHList->Add(pLabel, false);
+		
+		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("TeeWorlds"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_TW), true);
+		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("DDNet"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_DDNET), true);
+		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("OpenFNG"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_OPENFNG), true);
+	
+		pLayout->AddSeparator();
+	}
+	
+	//Buttonlist
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new COpenSavePackageDialog_Cancel(this), false);
+		pHList->Add(new gui::CFiller(Context()), true);
+		
+		if(m_Mode == MODE_SAVE)
+			pHList->Add(new COpenSavePackageDialog_Save(this), false);
+		else
+			pHList->Add(new COpenSavePackageDialog_Open(this), false);
+	}
+	
+	switch(m_Format)
+	{
+		case FORMAT_IMAGE:
+			SelectDirectory("images", CStorage::TYPE_SAVE);
+			break;
+		case FORMAT_MAP_TW:
+			SelectDirectory("maps", CStorage::TYPE_SAVE);
+			break;
+		default:
+			SelectDirectory("assets", CStorage::TYPE_SAVE);
+			break;
+	}
+}
+	
+void COpenSavePackageDialog::Update(bool ParentEnabled)
+{
+	if(m_RefreshList)
+	{
+		ListFiles();
+		m_RefreshList = false;
+	}
+	
+	gui::CPopup::Update(ParentEnabled);
+}
+	
+void COpenSavePackageDialog::ListFiles()
+{
+	m_pFilelist->Clear();
+	
+	dynamic_string Buffer;
+	
+	fs_listdir_iterator* pIter = fs_create_listdir_iterator(m_Directory.buffer());
+	int PathSize = str_length(m_Directory.buffer());
+	
+	if(!pIter)
+		return;
+	
+	sorted_array< dynamic_string, allocator_copy<dynamic_string> > Directories;
+	sorted_array< dynamic_string, allocator_copy<dynamic_string> > Files;
+	bool ParentFolder = false;
+	
+	while(pIter->next())
+	{
+		const char* pFilename = pIter->get_filename();
+		
+		if(str_length(pFilename) > PathSize+1 && str_comp_num(pFilename, m_Directory.buffer(), PathSize) == 0)
+			Buffer.copy(pFilename + PathSize +1);
+		else
+			Buffer.copy(pFilename);
+		
+		int Length = Buffer.length();
+		if(Length > 0 && Buffer.buffer()[0] == '.')
+		{
+			if(Buffer.buffer()[1] == 0)
+				continue;
+			if(Length > 1 && Buffer.buffer()[1] == '.' && (Buffer.buffer()[2] == 0))
 			{
-				if(Buffer.buffer()[1] == 0)
-					continue;
-				if(Length > 1 && Buffer.buffer()[1] == '.' && (Buffer.buffer()[2] == 0))
-				{
-					ParentFolder = true;
-					continue;
-				}
-			}
-			
-			if(fs_is_dir(pFilename))
-				Directories.add_by_copy(pFilename);
-			else
-			{
-				bool Found = false;
-				switch(m_Format)
-				{
-					case FORMAT_IMAGE:
-						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".png") == 0)
-						{
-							Found = true;
-							Buffer.buffer()[Length-4] = 0;
-						}
-						break;
-					case FORMAT_MAP_TW:
-						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
-						{
-							Found = true;
-							Buffer.buffer()[Length-4] = 0;
-						}
-						break;
-					case FORMAT_PACKAGE:
-						if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".tup") == 0)
-						{
-							Found = true;
-							Buffer.buffer()[Length-4] = 0;
-						}
-						break;
-				}
-				
-				if(Found)
-					Files.add_by_copy(Buffer);
+				ParentFolder = true;
+				continue;
 			}
 		}
 		
-		if(ParentFolder)
+		if(fs_is_dir(pFilename))
+			Directories.add_by_copy(pFilename);
+		else
 		{
-			int i=m_Directory.length()-1;
-			for(; i>=0; i--)
-				if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
-					break;
-			for(; i>=0; i--)
-				if(m_Directory.buffer()[i] == '/' || m_Directory.buffer()[i] == '\\')
-					break;
-			for(; i>=0; i--)
-				if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
-					break;
-				
-			if(i>=0)
+			bool Found = false;
+			switch(m_Format)
 			{
-				Buffer.clear();
-				Buffer.append_at_num(0, m_Directory.buffer(), i+1);
-				m_pFilelist->Add(new CItem_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer()), false);
+				case FORMAT_IMAGE:
+					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".png") == 0)
+					{
+						Found = true;
+						Buffer.buffer()[Length-4] = 0;
+					}
+					break;
+				case FORMAT_MAP_TW:
+					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".map") == 0)
+					{
+						Found = true;
+						Buffer.buffer()[Length-4] = 0;
+					}
+					break;
+				case FORMAT_PACKAGE:
+					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".tup") == 0)
+					{
+						Found = true;
+						Buffer.buffer()[Length-4] = 0;
+					}
+					break;
 			}
-		}
-		for(int i=0; i<Directories.size(); i++)
-		{
-			const char* pName = Directories[i].buffer();
-			if(Directories[i].length() > PathSize+1 && Directories[i].comp_num(m_Directory, PathSize) == 0)
-				pName += PathSize+1;
 			
-			m_pFilelist->Add(new CItem_Directory(this, pName, Directories[i].buffer()), false);
+			if(Found)
+				Files.add_by_copy(Buffer);
 		}
-		for(int i=0; i<Files.size(); i++)
-			m_pFilelist->Add(new CItem_Load(this, Files[i].buffer()), false);
-		
-		delete pIter;
 	}
 	
-	int GetFormat() const
+	if(ParentFolder)
 	{
-		return m_Format;
-	}
-	
-	void SelectName(const char* pFilename)
-	{
-		m_Filename.copy(pFilename);
-	}
-	
-	void SelectDirectory(const char* pDirectory)
-	{
-		m_Directory.copy(pDirectory);
-		m_RefreshList = true;
-	}
-	
-	void SelectDirectory(const char* pDirectory, int StorageType)
-	{
-		Storage()->GetCompletePath(StorageType, pDirectory, m_Directory);
-		m_RefreshList = true;
-	}
-	
-	void Save()
-	{
-		Context()->ShowLoadingCursor();
-		dynamic_string Buffer;
-		int TextIter = 0;
-		switch(m_Format)
-		{
-			case FORMAT_MAP_TW:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW))
-				{
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
-				}
+		int i=m_Directory.length()-1;
+		for(; i>=0; i--)
+			if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
 				break;
-			}
-		}
+		for(; i>=0; i--)
+			if(m_Directory.buffer()[i] == '/' || m_Directory.buffer()[i] == '\\')
+				break;
+		for(; i>=0; i--)
+			if(m_Directory.buffer()[i] != '/' && m_Directory.buffer()[i] != '\\')
+				break;
 			
-		m_pAssetsEditor->RefreshPackageTree();
-		Close();
-	}
-	
-	void Open()
-	{
-		Context()->ShowLoadingCursor();
-		dynamic_string Buffer;
-		int TextIter = 0;
-		switch(m_Format)
+		if(i>=0)
 		{
-			case FORMAT_IMAGE:
+			Buffer.clear();
+			Buffer.append_at_num(0, m_Directory.buffer(), i+1);
+			m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer()), false);
+		}
+	}
+	for(int i=0; i<Directories.size(); i++)
+	{
+		const char* pName = Directories[i].buffer();
+		if(Directories[i].length() > PathSize+1 && Directories[i].comp_num(m_Directory, PathSize) == 0)
+			pName += PathSize+1;
+		
+		m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, pName, Directories[i].buffer()), false);
+	}
+	for(int i=0; i<Files.size(); i++)
+		m_pFilelist->Add(new COpenSavePackageDialog_Item_Load(this, Files[i].buffer()), false);
+	
+	delete pIter;
+}
+
+int COpenSavePackageDialog::GetFormat() const
+{
+	return m_Format;
+}
+
+void COpenSavePackageDialog::SelectName(const char* pFilename)
+{
+	m_Filename.copy(pFilename);
+}
+
+void COpenSavePackageDialog::SelectDirectory(const char* pDirectory)
+{
+	m_Directory.copy(pDirectory);
+	m_RefreshList = true;
+}
+
+void COpenSavePackageDialog::SelectDirectory(const char* pDirectory, int StorageType)
+{
+	Storage()->GetCompletePath(StorageType, pDirectory, m_Directory);
+	m_RefreshList = true;
+}
+	
+void COpenSavePackageDialog::Save()
+{
+	Context()->ShowLoadingCursor();
+	dynamic_string Buffer;
+	int TextIter = 0;
+	switch(m_Format)
+	{
+		case FORMAT_MAP_TW:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".map");
+			if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW))
 			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".png");
-				
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
+			}
+			break;
+		}
+		case FORMAT_IMAGE:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".png");
+			if(!AssetsManager()->Save_Image(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedAssetPath()))
+			{
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The image can't be saved")));
+			}
+			break;
+		}
+	}
+		
+	m_pAssetsEditor->RefreshPackageTree();
+	Close();
+}
+	
+void COpenSavePackageDialog::Open()
+{
+	Context()->ShowLoadingCursor();
+	dynamic_string Buffer;
+	int TextIter = 0;
+	switch(m_Format)
+	{
+		case FORMAT_IMAGE:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".png");
+			
+			if(m_Mode == MODE_REPLACE)
+			{
+				if(!UpdateImage(m_pAssetsEditor->SharedKernel(), m_pAssetsEditor->GetEditedAssetPath(), Buffer.buffer(), CStorage::TYPE_ABSOLUTE))
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The image can't be loaded")));
+			}
+			else
+			{
 				CAssetPath ImagePath = CreateNewImage(
 					m_pAssetsEditor->SharedKernel(),
 					m_pAssetsEditor->GetEditedPackageId(),
@@ -899,61 +896,59 @@ public:
 					m_pAssetsEditor->SetEditedAsset(ImagePath, CSubPath::Null());
 					m_pAssetsEditor->RefreshAssetsTree();
 				}
-				
-				break;
 			}
-			case FORMAT_MAP_TW:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".map");
-				int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_CompatibilityMode);
-				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
-				else
-				{
-					m_pAssetsEditor->SetEditedPackage(PackageId);
-		
-					//Search for maps
-					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
-						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
-					
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
-					m_pAssetsEditor->RefreshAssetsTree();
-				}
-				break;
-			}
-			case FORMAT_PACKAGE:
-			{
-				TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
-				TextIter = Buffer.append_at(TextIter, "/");
-				TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
-				TextIter = Buffer.append_at(TextIter, ".tup");
-				int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
-				if(PackageId < 0)
-					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded")));
-				else
-				{
-					m_pAssetsEditor->SetEditedPackage(PackageId);
-					
-					//Search for maps
-					if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
-						m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
-					
-					AssetsManager()->SetPackageReadOnly(PackageId, false);
-					m_pAssetsEditor->RefreshAssetsTree();
-				}
-				break;
-			}
-		}
 			
-		m_pAssetsEditor->RefreshPackageTree();
-		Close();
-	}
+			break;
+		}
+		case FORMAT_MAP_TW:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".map");
+			int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_CompatibilityMode);
+			if(PackageId < 0)
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
+			else
+			{
+				m_pAssetsEditor->SetEditedPackage(PackageId);
 	
-	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
-};
+				//Search for maps
+				if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+					m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+				
+				AssetsManager()->SetPackageReadOnly(PackageId, false);
+				m_pAssetsEditor->RefreshAssetsTree();
+			}
+			break;
+		}
+		case FORMAT_PACKAGE:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".tup");
+			int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
+			if(PackageId < 0)
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded")));
+			else
+			{
+				m_pAssetsEditor->SetEditedPackage(PackageId);
+				
+				//Search for maps
+				if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
+					m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
+				
+				AssetsManager()->SetPackageReadOnly(PackageId, false);
+				m_pAssetsEditor->RefreshAssetsTree();
+			}
+			break;
+		}
+	}
+		
+	m_pAssetsEditor->RefreshPackageTree();
+	Close();
+}
 
 /* MENU ***************************************************************/
 
@@ -1037,7 +1032,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, false, COpenSavePackageDialog::FORMAT_PACKAGE));
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_OPEN, COpenSavePackageDialog::FORMAT_PACKAGE));
 		m_pPopupMenu->Close();
 	}
 
@@ -1062,7 +1057,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, false, m_Format));
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_OPEN, m_Format));
 		m_pPopupMenu->Close();
 	}
 
@@ -1110,7 +1105,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, true, m_Format));
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_SAVE, m_Format));
 		m_pPopupMenu->Close();
 	}
 

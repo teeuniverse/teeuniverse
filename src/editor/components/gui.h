@@ -274,6 +274,49 @@ public:
 	inline gui::CVListLayout* List() { return m_pList; }
 };
 
+
+
+class COpenSavePackageDialog : public gui::CPopup
+{
+public:
+	enum
+	{
+		MODE_OPEN=0,
+		MODE_SAVE,
+		MODE_REPLACE,
+	};
+	
+	enum
+	{
+		FORMAT_PACKAGE=0,
+		FORMAT_MAP_TW,
+		FORMAT_IMAGE,
+	};
+
+public:
+	CGuiEditor* m_pAssetsEditor;
+	dynamic_string m_Filename;
+	dynamic_string m_Directory;
+	gui::CVScrollLayout* m_pFilelist;
+	int m_Format;
+	int m_Mode;
+	bool m_RefreshList;
+	int m_CompatibilityMode;
+	
+public:
+	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format);
+	void ListFiles();
+	int GetFormat() const;
+	void SelectName(const char* pFilename);
+	void SelectDirectory(const char* pDirectory);
+	void SelectDirectory(const char* pDirectory, int StorageType);
+	void Save();
+	void Open();
+	
+	virtual void Update(bool ParentEnabled);
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
 class CMessageDialog : public gui::CPopup
 {
 protected:

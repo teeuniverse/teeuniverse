@@ -508,6 +508,46 @@ public:
 	{ }
 };
 
+class ImportImageButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_REPLACE, COpenSavePackageDialog::FORMAT_IMAGE));
+	}
+	
+public:
+	ImportImageButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Replace"), pAssetsEditor->m_Path_Sprite_IconLoad),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
+class ExportImageButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_SAVE, COpenSavePackageDialog::FORMAT_IMAGE));
+	}
+	
+public:
+	ExportImageButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Export"), pAssetsEditor->m_Path_Sprite_IconSave),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -526,6 +566,15 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 	
 	CImageTilingToggle* pWidget = new CImageTilingToggle(m_pAssetsEditor);
 	AddField(pTab, pWidget, _LSTRING("Compatible with tiles"));
+	
+	pTab->AddSeparator();
+	
+	{
+		gui::CHListLayout* pLayout = new gui::CHListLayout(AssetsEditor());
+		pTab->Add(pLayout, false);
+		pLayout->Add(new ImportImageButton(AssetsEditor()), true);
+		pLayout->Add(new ExportImageButton(AssetsEditor()), true);
+	}
 	
 	return pTab;
 }

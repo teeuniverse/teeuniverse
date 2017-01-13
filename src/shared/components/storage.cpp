@@ -367,13 +367,12 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 
 void CStorage::GetCompletePath(int Type, const char *pDir, dynamic_string& Buffer)
 {
-	if(Type < 0 || Type >= m_StoragePaths.size())
-	{
+	if(Type == TYPE_ABSOLUTE)
+		Buffer.copy(pDir);
+	else if(Type < 0 || Type >= m_StoragePaths.size())
 		Buffer.clear();
-		return;
-	}
-
-	GetPath(Type, pDir, Buffer);
+	else
+		GetPath(Type, pDir, Buffer);
 }
 
 bool CStorage::FileExists(const char* pFilename, int Type)

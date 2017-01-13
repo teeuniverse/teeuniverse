@@ -117,6 +117,24 @@ void CreateNewImage_CopyData(png_t& Png, unsigned char*& pBuffer, CAsset_Image* 
 	delete[] pBuffer;
 }
 
+bool UpdateImage(CSharedKernel* pKernel, CAssetPath ImagePath, const char* pFilename, int StorageType)
+{
+	png_t Png;
+	unsigned char* pBuffer;
+	
+	CreateNewImage_LoadPng(pKernel, Png, pBuffer, pFilename, StorageType);
+	if(!pBuffer)
+		return false;
+	
+	CAsset_Image* pImage = pKernel->AssetsManager()->GetAsset_Hard<CAsset_Image>(ImagePath);
+	
+	CreateNewImage_CopyData(Png, pBuffer, pImage);
+	
+	pKernel->AssetsManager()->RequestUpdate(ImagePath);
+	
+	return true;
+}
+
 CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int StorageType, int GridWidth, int GridHeight, bool TilingEnabled, int GridSpacing)
 {
 	png_t Png;

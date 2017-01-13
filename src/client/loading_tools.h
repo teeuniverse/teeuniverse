@@ -23,6 +23,7 @@
 #include <shared/components/assetsmanager.h>
 #include <pnglite/pnglite.h>
 
+bool UpdateImage(CSharedKernel* pKernel, CAssetPath ImagePath, const char* pFilename, int StorageType);
 CAssetPath CreateNewImage(CSharedKernel* pKernel, int PackageId, const char* pName, const char* pFilename, int StorageType, int GridWidth, int GridHeight, bool TilingEnabled = false, int GridSpacing = 0);
 
 #endif
