@@ -713,7 +713,8 @@ protected:
 			if(!pGroup)
 				return;
 			
-			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(pGroup->GetParentPath());
+			CAssetPath MapPath = pGroup->GetParentPath();
+			const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
 			if(!pMap)
 				return;
 			
@@ -723,18 +724,33 @@ protected:
 				if(pMap->GetBgGroup(*IterBgGroup) == m_AssetPath)
 				{
 					int Id = (*IterBgGroup).GetId();
-					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetBgGroupArraySize())
+					
+					//Move in foreground
+					if(Id+m_Shift >= pMap->GetBgGroupArraySize())
+					{
+						int Token = AssetsManager()->GenerateToken();
+						
+						CSubPath GroupSubPath = CAsset_Map::SubPath_FgGroup(AssetsManager()->AddSubItem(MapPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP, Token));
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, GroupSubPath, CAsset_Map::FGGROUP, m_AssetPath, Token);
+						AssetsManager()->RelMoveSubItem(MapPath, GroupSubPath, -999999999, Token);
+						
+						AssetsManager()->DeleteSubItem(MapPath, *IterBgGroup, Token);
+						m_pAssetsEditor->RefreshAssetsTree();
+					}
+					//Change position
+					else if(Id+m_Shift >= 0)
 					{
 						CSubPath TmpSubPath = CAsset_Map::SubPath_BgGroup(Id+m_Shift);
 						CAssetPath TmpAssetPath = pMap->GetBgGroup(TmpSubPath);
 						
 						int Token = AssetsManager()->GenerateToken();
-						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), *IterBgGroup, CAsset_Map::BGGROUP, TmpAssetPath, Token);
-						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), TmpSubPath, CAsset_Map::BGGROUP, m_AssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, *IterBgGroup, CAsset_Map::BGGROUP, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, TmpSubPath, CAsset_Map::BGGROUP, m_AssetPath, Token);
 						
 						m_pAssetsEditor->RefreshAssetsTree();
-						return;
 					}
+					
+					return;
 				}
 			}
 			
@@ -744,18 +760,32 @@ protected:
 				if(pMap->GetFgGroup(*IterFgGroup) == m_AssetPath)
 				{
 					int Id = (*IterFgGroup).GetId();
-					if(Id+m_Shift >= 0 && Id+m_Shift < pMap->GetFgGroupArraySize())
+					
+					//Move in background
+					if(Id+m_Shift < 0)
+					{
+						int Token = AssetsManager()->GenerateToken();
+						
+						CSubPath GroupSubPath = CAsset_Map::SubPath_BgGroup(AssetsManager()->AddSubItem(MapPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP, Token));
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, GroupSubPath, CAsset_Map::BGGROUP, m_AssetPath, Token);
+						
+						AssetsManager()->DeleteSubItem(MapPath, *IterFgGroup, Token);
+						m_pAssetsEditor->RefreshAssetsTree();
+					}
+					//Change position
+					else if(Id+m_Shift < pMap->GetFgGroupArraySize())
 					{
 						CSubPath TmpSubPath = CAsset_Map::SubPath_FgGroup(Id+m_Shift);
 						CAssetPath TmpAssetPath = pMap->GetFgGroup(TmpSubPath);
 						
 						int Token = AssetsManager()->GenerateToken();
-						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), *IterFgGroup, CAsset_Map::FGGROUP, TmpAssetPath, Token);
-						AssetsManager()->SetAssetValue<CAssetPath>(pGroup->GetParentPath(), TmpSubPath, CAsset_Map::FGGROUP, m_AssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, *IterFgGroup, CAsset_Map::FGGROUP, TmpAssetPath, Token);
+						AssetsManager()->SetAssetValue<CAssetPath>(MapPath, TmpSubPath, CAsset_Map::FGGROUP, m_AssetPath, Token);
 						
 						m_pAssetsEditor->RefreshAssetsTree();
-						return;
 					}
+					
+					return;
 				}
 			}
 		}
@@ -870,8 +900,14 @@ protected:
 			if(!pLayer)
 				return;
 			
-			const CAsset_MapGroup* pGroup = AssetsManager()->template GetAsset<CAsset_MapGroup>(pLayer->GetParentPath());
+			CAssetPath GroupPath = pLayer->GetParentPath();
+			const CAsset_MapGroup* pGroup = AssetsManager()->template GetAsset<CAsset_MapGroup>(GroupPath);
 			if(!pGroup)
+				return;
+			
+			CAssetPath MapPath = pGroup->GetParentPath();
+			const CAsset_Map* pMap = AssetsManager()->template GetAsset<CAsset_Map>(MapPath);
+			if(!pMap)
 				return;
 			
 			CAsset_MapGroup::CIteratorLayer Iter;
@@ -880,18 +916,116 @@ protected:
 				if(pGroup->GetLayer(*Iter) == m_AssetPath)
 				{
 					int Id = (*Iter).GetId();
-					if(Id+m_Shift >= 0 && Id+m_Shift < pGroup->GetLayerArraySize())
+					if(Id+m_Shift < 0)
+					{
+						int Token = AssetsManager()->GenerateToken();
+						
+						//Search the previous group
+						CSubPath OldGroupSubPath;
+						CAssetPath NewGroupPath;
+						
+						{
+							CAsset_Map::CIteratorBgGroup GroupIter;
+							for(GroupIter = pMap->BeginBgGroup(); GroupIter != pMap->EndBgGroup(); ++GroupIter)
+							{
+								if(pMap->GetBgGroup(*GroupIter) == GroupPath)
+								{
+									OldGroupSubPath = *GroupIter;
+									break;
+								}
+								NewGroupPath = pMap->GetBgGroup(*GroupIter);
+							}
+						}
+						
+						if(OldGroupSubPath.IsNull())
+						{
+							CAsset_Map::CIteratorFgGroup GroupIter;
+							for(GroupIter = pMap->BeginFgGroup(); GroupIter != pMap->EndFgGroup(); ++GroupIter)
+							{
+								if(pMap->GetFgGroup(*GroupIter) == GroupPath)
+								{
+									OldGroupSubPath = *GroupIter;
+									break;
+								}
+								NewGroupPath = pMap->GetFgGroup(*GroupIter);
+							}
+						}
+						
+						if(OldGroupSubPath.IsNotNull())
+						{
+							AssetsManager()->DeleteSubItem(GroupPath, *Iter, Token);
+						}
+						if(NewGroupPath.IsNotNull())
+						{
+							CSubPath LayerSubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(NewGroupPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+							AssetsManager()->template SetAssetValue<CAssetPath>(NewGroupPath, LayerSubPath, CAsset_MapGroup::LAYER, m_AssetPath, Token);
+							AssetsManager()->template SetAssetValue<CAssetPath>(m_AssetPath, CSubPath::Null(), T::PARENTPATH, NewGroupPath, Token);
+						}
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+					}
+					else if(Id+m_Shift >= pGroup->GetLayerArraySize())
+					{
+						int Token = AssetsManager()->GenerateToken();
+						
+						//Search the previous group
+						CSubPath OldGroupSubPath;
+						CAssetPath NewGroupPath;
+						
+						{
+							CAsset_Map::CIteratorFgGroup GroupIter;
+							for(GroupIter = pMap->ReverseBeginFgGroup(); GroupIter != pMap->ReverseEndFgGroup(); ++GroupIter)
+							{
+								if(pMap->GetFgGroup(*GroupIter) == GroupPath)
+								{
+									OldGroupSubPath = *GroupIter;
+									break;
+								}
+								NewGroupPath = pMap->GetFgGroup(*GroupIter);
+							}
+						}
+						
+						if(OldGroupSubPath.IsNull())
+						{
+							CAsset_Map::CIteratorBgGroup GroupIter;
+							for(GroupIter = pMap->ReverseBeginBgGroup(); GroupIter != pMap->ReverseEndBgGroup(); ++GroupIter)
+							{
+								if(pMap->GetBgGroup(*GroupIter) == GroupPath)
+								{
+									OldGroupSubPath = *GroupIter;
+									break;
+								}
+								NewGroupPath = pMap->GetBgGroup(*GroupIter);
+							}
+						}
+						
+						if(OldGroupSubPath.IsNotNull())
+						{
+							AssetsManager()->DeleteSubItem(GroupPath, *Iter, Token);
+						}
+						if(NewGroupPath.IsNotNull())
+						{
+							CSubPath LayerSubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(NewGroupPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+							AssetsManager()->template SetAssetValue<CAssetPath>(NewGroupPath, LayerSubPath, CAsset_MapGroup::LAYER, m_AssetPath, Token);
+							AssetsManager()->RelMoveSubItem(NewGroupPath, LayerSubPath, -99999999, Token);
+							AssetsManager()->template SetAssetValue<CAssetPath>(m_AssetPath, CSubPath::Null(), T::PARENTPATH, NewGroupPath, Token);
+						}
+						
+						m_pAssetsEditor->RefreshAssetsTree();
+					}
+					else
 					{
 						CSubPath TmpSubPath = CAsset_MapGroup::SubPath_Layer(Id+m_Shift);
 						CAssetPath TmpAssetPath = pGroup->GetLayer(TmpSubPath);
 						
 						int Token = AssetsManager()->GenerateToken();
-						AssetsManager()->template SetAssetValue<CAssetPath>(pLayer->GetParentPath(), *Iter, CAsset_MapGroup::LAYER, TmpAssetPath, Token);
-						AssetsManager()->template SetAssetValue<CAssetPath>(pLayer->GetParentPath(), TmpSubPath, CAsset_MapGroup::LAYER, m_AssetPath, Token);
+						AssetsManager()->template SetAssetValue<CAssetPath>(GroupPath, *Iter, CAsset_MapGroup::LAYER, TmpAssetPath, Token);
+						AssetsManager()->template SetAssetValue<CAssetPath>(GroupPath, TmpSubPath, CAsset_MapGroup::LAYER, m_AssetPath, Token);
 						
 						m_pAssetsEditor->RefreshAssetsTree();
-						return;
 					}
+					
+					return;
 				}
 			}
 		}
