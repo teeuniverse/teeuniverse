@@ -671,9 +671,10 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
+	AddField_MapGroups(pTab, CAsset_MapLayerTiles::PARENTPATH, _LSTRING("Group"));
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _LSTRING("Width"));	
 	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _LSTRING("Height"));	
-	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, _LSTRING("Image"));
 	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));	
 	
 	pTab->AddSeparator();
@@ -789,6 +790,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
+	AddField_MapGroups(pTab, CAsset_MapLayerQuads::PARENTPATH, _LSTRING("Group"));
 	AddField_Asset(pTab, CAsset_MapLayerQuads::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
 	AddField_Integer_NoEdit(pTab, CAsset_MapLayerQuads::QUAD_ARRAYSIZE, _LSTRING("Number of quads"));
 	
@@ -976,6 +978,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
+	AddField_MapGroups(pTab, CAsset_MapLayerObjects::PARENTPATH, _LSTRING("Group"));
 	pTab->Add(new CSubItemList_MapLayerObjects_Object(AssetsEditor()), true);
 	pTab->Add(new CSubItemList_MapLayerObjects_Vertex(AssetsEditor()), true);
 	
@@ -1167,7 +1170,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_ZoneType_Asset()
 	AddTab(pTab, _LSTRING("Zone Type"), AssetsEditor()->m_Path_Sprite_IconZoneType);
 	
 	AddField_AssetProperties(pTab);
-	AddField_ImageTiles(pTab, CAsset_ZoneType::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	AddField_ImageTiles(pTab, CAsset_ZoneType::IMAGEPATH, _LSTRING("Image"));
 	
 	pTab->Add(new CSubItemList_ZoneTypeIndices(AssetsEditor()), true);
 	
@@ -2221,6 +2224,14 @@ void CAssetsInspector::AddField_Color(gui::CVListLayout* pList, int Member, cons
 class CMemberAssetEdit : public gui::CButton
 {
 public:
+	enum
+	{
+		MODE_TYPEID=0,
+		MODE_IMAGE_TILE,
+		MODE_MAPGROUP_PARENT,
+	};
+	
+public:
 	class CPopup : public gui::CPopup
 	{
 	public:
@@ -2237,7 +2248,7 @@ public:
 			}
 			
 		public:
-			CItem(CPopup* pPopup, CAssetPath AssetPath, bool CheckTileCompatibility) :
+			CItem(CPopup* pPopup, CAssetPath AssetPath, int Mode) :
 				gui::CButton(pPopup->Context(), ""),
 				m_AssetPath(AssetPath),
 				m_pPopup(pPopup)
@@ -2253,7 +2264,7 @@ public:
 					SetText(m_pPopup->m_pAssetsEditor->GetItemName(m_AssetPath, CSubPath::Null()));
 				}
 				
-				if(CheckTileCompatibility)
+				if(Mode == MODE_IMAGE_TILE)
 				{
 					const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_AssetPath);
 					if(!pImage || !pImage->GetTilingEnabled())
@@ -2279,15 +2290,15 @@ public:
 		CGuiEditor* m_pAssetsEditor;
 		int m_Member;
 		int m_AssetType;
-		bool m_CheckTileCompatibility;
+		int m_Mode;
 	
 	public:
-		CPopup(CGuiEditor* pAssetsEditor, int Member, int AssetType, gui::CRect ParentRect, int CheckTileCompatibility) :
+		CPopup(CGuiEditor* pAssetsEditor, int Member, int AssetType, gui::CRect ParentRect, int Mode) :
 			gui::CPopup(pAssetsEditor, ParentRect, 250, 400, gui::CPopup::ALIGNMENT_SIDE),
 			m_pAssetsEditor(pAssetsEditor),
 			m_Member(Member),
 			m_AssetType(AssetType),
-			m_CheckTileCompatibility(CheckTileCompatibility)
+			m_Mode(Mode)
 		{
 			
 			gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
@@ -2302,7 +2313,7 @@ public:
 					pLayout->Add(pExpand);\
 					pExpand->SetTitle(new gui::CLabel(Context(), AssetsManager()->GetPackageName(m_pAssetsEditor->GetEditedPackageId()), m_pAssetsEditor->m_Path_Sprite_IconFolder));\
 					for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_##Name>(m_pAssetsEditor->GetEditedPackageId()); i++)\
-						pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, m_pAssetsEditor->GetEditedPackageId(), i), m_CheckTileCompatibility));\
+						pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, m_pAssetsEditor->GetEditedPackageId(), i), m_Mode));\
 				}\
 				for(int p=0; p<AssetsManager()->GetNumPackages(); p++)\
 				{\
@@ -2312,7 +2323,7 @@ public:
 						pLayout->Add(pExpand);\
 						pExpand->SetTitle(new gui::CLabel(Context(), AssetsManager()->GetPackageName(p), m_pAssetsEditor->m_Path_Sprite_IconFolder));\
 						for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_##Name>(p); i++)\
-							pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, p, i), m_CheckTileCompatibility));\
+							pExpand->Add(new CItem(this, CAssetPath(CAsset_##Name::TypeId, p, i), m_Mode));\
 					}\
 				}\
 				break;
@@ -2327,7 +2338,7 @@ public:
 		
 		CAssetPath GetValue()
 		{
-			return m_pAssetsEditor->AssetsManager()->GetAssetValue<CAssetPath>(
+			return AssetsManager()->GetAssetValue<CAssetPath>(
 				m_pAssetsEditor->GetEditedAssetPath(),
 				m_pAssetsEditor->GetEditedSubPath(),
 				m_Member,
@@ -2337,12 +2348,59 @@ public:
 		
 		void SetValue(CAssetPath Value)
 		{
-			m_pAssetsEditor->AssetsManager()->SetAssetValue<CAssetPath>(
-				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
-				m_Member,
-				Value
-			);
+			if(m_Mode == MODE_MAPGROUP_PARENT)
+			{
+				CAssetPath OldValue = AssetsManager()->GetAssetValue<CAssetPath>(
+					m_pAssetsEditor->GetEditedAssetPath(),
+					m_pAssetsEditor->GetEditedSubPath(),
+					m_Member,
+					CAssetPath::Null()
+				);
+				
+				if(OldValue != Value)
+				{
+					int Token = AssetsManager()->GenerateToken();
+					
+					//Search the layer in the group
+					const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(OldValue);
+					if(pGroup)
+					{
+						CAsset_MapGroup::CIteratorLayer Iter;
+						for(Iter = pGroup->ReverseBeginLayer(); Iter != pGroup->ReverseEndLayer(); ++Iter)
+						{
+							if(pGroup->GetLayer(*Iter) == m_pAssetsEditor->GetEditedAssetPath())
+							{
+								AssetsManager()->DeleteSubItem(OldValue, *Iter, Token);
+								
+								//We don't use a break here so all instance of the layer will be removed.
+								//This can be used to cleanup corrupted maps
+							}
+						}
+					}
+					
+					CSubPath LayerSubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(Value, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(Value, LayerSubPath, CAsset_MapGroup::LAYER, m_pAssetsEditor->GetEditedAssetPath(), Token);
+					
+					AssetsManager()->SetAssetValue<CAssetPath>(
+						m_pAssetsEditor->GetEditedAssetPath(),
+						m_pAssetsEditor->GetEditedSubPath(),
+						m_Member,
+						Value,
+						Token
+					);
+					
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			else
+			{
+				AssetsManager()->SetAssetValue<CAssetPath>(
+					m_pAssetsEditor->GetEditedAssetPath(),
+					m_pAssetsEditor->GetEditedSubPath(),
+					m_Member,
+					Value
+				);
+			}
 		}
 	
 		virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
@@ -2352,21 +2410,21 @@ protected:
 	CGuiEditor* m_pAssetsEditor;
 	int m_Member;
 	int m_AssetType;
-	bool m_CheckTileCompatibility;
+	int m_Mode;
 	
 protected:
 	virtual void MouseClickAction()
 	{
-		Context()->DisplayPopup(new CPopup(m_pAssetsEditor, m_Member, m_AssetType, m_DrawRect, m_CheckTileCompatibility));
+		Context()->DisplayPopup(new CPopup(m_pAssetsEditor, m_Member, m_AssetType, m_DrawRect, m_Mode));
 	}
 
 public:
-	CMemberAssetEdit(CGuiEditor* pAssetsEditor, int Member, int AssetType) :
+	CMemberAssetEdit(CGuiEditor* pAssetsEditor, int Member, int AssetType, int Mode) :
 		gui::CButton(pAssetsEditor, "", CAssetPath::Null()),
 		m_pAssetsEditor(pAssetsEditor),
 		m_Member(Member),
 		m_AssetType(AssetType),
-		m_CheckTileCompatibility(false)
+		m_Mode(Mode)
 	{
 		
 	}
@@ -2401,11 +2459,6 @@ public:
 		
 		gui::CButton::Update(ParentEnabled);
 	}
-	
-	void CheckTileCompatibility()
-	{
-		m_CheckTileCompatibility = true;
-	}
 };
 
 void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text)
@@ -2413,20 +2466,33 @@ void CAssetsInspector::AddField_Asset(gui::CVListLayout* pList, int Member, int 
 	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
 		m_pAssetsEditor,
 		Member,
-		AssetType
+		AssetType,
+		CMemberAssetEdit::MODE_TYPEID
 	);
 	
 	AddField(pList, pWidget, Text);
 }
 
-void CAssetsInspector::AddField_ImageTiles(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text)
+void CAssetsInspector::AddField_ImageTiles(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
 		m_pAssetsEditor,
 		Member,
-		AssetType
+		CAsset_Image::TypeId,
+		CMemberAssetEdit::MODE_IMAGE_TILE
 	);
-	pWidget->CheckTileCompatibility();
+	
+	AddField(pList, pWidget, Text);
+}
+
+void CAssetsInspector::AddField_MapGroups(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
+{
+	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
+		m_pAssetsEditor,
+		Member,
+		CAsset_MapGroup::TypeId,
+		CMemberAssetEdit::MODE_MAPGROUP_PARENT
+	);
 	
 	AddField(pList, pWidget, Text);
 }
