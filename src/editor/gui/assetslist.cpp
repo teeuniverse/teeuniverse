@@ -253,6 +253,150 @@ protected:
 		}
 	};
 	
+	class CDuplicateButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			int Token = AssetsManager()->GenerateToken();
+			
+			CAssetPath NewAssetPath = AssetsManager()->DuplicateAsset(m_AssetPath, m_AssetPath.GetPackageId(), Token);
+			
+			if(m_AssetPath.GetType() == CAsset_MapGroup::TypeId)
+			{
+				//Duplicate layers in the group
+				const CAsset_MapGroup* pOldGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
+				const CAsset_MapGroup* pNewGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(NewAssetPath);
+				if(pOldGroup && pNewGroup)
+				{
+					CAsset_MapGroup::CIteratorLayer Iter;
+					for(Iter = pOldGroup->BeginLayer(); Iter != pOldGroup->EndLayer(); ++Iter)
+					{
+						CAssetPath NewLayerPath = AssetsManager()->DuplicateAsset(pOldGroup->GetLayer(*Iter), m_AssetPath.GetPackageId(), Token);
+						switch(NewLayerPath.GetType())
+						{
+							case CAsset_MapLayerTiles::TypeId:
+								AssetsManager()->SetAssetValue<CAssetPath>(NewLayerPath, CSubPath::Null(), CAsset_MapLayerTiles::PARENTPATH, NewAssetPath, Token);
+								break;
+							case CAsset_MapLayerQuads::TypeId:
+								AssetsManager()->SetAssetValue<CAssetPath>(NewLayerPath, CSubPath::Null(), CAsset_MapLayerQuads::PARENTPATH, NewAssetPath, Token);
+								break;
+							case CAsset_MapLayerObjects::TypeId:
+								AssetsManager()->SetAssetValue<CAssetPath>(NewLayerPath, CSubPath::Null(), CAsset_MapLayerObjects::PARENTPATH, NewAssetPath, Token);
+								break;
+						}
+						AssetsManager()->SetAssetValue<CAssetPath>(NewAssetPath, *Iter, CAsset_MapGroup::LAYER, NewLayerPath, Token);
+					} 
+				}
+				
+				//Find if the group is background or forground, and add the new one
+				CAssetPath MapPath = AssetsManager()->GetAssetValue<CAssetPath>(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::PARENTPATH, CAssetPath::Null());
+				const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
+				if(pMap)
+				{
+					bool Found;
+					
+					//Search in backgrounds
+					{
+						Found = false;
+						CAsset_Map::CIteratorBgGroup Iter;
+						for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
+						{
+							if(pMap->GetBgGroup(*Iter) == m_AssetPath)
+							{
+								Found = true;
+								break;
+							}
+						}
+						if(Found)
+						{
+							CSubPath SubPath = CAsset_Map::SubPath_BgGroup(AssetsManager()->AddSubItem(MapPath, CSubPath::Null(), CAsset_Map::TYPE_BGGROUP, Token));
+							AssetsManager()->SetAssetValue<CAssetPath>(MapPath, SubPath, CAsset_Map::BGGROUP, NewAssetPath, Token);
+						}
+					}
+					
+					if(!Found)
+					{
+						Found = false;
+						CAsset_Map::CIteratorFgGroup Iter;
+						for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
+						{
+							if(pMap->GetFgGroup(*Iter) == m_AssetPath)
+							{
+								Found = true;
+								break;
+							}
+						}
+						if(Found)
+						{
+							CSubPath SubPath = CAsset_Map::SubPath_FgGroup(AssetsManager()->AddSubItem(MapPath, CSubPath::Null(), CAsset_Map::TYPE_FGGROUP, Token));
+							AssetsManager()->SetAssetValue<CAssetPath>(MapPath, SubPath, CAsset_Map::FGGROUP, NewAssetPath, Token);
+						}
+					}
+				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)
+			{
+				const CAsset_MapLayerTiles* pAsset = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(NewAssetPath);
+				if(pAsset)
+				{
+					CAssetPath ParentPath = pAsset->GetParentPath();
+					CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(pAsset->GetParentPath(), CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(ParentPath, SubPath, CAsset_MapGroup::LAYER, NewAssetPath, Token);
+				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerQuads::TypeId)
+			{
+				const CAsset_MapLayerQuads* pAsset = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(NewAssetPath);
+				if(pAsset)
+				{
+					CAssetPath ParentPath = pAsset->GetParentPath();
+					CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(pAsset->GetParentPath(), CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(ParentPath, SubPath, CAsset_MapGroup::LAYER, NewAssetPath, Token);
+				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapLayerObjects::TypeId)
+			{
+				const CAsset_MapLayerObjects* pAsset = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(NewAssetPath);
+				if(pAsset)
+				{
+					CAssetPath ParentPath = pAsset->GetParentPath();
+					CSubPath SubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(pAsset->GetParentPath(), CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(ParentPath, SubPath, CAsset_MapGroup::LAYER, NewAssetPath, Token);
+				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapZoneTiles::TypeId)
+			{
+				const CAsset_MapZoneTiles* pAsset = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(NewAssetPath);
+				if(pAsset)
+				{
+					CAssetPath ParentPath = pAsset->GetParentPath();
+					CSubPath SubPath = CAsset_Map::SubPath_ZoneLayer(AssetsManager()->AddSubItem(pAsset->GetParentPath(), CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(ParentPath, SubPath, CAsset_Map::ZONELAYER, NewAssetPath, Token);
+				}
+			}
+			else if(m_AssetPath.GetType() == CAsset_MapEntities::TypeId)
+			{
+				const CAsset_MapEntities* pAsset = AssetsManager()->GetAsset<CAsset_MapEntities>(NewAssetPath);
+				if(pAsset)
+				{
+					CAssetPath ParentPath = pAsset->GetParentPath();
+					CSubPath SubPath = CAsset_Map::SubPath_EntityLayer(AssetsManager()->AddSubItem(pAsset->GetParentPath(), CSubPath::Null(), CAsset_Map::TYPE_ENTITYLAYER, Token));
+					AssetsManager()->SetAssetValue<CAssetPath>(ParentPath, SubPath, CAsset_Map::ENTITYLAYER, NewAssetPath, Token);
+				}
+			}
+			
+			m_pAssetsEditor->SetEditedAsset(NewAssetPath, CSubPath::Null());
+			m_pAssetsEditor->RefreshAssetsTree();
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CDuplicateButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Duplicate"), pAssetsEditor->m_Path_Sprite_IconDuplicate)
+		{ }
+	};
+	
 	class CDeleteButton : public CMenuButton
 	{
 	protected:
@@ -986,8 +1130,6 @@ public:
 	{
 		if(Button == KEY_MOUSE_2 && AssetsManager()->IsValidPackage(m_AssetPath.GetPackageId()) && !AssetsManager()->IsReadOnlyPackage(m_AssetPath.GetPackageId()))
 		{
-			dbg_msg("DEBUG", "%d %d %d %d", m_VisibilityRect.x, m_VisibilityRect.y, m_VisibilityRect.w, m_VisibilityRect.h);
-			
 			if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 			{
 				CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
@@ -1014,11 +1156,15 @@ public:
 					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveGroupButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapZoneTiles::TypeId)
 				{
 					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveZoneButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapEntities::TypeId)
@@ -1026,11 +1172,15 @@ public:
 					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveEntitiesButton(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)
 				{
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerTiles>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapLayerQuads::TypeId)
@@ -1038,11 +1188,15 @@ public:
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerQuads>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->AddSeparator();
 				}
 				else if(m_AssetPath.GetType() == CAsset_MapLayerObjects::TypeId)
 				{
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerObjects>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1));
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerObjects>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
+					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
 					pMenu->List()->AddSeparator();
 				}
 				

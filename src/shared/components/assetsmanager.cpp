@@ -853,6 +853,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 	
 	CAssetPath NewAssetPath;
 	char aBuf[128];
+	dynamic_string Buffer;
 	
 	#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 	{\
@@ -865,15 +866,28 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 		pNewAsset->copy(*pOldAsset);\
 		\
 		int DuplicateNum = ((PackageId == Path.GetPackageId()) ? 1 : 0);\
+		const char* pName = pOldAsset->GetName();\
+		const char* pCharIter = pName + str_length(pName) - 1;\
+		while(pCharIter > pName && *pCharIter >= '0' && *pCharIter <= '9')\
+		{\
+			pCharIter--;\
+		}\
+		if(pCharIter >= pName)\
+		{\
+			Buffer.append_num(pName, pCharIter - pName + 1);\
+			DuplicateNum = atoi(pCharIter + 1);\
+		}\
+		else\
+			Buffer.copy(pName);\
 		bool NameFound;\
 		do\
 		{\
 			NameFound = false;\
 			DuplicateNum++;\
 			if(DuplicateNum < 2)\
-				str_copy(aBuf, pOldAsset->GetName(), sizeof(aBuf));\
+				str_copy(aBuf, Buffer.buffer(), sizeof(aBuf));\
 			else\
-				str_format(aBuf, sizeof(aBuf), "%s (%d)", pOldAsset->GetName(), DuplicateNum);\
+				str_format(aBuf, sizeof(aBuf), "%s%d", Buffer.buffer(), DuplicateNum);\
 			for(int i=0; i<GetNumAssets<CAsset_##Name>(PackageId); i++)\
 			{\
 				const CAsset_##Name* pTestedAsset = GetAsset<CAsset_##Name>(CAssetPath(Path.GetType(), PackageId, i));\

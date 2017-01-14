@@ -198,6 +198,7 @@ public:
 	CAssetPath m_Path_Sprite_IconFillOuter;
 	CAssetPath m_Path_Sprite_IconLineHide;
 	CAssetPath m_Path_Sprite_IconLineShow;
+	CAssetPath m_Path_Sprite_IconDuplicate;
 	
 	CAssetPath m_Path_Sprite_IconShapeStar;
 	CAssetPath m_Path_Sprite_IconShapeHexagon;
