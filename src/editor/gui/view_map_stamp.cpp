@@ -657,7 +657,30 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 			{
 				const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer)
-					Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
+				{
+					const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pLayer->GetImagePath());
+					if(pImage)
+						Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
+					else
+					{
+						m_QuadSelection.clear();
+						
+						CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
+						Quad.SetPivot(0.0f);
+						
+						Quad.SetVertex0(vec2(-128.0f, -128.0f));
+						Quad.SetVertex1(vec2(128.0f, -128.0f));
+						Quad.SetVertex2(vec2(-128.0f, 128.0f));
+						Quad.SetVertex3(vec2(128.0f, 128.0f));
+						
+						Quad.SetUV0(vec2(0.0f, 0.0f));
+						Quad.SetUV1(vec2(1.0f, 0.0f));
+						Quad.SetUV2(vec2(0.0f, 1.0f));
+						Quad.SetUV3(vec2(1.0f, 1.0f));
+						
+						m_SelectionEnabled = true;
+					}
+				}
 			}
 		}
 	}
