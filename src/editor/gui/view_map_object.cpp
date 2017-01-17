@@ -548,25 +548,35 @@ void CCursorTool_MapObjectEditVertex::RenderView()
 		VertexControlPoint1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint1 + VertexPos) + Position);
 		VertexPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPos + Position);
 		
-		Graphics()->TextureClear();
-		Graphics()->LinesBegin();
-		CGraphics::CLineItem aLineItem[] = {
-			CGraphics::CLineItem(VertexControlPoint0.x, VertexControlPoint0.y, VertexPos.x, VertexPos.y),
-			CGraphics::CLineItem(VertexPos.x, VertexPos.y, VertexControlPoint1.x, VertexControlPoint1.y)
-		};
-		Graphics()->LinesDraw(aLineItem, 2);
-		Graphics()->LinesEnd();
+		if(Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() > 0)
+		{
+			Graphics()->TextureClear();
+			Graphics()->LinesBegin();
+			CGraphics::CLineItem LineItem(VertexControlPoint0.x, VertexControlPoint0.y, VertexPos.x, VertexPos.y);
+			Graphics()->LinesDraw(&LineItem, 1);
+			Graphics()->LinesEnd();
+			
+			AssetsRenderer()->DrawSprite(
+				AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
+				VertexControlPoint0,
+				1.0f, angle(VertexControlPoint0 - VertexPos), 0x0, 1.0f
+			);
+		}
 		
-		AssetsRenderer()->DrawSprite(
-			AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
-			VertexControlPoint0,
-			1.0f, angle(VertexControlPoint0 - VertexPos), 0x0, 1.0f
-		);
-		AssetsRenderer()->DrawSprite(
-			AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
-			VertexControlPoint1,
-			1.0f, angle(VertexControlPoint1 - VertexPos), 0x0, 1.0f
-		);
+		if(Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() < Object.GetVertexArraySize()-1)
+		{
+			Graphics()->TextureClear();
+			Graphics()->LinesBegin();
+			CGraphics::CLineItem LineItem(VertexPos.x, VertexPos.y, VertexControlPoint1.x, VertexControlPoint1.y);
+			Graphics()->LinesDraw(&LineItem, 1);
+			Graphics()->LinesEnd();
+			
+			AssetsRenderer()->DrawSprite(
+				AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
+				VertexControlPoint1,
+				1.0f, angle(VertexControlPoint1 - VertexPos), 0x0, 1.0f
+			);
+		}
 	}
 	
 	//Render new vertex ghost
