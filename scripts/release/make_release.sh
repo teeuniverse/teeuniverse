@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+TUVERSION=$1
+if [ -z "$TUVERSION" ]; then
+	TUVERSION="unstable"
+fi
+
 SRCDIR=$(pwd)
 SCRIPTDIR=$SRCDIR/scripts/release
 TOOLCHAINDIR=$SCRIPTDIR/toolchains
@@ -45,19 +50,19 @@ make_host
 make_release linux_x86 $TOOLCHAINDIR/Toolchain-linux32.cmake
 cd $SCRIPTDIR/cmake-build/linux_x86/build/release/linux_x86
 cp -a $ENVDIR/linux_x86/usr/lib/libicu* .
-tar -czvf $SCRIPTDIR/archives/teeuniverse_linux_x86.tar.gz *
+tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86.tar.gz *
 
 ## --- Linux 64bit
 make_release linux_x86_64 $TOOLCHAINDIR/Toolchain-linux64.cmake
 cd $SCRIPTDIR/cmake-build/linux_x86_64/build/release/linux_x86_64
 cp -a $ENVDIR/linux_x86_64/usr/lib/libicu* .
-tar -czvf $SCRIPTDIR/archives/teeuniverse_linux_x86_64.tar.gz *
+tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86_64.tar.gz *
 
 ## --- Windows 32bit
 make_release win32 $TOOLCHAINDIR/Toolchain-mingw32.cmake "-DWITHOUT_HARFBUZZ=1"
 cd $SCRIPTDIR/cmake-build/win32/build/release/win32
 cp $ENVDIR/win32/usr/lib/*.dll .
-zip -r $SCRIPTDIR/archives/teeuniverse_win32.zip *
+zip -r $SCRIPTDIR/archives/teeuniverse-$TUVERSION-win32.zip *
 
 # Cleanup
 cd $SCRIPTDIR
