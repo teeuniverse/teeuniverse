@@ -672,10 +672,12 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	AddField_AssetProperties(pTab);
 	
 	AddField_MapGroups(pTab, CAsset_MapLayerTiles::PARENTPATH, _LSTRING("Group"));
-	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _LSTRING("Width"));	
-	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _LSTRING("Height"));	
+	AddField_Integer(pTab, CAsset_MapLayerTiles::POSITIONX, _LSTRING("Position X"));
+	AddField_Integer(pTab, CAsset_MapLayerTiles::POSITIONY, _LSTRING("Position Y"));
+	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_WIDTH, _LSTRING("Width"));
+	AddField_Integer(pTab, CAsset_MapLayerTiles::TILE_HEIGHT, _LSTRING("Height"));
 	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, _LSTRING("Image"));
-	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));	
+	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));
 	
 	pTab->AddSeparator();
 	

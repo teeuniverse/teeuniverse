@@ -44,6 +44,15 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_0& TuaType);
 
 	};
+	
+	class CTuaType_0_2_1
+	{
+	public:
+		tua_stringid m_Name;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_1& TuaType);
+
+	};
 
 private:
 	class CAssetsManager* m_pAssetsManager;

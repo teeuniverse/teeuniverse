@@ -984,11 +984,12 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 	if(!pGroup)
 		return;
 	
-	int StartLayer = LayerId;
-	
 	CAsset_MapGroup::CIteratorLayer LayerIter;
 	for(LayerIter = pGroup->BeginLayer(); LayerIter != pGroup->EndLayer(); ++LayerIter)
 	{
+		int StartLayer = LayerId;
+		vec2 GroupOffset = 0.0f;
+		
 		CAssetPath LayerPath = pGroup->GetLayer(*LayerIter);
 		
 		if(LayerPath.GetType() == CAsset_MapLayerTiles::TypeId)
@@ -996,6 +997,9 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			const CAsset_MapLayerTiles* pLayer = GetAsset<CAsset_MapLayerTiles>(LayerPath);
 			if(!pLayer)
 				continue;
+			
+			GroupOffset.x = -pLayer->GetPositionX()*32.0f;
+			GroupOffset.y = -pLayer->GetPositionY()*32.0f;
 			
 			int Width = pLayer->GetTileWidth();
 			int Height = pLayer->GetTileHeight();
@@ -1265,23 +1269,23 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 				ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
 			}
 		}
-	}		
 	
-	tw07::CMapItemGroup GItem;
-	GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
-	GItem.m_OffsetX = pGroup->GetPositionX();
-	GItem.m_OffsetY = pGroup->GetPositionY();
-	GItem.m_ParallaxX = pGroup->GetHardParallaxX()*100.0f;
-	GItem.m_ParallaxY = pGroup->GetHardParallaxY()*100.0f;
-	GItem.m_StartLayer = StartLayer;
-	GItem.m_NumLayers = LayerId-StartLayer;
-	GItem.m_UseClipping = pGroup->GetClipping();
-	GItem.m_ClipX = pGroup->GetClipPositionX();
-	GItem.m_ClipY = pGroup->GetClipPositionY();
-	GItem.m_ClipW = pGroup->GetClipSizeX();
-	GItem.m_ClipH = pGroup->GetClipSizeY();
-	StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
-	ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		tw07::CMapItemGroup GItem;
+		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		GItem.m_OffsetX = pGroup->GetPositionX() + GroupOffset.x;
+		GItem.m_OffsetY = pGroup->GetPositionY() + GroupOffset.y;
+		GItem.m_ParallaxX = pGroup->GetHardParallaxX()*100.0f;
+		GItem.m_ParallaxY = pGroup->GetHardParallaxY()*100.0f;
+		GItem.m_StartLayer = StartLayer;
+		GItem.m_NumLayers = LayerId-StartLayer;
+		GItem.m_UseClipping = pGroup->GetClipping();
+		GItem.m_ClipX = pGroup->GetClipPositionX();
+		GItem.m_ClipY = pGroup->GetClipPositionY();
+		GItem.m_ClipW = pGroup->GetClipSizeX();
+		GItem.m_ClipH = pGroup->GetClipSizeY();
+		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
+		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+	}
 }
 
 bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int PackageId, int Format)

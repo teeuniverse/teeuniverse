@@ -155,6 +155,80 @@ public:
 		ALLOCATOR::copy(m_pData[(y*m_Width+x)*m_Depth+d], Element);
 	}
 	
+	void apply_shift(int sx, int sy)
+	{
+		if(sx > 0)
+		{
+			if(sy > 0)
+			{
+				for(int j=m_Height-1; j>=0; j--)
+				{
+					for(int i=m_Width-1; i>=0; i--)
+					{
+						for(int d=0; d<m_Depth; d++)
+						{
+							if(i-sx < 0 || i-sx >= m_Width || j-sy < 0 || j-sy >= m_Height)
+								m_pData[(j*m_Width+i)*m_Depth+d] = T();
+							else
+								ALLOCATOR::transfert(m_pData[(j*m_Width+i)*m_Depth+d], m_pData[((j-sy)*m_Width+(i-sx))*m_Depth+d]);
+						}
+					}
+				}
+			}
+			else
+			{
+				for(int j=0; j<m_Height; j++)
+				{
+					for(int i=m_Width-1; i>=0; i--)
+					{
+						for(int d=0; d<m_Depth; d++)
+						{
+							if(i-sx < 0 || i-sx >= m_Width || j-sy < 0 || j-sy >= m_Height)
+								m_pData[(j*m_Width+i)*m_Depth+d] = T();
+							else
+								ALLOCATOR::transfert(m_pData[(j*m_Width+i)*m_Depth+d], m_pData[((j-sy)*m_Width+(i-sx))*m_Depth+d]);
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if(sy > 0)
+			{
+				for(int j=m_Height-1; j>=0; j--)
+				{
+					for(int i=0; i<m_Width; i++)
+					{
+						for(int d=0; d<m_Depth; d++)
+						{
+							if(i-sx < 0 || i-sx >= m_Width || j-sy < 0 || j-sy >= m_Height)
+								m_pData[(j*m_Width+i)*m_Depth+d] = T();
+							else
+								ALLOCATOR::transfert(m_pData[(j*m_Width+i)*m_Depth+d], m_pData[((j-sy)*m_Width+(i-sx))*m_Depth+d]);
+						}
+					}
+				}
+			}
+			else
+			{
+				for(int j=0; j<m_Height; j++)
+				{
+					for(int i=0; i<m_Width; i++)
+					{
+						for(int d=0; d<m_Depth; d++)
+						{
+							if(i-sx < 0 || i-sx >= m_Width || j-sy < 0 || j-sy >= m_Height)
+								m_pData[(j*m_Width+i)*m_Depth+d] = T();
+							else
+								ALLOCATOR::transfert(m_pData[(j*m_Width+i)*m_Depth+d], m_pData[((j-sy)*m_Width+(i-sx))*m_Depth+d]);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	void init(int Width, int Height, int Depth=1)
 	{
 		if(m_pData)

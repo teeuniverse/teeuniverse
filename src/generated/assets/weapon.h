@@ -71,6 +71,17 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CAssetPath::CTuaType m_CharacterPath;
+		CAssetPath::CTuaType m_CursorPath;
+		CAssetPath::CTuaType m_SkinPath;
+		CAssetPath::CTuaType m_AttackAnimationPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Weapon& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_CharacterPath;

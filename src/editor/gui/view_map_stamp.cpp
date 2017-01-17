@@ -668,10 +668,10 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 				{
 					vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
 					vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-					int TileX0 = static_cast<int>(PivotTilePos.x);
-					int TileY0 = static_cast<int>(PivotTilePos.y);
-					int TileX1 = static_cast<int>(CursorTilePos.x);
-					int TileY1 = static_cast<int>(CursorTilePos.y);
+					int TileX0 = static_cast<int>(PivotTilePos.x) - pLayer->GetPositionX();
+					int TileY0 = static_cast<int>(PivotTilePos.y) - pLayer->GetPositionY();
+					int TileX1 = static_cast<int>(CursorTilePos.x) - pLayer->GetPositionX();
+					int TileY1 = static_cast<int>(CursorTilePos.y) - pLayer->GetPositionY();
 				
 					int X0 = min(TileX0, TileX1);
 					int Y0 = min(TileY0, TileY1);
@@ -829,6 +829,9 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
+			TileX -= pLayer->GetPositionX();
+			TileY -= pLayer->GetPositionY();
+			
 			int MinX = clamp(TileX, 0, pLayer->GetTileWidth()-1);
 			int MinY = clamp(TileY, 0, pLayer->GetTileHeight()-1);
 			int MaxX = clamp(TileX + m_TileSelection.get_width(), 1, pLayer->GetTileWidth());

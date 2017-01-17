@@ -118,6 +118,44 @@ void CAsset_Image::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext
 	}
 }
 
+void CAsset_Image::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Image& SysType)
+{
+	CAsset::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_GridWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridWidth);
+	SysType.m_GridHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridHeight);
+	SysType.m_GridSpacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GridSpacing);
+	SysType.m_TexelSize = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TexelSize);
+	SysType.m_TilingEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TilingEnabled);
+	{
+		const tua_uint8* pData = (const tua_uint8*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Data.m_Data);
+		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Width);
+		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Height);
+		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Data.m_Depth);
+		SysType.m_Data.resize(Width, Height, Depth);
+		mem_copy((uint8*) SysType.m_Data.base_ptr(), pData, SysType.m_Data.get_linear_size());
+	}
+	
+}
+
+
+void CAsset_Image::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType_0_2_1& TuaType)
+{
+	CAsset::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_GridWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridWidth);
+	TuaType.m_GridHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridHeight);
+	TuaType.m_GridSpacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GridSpacing);
+	TuaType.m_TexelSize = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TexelSize);
+	TuaType.m_TilingEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TilingEnabled);
+	{
+		TuaType.m_Data.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Data.get_width());
+		TuaType.m_Data.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Data.get_height());
+		TuaType.m_Data.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Data.get_depth());
+		TuaType.m_Data.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) SysType.m_Data.base_ptr(), SysType.m_Data.get_linear_size());
+	}
+}
+
 template<>
 int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

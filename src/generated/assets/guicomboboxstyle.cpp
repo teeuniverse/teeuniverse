@@ -66,6 +66,25 @@ void CAsset_GuiComboBoxStyle::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoa
 	pLoadingContext->WriteAssetPath(SysType.m_EnumPath, TuaType.m_EnumPath);
 }
 
+void CAsset_GuiComboBoxStyle::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_GuiComboBoxStyle& SysType)
+{
+	CAsset::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ButtonPath, SysType.m_ButtonPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_PopupPath, SysType.m_PopupPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_EnumPath, SysType.m_EnumPath);
+}
+
+
+void CAsset_GuiComboBoxStyle::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType_0_2_1& TuaType)
+{
+	CAsset::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ButtonPath, TuaType.m_ButtonPath);
+	pLoadingContext->WriteAssetPath(SysType.m_PopupPath, TuaType.m_PopupPath);
+	pLoadingContext->WriteAssetPath(SysType.m_EnumPath, TuaType.m_EnumPath);
+}
+
 template<>
 CAssetPath CAsset_GuiComboBoxStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

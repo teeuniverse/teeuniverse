@@ -109,6 +109,19 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
+		class CTuaType_0_2_1
+		{
+		public:
+			tua_uint8 m_Used;
+			tua_stringid m_Description;
+			tua_uint32 m_Color;
+			tua_stringid m_Title;
+			tua_int32 m_BorderIndex;
+			tua_uint32 m_BorderColor;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
 	
 	private:
 		bool m_Used;
@@ -184,6 +197,15 @@ public:
 		CAssetPath::CTuaType m_ImagePath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_0& TuaType);
+	};
+	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CTuaArray m_Index;
+		CAssetPath::CTuaType m_ImagePath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
 

@@ -146,6 +146,62 @@ void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 }
 
+void CAsset_ZoneType::CIndex::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIndex& SysType)
+{
+	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
+	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
+	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
+	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
+}
+
+
+void CAsset_ZoneType::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType& SysType)
+{
+	CAsset::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
+
+	{
+		const CAsset_ZoneType::CIndex::CTuaType_0_2_1* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_2_1*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
+		SysType.m_Index.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_1::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
+		}
+	}
+	
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+}
+
+
+void CAsset_ZoneType::CIndex::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_1& TuaType)
+{
+	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
+	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+	TuaType.m_BorderIndex = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_BorderIndex);
+	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
+}
+
+void CAsset_ZoneType::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_1& TuaType)
+{
+	CAsset::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
+
+	{
+		TuaType.m_Index.m_Size = SysType.m_Index.size();
+		CAsset_ZoneType::CIndex::CTuaType_0_2_1* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_1[SysType.m_Index.size()];
+		for(int i=0; i<SysType.m_Index.size(); i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
+		}
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_1)*SysType.m_Index.size());
+		delete[] pData;
+	}
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+}
+
 template<>
 int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

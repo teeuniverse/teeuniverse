@@ -139,6 +139,9 @@ public:
 	MACRO_SAVE_ASSETSFILE(0_2_0)
 	MACRO_LOAD_ASSETSFILE(0_2_0)
 	
+	MACRO_SAVE_ASSETSFILE(0_2_1)
+	MACRO_LOAD_ASSETSFILE(0_2_1)
+	
 	void DeleteAsset(const CAssetPath& Path)
 	{
 		if(!Path.IsNull() && Path.GetType() == ASSET::TypeId)

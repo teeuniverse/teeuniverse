@@ -353,7 +353,7 @@ public:
 		return false;
 	}
 
-	void SaveAssetInHistory(CAssetPath AssetPath);
+	bool SaveAssetInHistory(CAssetPath AssetPath, int Token = -1);
 
 	int AddSubItem(CAssetPath AssetPath, CSubPath SubPath, int Type, int Token = -1);
 	int AddSubItem_Hard(CAssetPath AssetPath, CSubPath SubPath, int Type);

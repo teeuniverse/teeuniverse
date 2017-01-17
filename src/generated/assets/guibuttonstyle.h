@@ -70,6 +70,17 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CAssetPath::CTuaType m_IdleStylePath;
+		CAssetPath::CTuaType m_MouseOverStylePath;
+		CAssetPath::CTuaType m_ReadOnlyStylePath;
+		CAssetPath::CTuaType m_FocusStylePath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_GuiButtonStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_IdleStylePath;

@@ -77,6 +77,19 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		tua_int32 m_MinWidth;
+		tua_int32 m_MinHeight;
+		tua_int32 m_Margin;
+		tua_int32 m_Padding;
+		tua_int32 m_Spacing;
+		CAssetPath::CTuaType m_RectPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_GuiBoxStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
 
 private:
 	int m_MinWidth;

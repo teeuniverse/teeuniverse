@@ -18,7 +18,7 @@
 
 import sys, os
 
-versionList = ["0.1.0", "0.2.0"]
+versionList = ["0.1.0", "0.2.0", "0.2.1"]
 
 class SubPathType:
 	def __init__(self, name, enumname, numidx):
@@ -1989,6 +1989,8 @@ mapLayerTiles.addMember("0.1.0", "ImagePath", TypeAssetPath())
 mapLayerTiles.addMember("0.1.0", "Color", TypeColor(), "1.0f")
 mapLayerTiles.addMember("0.1.0", "Tile", TypeArray2d(mapLayerTiles_tile))
 mapLayerTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
+mapLayerTiles.addMember("0.2.1", "PositionX", TypeInt32(), "0")
+mapLayerTiles.addMember("0.2.1", "PositionY", TypeInt32(), "0")
 
 mapLayerTiles.addPublicLines([
 	"enum",

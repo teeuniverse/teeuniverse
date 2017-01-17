@@ -146,6 +146,20 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
+		class CTuaType_0_2_1
+		{
+		public:
+			tua_float m_Length;
+			tua_float m_Anchor;
+			CTuaVec2 m_Translation;
+			CTuaVec2 m_Scale;
+			tua_float m_Angle;
+			tua_stringid m_Name;
+			tua_uint32 m_Color;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Skeleton::CBone& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
 	
 	private:
 		float m_Length;
@@ -248,6 +262,14 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
+		class CTuaType_0_2_1
+		{
+		public:
+			tua_stringid m_Name;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Skeleton::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
 	
 	private:
 		string< _fixed_string_core<128> > m_Name;
@@ -292,6 +314,17 @@ public:
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_2_0& TuaType);
+	};
+	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_DefaultSkinPath;
+		CTuaArray m_Bone;
+		CTuaArray m_Layer;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Skeleton& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
 

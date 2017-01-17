@@ -77,6 +77,19 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiScrollbarStyle& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CAssetPath::CTuaType m_RectPath;
+		CAssetPath::CTuaType m_DefaultRailPath;
+		CAssetPath::CTuaType m_DefaultSliderPath;
+		CAssetPath::CTuaType m_MouseOverSliderPath;
+		tua_int32 m_Margin;
+		tua_int32 m_Padding;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_GuiScrollbarStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiScrollbarStyle& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_RectPath;

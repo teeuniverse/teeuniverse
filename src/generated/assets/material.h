@@ -174,6 +174,16 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
+		class CTuaType_0_2_1
+		{
+		public:
+			tua_uint32 m_Color;
+			tua_float m_AngleStart;
+			tua_float m_AngleEnd;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
 	
 	private:
 		vec4 m_Color;
@@ -238,6 +248,23 @@ public:
 			tua_int32 m_TileLabel1;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			CAssetPath::CTuaType m_Path;
+			CTuaVec2 m_Size;
+			tua_uint32 m_Color;
+			tua_int32 m_Flags;
+			CTuaVec2 m_Position;
+			tua_int32 m_Alignment;
+			tua_int32 m_Filling;
+			tua_int32 m_TileType;
+			tua_int32 m_TileLabel0;
+			tua_int32 m_TileLabel1;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 	
@@ -361,6 +388,14 @@ public:
 			CTuaArray m_Sprite;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLayer& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			CTuaArray m_Sprite;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 	
@@ -627,6 +662,21 @@ public:
 		tua_uint8 m_TextureEnabled;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType);
+	};
+	
+	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
+	{
+	public:
+		CTuaArray m_Label;
+		CTuaArray m_Layer;
+		CAssetPath::CTuaType m_TexturePath;
+		tua_uint32 m_TextureColor;
+		CTuaVec2 m_TextureSize;
+		tua_float m_TextureAngle;
+		tua_float m_TextureSpacing;
+		tua_uint8 m_TextureEnabled;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
 
