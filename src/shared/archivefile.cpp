@@ -148,19 +148,11 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 	return true;
 }
 
-bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
+bool CArchiveFile::Write(CStorage* pStorage, fs_stream_wb* pFileStream)
 {
-	//Open file
-	IOHANDLE File = pStorage->OpenFile(pFilename, IOFLAG_WRITE, CStorage::TYPE_SAVE);
-	if(!File)
-	{
-		dbg_msg("ArchiveFile", "could not open '%s'", pFilename);
-		return false;
-	}
-
 	//Write signature
 	const char aSignature[] = "TUA1";
-	io_write(File, &aSignature, sizeof(aSignature));
+	pFileStream->write(&aSignature, sizeof(aSignature));
 	
 	//Counte number of types
 	int NumTypes = 0;
@@ -175,7 +167,7 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 	StoredHeader.m_NumTypes = WriteUInt32(NumTypes);
 	StoredHeader.m_NumStrings = WriteUInt32(m_Strings.size());
 	StoredHeader.m_NumRawDatas = WriteUInt32(m_RawDatas.size());
-	io_write(File, &StoredHeader, sizeof(StoredHeader));
+	pFileStream->write(&StoredHeader, sizeof(StoredHeader));
 	
 	//Write items
 	for(uint32 i=0; i<256; i++)
@@ -189,9 +181,9 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 		StoredType.m_ItemSize = WriteUInt32(Type.m_ItemSize);
 		StoredType.m_NumItems = WriteUInt32(Type.m_NumItems);
 		StoredType.m_TypeId = WriteUInt32(i);
-		io_write(File, &StoredType, sizeof(StoredType));
+		pFileStream->write(&StoredType, sizeof(StoredType));
 		
-		io_write(File, Type.m_pData, StoredType.m_NumItems * StoredType.m_ItemSize * sizeof(uint8));
+		pFileStream->write(Type.m_pData, StoredType.m_NumItems * StoredType.m_ItemSize * sizeof(uint8));
 	}
 	
 	//Write raw datas
@@ -203,15 +195,15 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 		{
 			StoredRawData.m_CompressedSize = WriteUInt32(RawData.m_CompressedSize);
 			StoredRawData.m_UncompressedSize = WriteUInt32(RawData.m_UncompressedSize);
-			io_write(File, &StoredRawData, sizeof(StoredRawData));
-			io_write(File, RawData.m_pCompressedData, RawData.m_CompressedSize * sizeof(uint8));
+			pFileStream->write(&StoredRawData, sizeof(StoredRawData));
+			pFileStream->write(RawData.m_pCompressedData, RawData.m_CompressedSize * sizeof(uint8));
 		}
 		else
 		{
 			StoredRawData.m_CompressedSize = WriteUInt32(0);
 			StoredRawData.m_UncompressedSize = WriteUInt32(RawData.m_UncompressedSize);
-			io_write(File, &StoredRawData, sizeof(StoredRawData));
-			io_write(File, RawData.m_pUncompressedData, RawData.m_UncompressedSize * sizeof(uint8));
+			pFileStream->write(&StoredRawData, sizeof(StoredRawData));
+			pFileStream->write(RawData.m_pUncompressedData, RawData.m_UncompressedSize * sizeof(uint8));
 		}
 	}
 	
@@ -222,12 +214,28 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 		CString& String = m_Strings[i];
 		uint32 Length = str_length(String.m_pText);
 		tua_uint32 StoredLength = WriteUInt32(Length);
-		io_write(File, &StoredLength, sizeof(StoredLength));
-		io_write(File, String.m_pText, sizeof(char)*(Length+1));
+		pFileStream->write(&StoredLength, sizeof(StoredLength));
+		pFileStream->write(String.m_pText, sizeof(char)*(Length+1));
 	}
 	
-	io_close(File);
-	dbg_msg("ArchiveFile", "'%s' saved", pFilename);
+	return true;
+}
+
+bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
+{
+	dynamic_string Buffer;
+	pStorage->GetCompletePath(CStorage::TYPE_SAVE, pFilename, Buffer);
+	
+	fs_filestream_wb FileStream(Buffer.buffer());
+	if(!FileStream.is_valid())
+	{
+		dbg_msg("ArchiveFile", "could not open '%s'", pFilename);
+		return false;
+	}
+	
+	Write(pStorage, &FileStream);
+	
+	FileStream.close();
 	
 	return true;
 }

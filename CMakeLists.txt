@@ -74,6 +74,7 @@ set(TU_EXECNAME_SERVER teeuniverse_srv)
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/external")
 include_directories("${PROJECT_SOURCE_DIR}/src/external/zlib")
+include_directories("${PROJECT_SOURCE_DIR}/src/external/minizip")
 
 if(SDL2_FOUND)
 	include_directories(${SDL2_INCLUDE_DIR})
@@ -151,6 +152,12 @@ endif()
 # Sources
 file(GLOB teeuniverse_shared_src
     "${PROJECT_SOURCE_DIR}/src/external/zlib/*.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/ioapi.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/miniunz.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/minizip.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/zip.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/unzip.c"
+    "${PROJECT_SOURCE_DIR}/src/external/minizip/mztools.c"
     "${PROJECT_SOURCE_DIR}/src/external/json-parser/*.c"
     "${PROJECT_SOURCE_DIR}/src/shared/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/system/*.cpp"
@@ -162,6 +169,9 @@ file(GLOB teeuniverse_shared_src
     "${PROJECT_SOURCE_DIR}/src/tw07/shared/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/generated/assets/*.cpp"
 )
+if(WIN32)
+	set(teeuniverse_shared_src ${teeuniverse_shared_src} "${PROJECT_SOURCE_DIR}/src/external/minizip/iowin32.c")
+endif()
 
 # Build
 add_library(teeuniverse_shared ${teeuniverse_shared_src})

@@ -170,6 +170,8 @@ public:
 	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	
+	bool Save_ZipWithDependencies(const char* pFileName, int StorageType, int PackageId);
+	
 	bool Save_Image(const char* pFileName, int StorageType, const CAssetPath& ImagePath);
 	
 	void Load_UnivTeeWorlds();

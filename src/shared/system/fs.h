@@ -409,4 +409,40 @@ public:
  */
 fs_listdir_iterator* fs_create_listdir_iterator(const char *pDir);
 
+class fs_stream_wb
+{
+public:
+	virtual bool is_valid() = 0;
+	virtual void close() = 0;
+	virtual void write(const void* pData, unsigned DataSize) = 0;
+};
+
+class fs_filestream_wb : public fs_stream_wb
+{
+protected:
+	IOHANDLE m_pFile;
+	
+public:
+	fs_filestream_wb(const char* pFilename) :
+		m_pFile(NULL)
+	{
+		m_pFile = io_open(pFilename, IOFLAG_WRITE);
+	}
+	
+	virtual bool is_valid()
+	{
+		return (m_pFile);
+	}
+
+	virtual void write(const void* pData, unsigned DataSize)
+	{
+		io_write(m_pFile, pData, DataSize);
+	}
+	
+	virtual void close()
+	{
+		io_close(m_pFile);
+	}
+};
+
 #endif

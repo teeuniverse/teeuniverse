@@ -292,6 +292,7 @@ public:
 	{
 		FORMAT_PACKAGE=0,
 		FORMAT_MAP_TW,
+		FORMAT_ZIP,
 		FORMAT_IMAGE,
 	};
 

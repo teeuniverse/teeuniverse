@@ -178,6 +178,7 @@ public:
 	
 	bool Open(class CStorage* pStorage, const char* pFilename, int StorageType);
 	bool Write(class CStorage* pStorage, const char* pFilename);
+	bool Write(class CStorage* pStorage, fs_stream_wb* pFileStream);
 	void Close();
 	
 	void SetItemType(uint32 Type, uint32 ItemSize, uint32 NumItems);

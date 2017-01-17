@@ -415,6 +415,9 @@ public:
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconMap);
 				break;
+			case COpenSavePackageDialog::FORMAT_ZIP:
+				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
+				break;
 			default:
 				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
 				break;
@@ -557,6 +560,10 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export TeeWorlds Map")), false);
 			else
 				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Import TeeWorlds Map")), false);
+			break;
+		case FORMAT_ZIP:
+			if(m_Mode == MODE_SAVE)
+				pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Export Package with all Dependencies")), false);
 			break;
 		default:
 			if(m_Mode == MODE_SAVE)
@@ -753,6 +760,13 @@ void COpenSavePackageDialog::ListFiles()
 						Buffer.buffer()[Length-4] = 0;
 					}
 					break;
+				case FORMAT_ZIP:
+					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".zip") == 0)
+					{
+						Found = true;
+						Buffer.buffer()[Length-4] = 0;
+					}
+					break;
 				case FORMAT_PACKAGE:
 					if(Length >= 4 && str_comp(Buffer.buffer()+Length-4, ".tup") == 0)
 					{
@@ -839,6 +853,18 @@ void COpenSavePackageDialog::Save()
 			if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), CAssetsManager::MAPFORMAT_TW))
 			{
 				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
+			}
+			break;
+		}
+		case FORMAT_ZIP:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".zip");
+			if(!AssetsManager()->Save_ZipWithDependencies(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId()))
+			{
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
 			}
 			break;
 		}
@@ -976,7 +1002,7 @@ protected:
 	
 public:
 	CPopup_Menu(CGuiEditor* pAssetsEditor, const gui::CRect& CreatorRect) :
-		gui::CPopup(pAssetsEditor, CreatorRect, 250, -1, gui::CPopup::ALIGNMENT_BOTTOM),
+		gui::CPopup(pAssetsEditor, CreatorRect, 280, -1, gui::CPopup::ALIGNMENT_BOTTOM),
 		m_pAssetsEditor(pAssetsEditor)
 	{		
 		m_pList = new gui::CVListLayout(Context());
@@ -1120,6 +1146,9 @@ public:
 		{
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetText(_LSTRING("Export TeeWorlds Map"));
+				break;
+			case COpenSavePackageDialog::FORMAT_ZIP:
+				SetText(_LSTRING("Export Package with all Dependencies"));
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
@@ -1398,6 +1427,7 @@ protected:
 		pMenu->List()->Add(new CNewPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new COpenPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
+		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_ZIP));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
