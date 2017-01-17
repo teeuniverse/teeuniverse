@@ -743,7 +743,13 @@ void CCursorTool_MapObjectEditVertex::OnViewMouseMove()
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
 	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	vec2 NewPos = InvTransform*(ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos - ClickDiff) - Position);
+	vec2 MapMousePos = ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos - ClickDiff);
+	if(ViewMap()->GetGridAlign())
+	{
+		MapMousePos = ViewMap()->MapRenderer()->MapPosToTilePos(MapMousePos);
+		MapMousePos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(MapMousePos.x), floor(MapMousePos.y)));
+	}
+	vec2 NewPos = InvTransform*(MapMousePos - Position);
 	
 	if(m_DragType == 1)
 		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, CAsset_MapLayerObjects::OBJECT_VERTEX_POSITION, NewPos, m_Token);

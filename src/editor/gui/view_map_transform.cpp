@@ -22,8 +22,9 @@
 #include <client/maprenderer.h>
 #include <shared/geometry/geometry.h>
 #include <generated/assets/maplayerquads.h>
+#include <client/gui/toggle.h>
 
-/* CURSORTOOL QUAD PICKER *********************************************/
+/* CURSORTOOL MAP PICKER **********************************************/
 
 CCursorTool_MapPicker::CCursorTool_MapPicker(CViewMap* pViewMap, const CLocalizableString& LString, CAssetPath IconPath) :
 	CCursorTool(pViewMap, LString, IconPath)
@@ -151,7 +152,7 @@ void CCursorTool_MapPicker::RenderPivots()
 	}
 }
 
-/* CURSORTOOL QUAD TRANSFORM ******************************************/
+/* CURSORTOOL MAP TRANSFORM *******************************************/
 
 CCursorTool_MapTransform::CCursorTool_MapTransform(CViewMap* pViewMap) :
 	CCursorTool_MapPicker(pViewMap, _LSTRING("Transform"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMove),
@@ -235,6 +236,10 @@ void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 			m_Token = AssetsManager()->GenerateToken();
 			m_DragType = DRAGTYPE_TRANSLATION;
 			
+			vec2 PivotMapPos = pMapLayer->GetQuadPivot(SelectedQuad);
+			vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(vec2(Context()->GetMousePos().x, Context()->GetMousePos().y));
+			m_ClickDiff = CursorMapPos - PivotMapPos;
+			
 			AssetsEditor()->SetEditedAsset(
 				AssetsEditor()->GetEditedAssetPath(),
 				SelectedQuad
@@ -257,6 +262,10 @@ void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 		{
 			m_Token = AssetsManager()->GenerateToken();
 			m_DragType = DRAGTYPE_TRANSLATION;
+			
+			vec2 PivotMapPos = pEntities->GetEntityPosition(EntityFound);
+			vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(vec2(Context()->GetMousePos().x, Context()->GetMousePos().y));
+			m_ClickDiff = CursorMapPos - PivotMapPos;
 			
 			AssetsEditor()->SetEditedAsset(
 				AssetsEditor()->GetEditedAssetPath(),
@@ -316,19 +325,19 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		pMapLayer->GetQuadTransform(SelectedQuad, ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
 		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-		int RelX = Context()->GetMouseRelPos().x;
-		int RelY = Context()->GetMouseRelPos().y;
 		
 		if(m_DragType == DRAGTYPE_TRANSLATION)
 		{
-			if(RelX != 0 || RelY != 0)
+			vec2 NewPivotPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos) - m_ClickDiff;
+		
+			if(ViewMap()->GetGridAlign())
 			{
-				vec2 PivotScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
-				vec2 Diff = ViewMap()->MapRenderer()->ScreenPosToMapPos(PivotScreenPos + vec2(RelX, RelY)) - Position;
-				vec2 NewPivotPos = pMapLayer->GetQuadPivot(SelectedQuad) + Diff;
-				AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
-				m_Transformed = true;
+				NewPivotPos = ViewMap()->MapRenderer()->MapPosToTilePos(NewPivotPos);
+				NewPivotPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(NewPivotPos.x), floor(NewPivotPos.y))) + vec2(16.0f, 16.0f);
 			}
+			
+			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
+			m_Transformed = true;
 		}
 		else if(m_DragType == DRAGTYPE_GIZMO)
 		{
@@ -403,14 +412,18 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		
 		ViewMap()->MapRenderer()->UnsetGroup();
 		
-		int RelX = Context()->GetMouseRelPos().x;
-		int RelY = Context()->GetMouseRelPos().y;
+		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 		
 		if(m_DragType == DRAGTYPE_TRANSLATION)
 		{
-			vec2 Position = pEntities->GetEntityPosition(SelectedEntity);
-			vec2 ScreenPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Position);
-			vec2 NewPosition = ViewMap()->MapRenderer()->ScreenPosToMapPos(ScreenPos + vec2(RelX, RelY));
+			vec2 NewPosition = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos) - m_ClickDiff;
+		
+			if(ViewMap()->GetGridAlign())
+			{
+				NewPosition = ViewMap()->MapRenderer()->MapPosToTilePos(NewPosition);
+				NewPosition = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(NewPosition.x), floor(NewPosition.y))) + vec2(16.0f, 16.0f);
+			}
+			
 			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedEntity, CAsset_MapEntities::ENTITY_POSITION, NewPosition, m_Token);
 			m_Transformed = true;
 		}
@@ -508,7 +521,7 @@ void CCursorTool_MapTransform::OnMouseMove()
 	CCursorTool_MapPicker::OnMouseMove();
 }
 
-/* CURSORTOOL QUAD EDIT ***********************************************/
+/* CURSORTOOL VERTEX EDITOR *******************************************/
 
 CCursorTool_MapEdit::CCursorTool_MapEdit(CViewMap* pViewMap) :
 	CCursorTool_MapPicker(pViewMap, _LSTRING("Edit"), pViewMap->AssetsEditor()->m_Path_Sprite_IconMoveVertex),
@@ -639,6 +652,12 @@ void CCursorTool_MapEdit::OnViewMouseMove()
 	
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos - m_ClickDiff);
+	
+	if(ViewMap()->GetGridAlign())
+	{
+		CursorMapPos = ViewMap()->MapRenderer()->MapPosToTilePos(CursorMapPos);
+		CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y)));
+	}
 	
 	vec2 Position;
 	matrix2x2 Transform;

@@ -31,6 +31,40 @@
 #include <client/gui/float-edit.h>
 #include <client/gui/listlayout.h>
 
+
+class CGridAlignToggle : public gui::CToggle
+{
+protected:
+	CViewMap* m_pViewMap;
+	
+protected:
+	virtual bool GetValue()
+	{
+		return m_pViewMap->GetGridAlign();
+	}
+
+	virtual void SetValue(bool Value)
+	{
+		m_pViewMap->SetGridAlign(Value);
+	}
+
+public:
+	CGridAlignToggle(CViewMap* pViewMap) :
+		gui::CToggle(pViewMap->AssetsEditor(), "", pViewMap->AssetsEditor()->m_Path_Sprite_IconGridAligned),
+		m_pViewMap(pViewMap)
+	{
+		SetToggleStyle(pViewMap->AssetsEditor()->m_Path_Toggle_Toolbar);
+	}
+
+	virtual void OnMouseMove()
+	{
+		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			m_pViewMap->AssetsEditor()->SetHint(_LSTRING("Align to the grid"));
+		
+		gui::CToggle::OnMouseMove();
+	}
+};
+
 class CZoomUnitButton : public gui::CButton
 {
 protected:
@@ -248,6 +282,7 @@ public:
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
+	m_GridAligned(false),
 	m_CameraDraged(false),
 	m_ZoneOpacity(0.5f),
 	m_ShowGrid(false),
@@ -288,6 +323,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(m_pCursorTool_MapWeightVertex);
 	
 	m_pCursorTool_MapStamp->UpdateToolbar();
+	m_pCursorTool_MapTransform->UpdateToolbar();
 	m_pCursorTool_MapEdit->UpdateToolbar();
 	m_pCursorTool_MapEraser->UpdateToolbar();
 	m_pCursorTool_MapCrop->UpdateToolbar();
@@ -300,6 +336,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(new CZoomEdit(AssetsEditor(), this), false, 75);
 	m_pToolbar->AddSeparator();
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
+	m_pToolbar->Add(new CGridAlignToggle(this), false);
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CDisplaySettingsButton(this), false);
 	

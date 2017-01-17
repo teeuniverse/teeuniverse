@@ -452,41 +452,6 @@ public:
 	}
 };
 
-class CGridAlignToggle : public gui::CToggle
-{
-protected:
-	CGuiEditor* m_pAssetsEditor;
-	CCursorTool_MapStamp* m_pCursorTool;
-	
-protected:
-	virtual bool GetValue()
-	{
-		return m_pCursorTool->m_GridAligned;
-	}
-
-	virtual void SetValue(bool Value)
-	{
-		m_pCursorTool->m_GridAligned = Value;
-	}
-
-public:
-	CGridAlignToggle(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool) :
-		gui::CToggle(pAssetsEditor, "", pAssetsEditor->m_Path_Sprite_IconGridAligned),
-		m_pAssetsEditor(pAssetsEditor),
-		m_pCursorTool(pCursorTool)
-	{
-		SetToggleStyle(pAssetsEditor->m_Path_Toggle_Toolbar);
-	}
-
-	virtual void OnMouseMove()
-	{
-		if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			m_pAssetsEditor->SetHint(_LSTRING("Align the stamp to the grid"));
-		
-		gui::CToggle::OnMouseMove();
-	}
-};
-
 /* CURSOR TOOL ********************************************************/
 
 CCursorTool_MapStamp::CCursorTool_MapStamp(CViewMap* pViewMap) :
@@ -495,7 +460,6 @@ CCursorTool_MapStamp::CCursorTool_MapStamp(CViewMap* pViewMap) :
 {
 	m_SelectionEnabled = false;
 	m_DragEnabled = false;
-	m_GridAligned = false;
 }
 
 void CCursorTool_MapStamp::UpdateToolbar()
@@ -511,13 +475,6 @@ void CCursorTool_MapStamp::UpdateToolbar()
 	m_pOptions->Add(new CRotateCWButton(AssetsEditor(), this), false);
 	m_pOptions->Add(new CVFlipButton(AssetsEditor(), this), false);
 	m_pOptions->Add(new CHFlipButton(AssetsEditor(), this), false);
-	m_pOptions->AddSeparator();
-	{
-		gui::CLabel* pLabel = new gui::CLabel(AssetsEditor(), _LSTRING("Options:"));
-		pLabel->NoTextClipping();
-		m_pOptions->Add(pLabel, false);
-	}
-	m_pOptions->Add(new CGridAlignToggle(AssetsEditor(), this), false);
 	ViewMap()->GetToolbar()->Add(m_pOptions, false);
 }
 
@@ -539,7 +496,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 				{
 					vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
-					if(m_GridAligned)
+					if(ViewMap()->GetGridAlign())
 					{
 						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
 						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
@@ -590,7 +547,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 				{
 					vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
-					if(m_GridAligned)
+					if(ViewMap()->GetGridAlign())
 					{
 						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
 						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
@@ -988,7 +945,7 @@ void CCursorTool_MapStamp::RenderView()
 		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
 		{
 			vec2 RenderPos = CursorMapPos;
-			if(m_GridAligned)
+			if(ViewMap()->GetGridAlign())
 			{
 				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
 				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);
@@ -1015,7 +972,7 @@ void CCursorTool_MapStamp::RenderView()
 		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
 		{
 			vec2 RenderPos = CursorMapPos;
-			if(m_GridAligned)
+			if(ViewMap()->GetGridAlign())
 			{
 				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
 				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);

@@ -40,8 +40,9 @@ public:
 		
 		inline CViewMap* ViewMap() { return m_pViewMap; }
 	};
-	
+
 protected:
+	bool m_GridAligned;
 	bool m_CameraDraged;
 	float m_ZoneOpacity;
 	bool m_ShowGrid;
@@ -78,6 +79,9 @@ public:
 	
 	inline int GetShowEntites() const { return m_ShowEntities; }
 	inline void SetShowEntites(int Value) { m_ShowEntities = Value; }
+	
+	inline int GetGridAlign() const { return m_GridAligned; }
+	inline void SetGridAlign(int Value) { m_GridAligned = Value; }
 	
 	float GetCameraZoom();
 	void SetCameraZoom(float Value);
