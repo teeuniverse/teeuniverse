@@ -38,7 +38,7 @@ CAsset_MapLayerObjects::CVertex::CVertex()
 	m_Position = 0.0f;
 	m_Weight = 1.0f;
 	m_Color = 1.0f;
-	m_Smoothness = CBezierVertex::TYPE_AUTOSMOOTH;
+	m_Smoothness = CBezierVertex::TYPE_CORNER;
 	m_ControlPoint0 = vec2(-16.0f, 0.0f);
 	m_ControlPoint1 = vec2(16.0f, 0.0f);
 }
