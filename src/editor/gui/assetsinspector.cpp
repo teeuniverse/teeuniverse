@@ -879,6 +879,42 @@ public:
 class CSubItemList_MapLayerObjects_Vertex : public gui::CVScrollLayout
 {
 protected:
+	class CVertexItem : public CSubItem
+	{
+	public:
+		CVertexItem(CGuiEditor* pAssetsEditor, CSubPath SubPath, const CLocalizableString& Text) :
+			CSubItem(pAssetsEditor, SubPath, Text, pAssetsEditor->m_Path_Sprite_IconVertex)
+		{
+			
+		}
+		
+		virtual void Update(bool ParentEnabled)
+		{
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+			switch(pLayer->GetObjectVertexSmoothness(m_SubPath))
+			{
+				case CBezierVertex::TYPE_CORNER:
+					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexCorner);
+					break;
+				case CBezierVertex::TYPE_CONTROLLED_FREE:
+					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexFree);
+					break;
+				case CBezierVertex::TYPE_CONTROLLED_ALIGNED:
+					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexAligned);
+					break;
+				case CBezierVertex::TYPE_CONTROLLED_SYMETRIC:
+					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSymetric);
+					break;
+				case CBezierVertex::TYPE_AUTOSMOOTH:
+					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSmooth);
+					break;
+			}
+			
+			CSubItem::Update(ParentEnabled);
+		}
+	};
+	
+protected:
 	CAssetPath m_AssetPath;
 	int m_ObjectId;
 	int m_AssetVersion;
@@ -952,7 +988,8 @@ public:
 						{
 							str_format(aBuf, sizeof(aBuf), "Vertex %d", i+1);
 							CSubPath VertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
-							Add(new CSubItem(m_pAssetsEditor, VertexPath, aBuf, m_pAssetsEditor->m_Path_Sprite_IconVertex), false);
+							
+							Add(new CVertexItem(m_pAssetsEditor, VertexPath, aBuf), false);
 						}
 						
 						m_UpdateNeeded = false;
