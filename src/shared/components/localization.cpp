@@ -799,5 +799,12 @@ float CLocalization::ParsePercent(const char* pLanguageCode, const char* pText)
 	UErrorCode Status = U_ZERO_ERROR;
 	int Length = ucnv_toUChars(m_pUtf8Converter, aBufUtf16, sizeof(aBufUtf16), pText, -1, &Status);
 	
-	return unum_parseDouble(pLanguage->m_pPercentFormater, aBufUtf16, Length, NULL, &Status);
+	double Result = unum_parseDouble(pLanguage->m_pPercentFormater, aBufUtf16, Length, NULL, &Status);
+	if(Status == U_PARSE_ERROR)
+	{
+		UErrorCode Status = U_ZERO_ERROR;
+		return unum_parseDouble(pLanguage->m_pNumberFormater, aBufUtf16, Length, NULL, &Status)/100.0;
+	}
+	else
+		return Result;
 }
