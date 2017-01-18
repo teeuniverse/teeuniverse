@@ -266,8 +266,8 @@ int main(int argc, char* argv[])
 		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 		
-		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "desertMain", "images/env_desert/desert_main.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-		CreateNewImage(pKernel, PackageId, "desertDoodads", "images/env_desert/desert_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "desertMain", "images/env_desert/desert_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "desertDoodads", "images/env_desert/desert_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		CreateNewImage(pKernel, PackageId, "desertMountains1", "images/env_desert/desert_mountains.png", CStorage::TYPE_ALL, 1, 1);
 		CreateNewImage(pKernel, PackageId, "desertMountains2", "images/env_desert/desert_mountains2.png", CStorage::TYPE_ALL, 1, 1);
 		CreateNewImage(pKernel, PackageId, "desertSun", "images/env_desert/desert_sun.png", CStorage::TYPE_ALL, 1, 1);
@@ -441,8 +441,8 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "genericSpikes", "images/env_generic/generic_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "genericUnhookable", "images/env_generic/generic_unhookable.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "genericSpikes", "images/env_generic/generic_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+	CreateNewImage(pKernel, PackageId, "genericUnhookable", "images/env_generic/generic_unhookable.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV GRASS */
@@ -452,8 +452,8 @@ int main(int argc, char* argv[])
 		pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "grassMain", "images/env_grass/grass_main.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-		CreateNewImage(pKernel, PackageId, "grassDoodads", "images/env_grass/grass_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "grassMain", "images/env_grass/grass_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "grassDoodads", "images/env_grass/grass_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		
 		CAssetPath GrassPath;
 		CAssetPath GrassCornerConvexPath;
@@ -676,12 +676,12 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "jungleMain", "images/env_jungle/jungle_main.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "jungleDoodads", "images/env_jungle/jungle_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "jungleSpikes", "images/env_jungle/jungle_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "jungleUnhookable", "images/env_jungle/jungle_unhookables.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "jungleMain", "images/env_jungle/jungle_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+	CreateNewImage(pKernel, PackageId, "jungleDoodads", "images/env_jungle/jungle_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+	CreateNewImage(pKernel, PackageId, "jungleSpikes", "images/env_jungle/jungle_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+	CreateNewImage(pKernel, PackageId, "jungleUnhookable", "images/env_jungle/jungle_unhookables.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 	CreateNewImage(pKernel, PackageId, "jungleBackground", "images/env_jungle/jungle_background.png", CStorage::TYPE_ALL, 1, 1);
-	CreateNewImage(pKernel, PackageId, "jungleMidground", "images/env_jungle/jungle_midground.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "jungleMidground", "images/env_jungle/jungle_midground.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	
 	/* ENV MOON */
@@ -735,8 +735,8 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "winterMain", "images/env_winter/winter_main.png", CStorage::TYPE_ALL, 16, 16, true, 1);
-	CreateNewImage(pKernel, PackageId, "winterDoodads", "images/env_winter/winter_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 1);
+	CreateNewImage(pKernel, PackageId, "winterMain", "images/env_winter/winter_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+	CreateNewImage(pKernel, PackageId, "winterDoodads", "images/env_winter/winter_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 	CreateNewImage(pKernel, PackageId, "winterMountains1", "images/env_winter/winter_mountains.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains2", "images/env_winter/winter_mountains2.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains3", "images/env_winter/winter_mountains3.png", CStorage::TYPE_ALL, 1, 1);

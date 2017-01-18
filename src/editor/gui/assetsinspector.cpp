@@ -30,6 +30,8 @@
 #include <client/gui/expand.h>
 #include <shared/components/localization.h>
 #include <shared/geometry/linetesselation.h>
+#include <shared/imageprocessing/dilate.h>
+#include <shared/imageprocessing/addborder.h>
 
 /* COMBOBOX ***********************************************************/
 	
@@ -548,6 +550,64 @@ public:
 	}
 };
 
+class DilateImageButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		CAsset_Image* pImage = AssetsManager()->GetAsset_Hard<CAsset_Image>(m_pAssetsEditor->GetEditedAssetPath());
+		if(!pImage)
+			return;
+		
+		AssetsManager()->SaveAssetInHistory(m_pAssetsEditor->GetEditedAssetPath());
+		
+		array2d< uint8, allocator_default<uint8> >& Pixels = pImage->GetDataArray();
+		ImageProcessing_Dilate(Pixels, 11);
+		
+		AssetsManager()->RequestUpdate(m_pAssetsEditor->GetEditedAssetPath());
+	}
+	
+public:
+	DilateImageButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Fix color of transparent pixels"), pAssetsEditor->m_Path_Sprite_IconImage),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
+class AddBorderButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		CAsset_Image* pImage = AssetsManager()->GetAsset_Hard<CAsset_Image>(m_pAssetsEditor->GetEditedAssetPath());
+		if(!pImage)
+			return;
+		
+		AssetsManager()->SaveAssetInHistory(m_pAssetsEditor->GetEditedAssetPath());
+		
+		array2d< uint8, allocator_default<uint8> >& Pixels = pImage->GetDataArray();
+		ImageProcessing_AddBorder(Pixels, pImage->GetGridWidth(), pImage->GetGridHeight(), 2);
+		
+		AssetsManager()->RequestUpdate(m_pAssetsEditor->GetEditedAssetPath());
+	}
+	
+public:
+	AddBorderButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add border around grid cells"), pAssetsEditor->m_Path_Sprite_IconImage),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -575,6 +635,10 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_Image_Asset()
 		pLayout->Add(new ImportImageButton(AssetsEditor()), true);
 		pLayout->Add(new ExportImageButton(AssetsEditor()), true);
 	}
+	
+	pTab->AddSeparator();
+	pTab->Add(new DilateImageButton(AssetsEditor()), false);
+	pTab->Add(new AddBorderButton(AssetsEditor()), false);
 	
 	return pTab;
 }
