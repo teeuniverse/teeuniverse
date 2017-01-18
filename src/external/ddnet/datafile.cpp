@@ -24,9 +24,9 @@
  * 
  * FOREIGN CODE END: ProjectName ***************************************
  * 
- * If ProjectName is "TeeWorlds", then this part of the code follows the
- * TeeWorlds licence:
- *      (c) Magnus Auvinen. See LICENSE_TEEWORLDS in the root of the
+ * If ProjectName is "DDNet", then this part of the code follows the
+ * DDNet licence:
+ *      (c) Magnus Auvinen. See LICENSE_DDNET in the root of the
  *      distribution for more information. If you are missing that file,
  *      acquire a complete release at teeworlds.com.
  */
@@ -34,15 +34,16 @@
 #include "datafile.h"
 
 #include <shared/system/types.h>
+#include <shared/system/debug.h>
 #include <shared/math/math.h>
 #include <shared/components/storage.h>
 
 #include <external/zlib/zlib.h>
 
-namespace tw07
+namespace ddnet
 {
 
-/* FOREIGN CODE BEGIN: TeeWorlds **************************************/
+/* FOREIGN CODE BEGIN: DDNet ******************************************/
 
 struct CDatafileItemType
 {
@@ -102,7 +103,7 @@ struct CDatafile
 	char *m_pData;
 };
 
-bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int StorageType)
+bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int StorageType)
 {
 	dbg_msg("datafile", "loading. filename='%s'", pFilename);
 
@@ -115,7 +116,7 @@ bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int Storag
 
 
 	// take the CRC of the file and store it
-	unsigned Crc = crc32(0L, 0x0, 0);
+	unsigned Crc = 0;
 	{
 		enum
 		{
@@ -138,13 +139,16 @@ bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int Storag
 
 	// TODO: change this header
 	CDatafileHeader Header;
-	io_read(File, &Header, sizeof(Header));
+	if (sizeof(Header) != io_read(File, &Header, sizeof(Header)))
+	{
+		dbg_msg("datafile", "couldn't load header");
+		return 0;
+	}
 	if(Header.m_aID[0] != 'A' || Header.m_aID[1] != 'T' || Header.m_aID[2] != 'A' || Header.m_aID[3] != 'D')
 	{
 		if(Header.m_aID[0] != 'D' || Header.m_aID[1] != 'A' || Header.m_aID[2] != 'T' || Header.m_aID[3] != 'A')
 		{
 			dbg_msg("datafile", "wrong signature. %x %x %x %x", Header.m_aID[0], Header.m_aID[1], Header.m_aID[2], Header.m_aID[3]);
-			io_close(File);
 			return 0;
 		}
 	}
@@ -155,7 +159,6 @@ bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int Storag
 	if(Header.m_Version != 3 && Header.m_Version != 4)
 	{
 		dbg_msg("datafile", "wrong version. version=%x", Header.m_Version);
-		io_close(File);
 		return 0;
 	}
 
@@ -187,7 +190,7 @@ bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int Storag
 	if(ReadSize != Size)
 	{
 		io_close(pTmpDataFile->m_File);
-		delete[] (char*)(pTmpDataFile);
+		delete[] (char*) pTmpDataFile;
 		pTmpDataFile = 0;
 		dbg_msg("datafile", "couldn't load the whole thing, wanted=%d got=%d", Size, ReadSize);
 		return false;
@@ -224,20 +227,57 @@ bool CDataFileReader::Open(CStorage *pStorage, const char *pFilename, int Storag
 	return true;
 }
 
-int CDataFileReader::NumData() const
+bool CDataFileReader::GetCrcSize(class CStorage *pStorage, const char *pFilename, int StorageType, unsigned *pCrc, unsigned *pSize)
+{
+	IOHANDLE File = pStorage->OpenFile(pFilename, IOFLAG_READ, StorageType);
+	if(!File)
+		return false;
+
+	// get crc and size
+	unsigned Crc = 0;
+	unsigned Size = 0;
+	unsigned char aBuffer[64*1024];
+	while(1)
+	{
+		unsigned Bytes = io_read(File, aBuffer, sizeof(aBuffer));
+		if(Bytes <= 0)
+			break;
+		Crc = crc32(Crc, aBuffer, Bytes); // ignore_convention
+		Size += Bytes;
+	}
+
+	io_close(File);
+
+	*pCrc = Crc;
+	*pSize = Size;
+	return true;
+}
+
+int CDataFileReader::NumData()
 {
 	if(!m_pDataFile) { return 0; }
 	return m_pDataFile->m_Header.m_NumRawData;
 }
 
 // always returns the size in the file
-int CDataFileReader::GetDataSize(int Index) const
+int CDataFileReader::GetDataSize(int Index)
 {
 	if(!m_pDataFile) { return 0; }
 
 	if(Index == m_pDataFile->m_Header.m_NumRawData-1)
 		return m_pDataFile->m_Header.m_DataSize-m_pDataFile->m_Info.m_pDataOffsets[Index];
 	return m_pDataFile->m_Info.m_pDataOffsets[Index+1]-m_pDataFile->m_Info.m_pDataOffsets[Index];
+}
+
+// always returns the size in the file
+int CDataFileReader::GetUncompressedDataSize(int Index)
+{
+	if(!m_pDataFile) { return 0; }
+
+	if(m_pDataFile->m_Header.m_Version == 4)
+		return m_pDataFile->m_Info.m_pDataSizes[Index];
+	else
+		return GetDataSize(Index);
 }
 
 void *CDataFileReader::GetDataImpl(int Index, int Swap)
@@ -275,13 +315,13 @@ void *CDataFileReader::GetDataImpl(int Index, int Swap)
 #endif
 
 			// clean up the temporary buffers
-			delete[] (char*)pTemp;
+			delete[] (char*) pTemp;
 		}
 		else
 		{
 			// load the data
 			dbg_msg("datafile", "loading data index=%d size=%d", Index, DataSize);
-			m_pDataFile->m_ppDataPtrs[Index] = (char *) new char[DataSize];
+			m_pDataFile->m_ppDataPtrs[Index] = new char[DataSize];
 			io_seek(m_pDataFile->m_File, m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], IOSEEK_START);
 			io_read(m_pDataFile->m_File, m_pDataFile->m_ppDataPtrs[Index], DataSize);
 		}
@@ -315,7 +355,7 @@ void CDataFileReader::UnloadData(int Index)
 	m_pDataFile->m_ppDataPtrs[Index] = 0x0;
 }
 
-int CDataFileReader::GetItemSize(int Index) const
+int CDataFileReader::GetItemSize(int Index)
 {
 	if(!m_pDataFile) { return 0; }
 	if(Index == m_pDataFile->m_Header.m_NumItems-1)
@@ -370,7 +410,7 @@ void *CDataFileReader::FindItem(int Type, int ID)
 	return 0;
 }
 
-int CDataFileReader::NumItems() const
+int CDataFileReader::NumItems()
 {
 	if(!m_pDataFile) return 0;
 	return m_pDataFile->m_Header.m_NumItems;
@@ -387,12 +427,12 @@ bool CDataFileReader::Close()
 		delete[] (char*) m_pDataFile->m_ppDataPtrs[i];
 
 	io_close(m_pDataFile->m_File);
-	delete[] (char*)m_pDataFile;
+	delete[] (char*) m_pDataFile;
 	m_pDataFile = 0;
 	return true;
 }
 
-unsigned CDataFileReader::Crc() const
+unsigned CDataFileReader::Crc()
 {
 	if(!m_pDataFile) return 0xFFFFFFFF;
 	return m_pDataFile->m_Crc;
@@ -417,13 +457,16 @@ CDataFileWriter::~CDataFileWriter()
 	m_pDatas = 0;
 }
 
-bool CDataFileWriter::Open(CStorage *pStorage, int StorageType, const char *pFilename)
+bool CDataFileWriter::OpenFile(class CStorage *pStorage, int StorageType, const char *pFilename)
 {
 	assert(!m_File);
 	m_File = pStorage->OpenFile(pFilename, IOFLAG_WRITE, StorageType);
-	if(!m_File)
-		return false;
+	return m_File != 0;
+}
 
+void CDataFileWriter::Init()
+{
+	assert(!m_File);
 	m_NumItems = 0;
 	m_NumDatas = 0;
 	m_NumItemTypes = 0;
@@ -434,14 +477,16 @@ bool CDataFileWriter::Open(CStorage *pStorage, int StorageType, const char *pFil
 		m_pItemTypes[i].m_First = -1;
 		m_pItemTypes[i].m_Last = -1;
 	}
+}
 
-	return true;
+bool CDataFileWriter::Open(class CStorage *pStorage, int StorageType, const char *pFilename)
+{
+	Init();
+	return OpenFile(pStorage, StorageType, pFilename);
 }
 
 int CDataFileWriter::AddItem(int Type, int ID, int Size, void *pData)
 {
-	if(!m_File) return 0;
-
 	assert(Type >= 0 && Type < 0xFFFF);
 	assert(m_NumItems < 1024);
 	assert(Size%sizeof(int) == 0);
@@ -476,8 +521,6 @@ int CDataFileWriter::AddItem(int Type, int ID, int Size, void *pData)
 
 int CDataFileWriter::AddData(int Size, void *pData)
 {
-	if(!m_File) return 0;
-
 	assert(m_NumDatas < 1024);
 
 	CDataInfo *pInfo = &m_pDatas[m_NumDatas];
@@ -488,14 +531,14 @@ int CDataFileWriter::AddData(int Size, void *pData)
 	if(Result != Z_OK)
 	{
 		dbg_msg("datafile", "compression error %d", Result);
-		abort();
+		assert(Result == Z_OK);
 	}
 
 	pInfo->m_UncompressedSize = Size;
 	pInfo->m_CompressedSize = (int)s;
 	pInfo->m_pCompressedData = new char[pInfo->m_CompressedSize];
 	mem_copy(pInfo->m_pCompressedData, pCompData, pInfo->m_CompressedSize);
-	delete[] (char*)pCompData;
+	delete[] (char*) pCompData;
 
 	m_NumDatas++;
 	return m_NumDatas-1;
@@ -526,6 +569,8 @@ int CDataFileWriter::Finish()
 	int TypesSize, HeaderSize, OffsetSize, FileSize, SwapSize;
 	int DataSize = 0;
 	CDatafileHeader Header;
+
+	// we should now write this file!
 
 	// calculate sizes
 	for(int i = 0; i < m_NumItems; i++)
@@ -673,6 +718,6 @@ int CDataFileWriter::Finish()
 	return 0;
 }
 
-/* FOREIGN CODE END: TeeWorlds ****************************************/
+/* FOREIGN CODE END: DDNet ********************************************/
 
 }

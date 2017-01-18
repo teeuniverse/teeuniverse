@@ -24,7 +24,7 @@
 #include <shared/assets/assetpath.h>
 #include <shared/assets/assetspackage.h>
 #include <shared/components/assetsmanager_history.h>
-#include <tw07/shared/datafile.h>
+#include <external/ddnet/datafile.h>
 
 class CAssetsManager : public CSharedKernel::CComponent
 {
@@ -166,7 +166,7 @@ public:
 	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0);
 	int Load_AssetsFile(const char *pFileName, int StorageType, unsigned Crc = 0);
 	
-	void Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId);
+	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId);
 	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	

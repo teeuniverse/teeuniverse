@@ -17,8 +17,8 @@
  */
 
 #include <shared/components/storage.h>
-#include <tw07/shared/datafile.h>
-#include <tw07/shared/mapitems.h>
+#include <external/ddnet/datafile.h>
+#include <external/ddnet/mapitems.h>
 #include <shared/geometry/linetesselation.h>
 
 #include "assetsmanager.h"
@@ -125,7 +125,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	
 	int PackageId = NewPackage(PackageName.buffer());
 	
-	tw07::CDataFileReader ArchiveFile;
+	ddnet::CDataFileReader ArchiveFile;
 	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), StorageType))
 	{
 		dbg_msg("AssetsManager", "can't open the file %s (storage type:%d)", FullPath.buffer(), StorageType);
@@ -138,11 +138,11 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 		return -1;
 	}
 	
-	tw07::CMapItemVersion *pItem = (tw07::CMapItemVersion *) ArchiveFile.FindItem(tw07::MAPITEMTYPE_VERSION, 0);
+	ddnet::CMapItemVersion *pItem = (ddnet::CMapItemVersion *) ArchiveFile.FindItem(ddnet::MAPITEMTYPE_VERSION, 0);
 	if(!pItem)
 		return -1;
 
-	if(pItem->m_Version != tw07::CMapItemVersion::CURRENT_VERSION)
+	if(pItem->m_Version != 1)
 		return -1;
 
 	Load_UnivTeeWorlds();
@@ -160,13 +160,13 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	//Load images
 	{
 		int Start, Num;
-		ArchiveFile.GetType(tw07::MAPITEMTYPE_IMAGE, &Start, &Num);
+		ArchiveFile.GetType(ddnet::MAPITEMTYPE_IMAGE, &Start, &Num);
 		
 		pImagePath = new CAssetPath[Num];
 
 		for(int i = 0; i < Num; i++)
 		{
-			tw07::CMapItemImage *pItem = (tw07::CMapItemImage *) ArchiveFile.GetItem(Start+i, 0, 0);
+			ddnet::CMapItemImage *pItem = (ddnet::CMapItemImage *) ArchiveFile.GetItem(Start+i, 0, 0);
 			
 			//Image data
 			if(pItem->m_External)
@@ -330,45 +330,16 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				unsigned char* pData = (unsigned char*) ArchiveFile.GetData(pItem->m_ImageData);				
 				array2d<uint8>& Data = pImage->GetDataArray();
 				
-				if(pItem->m_Version <= 1 || pItem->m_Format == CImageInfo::FORMAT_RGBA)
+				Data.resize(pItem->m_Width, pItem->m_Height, 4);
+				
+				for(int j=0; j<pItem->m_Height; j++)
 				{
-					Data.resize(pItem->m_Width, pItem->m_Height, 4);
-					
-					for(int j=0; j<pItem->m_Height; j++)
+					for(int i=0; i<pItem->m_Width; i++)
 					{
-						for(int i=0; i<pItem->m_Width; i++)
-						{
-							Data.set_clamp(i, j, 0, pData[(j*pItem->m_Width+i)*4+0]);
-							Data.set_clamp(i, j, 1, pData[(j*pItem->m_Width+i)*4+1]);
-							Data.set_clamp(i, j, 2, pData[(j*pItem->m_Width+i)*4+2]);
-							Data.set_clamp(i, j, 3, pData[(j*pItem->m_Width+i)*4+3]);
-						}
-					}
-				}
-				else if(pItem->m_Format == CImageInfo::FORMAT_RGB)
-				{
-					Data.resize(pItem->m_Width, pItem->m_Height, 3);
-					
-					for(int j=0; j<pItem->m_Height; j++)
-					{
-						for(int i=0; i<pItem->m_Width; i++)
-						{
-							Data.set_clamp(i, j, 0, pData[(j*pItem->m_Width+i)*3+0]);
-							Data.set_clamp(i, j, 1, pData[(j*pItem->m_Width+i)*3+1]);
-							Data.set_clamp(i, j, 2, pData[(j*pItem->m_Width+i)*3+2]);
-						}
-					}
-				}
-				else if(pItem->m_Format == CImageInfo::FORMAT_ALPHA)
-				{
-					Data.resize(pItem->m_Width, pItem->m_Height, 1);
-					
-					for(int j=0; j<pItem->m_Height; j++)
-					{
-						for(int i=0; i<pItem->m_Width; i++)
-						{
-							Data.set_clamp(i, j, 0, pData[j*pItem->m_Width+i]);
-						}
+						Data.set_clamp(i, j, 0, pData[(j*pItem->m_Width+i)*4+0]);
+						Data.set_clamp(i, j, 1, pData[(j*pItem->m_Width+i)*4+1]);
+						Data.set_clamp(i, j, 2, pData[(j*pItem->m_Width+i)*4+2]);
+						Data.set_clamp(i, j, 3, pData[(j*pItem->m_Width+i)*4+3]);
 					}
 				}
 				
@@ -382,15 +353,15 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	//Load groups
 	{
 		int LayersStart, LayersNum;
-		ArchiveFile.GetType(tw07::MAPITEMTYPE_LAYER, &LayersStart, &LayersNum);
+		ArchiveFile.GetType(ddnet::MAPITEMTYPE_LAYER, &LayersStart, &LayersNum);
 
 		int Start, Num;
-		ArchiveFile.GetType(tw07::MAPITEMTYPE_GROUP, &Start, &Num);
+		ArchiveFile.GetType(ddnet::MAPITEMTYPE_GROUP, &Start, &Num);
 		for(int g = 0; g < Num; g++)
 		{
-			tw07::CMapItemGroup *pGItem = (tw07::CMapItemGroup *)ArchiveFile.GetItem(Start+g, 0, 0);
+			ddnet::CMapItemGroup *pGItem = (ddnet::CMapItemGroup *)ArchiveFile.GetItem(Start+g, 0, 0);
 
-			if(pGItem->m_Version < 1 || pGItem->m_Version > tw07::CMapItemGroup::CURRENT_VERSION)
+			if(pGItem->m_Version < 1 || pGItem->m_Version > ddnet::CMapItemGroup::CURRENT_VERSION)
 				continue;
 
 			// load group name
@@ -406,14 +377,14 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			{
 				for(int l = 0; l < pGItem->m_NumLayers; l++)
 				{
-					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					ddnet::CMapItemLayer *pLayerItem = (ddnet::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
 					if(!pLayerItem)
 						continue;
 					
-					if(pLayerItem->m_Type != tw07::LAYERTYPE_QUADS)
+					if(pLayerItem->m_Type != ddnet::LAYERTYPE_QUADS)
 						continue;
 					
-					tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
+					ddnet::CMapItemLayerQuads *pQuadsItem = (ddnet::CMapItemLayerQuads *)pLayerItem;
 					
 					//Name
 					aBuf[0] = 0;
@@ -444,7 +415,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 					pEntities->SetParentPath(MapPath);
 					
 					//Quads
-					tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
+					ddnet::CQuad *pQuads = (ddnet::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
 					for(int i=0; i<pQuadsItem->m_NumQuads; i++)
 					{
 						vec2 P0(fx2f(pQuads[i].m_aPoints[0].x), fx2f(pQuads[i].m_aPoints[0].y));
@@ -462,13 +433,13 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			{
 				for(int l = 0; l < pGItem->m_NumLayers; l++)
 				{
-					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					ddnet::CMapItemLayer *pLayerItem = (ddnet::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
 					if(!pLayerItem)
 						continue;
 					
-					if(pLayerItem->m_Type == tw07::LAYERTYPE_TILES)
+					if(pLayerItem->m_Type == ddnet::LAYERTYPE_TILES)
 					{
-						tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
+						ddnet::CMapItemLayerTilemap *pTilemapItem = (ddnet::CMapItemLayerTilemap *)pLayerItem;
 							
 						//Name
 						aBuf[0] = 0;
@@ -497,7 +468,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						pZone->SetZoneTypePath(ZoneTypePath);
 						
 						//Tiles
-						tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+						ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 						int Width = pTilemapItem->m_Width;
 						int Height = pTilemapItem->m_Height;
 						
@@ -547,20 +518,20 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 
 				for(int l = 0; l < pGItem->m_NumLayers; l++)
 				{
-					tw07::CMapItemLayer *pLayerItem = (tw07::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
+					ddnet::CMapItemLayer *pLayerItem = (ddnet::CMapItemLayer *) ArchiveFile.GetItem(LayersStart+pGItem->m_StartLayer+l, 0, 0);
 					if(!pLayerItem)
 						continue;
 
-					if(pLayerItem->m_Type == tw07::LAYERTYPE_TILES)
+					if(pLayerItem->m_Type == ddnet::LAYERTYPE_TILES)
 					{
-						tw07::CMapItemLayerTilemap *pTilemapItem = (tw07::CMapItemLayerTilemap *)pLayerItem;
+						ddnet::CMapItemLayerTilemap *pTilemapItem = (ddnet::CMapItemLayerTilemap *)pLayerItem;
 
-						if(pTilemapItem->m_Flags == tw07::TILESLAYERFLAG_GAME)
+						if(pTilemapItem->m_Flags == ddnet::TILESLAYERFLAG_GAME)
 						{
 							Background = false;
 								
 							//Tiles
-							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+							ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 							int Width = pTilemapItem->m_Width;
 							int Height = pTilemapItem->m_Height;
 							
@@ -584,87 +555,87 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									
 									switch(pTiles[j*Width+i].m_Index)
 									{
-										case tw07::ENTITY_SPAWN + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_SPAWN + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_SPAWN_RED + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_SPAWN_RED + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_SPAWN_BLUE + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_SPAWN_BLUE + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_HEALTH_1 + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_HEALTH_1 + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_ARMOR_1 + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_ARMOR_1 + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_POWERUP_NINJA + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_POWERUP_NINJA + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_WEAPON_GRENADE + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_WEAPON_GRENADE + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_WEAPON_LASER + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_WEAPON_RIFLE + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_WEAPON_SHOTGUN + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_WEAPON_SHOTGUN + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_FLAGSTAND_BLUE + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_FLAGSTAND_BLUE + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::ENTITY_FLAGSTAND_RED + tw07::ENTITY_OFFSET:
+										case ddnet::ENTITY_FLAGSTAND_RED + ddnet::ENTITY_OFFSET:
 										{
 											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
 											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
 											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 											break;
 										}
-										case tw07::TILE_AIR:
-										case tw07::TILE_SOLID:
-										case tw07::TILE_DEATH:
-										case tw07::TILE_NOHOOK:
+										case ddnet::TILE_AIR:
+										case ddnet::TILE_SOLID:
+										case ddnet::TILE_DEATH:
+										case ddnet::TILE_NOHOOK:
 										{
 											Zones.CreateZone(&Zones.m_pTeeWorldsZone, Zones.m_TeeWorldsPath, "teeworlds", m_Path_ZoneType_TeeWorlds, Width, Height);
 											if(Zones.m_pTeeWorldsZone)
@@ -835,7 +806,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Data = pMapLayer->GetTileArray();
 							Data.resize(Width, Height);
 							
-							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+							ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 							
 							for(int j=0; j<Height; j++)
 							{
@@ -887,7 +858,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							pZone->SetParentPath(MapPath);
 							
 							//Tiles
-							tw07::CTile* pTiles = (tw07::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
+							ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
 							int Width = pTilemapItem->m_Width;
 							int Height = pTilemapItem->m_Height;
 							
@@ -904,9 +875,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							}
 						}
 					}
-					else if(pLayerItem->m_Type == tw07::LAYERTYPE_QUADS)
+					else if(pLayerItem->m_Type == ddnet::LAYERTYPE_QUADS)
 					{
-						tw07::CMapItemLayerQuads *pQuadsItem = (tw07::CMapItemLayerQuads *)pLayerItem;
+						ddnet::CMapItemLayerQuads *pQuadsItem = (ddnet::CMapItemLayerQuads *)pLayerItem;
 
 						CAssetPath MapLayerPath;
 						CAsset_MapLayerQuads* pMapLayer = NewAsset_Hard<CAsset_MapLayerQuads>(&MapLayerPath, PackageId);
@@ -927,7 +898,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						AssetsManager()->TryChangeAssetName_Hard(MapLayerPath, aBuf);
 						
 						//Quads
-						tw07::CQuad *pQuads = (tw07::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
+						ddnet::CQuad *pQuads = (ddnet::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
 						for(int i=0; i<pQuadsItem->m_NumQuads; i++)
 						{
 							CSubPath QuadPath = CAsset_MapLayerQuads::SubPath_Quad(pMapLayer->AddQuad());
@@ -978,7 +949,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	return PackageId;
 }
 
-void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId)
+void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId)
 {
 	const CAsset_MapGroup* pGroup = GetAsset<CAsset_MapGroup>(GroupPath);
 	if(!pGroup)
@@ -1003,7 +974,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			
 			int Width = pLayer->GetTileWidth();
 			int Height = pLayer->GetTileHeight();
-			tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+			ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
 			
 			for(int j=0; j<Height; j++)
 			{
@@ -1018,11 +989,11 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			}
 			
 			{
-				tw07::CMapItemLayerTilemap LItem;
+				ddnet::CMapItemLayerTilemap LItem;
 				
 				LItem.m_Version = 3;
 				LItem.m_Flags = 0;
-				LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 				LItem.m_Layer.m_Flags = 0;
 				LItem.m_Width = Width;
 				LItem.m_Height = Height;
@@ -1033,7 +1004,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 				LItem.m_ColorEnv = -1;
 				LItem.m_ColorEnvOffset = 0;
 				LItem.m_Image = -1;
-				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
 				StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
 			
 				const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
@@ -1055,7 +1026,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 					}
 				}
 				
-				ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+				ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			}
 			
 			delete[] pTiles;
@@ -1066,7 +1037,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			if(!pLayer)
 				continue;
 			
-			tw07::CQuad* pQuads = new tw07::CQuad[pLayer->GetQuadArraySize()];
+			ddnet::CQuad* pQuads = new ddnet::CQuad[pLayer->GetQuadArraySize()];
 			
 			for(int i=0; i<pLayer->GetQuadArraySize(); i++)
 			{
@@ -1123,13 +1094,13 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 				pQuads[i].m_ColorEnvOffset = 0;
 			}
 			
-			tw07::CMapItemLayerQuads LItem;
+			ddnet::CMapItemLayerQuads LItem;
 			LItem.m_Version = 2;
-			LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
 			LItem.m_Layer.m_Flags = 0;
 			LItem.m_Image = -1;
 			LItem.m_NumQuads = pLayer->GetQuadArraySize();
-			LItem.m_Data = ArchiveFile.AddDataSwapped(pLayer->GetQuadArraySize()*sizeof(tw07::CQuad), pQuads);
+			LItem.m_Data = ArchiveFile.AddDataSwapped(pLayer->GetQuadArraySize()*sizeof(ddnet::CQuad), pQuads);
 			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
 			
 			const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
@@ -1151,7 +1122,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 				}
 			}
 
-			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerQuads), &LItem);
 			
 			delete[] pQuads;
 		}
@@ -1169,7 +1140,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 			
 			if(Quads.size())
 			{
-				array<tw07::CQuad> ExportedQuads;
+				array<ddnet::CQuad> ExportedQuads;
 				
 				CAssetPath CurrentImagePath;
 				for(int i=0; i<Quads.size(); i++)
@@ -1177,13 +1148,13 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 					if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
 					{
 						//Image switch: save the current quads in a layer
-						tw07::CMapItemLayerQuads LItem;
+						ddnet::CMapItemLayerQuads LItem;
 						LItem.m_Version = 2;
-						LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+						LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
 						LItem.m_Layer.m_Flags = 0;
 						LItem.m_Image = -1;
 						LItem.m_NumQuads = ExportedQuads.size();
-						LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(tw07::CQuad), &ExportedQuads[0]);
+						LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(ddnet::CQuad), &ExportedQuads[0]);
 						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
 						
 						const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
@@ -1205,14 +1176,14 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 							}
 						}
 
-						ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+						ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerQuads), &LItem);
 						ExportedQuads.clear();
 					}
 					
 					if(i==0 || CurrentImagePath != Quads[i].m_ImagePath)
 						CurrentImagePath = Quads[i].m_ImagePath;
 					
-					tw07::CQuad& Quad = ExportedQuads.increment();
+					ddnet::CQuad& Quad = ExportedQuads.increment();
 					
 					vec2 Barycenter = 0.0f;
 					for(int j=0; j<4; j++)
@@ -1238,13 +1209,13 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 				}
 				
 				//Save the remaning quads
-				tw07::CMapItemLayerQuads LItem;
+				ddnet::CMapItemLayerQuads LItem;
 				LItem.m_Version = 2;
-				LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
 				LItem.m_Layer.m_Flags = 0;
 				LItem.m_Image = -1;
 				LItem.m_NumQuads = ExportedQuads.size();
-				LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(tw07::CQuad), &ExportedQuads[0]);
+				LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(ddnet::CQuad), &ExportedQuads[0]);
 				StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
 				
 				const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
@@ -1266,12 +1237,12 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 					}
 				}
 
-				ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+				ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerQuads), &LItem);
 			}
 		}
 	
-		tw07::CMapItemGroup GItem;
-		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		ddnet::CMapItemGroup GItem;
+		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
 		GItem.m_OffsetX = pGroup->GetPositionX() + GroupOffset.x;
 		GItem.m_OffsetY = pGroup->GetPositionY() + GroupOffset.y;
 		GItem.m_ParallaxX = pGroup->GetHardParallaxX()*100.0f;
@@ -1284,7 +1255,7 @@ void CAssetsManager::Save_Map_Group(tw07::CDataFileWriter& ArchiveFile, const CA
 		GItem.m_ClipW = pGroup->GetClipSizeX();
 		GItem.m_ClipH = pGroup->GetClipSizeY();
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_GROUP, GroupId++, sizeof(ddnet::CMapItemGroup), &GItem);
 	}
 }
 
@@ -1301,7 +1272,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		return false;
 	}
 	
-	tw07::CDataFileWriter ArchiveFile;
+	ddnet::CDataFileWriter ArchiveFile;
 	
 	if(!ArchiveFile.Open(Storage(), StorageType, pFileName))
 	{
@@ -1317,18 +1288,18 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	array<CAsset_MapEntities::CEntity> PTUMTeeWorldsEntities;
 	
 	//Map version
-	tw07::CMapItemVersion VerItem;
+	ddnet::CMapItemVersion VerItem;
 	VerItem.m_Version = 1;
-	ArchiveFile.AddItem(tw07::MAPITEMTYPE_VERSION, 0, sizeof(tw07::CMapItemVersion), &VerItem);
+	ArchiveFile.AddItem(ddnet::MAPITEMTYPE_VERSION, 0, sizeof(ddnet::CMapItemVersion), &VerItem);
 	
 	//Map info
-	tw07::CMapItemInfo InfoItem;
+	ddnet::CMapItemInfo InfoItem;
 	InfoItem.m_Version = 1;
 	InfoItem.m_MapVersion = ArchiveFile.AddData(str_length(GetPackageVersion(PackageId))+1, (char*) GetPackageVersion(PackageId));
 	InfoItem.m_Author = ArchiveFile.AddData(str_length(GetPackageAuthor(PackageId))+1, (char*) GetPackageAuthor(PackageId));
 	InfoItem.m_Credits = ArchiveFile.AddData(str_length(GetPackageCredits(PackageId))+1, (char*) GetPackageCredits(PackageId));
 	InfoItem.m_License = ArchiveFile.AddData(str_length(GetPackageLicense(PackageId))+1, (char*) GetPackageLicense(PackageId));
-	ArchiveFile.AddItem(tw07::MAPITEMTYPE_INFO, 0, sizeof(tw07::CMapItemInfo), &InfoItem);
+	ArchiveFile.AddItem(ddnet::MAPITEMTYPE_INFO, 0, sizeof(ddnet::CMapItemInfo), &InfoItem);
 	
 	int GroupId = 0;
 	int LayerId = 0;
@@ -1363,7 +1334,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			}
 		}
 		
-		tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+		ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
 		
 		for(int j=0; j<Height; j++)
 		{
@@ -1399,14 +1370,14 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					switch(pZone->GetTileIndex(TilePath))
 					{
 						case 1:
-							pTiles[j*Width+i].m_Index = tw07::TILE_SOLID;
+							pTiles[j*Width+i].m_Index = ddnet::TILE_SOLID;
 							break;
 						case 2:
-							if(pTiles[j*Width+i].m_Index != tw07::TILE_SOLID && pTiles[j*Width+i].m_Index != tw07::TILE_NOHOOK)
-								pTiles[j*Width+i].m_Index = tw07::TILE_DEATH;
+							if(pTiles[j*Width+i].m_Index != ddnet::TILE_SOLID && pTiles[j*Width+i].m_Index != ddnet::TILE_NOHOOK)
+								pTiles[j*Width+i].m_Index = ddnet::TILE_DEATH;
 							break;
 						case 3:
-							pTiles[j*Width+i].m_Index = tw07::TILE_NOHOOK;
+							pTiles[j*Width+i].m_Index = ddnet::TILE_NOHOOK;
 							break;
 					}
 				}
@@ -1434,7 +1405,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
 					continue;
 				}
-				if(pTiles[Y*Width+X].m_Index == tw07::TILE_SOLID || pTiles[Y*Width+X].m_Index == tw07::TILE_NOHOOK)
+				if(pTiles[Y*Width+X].m_Index == ddnet::TILE_SOLID || pTiles[Y*Width+X].m_Index == ddnet::TILE_NOHOOK)
 				{
 					EntityGroupNeeded = true;
 					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
@@ -1448,37 +1419,37 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				}
 				
 				if(EntityTypePath == m_Path_EntityType_TWSpawn)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
 				else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN_RED;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
 				else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_SPAWN_BLUE;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
 				else if(EntityTypePath == m_Path_EntityType_TWShotgun)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_SHOTGUN;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
 				else if(EntityTypePath == m_Path_EntityType_TWGrenade)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_GRENADE;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
 				else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_WEAPON_LASER;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
 				else if(EntityTypePath == m_Path_EntityType_TWNinja)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_POWERUP_NINJA;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
 				else if(EntityTypePath == m_Path_EntityType_TWHeart)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_HEALTH_1;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
 				else if(EntityTypePath == m_Path_EntityType_TWArmor)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_ARMOR_1;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
 				else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_BLUE;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
 				else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
-					pTiles[Y*Width+X].m_Index = tw07::ENTITY_OFFSET + tw07::ENTITY_FLAGSTAND_RED;
+					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
 				else
 					EntityGroupNeeded = true;
 			}
 		}
 	
-		tw07::CMapItemLayerTilemap LItem;
+		ddnet::CMapItemLayerTilemap LItem;
 		
 		LItem.m_Version = 3;
-		LItem.m_Flags = tw07::TILESLAYERFLAG_GAME;
-		LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+		LItem.m_Flags = ddnet::TILESLAYERFLAG_GAME;
+		LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 		LItem.m_Layer.m_Flags = 0;
 		LItem.m_Width = Width;
 		LItem.m_Height = Height;
@@ -1489,12 +1460,12 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		LItem.m_ColorEnv = -1;
 		LItem.m_ColorEnvOffset = 0;
 		LItem.m_Image = -1;
-		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
 		StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Game");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 		
-		tw07::CMapItemGroup GItem;
-		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		ddnet::CMapItemGroup GItem;
+		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
 		GItem.m_OffsetX = 0;
 		GItem.m_OffsetY = 0;
 		GItem.m_ParallaxX = 100;
@@ -1507,7 +1478,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		GItem.m_ClipW = 0;
 		GItem.m_ClipH = 0;
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "Game");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_GROUP, GroupId++, sizeof(ddnet::CMapItemGroup), &GItem);
 		
 		delete[] pTiles;
 	}
@@ -1536,7 +1507,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			int Width = pZone->GetTileWidth();
 			int Height = pZone->GetTileHeight();
 	
-			tw07::CTile* pTiles = new tw07::CTile[Width*Height];
+			ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
 			
 			for(int j=0; j<Height; j++)
 			{
@@ -1558,11 +1529,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				}
 			}
 	
-			tw07::CMapItemLayerTilemap LItem;
+			ddnet::CMapItemLayerTilemap LItem;
 			
 			LItem.m_Version = 3;
 			LItem.m_Flags = 0;
-			LItem.m_Layer.m_Type = tw07::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 			LItem.m_Layer.m_Flags = 0;
 			LItem.m_Width = Width;
 			LItem.m_Height = Height;
@@ -1573,7 +1544,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_ColorEnv = -1;
 			LItem.m_ColorEnvOffset = 0;
 			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(tw07::CTile), pTiles);
+			LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
 			
 			{
 				const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
@@ -1583,13 +1554,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
 			}
 			
-			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerTilemap), &LItem);
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
 			delete[] pTiles;
 		}
 			
-		tw07::CMapItemGroup GItem;
-		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		ddnet::CMapItemGroup GItem;
+		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
 		GItem.m_OffsetX = 0;
 		GItem.m_OffsetY = 0;
 		GItem.m_ParallaxX = 100;
@@ -1602,7 +1573,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		GItem.m_ClipW = 0;
 		GItem.m_ClipH = 0;
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "#Zones");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_GROUP, GroupId++, sizeof(ddnet::CMapItemGroup), &GItem);
 	}
 	
 	//Step5: Save other entities in PTUM format
@@ -1611,7 +1582,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		int StartLayer = LayerId;
 		
 		array<CAssetPath> EntityTypeList;
-		array< array<tw07::CQuad>, allocator_copy< array<tw07::CQuad> > > EntityQuads;
+		array< array<ddnet::CQuad>, allocator_copy< array<ddnet::CQuad> > > EntityQuads;
 		
 		for(int i=0; i<PTUMTeeWorldsEntities.size(); i++)
 		{
@@ -1631,7 +1602,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				EntityQuads.increment();
 			}
 			
-			tw07::CQuad& Quad = EntityQuads[eId].increment();
+			ddnet::CQuad& Quad = EntityQuads[eId].increment();
 			
 			Quad.m_aPoints[0].x = f2fx(Entity.GetPositionX()-16.0f);
 			Quad.m_aPoints[0].y = f2fx(Entity.GetPositionY()-16.0f);
@@ -1708,7 +1679,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					EntityQuads.increment();
 				}
 				
-				tw07::CQuad& Quad = EntityQuads[eId].increment();
+				ddnet::CQuad& Quad = EntityQuads[eId].increment();
 				
 				Quad.m_aPoints[0].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f);
 				Quad.m_aPoints[0].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f);
@@ -1740,13 +1711,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		
 		for(int	eId=0; eId<EntityTypeList.size(); eId++)
 		{
-			tw07::CMapItemLayerQuads LItem;
+			ddnet::CMapItemLayerQuads LItem;
 			LItem.m_Version = 2;
-			LItem.m_Layer.m_Type = tw07::LAYERTYPE_QUADS;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
 			LItem.m_Layer.m_Flags = 0;
 			LItem.m_Image = -1;
 			LItem.m_NumQuads = EntityQuads[eId].size();
-			LItem.m_Data = ArchiveFile.AddDataSwapped(EntityQuads[eId].size()*sizeof(tw07::CQuad), &EntityQuads[eId][0]);
+			LItem.m_Data = ArchiveFile.AddDataSwapped(EntityQuads[eId].size()*sizeof(ddnet::CQuad), &EntityQuads[eId][0]);
 			{
 				const char* pEntityName = GetAssetValue<const char*>(EntityTypeList[eId], CSubPath::Null(), CAsset_EntityType::NAME, NULL);
 				if(pEntityName)
@@ -1754,11 +1725,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				else
 					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
 			}
-			ArchiveFile.AddItem(tw07::MAPITEMTYPE_LAYER, LayerId++, sizeof(tw07::CMapItemLayerQuads), &LItem);
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerQuads), &LItem);
 		}
 		
-		tw07::CMapItemGroup GItem;
-		GItem.m_Version = tw07::CMapItemGroup::CURRENT_VERSION;
+		ddnet::CMapItemGroup GItem;
+		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
 		GItem.m_OffsetX = 0;
 		GItem.m_OffsetY = 0;
 		GItem.m_ParallaxX = 100;
@@ -1771,39 +1742,26 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		GItem.m_ClipW = 0;
 		GItem.m_ClipH = 0;
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "#Entities");
-		ArchiveFile.AddItem(tw07::MAPITEMTYPE_GROUP, GroupId++, sizeof(tw07::CMapItemGroup), &GItem);
+		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_GROUP, GroupId++, sizeof(ddnet::CMapItemGroup), &GItem);
 	}
 	
 	//Step6: Save images
 	{
 		for(int i=0; i<Images.size(); i++)
 		{
-			tw07::CMapItemImage IItem;
-			IItem.m_Version = tw07::CMapItemImage::CURRENT_VERSION;
+			ddnet::CMapItemImage IItem;
+			IItem.m_Version = 1;
 			IItem.m_Width = 0;
 			IItem.m_Height = 0;
 			IItem.m_External = 1;
 			IItem.m_ImageName = -1;
 			IItem.m_ImageData = -1;
-			IItem.m_Format = CImageInfo::FORMAT_RGB;
 			
 			const CAsset_Image* pImage = GetAsset<CAsset_Image>(Images[i]);
 			if(pImage)
 			{
 				IItem.m_Width = pImage->GetDataWidth();
 				IItem.m_Height = pImage->GetDataHeight();
-				switch(pImage->GetDataArray().get_depth())
-				{
-					case 1:
-						IItem.m_Format = CImageInfo::FORMAT_ALPHA;
-						break;
-					case 3:
-						IItem.m_Format = CImageInfo::FORMAT_RGB;
-						break;
-					case 4:
-						IItem.m_Format = CImageInfo::FORMAT_RGBA;
-						break;
-				}
 				
 				if(str_comp(GetPackageName(Images[i].GetPackageId()), "env_clouds") == 0)
 				{
@@ -1903,7 +1861,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				}
 			}
 			
-			ArchiveFile.AddItem(tw07::MAPITEMTYPE_IMAGE, i, sizeof(IItem), &IItem);
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_IMAGE, i, sizeof(IItem), &IItem);
 		}
 	}
 	

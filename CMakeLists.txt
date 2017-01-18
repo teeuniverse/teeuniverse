@@ -159,6 +159,7 @@ file(GLOB teeuniverse_shared_src
     "${PROJECT_SOURCE_DIR}/src/external/minizip/unzip.c"
     "${PROJECT_SOURCE_DIR}/src/external/minizip/mztools.c"
     "${PROJECT_SOURCE_DIR}/src/external/json-parser/*.c"
+    "${PROJECT_SOURCE_DIR}/src/external/ddnet/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/system/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/tl/*.cpp"
@@ -167,7 +168,6 @@ file(GLOB teeuniverse_shared_src
     "${PROJECT_SOURCE_DIR}/src/shared/math/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/geometry/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/shared/imageprocessing/*.cpp"
-    "${PROJECT_SOURCE_DIR}/src/tw07/shared/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/generated/assets/*.cpp"
 )
 if(WIN32)
