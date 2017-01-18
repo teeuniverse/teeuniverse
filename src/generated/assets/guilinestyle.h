@@ -93,6 +93,18 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		tua_int32 m_Flags;
+		tua_uint32 m_BorderColor;
+		CAssetPath::CTuaType m_ImageLPath;
+		CAssetPath::CTuaType m_ImageMPath;
+		CAssetPath::CTuaType m_ImageRPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_GuiLineStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	int m_Flags;

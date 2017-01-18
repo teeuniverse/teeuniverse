@@ -104,6 +104,19 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		tua_int32 m_GridWidth;
+		tua_int32 m_GridHeight;
+		tua_int32 m_GridSpacing;
+		tua_int32 m_TexelSize;
+		tua_uint8 m_TilingEnabled;
+		CTuaArray2d m_Data;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Image& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Image& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	int m_GridWidth;

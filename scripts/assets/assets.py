@@ -18,7 +18,7 @@
 
 import sys, os
 
-versionList = ["0.1.0", "0.2.0", "0.2.1"]
+versionList = ["0.1.0", "0.2.0", "0.2.1", "0.2.2"]
 
 class SubPathType:
 	def __init__(self, name, enumname, numidx):
@@ -2016,6 +2016,7 @@ mapZoneTiles.addMember("0.1.0", "ParentPath", TypeAssetPath())
 mapZoneTiles.addMember("0.1.0", "ZoneTypePath", TypeAssetPath())
 mapZoneTiles.addMember("0.1.0", "Tile", TypeArray2d(mapZoneTiles_tile))
 mapZoneTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
+mapZoneTiles.addMember("0.2.2", "DataInt", TypeArray2d(TypeInt32()))
 
 assetsList.append(mapZoneTiles)
 
@@ -2034,6 +2035,13 @@ mapEntities.addMember("0.1.0", "Visibility", TypeBool(), "true")
 assetsList.append(mapEntities)
 
 # ZONE TYPE ############################################################
+zoneType_intData = Class("IntData")
+zoneType_intData.addMember("0.2.2", "Title", TypeBool(), "true")
+zoneType_intData.addMember("0.2.2", "Description", TypeString(128))
+zoneType_intData.addMember("0.2.2", "DefaultValue", TypeInt32(), "0")
+zoneType_intData.addMember("0.2.2", "MinValue", TypeInt32(), "0")
+zoneType_intData.addMember("0.2.2", "MaxValue", TypeInt32(), "256")
+
 zoneType_index = Class("Index")
 zoneType_index.addMember("0.1.0", "Used", TypeBool(), "true")
 zoneType_index.addMember("0.1.0", "Description", TypeString(128))
@@ -2045,8 +2053,10 @@ zoneType_index.addMember("0.2.0", "BorderColor", TypeColor(), "1.0f")
 zoneType = ClassAsset("ZoneType", len(assetsList))
 zoneType.setInheritance(mainAsset)
 zoneType.addClass(zoneType_index)
+zoneType.addClass(zoneType_intData)
 zoneType.addMember("0.1.0", "Index", TypeArray(zoneType_index))
 zoneType.addMember("0.2.0", "ImagePath", TypeAssetPath())
+zoneType.addMember("0.2.2", "IntData", TypeArray(zoneType_intData))
 
 assetsList.append(zoneType)
 

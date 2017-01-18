@@ -120,6 +120,33 @@ void CAsset_GuiTabsStyle::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoading
 	TuaType.m_ButtonListText = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ButtonListText);
 }
 
+void CAsset_GuiTabsStyle::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_GuiTabsStyle& SysType)
+{
+	CAsset::CTuaType_0_2_2::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_LayoutPath, SysType.m_LayoutPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ContentPath, SysType.m_ContentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ButtonListPath, SysType.m_ButtonListPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_InactiveButtonPath, SysType.m_InactiveButtonPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ActiveButtonPath, SysType.m_ActiveButtonPath);
+	SysType.m_ButtonListFill = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ButtonListFill);
+	SysType.m_ButtonListText = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ButtonListText);
+}
+
+
+void CAsset_GuiTabsStyle::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiTabsStyle& SysType, CTuaType_0_2_2& TuaType)
+{
+	CAsset::CTuaType_0_2_2::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_LayoutPath, TuaType.m_LayoutPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ContentPath, TuaType.m_ContentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ButtonListPath, TuaType.m_ButtonListPath);
+	pLoadingContext->WriteAssetPath(SysType.m_InactiveButtonPath, TuaType.m_InactiveButtonPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ActiveButtonPath, TuaType.m_ActiveButtonPath);
+	TuaType.m_ButtonListFill = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ButtonListFill);
+	TuaType.m_ButtonListText = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ButtonListText);
+}
+
 template<>
 bool CAsset_GuiTabsStyle::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
 {

@@ -44,9 +44,11 @@ public:
 	enum
 	{
 		TYPE_INDEX,
+		TYPE_INTDATA,
 	};
 	
 	static inline CSubPath SubPath_Index(int Id0) { return CSubPath(TYPE_INDEX, Id0, 0, 0); }
+	static inline CSubPath SubPath_IntData(int Id0) { return CSubPath(TYPE_INTDATA, Id0, 0, 0); }
 	
 	enum
 	{
@@ -62,6 +64,15 @@ public:
 		INDEX_BORDERCOLOR,
 		INDEX,
 		IMAGEPATH,
+		INTDATA_ARRAYSIZE,
+		INTDATA_PTR,
+		INTDATA_ARRAY,
+		INTDATA_TITLE,
+		INTDATA_DESCRIPTION,
+		INTDATA_DEFAULTVALUE,
+		INTDATA_MINVALUE,
+		INTDATA_MAXVALUE,
+		INTDATA,
 	};
 	
 	class CIteratorIndex
@@ -82,6 +93,25 @@ public:
 	CIteratorIndex EndIndex() const { return CIteratorIndex(m_Index.size(), false); }
 	CIteratorIndex ReverseBeginIndex() const { return CIteratorIndex(m_Index.size()-1, true); }
 	CIteratorIndex ReverseEndIndex() const { return CIteratorIndex(-1, true); }
+	
+	class CIteratorIntData
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorIntData() : m_Index(0), m_Reverse(false) {}
+		CIteratorIntData(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorIntData& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_IntData(m_Index); }
+		bool operator==(const CIteratorIntData& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorIntData& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorIntData BeginIntData() const { return CIteratorIntData(0, false); }
+	CIteratorIntData EndIntData() const { return CIteratorIntData(m_IntData.size(), false); }
+	CIteratorIntData ReverseBeginIntData() const { return CIteratorIntData(m_IntData.size()-1, true); }
+	CIteratorIntData ReverseEndIntData() const { return CIteratorIntData(-1, true); }
 	
 	class CIndex
 	{
@@ -120,6 +150,19 @@ public:
 			tua_uint32 m_BorderColor;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIndex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			tua_uint8 m_Used;
+			tua_stringid m_Description;
+			tua_uint32 m_Color;
+			tua_stringid m_Title;
+			tua_int32 m_BorderIndex;
+			tua_uint32 m_BorderColor;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 	
@@ -182,6 +225,95 @@ public:
 		}
 		
 	};
+	class CIntData
+	{
+	public:
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CIntData& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIntData& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIntData& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			tua_uint8 m_Title;
+			tua_stringid m_Description;
+			tua_int32 m_DefaultValue;
+			tua_int32 m_MinValue;
+			tua_int32 m_MaxValue;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIntData& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+	
+	private:
+		bool m_Title;
+		string< _fixed_string_core<128> > m_Description;
+		int m_DefaultValue;
+		int m_MinValue;
+		int m_MaxValue;
+	
+	public:
+		CIntData();
+		void copy(const CAsset_ZoneType::CIntData& Item)
+		{
+			m_Title = Item.m_Title;
+			m_Description.copy(Item.m_Description);
+			m_DefaultValue = Item.m_DefaultValue;
+			m_MinValue = Item.m_MinValue;
+			m_MaxValue = Item.m_MaxValue;
+		}
+		
+		void transfert(CAsset_ZoneType::CIntData& Item)
+		{
+			m_Title = Item.m_Title;
+			m_Description.transfert(Item.m_Description);
+			m_DefaultValue = Item.m_DefaultValue;
+			m_MinValue = Item.m_MinValue;
+			m_MaxValue = Item.m_MaxValue;
+		}
+		
+		inline bool GetTitle() const { return m_Title; }
+		
+		inline const char* GetDescription() const { return m_Description.buffer(); }
+		
+		inline int GetDefaultValue() const { return m_DefaultValue; }
+		
+		inline int GetMinValue() const { return m_MinValue; }
+		
+		inline int GetMaxValue() const { return m_MaxValue; }
+		
+		inline void SetTitle(bool Value) { m_Title = Value; }
+		
+		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
+		
+		inline void SetDefaultValue(int Value) { m_DefaultValue = Value; }
+		
+		inline void SetMinValue(int Value) { m_MinValue = Value; }
+		
+		inline void SetMaxValue(int Value) { m_MaxValue = Value; }
+		
+		void AssetPathOperation(const CAssetPath::COperation& Operation)
+		{
+		}
+		
+	};
 	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
@@ -208,10 +340,21 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CTuaArray m_Index;
+		CAssetPath::CTuaType m_ImagePath;
+		CTuaArray m_IntData;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> > m_Index;
 	CAssetPath m_ImagePath;
+	array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> > m_IntData;
 
 public:
 	template<typename T>
@@ -239,6 +382,7 @@ public:
 		CAsset::copy(Item);
 		m_Index.copy(Item.m_Index);
 		m_ImagePath = Item.m_ImagePath;
+		m_IntData.copy(Item.m_IntData);
 	}
 	
 	void transfert(CAsset_ZoneType& Item)
@@ -246,6 +390,7 @@ public:
 		CAsset::transfert(Item);
 		m_Index.transfert(Item.m_Index);
 		m_ImagePath = Item.m_ImagePath;
+		m_IntData.transfert(Item.m_IntData);
 	}
 	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
@@ -305,6 +450,54 @@ public:
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
 	
+	inline int GetIntDataArraySize() const { return m_IntData.size(); }
+	
+	inline const CAsset_ZoneType::CIntData* GetIntDataPtr() const { return m_IntData.base_ptr(); }
+	
+	inline const array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> >& GetIntDataArray() const { return m_IntData; }
+	inline array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> >& GetIntDataArray() { return m_IntData; }
+	
+	inline const CAsset_ZoneType::CIntData& GetIntData(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_IntData.size());
+		return m_IntData[SubPath.GetId()];
+	}
+	
+	inline bool GetIntDataTitle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			return m_IntData[SubPath.GetId()].GetTitle();
+		else return false;
+	}
+	
+	inline const char* GetIntDataDescription(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			return m_IntData[SubPath.GetId()].GetDescription();
+		else return NULL;
+	}
+	
+	inline int GetIntDataDefaultValue(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			return m_IntData[SubPath.GetId()].GetDefaultValue();
+		else return 0;
+	}
+	
+	inline int GetIntDataMinValue(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			return m_IntData[SubPath.GetId()].GetMinValue();
+		else return 0;
+	}
+	
+	inline int GetIntDataMaxValue(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			return m_IntData[SubPath.GetId()].GetMaxValue();
+		else return 0;
+	}
+	
 	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
 	
 	inline void SetIndex(const CSubPath& SubPath, const CAsset_ZoneType::CIndex& Value)
@@ -353,6 +546,46 @@ public:
 	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
+	inline void SetIntDataArraySize(int Value) { m_IntData.resize(Value); }
+	
+	inline void SetIntData(const CSubPath& SubPath, const CAsset_ZoneType::CIntData& Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+		{
+			m_IntData[SubPath.GetId()].copy(Value);
+		}
+	}
+	
+	inline void SetIntDataTitle(const CSubPath& SubPath, bool Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			m_IntData[SubPath.GetId()].SetTitle(Value);
+	}
+	
+	inline void SetIntDataDescription(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			m_IntData[SubPath.GetId()].SetDescription(Value);
+	}
+	
+	inline void SetIntDataDefaultValue(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			m_IntData[SubPath.GetId()].SetDefaultValue(Value);
+	}
+	
+	inline void SetIntDataMinValue(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			m_IntData[SubPath.GetId()].SetMinValue(Value);
+	}
+	
+	inline void SetIntDataMaxValue(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_IntData.size())
+			m_IntData[SubPath.GetId()].SetMaxValue(Value);
+	}
+	
 	inline int AddIndex()
 	{
 		int Id = m_Index.size();
@@ -360,13 +593,28 @@ public:
 		return Id;
 	}
 	
+	inline int AddIntData()
+	{
+		int Id = m_IntData.size();
+		m_IntData.increment();
+		return Id;
+	}
+	
 	inline void AddAtIndex(int Index) { m_Index.insertat_and_init(Index); }
+	
+	inline void AddAtIntData(int Index) { m_IntData.insertat_and_init(Index); }
 	
 	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
 	
+	inline void DeleteIntData(const CSubPath& SubPath) { m_IntData.remove_index(SubPath.GetId()); }
+	
 	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { m_Index.relative_move(SubPath.GetId(), RelMove); }
 	
+	inline void RelMoveIntData(const CSubPath& SubPath, int RelMove) { m_IntData.relative_move(SubPath.GetId(), RelMove); }
+	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Index.size()); }
+	
+	inline bool IsValidIntData(const CSubPath& SubPath) const { return (SubPath.GetId() < m_IntData.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
@@ -375,6 +623,10 @@ public:
 			m_Index[i].AssetPathOperation(Operation);
 		}
 		Operation.Apply(m_ImagePath);
+		for(int i=0; i<m_IntData.size(); i++)
+		{
+			m_IntData[i].AssetPathOperation(Operation);
+		}
 	}
 	
 };

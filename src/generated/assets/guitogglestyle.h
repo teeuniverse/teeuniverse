@@ -94,6 +94,20 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CAssetPath::CTuaType m_IdleTrueStylePath;
+		CAssetPath::CTuaType m_MouseOverTrueStylePath;
+		CAssetPath::CTuaType m_IconTruePath;
+		CAssetPath::CTuaType m_IdleFalseStylePath;
+		CAssetPath::CTuaType m_MouseOverFalseStylePath;
+		CAssetPath::CTuaType m_IconFalsePath;
+		tua_uint8 m_SwitchIcon;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_GuiToggleStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_IdleTrueStylePath;

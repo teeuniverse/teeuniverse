@@ -74,6 +74,15 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CAssetPath::CTuaType m_GizmoPath;
+		tua_float m_CollisionRadius;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_EntityType& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_GizmoPath;

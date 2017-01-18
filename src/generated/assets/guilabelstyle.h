@@ -116,6 +116,23 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		tua_int32 m_MinWidth;
+		tua_int32 m_MinHeight;
+		tua_int32 m_Margin;
+		tua_int32 m_Padding;
+		tua_int32 m_Spacing;
+		tua_int32 m_FontSize;
+		tua_uint32 m_TextColor;
+		tua_int32 m_TextAlignment;
+		CAssetPath::CTuaType m_RectPath;
+		CAssetPath::CTuaType m_IconPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_GuiLabelStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	int m_MinWidth;

@@ -51,6 +51,16 @@ void CAsset::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, cons
 	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
 }
 
+void CAsset::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset& SysType)
+{
+	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+}
+
+void CAsset::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_2& TuaType)
+{
+	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
+}
+
 template<>
 const char* CAsset::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const
 {

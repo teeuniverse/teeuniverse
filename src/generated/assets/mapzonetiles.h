@@ -44,9 +44,11 @@ public:
 	enum
 	{
 		TYPE_TILE,
+		TYPE_DATAINT,
 	};
 	
 	static inline CSubPath SubPath_Tile(int Id0, int Id1) { return CSubPath(TYPE_TILE, Id0, Id1, 0); }
+	static inline CSubPath SubPath_DataInt(int Id0, int Id1) { return CSubPath(TYPE_DATAINT, Id0, Id1, 0); }
 	
 	enum
 	{
@@ -60,6 +62,11 @@ public:
 		TILE_INDEX,
 		TILE,
 		VISIBILITY,
+		DATAINT_WIDTH,
+		DATAINT_HEIGHT,
+		DATAINT_PTR,
+		DATAINT_ARRAY,
+		DATAINT,
 	};
 	
 	class CTile
@@ -87,6 +94,14 @@ public:
 			tua_uint8 m_Index;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_MapZoneTiles::CTile& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			tua_uint8 m_Index;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapZoneTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 	
@@ -147,12 +162,25 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ZoneTypePath;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		CTuaArray2d m_DataInt;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapZoneTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
 	array2d< CTile, allocator_copy<CTile> > m_Tile;
 	bool m_Visibility;
+	array2d< int, allocator_default<int> > m_DataInt;
 
 public:
 	template<typename T>
@@ -183,6 +211,7 @@ public:
 		m_ZoneTypePath = Item.m_ZoneTypePath;
 		m_Tile.copy(Item.m_Tile);
 		m_Visibility = Item.m_Visibility;
+		m_DataInt.copy(Item.m_DataInt);
 	}
 	
 	void transfert(CAsset_MapZoneTiles& Item)
@@ -192,6 +221,7 @@ public:
 		m_ZoneTypePath = Item.m_ZoneTypePath;
 		m_Tile.transfert(Item.m_Tile);
 		m_Visibility = Item.m_Visibility;
+		m_DataInt.transfert(Item.m_DataInt);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
@@ -213,6 +243,17 @@ public:
 	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
+	inline int GetDataIntWidth() const { return m_DataInt.get_width(); }
+	
+	inline int GetDataIntHeight() const { return m_DataInt.get_height(); }
+	
+	inline const int* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
+	
+	inline const array2d< int, allocator_default<int> >& GetDataIntArray() const { return m_DataInt; }
+	inline array2d< int, allocator_default<int> >& GetDataIntArray() { return m_DataInt; }
+	
+	inline int GetDataInt(const CSubPath& SubPath) const { return m_DataInt.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
 	inline void SetZoneTypePath(const CAssetPath& Value) { m_ZoneTypePath = Value; }
@@ -226,6 +267,12 @@ public:
 	inline void SetTileIndex(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetIndex(Value); }
 	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
+	inline void SetDataIntWidth(int Value) { m_DataInt.resize_width(max(Value, 1)); }
+	
+	inline void SetDataIntHeight(int Value) { m_DataInt.resize_height(max(Value, 1)); }
+	
+	inline void SetDataInt(const CSubPath& SubPath, int Value) { m_DataInt.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

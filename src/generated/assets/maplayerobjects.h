@@ -157,6 +157,19 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
+		class CTuaType_0_2_2
+		{
+		public:
+			CTuaVec2 m_Position;
+			tua_float m_Weight;
+			tua_uint32 m_Color;
+			tua_int32 m_Smoothness;
+			CTuaVec2 m_ControlPoint0;
+			CTuaVec2 m_ControlPoint1;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
 	
 	private:
 		vec2 m_Position;
@@ -281,6 +294,22 @@ public:
 			tua_int32 m_OrthoTesselation;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_MapLayerObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			CTuaVec2 m_Position;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CAssetPath::CTuaType m_StylePath;
+			CTuaArray m_Vertex;
+			tua_int32 m_PathType;
+			tua_int32 m_FillType;
+			tua_int32 m_LineType;
+			tua_int32 m_OrthoTesselation;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 	
@@ -602,6 +631,16 @@ public:
 		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_MapLayerObjects& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Object;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
 

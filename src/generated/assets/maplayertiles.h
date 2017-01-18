@@ -105,6 +105,15 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
+		class CTuaType_0_2_2
+		{
+		public:
+			tua_uint8 m_Index;
+			tua_uint8 m_Flags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
 	
 	private:
 		uint8 m_Index;
@@ -173,6 +182,20 @@ public:
 		tua_int32 m_PositionY;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_MapLayerTiles& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_1& TuaType);
+	};
+	
+	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ImagePath;
+		tua_uint32 m_Color;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		tua_int32 m_PositionX;
+		tua_int32 m_PositionY;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
 
