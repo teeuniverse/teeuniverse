@@ -34,13 +34,13 @@ public:
 	
 	CAssetPath m_TeeWorldsPath;
 	CAssetPath m_DDGamePath;
-	CAssetPath m_DDFreezePath;
+	CAssetPath m_DDFrontPath;
 	CAssetPath m_OpenFNGPath;
 	CAssetPath m_UnknownPath;
 	
 	CAsset_MapZoneTiles* m_pTeeWorldsZone;
 	CAsset_MapZoneTiles* m_pDDGameZone;
-	CAsset_MapZoneTiles* m_pDDFreezeZone;
+	CAsset_MapZoneTiles* m_pDDFrontZone;
 	CAsset_MapZoneTiles* m_pOpenFNGZone;
 	CAsset_MapZoneTiles* m_pUnknownZone;
 	
@@ -50,7 +50,7 @@ public:
 		m_MapPath(MapPath),
 		m_pTeeWorldsZone(NULL),
 		m_pDDGameZone(NULL),
-		m_pDDFreezeZone(NULL),
+		m_pDDFrontZone(NULL),
 		m_pOpenFNGZone(NULL),
 		m_pUnknownZone(NULL)
 	{
@@ -78,8 +78,8 @@ public:
 			m_pTeeWorldsZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_TeeWorldsPath);
 		if(m_pDDGameZone && &m_pDDGameZone != ppZone)
 			m_pDDGameZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDGamePath);
-		if(m_pDDFreezeZone && &m_pDDFreezeZone != ppZone)
-			m_pDDFreezeZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDFreezePath);
+		if(m_pDDFrontZone && &m_pDDFrontZone != ppZone)
+			m_pDDFrontZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDFrontPath);
 		if(m_pOpenFNGZone && &m_pOpenFNGZone != ppZone)
 			m_pOpenFNGZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_OpenFNGPath);
 		if(m_pUnknownZone && &m_pUnknownZone != ppZone)
@@ -660,14 +660,14 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 												WriteInUnknown = true;
 											break;
 										}
-										case 9:
+										case ddnet::TILE_FREEZE:
 										{
 											if(Format == MAPFORMAT_DDNET)
 											{
 												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
-												if(Zones.m_pDDFreezeZone)
-													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, 1);
+												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+												if(Zones.m_pDDGameZone)
+													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
 												else
 													WriteInUnknown = true;
 											}
@@ -699,15 +699,15 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 												WriteInUnknown = true;
 											break;
 										}
-										case 11:
-										case 12:
+										case ddnet::TILE_UNFREEZE:
+										case ddnet::TILE_DFREEZE:
 										{
 											if(Format == MAPFORMAT_DDNET)
 											{
 												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
-												if(Zones.m_pDDFreezeZone)
-													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index-9);
+												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+												if(Zones.m_pDDGameZone)
+													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
 												else
 													WriteInUnknown = true;
 											}
@@ -724,14 +724,14 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 												WriteInUnknown = true;
 											break;
 										}
-										case 13:
+										case ddnet::TILE_DUNFREEZE:
 										{
 											if(Format == MAPFORMAT_DDNET)
 											{
 												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDFreezeZone, Zones.m_DDFreezePath, "freeze", m_Path_ZoneType_DDFreeze, Width, Height);
-												if(Zones.m_pDDFreezeZone)
-													Zones.m_pDDFreezeZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index-9);
+												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+												if(Zones.m_pDDGameZone)
+													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
 												else
 													WriteInUnknown = true;
 											}
@@ -747,6 +747,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									{
 										if(Format == MAPFORMAT_DDNET)
 										{
+											Load_UnivDDNet();
 											Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
 											if(Zones.m_pDDGameZone)
 												Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
@@ -777,6 +778,39 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								pNewGroup->SetHardParallax(pMapGroup->GetHardParallax());
 								pNewGroup->SetParentPath(MapPath);
 								pMapGroup = pNewGroup;
+							}
+						}
+						else if(pTilemapItem->m_Flags == ddnet::TILESLAYERFLAG_FRONT)
+						{
+							//Tiles
+							ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Front);
+							int Width = pTilemapItem->m_Width;
+							int Height = pTilemapItem->m_Height;
+							
+							for(int j=0; j<Height; j++)
+							{
+								for(int i=0; i<Width; i++)
+								{
+									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									
+									if(Format == MAPFORMAT_DDNET)
+									{
+										Load_UnivDDNet();
+										Zones.CreateZone(&Zones.m_pDDFrontZone, Zones.m_DDFrontPath, "ddnetFront", m_Path_ZoneType_DDFront, Width, Height);
+										if(Zones.m_pDDFrontZone)
+											Zones.m_pDDFrontZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+									}
+									else
+									{
+										Zones.CreateZone(&Zones.m_pUnknownZone, Zones.m_UnknownPath, "unknown", CAssetPath::Null(), Width, Height);
+										if(Zones.m_pUnknownZone)
+											Zones.m_pUnknownZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+									}
+									
+									int Skip = pTiles[j*Width+i].m_Skip;
+									for(int s=0; s<Skip; s++)
+										i++;
+								}
 							}
 						}
 						else if(pTilemapItem->m_Flags == 0x0)
@@ -1313,37 +1347,70 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 	}
 	
-	//Step2: Save the game layer
+	//Step2: Save the game/front layer
 	{
 		int StartLayer = LayerId;
 		
 		//Get game layer size
-		int Width = 0;
-		int Height = 0;
+		int GameWidth = 0;
+		int GameHeight = 0;
+		int FrontWidth = 0;
+		int FrontHeight = 0;
 		
 		{
 			CAsset_Map::CIteratorZoneLayer ZoneIter;
 			for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
 			{
 				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-				if(!pZone || pZone->GetZoneTypePath() != m_Path_ZoneType_TeeWorlds)
-					continue;
+				if(pZone)
+				{
+					if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+					{
+						GameWidth = max(pZone->GetTileWidth(), GameWidth);
+						GameHeight = max(pZone->GetTileHeight(), GameHeight);
+					}
+					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					{
+						GameWidth = max(pZone->GetTileWidth(), GameWidth);
+						GameHeight = max(pZone->GetTileHeight(), GameHeight);
+					}
+					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+					{
+						FrontWidth = max(pZone->GetTileWidth(), FrontWidth);
+						FrontHeight = max(pZone->GetTileHeight(), FrontHeight);
+					}
+				}
 				
-				Width = max(pZone->GetTileWidth(), Width);
-				Height = max(pZone->GetTileHeight(), Height);
 			}
 		}
 		
-		ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
+		ddnet::CTile* pGameTiles = new ddnet::CTile[GameWidth*GameHeight];
 		
-		for(int j=0; j<Height; j++)
+		for(int j=0; j<GameHeight; j++)
 		{
-			for(int i=0; i<Width; i++)
+			for(int i=0; i<GameWidth; i++)
 			{
-				pTiles[j*Width+i].m_Index = 0;
-				pTiles[j*Width+i].m_Flags = 0;
-				pTiles[j*Width+i].m_Skip = 0;
-				pTiles[j*Width+i].m_Reserved = 0;
+				pGameTiles[j*GameWidth+i].m_Index = 0;
+				pGameTiles[j*GameWidth+i].m_Flags = 0;
+				pGameTiles[j*GameWidth+i].m_Skip = 0;
+				pGameTiles[j*GameWidth+i].m_Reserved = 0;
+			}
+		}
+			
+		ddnet::CTile* pFrontTiles = NULL;
+		if(FrontWidth > 0 && FrontHeight > 0)
+		{
+			pFrontTiles = new ddnet::CTile[FrontWidth*FrontHeight];	
+			
+			for(int j=0; j<FrontHeight; j++)
+			{
+				for(int i=0; i<FrontWidth; i++)
+				{
+					pGameTiles[j*FrontWidth+i].m_Index = 0;
+					pGameTiles[j*FrontWidth+i].m_Flags = 0;
+					pGameTiles[j*FrontWidth+i].m_Skip = 0;
+					pGameTiles[j*FrontWidth+i].m_Reserved = 0;
+				}
 			}
 		}
 	
@@ -1355,33 +1422,54 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			if(!pZone)
 				continue;
 			
-			if(pZone->GetZoneTypePath() != m_Path_ZoneType_TeeWorlds)
+			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
 			{
-				ZoneGroupNeeded = true;
-				continue;
-			}
-				
-			for(int j=0; j<pZone->GetTileHeight(); j++)
-			{
-				for(int i=0; i<pZone->GetTileWidth(); i++)
+				for(int j=0; j<pZone->GetTileHeight(); j++)
 				{
-					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-					
-					switch(pZone->GetTileIndex(TilePath))
+					for(int i=0; i<pZone->GetTileWidth(); i++)
 					{
-						case 1:
-							pTiles[j*Width+i].m_Index = ddnet::TILE_SOLID;
-							break;
-						case 2:
-							if(pTiles[j*Width+i].m_Index != ddnet::TILE_SOLID && pTiles[j*Width+i].m_Index != ddnet::TILE_NOHOOK)
-								pTiles[j*Width+i].m_Index = ddnet::TILE_DEATH;
-							break;
-						case 3:
-							pTiles[j*Width+i].m_Index = ddnet::TILE_NOHOOK;
-							break;
+						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+						
+						switch(pZone->GetTileIndex(TilePath))
+						{
+							case 1:
+								pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
+								break;
+							case 2:
+								if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
+								break;
+							case 3:
+								pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
+								break;
+						}
 					}
 				}
 			}
+			else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+			{
+				for(int j=0; j<pZone->GetTileHeight(); j++)
+				{
+					for(int i=0; i<pZone->GetTileWidth(); i++)
+					{
+						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+						pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+					}
+				}
+			}
+			else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+			{
+				for(int j=0; j<pZone->GetTileHeight(); j++)
+				{
+					for(int i=0; i<pZone->GetTileWidth(); i++)
+					{
+						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+						pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+					}
+				}
+			}
+			else
+				ZoneGroupNeeded = true;
 		}
 	
 		//TeeWorlds entities
@@ -1399,13 +1487,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f;
 				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f;
 				
-				if(X < 0 || X >= Width || Y < 0 || Y >= Height)
+				if(X < 0 || X >= GameWidth || Y < 0 || Y >= GameHeight)
 				{
 					EntityGroupNeeded = true;
 					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
 					continue;
 				}
-				if(pTiles[Y*Width+X].m_Index == ddnet::TILE_SOLID || pTiles[Y*Width+X].m_Index == ddnet::TILE_NOHOOK)
+				if(pGameTiles[Y*GameWidth+X].m_Index == ddnet::TILE_SOLID || pGameTiles[Y*GameWidth+X].m_Index == ddnet::TILE_NOHOOK)
 				{
 					EntityGroupNeeded = true;
 					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
@@ -1419,50 +1507,80 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				}
 				
 				if(EntityTypePath == m_Path_EntityType_TWSpawn)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
 				else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
 				else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
 				else if(EntityTypePath == m_Path_EntityType_TWShotgun)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
 				else if(EntityTypePath == m_Path_EntityType_TWGrenade)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
 				else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
 				else if(EntityTypePath == m_Path_EntityType_TWNinja)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
 				else if(EntityTypePath == m_Path_EntityType_TWHeart)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
 				else if(EntityTypePath == m_Path_EntityType_TWArmor)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
 				else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
 				else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
-					pTiles[Y*Width+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
 				else
 					EntityGroupNeeded = true;
 			}
 		}
-	
-		ddnet::CMapItemLayerTilemap LItem;
 		
-		LItem.m_Version = 3;
-		LItem.m_Flags = ddnet::TILESLAYERFLAG_GAME;
-		LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-		LItem.m_Layer.m_Flags = 0;
-		LItem.m_Width = Width;
-		LItem.m_Height = Height;
-		LItem.m_Color.r = 255;
-		LItem.m_Color.g = 255;
-		LItem.m_Color.b = 255;
-		LItem.m_Color.a = 255;
-		LItem.m_ColorEnv = -1;
-		LItem.m_ColorEnvOffset = 0;
-		LItem.m_Image = -1;
-		LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
-		StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Game");
-		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
+		{
+			ddnet::CMapItemLayerTilemap LItem;
+			LItem.m_Version = 3;
+			LItem.m_Flags = ddnet::TILESLAYERFLAG_GAME;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Width = GameWidth;
+			LItem.m_Height = GameHeight;
+			LItem.m_Color.r = 255;
+			LItem.m_Color.g = 255;
+			LItem.m_Color.b = 255;
+			LItem.m_Color.a = 255;
+			LItem.m_ColorEnv = -1;
+			LItem.m_ColorEnvOffset = 0;
+			LItem.m_Image = -1;
+			LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pGameTiles);
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Game");
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
+			
+			delete[] pGameTiles;
+		}
+		if(pFrontTiles)
+		{
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[FrontWidth*FrontHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*FrontWidth*FrontHeight);
+			
+			ddnet::CMapItemLayerTilemap LItem;
+			LItem.m_Version = 3;
+			LItem.m_Flags = ddnet::TILESLAYERFLAG_FRONT;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Width = FrontWidth;
+			LItem.m_Height = FrontHeight;
+			LItem.m_Color.r = 255;
+			LItem.m_Color.g = 255;
+			LItem.m_Color.b = 255;
+			LItem.m_Color.a = 255;
+			LItem.m_ColorEnv = -1;
+			LItem.m_ColorEnvOffset = 0;
+			LItem.m_Image = -1;
+			LItem.m_Data = ArchiveFile.AddData(FrontWidth*FrontHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Front = ArchiveFile.AddData(FrontWidth*FrontHeight*sizeof(ddnet::CTile), pFrontTiles);
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
+			
+			delete[] pZeroTiles;
+			delete[] pFrontTiles;
+		}
 		
 		ddnet::CMapItemGroup GItem;
 		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
@@ -1480,7 +1598,6 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), "Game");
 		ArchiveFile.AddItem(ddnet::MAPITEMTYPE_GROUP, GroupId++, sizeof(ddnet::CMapItemGroup), &GItem);
 		
-		delete[] pTiles;
 	}
 	
 	//Step3: Save forground layers
@@ -1501,7 +1618,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
 		{
 			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-			if(!pZone || pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+			if(!pZone)
+				continue;
+			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+				continue;
+			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+				continue;
+			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 				continue;
 			
 			int Width = pZone->GetTileWidth();

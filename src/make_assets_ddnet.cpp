@@ -52,16 +52,19 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
 	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones_game", "images/univ_ddnet/zones_game.png", CStorage::TYPE_ALL, 16, 16, true, 0);
-	CAssetPath ImageFreezePath = CreateNewImage(pKernel, PackageId, "zones_freeze", "images/univ_ddnet/zones_freeze.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 	
 	//Game Layer
 	//Informations took from https://ddnet.tw/explain/explanations.json
+	for(int Pass=0; Pass<2; Pass++)
 	{
 		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
 		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("ddGame");
+		if(Pass == 0)
+			pAsset->SetName("ddGame");
+		else
+			pAsset->SetName("ddFront");
 		pAsset->SetImagePath(ImageZonesPath);
 		
 		for(int i=0; i<4; i++)
@@ -74,11 +77,43 @@ int main(int argc, char* argv[])
 		CREATE_ZONEINDEX("Hookthrough", "Combined with \"Hookable/Unhookable Ground\" tiles, allows to hook through the walls.")
 		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
+		
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexTitle(SubPath, "Freeze");
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 1);
+			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 52.0f/255.0f, 104.0f/255.0f, 1.0f));
+		}
+		
 		CREATE_ZONEINDEX_NOUSE()
-		CREATE_ZONEINDEX_NOUSE()
-		CREATE_ZONEINDEX_NOUSE()
-		CREATE_ZONEINDEX_NOUSE()
-		CREATE_ZONEINDEX_NOUSE()
+		
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexTitle(SubPath, "Unfreeze");
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 2);
+			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 153.0f/255.0f, 0.0f, 1.0f));
+		}
+		
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexTitle(SubPath, "Deep Freeze");
+			pAsset->SetIndexDescription(SubPath, "Permanent freeze. Only Undeep tile can cancel this effect.");
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 3);
+			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexTitle(SubPath, "Undeep Freeze");
+			pAsset->SetIndexDescription(SubPath, "Removes Deep Freeze effect.");
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 4);
+			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		
 		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
 		
@@ -278,8 +313,16 @@ int main(int argc, char* argv[])
 		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
-		CREATE_ZONEINDEX("Entities Off Sign", "Informs people playing with entities about important marks, tips, information, or text on the map. Players should turn entities off to see the note before continuing the race.")
-		CREATE_ZONEINDEX_NOUSE()
+		if(Pass==0)
+		{
+			CREATE_ZONEINDEX("Entities Off Sign (1)", "Informs people playing with entities about important marks, tips, information, or text on the map. Players should turn entities off to see the note before continuing the race.")
+			CREATE_ZONEINDEX("Entities Off Sign (2)", "Informs people playing with entities about important marks, tips, information, or text on the map. Players should turn entities off to see the note before continuing the race.")
+		}
+		else
+		{
+			CREATE_ZONEINDEX_NOUSE()
+			CREATE_ZONEINDEX_NOUSE()
+		}
 		
 		//192
 		CREATE_ZONEINDEX_NOUSE()
@@ -353,51 +396,6 @@ int main(int argc, char* argv[])
 		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
 	}
-	
-	{
-		CAssetPath AssetPath;
-		CSubPath SubPath;
-		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
-		pAsset->SetName("ddFreeze");
-		pAsset->SetImagePath(ImageFreezePath);
-		
-		CREATE_ZONEINDEX_NOUSE()
-		
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Freeze");
-			pAsset->SetIndexUsed(SubPath, true);
-			pAsset->SetIndexBorderIndex(SubPath, 1);
-			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 52.0f/255.0f, 104.0f/255.0f, 1.0f));
-		}
-		
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Unfreeze");
-			pAsset->SetIndexUsed(SubPath, true);
-			pAsset->SetIndexBorderIndex(SubPath, 2);
-			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 153.0f/255.0f, 0.0f, 1.0f));
-		}
-		
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Deep Freeze");
-			pAsset->SetIndexDescription(SubPath, "Permanent freeze. Only Undeep tile can cancel this effect.");
-			pAsset->SetIndexUsed(SubPath, true);
-			pAsset->SetIndexBorderIndex(SubPath, 3);
-			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		}
-		
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Undeep Freeze");
-			pAsset->SetIndexDescription(SubPath, "Removes Deep Freeze effect.");
-			pAsset->SetIndexUsed(SubPath, true);
-			pAsset->SetIndexBorderIndex(SubPath, 4);
-			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
-		}
-	}	
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	

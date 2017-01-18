@@ -705,7 +705,7 @@ void CAssetsManager::Load_UnivDDNet()
 		if(m_PackageId_UnivDDNet >= 0)
 		{
 			m_Path_ZoneType_DDGame = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddGame");
-			m_Path_ZoneType_DDFreeze = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddFreeze");
+			m_Path_ZoneType_DDFront = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddFront");
 		}
 	}
 }
