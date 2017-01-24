@@ -361,10 +361,12 @@ protected:
 	COpenSavePackageDialog* m_pPopup;
 	CGuiEditor* m_pAssetsEditor;
 	dynamic_string m_Directory;
+	bool m_ReadOnly;
 	
 protected:
 	virtual void MouseClickAction()
 	{
+		m_pPopup->m_ReadOnly = m_ReadOnly;
 		m_pPopup->SelectDirectory(m_Directory.buffer());
 	}
 	
@@ -372,16 +374,18 @@ public:
 	COpenSavePackageDialog_Item_Directory(COpenSavePackageDialog* pPopup, const char* pFilename, const char* pDir) :
 		gui::CButton(pPopup->Context(), pFilename, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
 		m_pPopup(pPopup),
-		m_pAssetsEditor(pPopup->m_pAssetsEditor)
+		m_pAssetsEditor(pPopup->m_pAssetsEditor),
+		m_ReadOnly(false)
 	{
 		m_Directory.copy(pDir);
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
 	}
 	
-	COpenSavePackageDialog_Item_Directory(COpenSavePackageDialog* pPopup, const CLocalizableString& Title, const char* pDir) :
+	COpenSavePackageDialog_Item_Directory(COpenSavePackageDialog* pPopup, const CLocalizableString& Title, const char* pDir, bool ReadOnly) :
 		gui::CButton(pPopup->Context(), Title, pPopup->m_pAssetsEditor->m_Path_Sprite_IconFolder),
 		m_pPopup(pPopup),
-		m_pAssetsEditor(pPopup->m_pAssetsEditor)
+		m_pAssetsEditor(pPopup->m_pAssetsEditor),
+		m_ReadOnly(ReadOnly)
 	{
 		m_Directory.copy(pDir);
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
@@ -541,7 +545,8 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 	m_Format(Format),
 	m_Mode(Mode),
 	m_RefreshList(true),
-	m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET)
+	m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET),
+	m_ReadOnly(false)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
@@ -596,12 +601,12 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		{
 			Buffer.clear();
 			Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("My packages"), Buffer.buffer()), false);			
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("My packages"), Buffer.buffer(), false), false);			
 		}
 		{
 			Buffer.clear();
 			Storage()->GetCompletePath(CStorage::TYPE_DATA, "assets", Buffer);
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Default packages"), Buffer.buffer()), false);			
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Default packages"), Buffer.buffer(), true), false);			
 		}
 		for(int i=2; i<Storage()->GetNumPaths(); i++)
 		{
@@ -611,20 +616,20 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 			CLocalizableString LString(_("Alternative Data Directory {int:Id}"));
 			LString.AddInteger("Id", i-1);
 			
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Buffer.buffer()), false);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Buffer.buffer(), false), false);
 		}
 		pPlaces->AddSeparator();
 		{
 			Buffer.clear();
 			fs_storage_path("teeworlds", Buffer);
 			Buffer.append("/maps");
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer()), false);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer(), false), false);
 		}
 		{
 			Buffer.clear();
 			fs_storage_path("teeworlds", Buffer);
 			Buffer.append("/downloadedmaps");
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer()), false);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer(), false), false);
 		}
 		
 		m_pFilelist = new gui::CVScrollLayout(Context());
@@ -798,7 +803,7 @@ void COpenSavePackageDialog::ListFiles()
 		{
 			Buffer.clear();
 			Buffer.append_at_num(0, m_Directory.buffer(), i+1);
-			m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer()), false);
+			m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer(), false), false);
 		}
 	}
 	for(int i=0; i<Directories.size(); i++)
@@ -965,7 +970,9 @@ void COpenSavePackageDialog::Open()
 				if(AssetsManager()->GetNumAssets<CAsset_Map>(PackageId))
 					m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, PackageId, 0), CSubPath::Null());
 				
-				AssetsManager()->SetPackageReadOnly(PackageId, false);
+				if(!m_ReadOnly)
+					AssetsManager()->SetPackageReadOnly(PackageId, false);
+				
 				m_pAssetsEditor->RefreshAssetsTree();
 			}
 			break;
