@@ -86,6 +86,7 @@ public:
 
 public:
 	int m_Cfg_Scale;
+	int m_Cfg_ColorChooserTab;
 	
 protected:
 	gui::CRect m_DrawRect;

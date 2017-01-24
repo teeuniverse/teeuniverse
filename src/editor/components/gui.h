@@ -59,7 +59,9 @@ public:
 	gui::CLabel* m_pHintLabel;
 	gui::CLabel* m_pCoordinatesLabel;
 	
-public:	
+public:
+	
+	
 	CAssetPath m_Path_Rect_TextSelection;
 	CAssetPath m_Path_Rect_Selection;
 	CAssetPath m_Path_Rect_Border;
