@@ -39,14 +39,15 @@ CAsset_ZoneType::CIndex::CIndex()
 	m_Color = 1.0f;
 	m_BorderIndex = 0;
 	m_BorderColor = 1.0f;
+	m_Group = -1;
 }
 
-CAsset_ZoneType::CIntData::CIntData()
+CAsset_ZoneType::CDataInt::CDataInt()
 {
-	m_Title = true;
 	m_DefaultValue = 0;
 	m_MinValue = 0;
-	m_MaxValue = 256;
+	m_MaxValue = 255;
+	m_NullValue = 0;
 }
 
 
@@ -58,7 +59,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoad
 }
 
 
-void CAsset_ZoneType::CIntData::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CIntData& SysType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CDataInt& SysType)
 {
 }
 
@@ -87,7 +88,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoa
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
 
-void CAsset_ZoneType::CIntData::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_1_0& TuaType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_1_0& TuaType)
 {
 }
 
@@ -118,7 +119,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoad
 }
 
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIntData& SysType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CDataInt& SysType)
 {
 }
 
@@ -151,7 +152,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoa
 	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
 }
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_0& TuaType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_0& TuaType)
 {
 }
 
@@ -183,7 +184,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoad
 }
 
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIntData& SysType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CDataInt& SysType)
 {
 }
 
@@ -216,7 +217,7 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoa
 	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
 }
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_1& TuaType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_1& TuaType)
 {
 }
 
@@ -245,16 +246,18 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoad
 	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
 	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
 	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
+	SysType.m_Group = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Group);
 }
 
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIntData& SysType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CDataInt& SysType)
 {
-	SysType.m_Title = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Title);
+	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
 	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
 	SysType.m_DefaultValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_DefaultValue);
 	SysType.m_MinValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinValue);
 	SysType.m_MaxValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MaxValue);
+	SysType.m_NullValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_NullValue);
 }
 
 
@@ -274,12 +277,22 @@ void CAsset_ZoneType::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingConte
 	
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	{
-		const CAsset_ZoneType::CIntData::CTuaType_0_2_2* pData = (const CAsset_ZoneType::CIntData::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_IntData.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_IntData.m_Size);
-		SysType.m_IntData.resize(Size);
+		const CAsset_ZoneType::CDataInt::CTuaType_0_2_2* pData = (const CAsset_ZoneType::CDataInt::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_DataInt.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_DataInt.m_Size);
+		SysType.m_DataInt.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_ZoneType::CIntData::CTuaType_0_2_2::Read(pLoadingContext, pData[i], SysType.m_IntData[i]);
+			CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Read(pLoadingContext, pData[i], SysType.m_DataInt[i]);
+		}
+	}
+	
+	{
+		const tua_stringid* pData = (const tua_stringid*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Group.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Group.m_Size);
+		SysType.m_Group.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			SysType.m_Group[i].copy(pLoadingContext->ArchiveFile()->GetString(pData[i]));
 		}
 	}
 	
@@ -294,15 +307,17 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoa
 	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
 	TuaType.m_BorderIndex = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_BorderIndex);
 	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
+	TuaType.m_Group = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Group);
 }
 
-void CAsset_ZoneType::CIntData::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_2& TuaType)
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_2& TuaType)
 {
-	TuaType.m_Title = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Title);
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
 	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
 	TuaType.m_DefaultValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DefaultValue);
 	TuaType.m_MinValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinValue);
 	TuaType.m_MaxValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MaxValue);
+	TuaType.m_NullValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_NullValue);
 }
 
 void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_2& TuaType)
@@ -321,13 +336,23 @@ void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	}
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 	{
-		TuaType.m_IntData.m_Size = SysType.m_IntData.size();
-		CAsset_ZoneType::CIntData::CTuaType_0_2_2* pData = new CAsset_ZoneType::CIntData::CTuaType_0_2_2[SysType.m_IntData.size()];
-		for(int i=0; i<SysType.m_IntData.size(); i++)
+		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
+		CAsset_ZoneType::CDataInt::CTuaType_0_2_2* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_2_2[SysType.m_DataInt.size()];
+		for(int i=0; i<SysType.m_DataInt.size(); i++)
 		{
-			CAsset_ZoneType::CIntData::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_IntData[i], pData[i]);
+			CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
 		}
-		TuaType.m_IntData.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIntData::CTuaType_0_2_2)*SysType.m_IntData.size());
+		TuaType.m_DataInt.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_2_2)*SysType.m_DataInt.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Group.m_Size = SysType.m_Group.size();
+		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		for(int i=0; i<SysType.m_Group.size(); i++)
+		{
+			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());
+		}
+		TuaType.m_Group.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
 		delete[] pData;
 	}
 }
@@ -341,14 +366,20 @@ int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int Defaul
 			return GetIndexArraySize();
 		case INDEX_BORDERINDEX:
 			return GetIndexBorderIndex(SubPath);
-		case INTDATA_ARRAYSIZE:
-			return GetIntDataArraySize();
-		case INTDATA_DEFAULTVALUE:
-			return GetIntDataDefaultValue(SubPath);
-		case INTDATA_MINVALUE:
-			return GetIntDataMinValue(SubPath);
-		case INTDATA_MAXVALUE:
-			return GetIntDataMaxValue(SubPath);
+		case INDEX_GROUP:
+			return GetIndexGroup(SubPath);
+		case DATAINT_ARRAYSIZE:
+			return GetDataIntArraySize();
+		case DATAINT_DEFAULTVALUE:
+			return GetDataIntDefaultValue(SubPath);
+		case DATAINT_MINVALUE:
+			return GetDataIntMinValue(SubPath);
+		case DATAINT_MAXVALUE:
+			return GetDataIntMaxValue(SubPath);
+		case DATAINT_NULLVALUE:
+			return GetDataIntNullValue(SubPath);
+		case GROUP_ARRAYSIZE:
+			return GetGroupArraySize();
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -364,17 +395,26 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, int Value
 		case INDEX_BORDERINDEX:
 			SetIndexBorderIndex(SubPath, Value);
 			return true;
-		case INTDATA_ARRAYSIZE:
-			SetIntDataArraySize(Value);
+		case INDEX_GROUP:
+			SetIndexGroup(SubPath, Value);
 			return true;
-		case INTDATA_DEFAULTVALUE:
-			SetIntDataDefaultValue(SubPath, Value);
+		case DATAINT_ARRAYSIZE:
+			SetDataIntArraySize(Value);
 			return true;
-		case INTDATA_MINVALUE:
-			SetIntDataMinValue(SubPath, Value);
+		case DATAINT_DEFAULTVALUE:
+			SetDataIntDefaultValue(SubPath, Value);
 			return true;
-		case INTDATA_MAXVALUE:
-			SetIntDataMaxValue(SubPath, Value);
+		case DATAINT_MINVALUE:
+			SetDataIntMinValue(SubPath, Value);
+			return true;
+		case DATAINT_MAXVALUE:
+			SetDataIntMaxValue(SubPath, Value);
+			return true;
+		case DATAINT_NULLVALUE:
+			SetDataIntNullValue(SubPath, Value);
+			return true;
+		case GROUP_ARRAYSIZE:
+			SetGroupArraySize(Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
@@ -387,8 +427,6 @@ bool CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, bool Defa
 	{
 		case INDEX_USED:
 			return GetIndexUsed(SubPath);
-		case INTDATA_TITLE:
-			return GetIntDataTitle(SubPath);
 	}
 	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
 }
@@ -400,9 +438,6 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, bool Valu
 	{
 		case INDEX_USED:
 			SetIndexUsed(SubPath, Value);
-			return true;
-		case INTDATA_TITLE:
-			SetIntDataTitle(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<bool>(ValueType, SubPath, Value);
@@ -417,8 +452,12 @@ const char* CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, co
 			return GetIndexDescription(SubPath);
 		case INDEX_TITLE:
 			return GetIndexTitle(SubPath);
-		case INTDATA_DESCRIPTION:
-			return GetIntDataDescription(SubPath);
+		case DATAINT_TITLE:
+			return GetDataIntTitle(SubPath);
+		case DATAINT_DESCRIPTION:
+			return GetDataIntDescription(SubPath);
+		case GROUP:
+			return GetGroup(SubPath);
 	}
 	return CAsset::GetValue<const char*>(ValueType, SubPath, DefaultValue);
 }
@@ -434,8 +473,14 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, const cha
 		case INDEX_TITLE:
 			SetIndexTitle(SubPath, Value);
 			return true;
-		case INTDATA_DESCRIPTION:
-			SetIntDataDescription(SubPath, Value);
+		case DATAINT_TITLE:
+			SetDataIntTitle(SubPath, Value);
+			return true;
+		case DATAINT_DESCRIPTION:
+			SetDataIntDescription(SubPath, Value);
+			return true;
+		case GROUP:
+			SetGroup(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<const char*>(ValueType, SubPath, Value);
@@ -498,8 +543,10 @@ int CAsset_ZoneType::AddSubItem(int Type, const CSubPath& SubPath)
 	{
 		case TYPE_INDEX:
 			return AddIndex();
-		case TYPE_INTDATA:
-			return AddIntData();
+		case TYPE_DATAINT:
+			return AddDataInt();
+		case TYPE_GROUP:
+			return AddGroup();
 	}
 	return -1;
 }
@@ -511,8 +558,11 @@ int CAsset_ZoneType::AddSubItemAt(int Type, const CSubPath& SubPath, int Index)
 		case TYPE_INDEX:
 			AddAtIndex(Index);
 			return Index;
-		case TYPE_INTDATA:
-			AddAtIntData(Index);
+		case TYPE_DATAINT:
+			AddAtDataInt(Index);
+			return Index;
+		case TYPE_GROUP:
+			AddAtGroup(Index);
 			return Index;
 	}
 	return -1;
@@ -525,8 +575,11 @@ void CAsset_ZoneType::DeleteSubItem(const CSubPath& SubPath)
 		case TYPE_INDEX:
 			DeleteIndex(SubPath);
 			break;
-		case TYPE_INTDATA:
-			DeleteIntData(SubPath);
+		case TYPE_DATAINT:
+			DeleteDataInt(SubPath);
+			break;
+		case TYPE_GROUP:
+			DeleteGroup(SubPath);
 			break;
 	}
 }
@@ -538,8 +591,11 @@ void CAsset_ZoneType::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 		case TYPE_INDEX:
 			RelMoveIndex(SubPath, RelMove);
 			break;
-		case TYPE_INTDATA:
-			RelMoveIntData(SubPath, RelMove);
+		case TYPE_DATAINT:
+			RelMoveDataInt(SubPath, RelMove);
+			break;
+		case TYPE_GROUP:
+			RelMoveGroup(SubPath, RelMove);
 			break;
 	}
 }

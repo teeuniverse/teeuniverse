@@ -21,7 +21,9 @@
 #include <editor/components/gui.h>
 #include <client/components/assetsrenderer.h>
 #include <client/gui/popup.h>
+#include <client/gui/panellayout.h>
 #include <client/gui/toggle.h>
+#include <client/gui/integer-edit.h>
 #include <client/gui/boxlayout.h>
 #include <client/maprenderer.h>
 #include <generated/assets/maplayertiles.h>
@@ -161,7 +163,7 @@ protected:
 					Index = m_IndexSubPath.GetId();
 			}
 			
-			m_Tiles.resize(5, 4);
+			m_Tiles.resize(5, 5);
 			
 			m_Tiles.get_clamp(0, 0).SetIndex(0);
 			m_Tiles.get_clamp(1, 0).SetIndex(0);
@@ -182,15 +184,21 @@ protected:
 			m_Tiles.get_clamp(4, 2).SetIndex(0);
 			
 			m_Tiles.get_clamp(0, 3).SetIndex(0);
-			m_Tiles.get_clamp(1, 3).SetIndex(0);
-			m_Tiles.get_clamp(2, 3).SetIndex(0);
-			m_Tiles.get_clamp(3, 3).SetIndex(0);
+			m_Tiles.get_clamp(1, 3).SetIndex(Index);
+			m_Tiles.get_clamp(2, 3).SetIndex(Index);
+			m_Tiles.get_clamp(3, 3).SetIndex(Index);
 			m_Tiles.get_clamp(4, 3).SetIndex(0);
+			
+			m_Tiles.get_clamp(0, 4).SetIndex(0);
+			m_Tiles.get_clamp(1, 4).SetIndex(0);
+			m_Tiles.get_clamp(2, 4).SetIndex(0);
+			m_Tiles.get_clamp(3, 4).SetIndex(0);
+			m_Tiles.get_clamp(4, 4).SetIndex(0);
 		}
 		
 		virtual void UpdateBoundingSize()
 		{
-			m_BoundingSizeRect.BSMinimum(32.0f*4, 32.0f*3);
+			m_BoundingSizeRect.BSMinimum(32.0f*2, 32.0f*2);
 		}
 		
 		virtual void Render()
@@ -204,7 +212,7 @@ protected:
 			MapRenderer.SetCanvas(m_DrawRect, vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2));
 			MapRenderer.SetCamera(0.0f, 1.0f);
 			
-			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*2.5f, -32.0f*2.0f), 1.0f, true);
+			MapRenderer.RenderTiles_Zone(m_ZoneTypePath, m_Tiles, vec2(-32.0f*2.5f, -32.0f*2.5f), 1.0f, true);
 			
 			Graphics()->ClipPop();
 		}
@@ -226,13 +234,13 @@ protected:
 			m_ZoneTypePath(ZoneTypePath),
 			m_IndexSubPath(IndexSubPath)
 		{
-			SetText("Empty");
+			//~ SetText("Empty");
 			
 			if(IndexSubPath.IsNotNull())
 			{
-				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
-				if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath) && pZoneType->GetIndexUsed(m_IndexSubPath))
-					SetText(pZoneType->GetIndexTitle(m_IndexSubPath));
+				//~ const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
+				//~ if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath) && pZoneType->GetIndexUsed(m_IndexSubPath))
+					//~ SetText(pZoneType->GetIndexTitle(m_IndexSubPath));
 			}
 				
 			
@@ -242,36 +250,142 @@ protected:
 		
 		virtual void MouseClickAction()
 		{
-			m_pCursorTool->PaletteCallback_SelectZoneType(m_ZoneTypePath, m_IndexSubPath);
+			m_pCursorTool->PaletteCallback_SelectZoneType(m_ZoneTypePath, m_IndexSubPath, m_pPopup->m_DataInt);
 			m_pPopup->Close();
+		}
+		
+		virtual void OnMouseMove()
+		{
+			if(m_pPopup->m_pZoneTitle && m_pPopup->m_pZoneDesc && m_VisibilityRect.IsInside(Context()->GetMousePos()))
+			{
+				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_ZoneTypePath);
+				if(pZoneType && pZoneType->IsValidIndex(m_IndexSubPath) && pZoneType->GetIndexUsed(m_IndexSubPath))
+				{
+					m_pPopup->m_pZoneTitle->SetText(pZoneType->GetIndexTitle(m_IndexSubPath));
+					m_pPopup->m_pZoneDesc->SetText(pZoneType->GetIndexDescription(m_IndexSubPath));
+				}
+				else
+				{
+					m_pPopup->m_pZoneTitle->SetText(_LSTRING("Empty"));
+					m_pPopup->m_pZoneDesc->SetText(_LSTRING("Can be used as an eraser"));
+				}
+			}
+			
+			gui::CButton::OnMouseMove();
 		}
 	};
 	
 protected:
 	CAssetPath m_ZoneTypePath;
+	array<int> m_DataInt;
+	gui::CLabel* m_pZoneTitle;
+	gui::CLabel* m_pZoneDesc;
 	
 public:
 	CPopup_ZonePalette(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool, const gui::CRect& CreatorRect, CAssetPath ZoneTypePath) :
 		gui::CPopup(pAssetsEditor, CreatorRect, CreatorRect.w-16, CreatorRect.h-16, gui::CPopup::ALIGNMENT_INNER),
-		m_ZoneTypePath(ZoneTypePath)
+		m_ZoneTypePath(ZoneTypePath),
+		m_pZoneTitle(NULL),
+		m_pZoneDesc(NULL)
 	{
-		SetBoxStyle(pAssetsEditor->m_Path_Box_Dialog);
-		
-		gui::CBoxLayout* pList = new gui::CBoxLayout(Context());
-		Add(pList);		
+		SetBoxStyle(pAssetsEditor->m_Path_Box_DialogPanel);
 		
 		const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_ZoneTypePath);
 		if(!pZoneType)
 			return;
 		
-		if(!pZoneType->IsValidIndex(CAsset_ZoneType::SubPath_Index(0)) || !pZoneType->GetIndexUsed(CAsset_ZoneType::SubPath_Index(0)))
-			pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, CSubPath::Null()));
+		gui::CVListLayout* pVList = new gui::CVListLayout(Context());
+		Add(pVList);
 		
-		CAsset_ZoneType::CIteratorIndex Iter;
-		for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
+		//Description of the current zone
 		{
-			if(pZoneType->GetIndexUsed(*Iter))
-				pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *Iter));
+			gui::CVListLayout* pHeader = new gui::CVListLayout(Context());
+			pHeader->SetBoxStyle(pAssetsEditor->m_Path_Box_PanelHeader);
+			pVList->Add(pHeader);
+			
+			m_pZoneTitle = new gui::CLabel(Context(), _LSTRING("Select a zone type by clicking on it"));
+			m_pZoneTitle->SetLabelStyle(pAssetsEditor->m_Path_Label_Group);
+			pHeader->Add(m_pZoneTitle, false);
+			m_pZoneDesc = new gui::CLabel(Context(), _LSTRING(""));
+			pHeader->Add(m_pZoneDesc, false);
+		}
+		
+		gui::CHPanelLayout* pPanels = new gui::CHPanelLayout(Context());
+		pVList->Add(pPanels, true);
+		
+		//List of zones
+		{
+			gui::CBoxLayout* pList = new gui::CBoxLayout(Context());
+			pPanels->Add(pList, -1);
+			pList->SetBoxStyle(pAssetsEditor->m_Path_Box_Panel);
+			
+			if(!pZoneType->IsValidIndex(CAsset_ZoneType::SubPath_Index(0)) || !pZoneType->GetIndexUsed(CAsset_ZoneType::SubPath_Index(0)))
+				pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, CSubPath::Null()));
+			
+			CAsset_ZoneType::CIteratorGroup GroupIter;
+			CAsset_ZoneType::CIteratorIndex IndexIter;
+			
+			//Show default group
+			bool UnknownGroupNeed = false;
+			for(IndexIter = pZoneType->BeginIndex(); IndexIter != pZoneType->EndIndex(); ++IndexIter)
+			{
+				if(pZoneType->GetIndexUsed(*IndexIter))
+				{
+					if(pZoneType->GetIndexGroup(*IndexIter) == -1)
+						pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *IndexIter));
+					else if(pZoneType->IsValidGroup(CAsset_ZoneType::SubPath_Group(pZoneType->GetIndexGroup(*IndexIter))))
+						UnknownGroupNeed = true;
+				}
+			}
+			
+			//Show groups
+			for(GroupIter = pZoneType->BeginGroup(); GroupIter != pZoneType->EndGroup(); ++GroupIter)
+			{
+				gui::CLabel* pLabel = new gui::CLabel(Context(), pZoneType->GetGroup(*GroupIter));
+				pLabel->SetLabelStyle(pAssetsEditor->m_Path_Label_Group);
+				pList->Add(pLabel, true);
+				
+				for(IndexIter = pZoneType->BeginIndex(); IndexIter != pZoneType->EndIndex(); ++IndexIter)
+				{
+					if(pZoneType->GetIndexUsed(*IndexIter) && pZoneType->GetIndexGroup(*IndexIter) == (*GroupIter).GetId())
+						pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *IndexIter));
+				}
+			}
+			
+			//Show unknown groups
+			if(UnknownGroupNeed)
+			{
+				gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Other zones"));
+				pLabel->SetLabelStyle(pAssetsEditor->m_Path_Label_Group);
+				pList->Add(pLabel, true);
+				
+				for(IndexIter = pZoneType->BeginIndex(); IndexIter != pZoneType->EndIndex(); ++IndexIter)
+				{
+					if(pZoneType->GetIndexUsed(*IndexIter) && pZoneType->GetIndexGroup(*IndexIter) != -1 && !pZoneType->IsValidGroup(CAsset_ZoneType::SubPath_Group(pZoneType->GetIndexGroup(*IndexIter))))
+						pList->Add(new CZoneButton(pAssetsEditor, pCursorTool, this, m_ZoneTypePath, *IndexIter));
+				}
+			}
+		}
+		
+		//DataInt editor
+		if(pZoneType->GetDataIntArraySize())
+		{
+			m_DataInt.resize(pZoneType->GetDataIntArraySize());
+			
+			gui::CVScrollLayout* pDataList = new gui::CVScrollLayout(Context());
+			pPanels->Add(pDataList, 200);
+			pDataList->SetBoxStyle(pAssetsEditor->m_Path_Box_Panel);
+			
+			CAsset_ZoneType::CIteratorDataInt Iter;
+			for(Iter = pZoneType->BeginDataInt(); Iter != pZoneType->EndDataInt(); ++Iter)
+			{
+				m_DataInt[(*Iter).GetId()] = pZoneType->GetDataIntDefaultValue(*Iter);
+				
+				gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+				pHList->Add(new gui::CLabel(Context(), pZoneType->GetDataIntTitle(*Iter)), true);
+				pHList->Add(new gui::CBoundedExternalIntegerEdit(Context(), &m_DataInt[(*Iter).GetId()], pZoneType->GetDataIntMinValue(*Iter), pZoneType->GetDataIntMaxValue(*Iter)), true);
+				pDataList->Add(pHList, false);
+			}
 		}
 	}
 	
@@ -712,13 +826,42 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 				if(pLayer)
 				{
 					m_TileSelection.resize(X1-X0, Y1-Y0);
-				
+					
 					for(int j=0; j<m_TileSelection.get_height(); j++)
 					{
 						for(int i=0; i<m_TileSelection.get_width(); i++)
 						{
 							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
 							m_TileSelection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
+						}
+					}
+					
+					const array2d<int>& Data = pLayer->GetDataIntArray();
+					if(Data.get_depth())
+					{
+						m_IntDataSelection.resize(X1-X0, Y1-Y0, Data.get_depth());
+						
+						for(int j=0; j<m_TileSelection.get_height(); j++)
+						{
+							for(int i=0; i<m_TileSelection.get_width(); i++)
+							{
+								for(int d=0; d<Data.get_depth(); d++)
+								{
+									m_IntDataSelection.get_clamp(i, j, d) = Data.get_clamp(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1), d);
+								}
+							}
+						}
+					}
+					else
+					{
+						m_IntDataSelection.resize(X1-X0, Y1-Y0, 1);
+						
+						for(int j=0; j<m_TileSelection.get_height(); j++)
+						{
+							for(int i=0; i<m_TileSelection.get_width(); i++)
+							{
+								m_IntDataSelection.set_clamp(i, j, 0, 0);
+							}
 						}
 					}
 					
@@ -866,6 +1009,30 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
 				}
 			}
+			
+			const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(pLayer->GetZoneTypePath());
+			if(pZoneType && pZoneType->GetDataIntArraySize() > 0)
+			{
+				CAsset_MapZoneTiles* pLayerEditable = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+				array2d<int>& Data = pLayerEditable->GetDataIntArray();
+				
+				AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token);
+				
+				if(Data.get_width() != pLayer->GetTileWidth() || Data.get_height() != pLayer->GetTileHeight() || Data.get_depth() != pZoneType->GetDataIntArraySize())
+				{
+					Data.resize(pLayer->GetTileWidth(), pLayer->GetTileHeight(), pZoneType->GetDataIntArraySize());
+				}
+				
+				for(int j=MinY; j<MaxY; j++)
+				{
+					for(int i=MinX; i<MaxX; i++)
+					{
+						for(int d=0; d<Data.get_depth(); d++)
+							Data.get_clamp(i, j, d) = m_IntDataSelection.get_clamp(i-TileX, j-TileY, d);
+					}
+				}
+			}
+					
 		}
 	}
 	
@@ -1153,7 +1320,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 	}
 }
 	
-void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index)
+void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const array<int>& DataInt)
 {
 	int Number = 0;
 	
@@ -1163,7 +1330,15 @@ void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePat
 	
 	m_TileSelection.resize(1, 1);
 	m_TileSelection.get_clamp(0, 0).SetIndex(Number);
-	m_TileSelection.get_clamp(0, 0).SetFlags(0x0);		
+	m_TileSelection.get_clamp(0, 0).SetFlags(0x0);
+	
+	if(pZoneType && pZoneType->GetDataIntArraySize())
+	{
+		m_IntDataSelection.resize(1, 1, pZoneType->GetDataIntArraySize());
+		for(int d=0; d<DataInt.size(); d++)
+			m_IntDataSelection.set_clamp(1, 1, d, DataInt[d]);
+	}
+		
 	m_SelectionEnabled = true;
 }
 	

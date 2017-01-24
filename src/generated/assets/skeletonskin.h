@@ -300,7 +300,7 @@ public:
 
 private:
 	CAssetPath m_SkeletonPath;
-	array< CAsset_SkeletonSkin::CBone, allocator_copy<CAsset_SkeletonSkin::CBone> > m_Sprite;
+	array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > > m_Sprite;
 
 public:
 	template<typename T>
@@ -343,13 +343,15 @@ public:
 	
 	inline const CAsset_SkeletonSkin::CBone* GetSpritePtr() const { return m_Sprite.base_ptr(); }
 	
-	inline const array< CAsset_SkeletonSkin::CBone, allocator_copy<CAsset_SkeletonSkin::CBone> >& GetSpriteArray() const { return m_Sprite; }
-	inline array< CAsset_SkeletonSkin::CBone, allocator_copy<CAsset_SkeletonSkin::CBone> >& GetSpriteArray() { return m_Sprite; }
+	inline const array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() const { return m_Sprite; }
+	inline array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() { return m_Sprite; }
 	
 	inline const CAsset_SkeletonSkin::CBone& GetSprite(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Sprite.size());
-		return m_Sprite[SubPath.GetId()];
+		{
+			return m_Sprite[SubPath.GetId()];
+		}
 	}
 	
 	inline CAssetPath GetSpriteSpritePath(const CSubPath& SubPath) const

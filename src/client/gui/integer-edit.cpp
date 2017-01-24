@@ -142,21 +142,42 @@ int CIntegerEdit::GetValue() const
 
 /* EXTERNAL INTEGER EDIT **********************************************/
 
-CExternalIntegerEdit::CExternalIntegerEdit(CGui* pContext, int* Memory) :
+CExternalIntegerEdit::CExternalIntegerEdit(CGui* pContext, int* pMemory) :
 	CAbstractIntegerEdit(pContext),
-	m_Memory(Memory)
+	m_pMemory(pMemory)
 {
 	
 }
 	
 void CExternalIntegerEdit::SetValue(int v)
 {
-	*m_Memory = v;
+	*m_pMemory = v;
 }
 	
 int CExternalIntegerEdit::GetValue() const
 {
-	return *m_Memory;
+	return *m_pMemory;
+}
+
+/* BOUNDED EXTERNAL INTEGER EDIT **************************************/
+
+CBoundedExternalIntegerEdit::CBoundedExternalIntegerEdit(CGui* pContext, int* pMemory, int MinVal, int MaxVal) :
+	CAbstractIntegerEdit(pContext),
+	m_pMemory(pMemory),
+	m_MinVal(MinVal),
+	m_MaxVal(MaxVal)
+{
+	
+}
+	
+void CBoundedExternalIntegerEdit::SetValue(int v)
+{
+	*m_pMemory = clamp(v, m_MinVal, m_MaxVal);
+}
+	
+int CBoundedExternalIntegerEdit::GetValue() const
+{
+	return clamp(*m_pMemory, m_MinVal, m_MaxVal);
 }
 
 }

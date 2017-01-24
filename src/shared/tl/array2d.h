@@ -40,7 +40,7 @@ public:
 	array2d() :
 		m_Width(0),
 		m_Height(0),
-		m_Depth(1),
+		m_Depth(0),
 		m_pData(NULL)
 	{
 		

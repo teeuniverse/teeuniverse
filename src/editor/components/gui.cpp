@@ -1648,10 +1648,13 @@ void CGuiEditor::LoadAssets()
 		m_Path_Box_Panel = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panel");
 		m_Path_Box_Menu = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "menu");
 		m_Path_Box_Dialog = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "dialog");
+		m_Path_Box_DialogPanel = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "dialogPanel");
+		m_Path_Box_PanelHeader = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panelHeader");
 		m_Path_Box_SubList = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "subList");
 		m_Path_Box_Statusbar = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "statusbar");
 		
 		m_Path_Label_Text = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "text");
+		m_Path_Label_Group = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "group");
 		m_Path_Label_Header = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "header");
 		m_Path_Label_DialogMessage = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "dialogMessage");
 		m_Path_Label_Compose = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "compose");

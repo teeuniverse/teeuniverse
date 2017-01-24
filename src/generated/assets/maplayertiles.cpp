@@ -308,6 +308,8 @@ int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int D
 			return GetTileWidth();
 		case TILE_HEIGHT:
 			return GetTileHeight();
+		case TILE_DEPTH:
+			return GetTileDepth();
 		case TILE_INDEX:
 			return GetTileIndex(SubPath);
 		case TILE_FLAGS:
@@ -330,6 +332,9 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int 
 			return true;
 		case TILE_HEIGHT:
 			SetTileHeight(Value);
+			return true;
+		case TILE_DEPTH:
+			SetTileDepth(Value);
 			return true;
 		case TILE_INDEX:
 			SetTileIndex(SubPath, Value);

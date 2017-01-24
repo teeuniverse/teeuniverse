@@ -245,6 +245,7 @@ int main(int argc, char* argv[])
 	CAssetPath RectStampPath;
 	CAssetPath RectSelectionPath;
 	CAssetPath RectDialogPath;
+	CAssetPath RectDialogPanelPath;
 	CAssetPath RectButtonPath;
 	CAssetPath RectButtonMoPath;
 	CAssetPath RectButtonFocusPath;
@@ -338,6 +339,38 @@ int main(int argc, char* argv[])
 		pAsset->SetName("dialog");
 		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
 		pAsset->SetBackgroundColor(ColorLightBG);
+		pAsset->SetImageTLPath(SpriteTL);
+		pAsset->SetImageTPath(SpriteT);
+		pAsset->SetImageTRPath(SpriteTR);
+		pAsset->SetImageLPath(SpriteL);
+		pAsset->SetImageRPath(SpriteR);
+		pAsset->SetImageBLPath(SpriteBL);
+		pAsset->SetImageBPath(SpriteB);
+		pAsset->SetImageBRPath(SpriteBR);
+	}
+	{
+		CAssetPath SpriteTL;
+		CAssetPath SpriteT;
+		CAssetPath SpriteTR;
+		CAssetPath SpriteL;
+		CAssetPath SpriteR;
+		CAssetPath SpriteBL;
+		CAssetPath SpriteB;
+		CAssetPath SpriteBR;
+		
+		CREATE_SPRITE_PATH(SpriteTL, PackageId, "boxDialogTL", ImageBoxesPath, 12, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteT , PackageId, "boxDialogT" , ImageBoxesPath, 13, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteTR, PackageId, "boxDialogTR", ImageBoxesPath, 14, 0, 1, 1);
+		CREATE_SPRITE_PATH(SpriteL,  PackageId, "boxDialogL" , ImageBoxesPath, 12, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteR,  PackageId, "boxDialogR" , ImageBoxesPath, 14, 1, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBL, PackageId, "boxDialogBL", ImageBoxesPath, 12, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteB,  PackageId, "boxDialogB" , ImageBoxesPath, 13, 2, 1, 1);
+		CREATE_SPRITE_PATH(SpriteBR, PackageId, "boxDialogBR", ImageBoxesPath, 14, 2, 1, 1);
+	
+		CAsset_GuiRectStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiRectStyle>(&RectDialogPanelPath, PackageId);
+		pAsset->SetName("dialogPanel");
+		pAsset->SetFlags(CAsset_GuiRectStyle::FLAG_BACKGROUND | CAsset_GuiRectStyle::FLAG_IMAGE);
+		pAsset->SetBackgroundColor(ColorDarkBG);
 		pAsset->SetImageTLPath(SpriteTL);
 		pAsset->SetImageTPath(SpriteT);
 		pAsset->SetImageTRPath(SpriteTR);
@@ -577,6 +610,15 @@ int main(int argc, char* argv[])
 		pAsset->SetPadding(2);
 		pAsset->SetSpacing(4);
 		pAsset->SetFontSize(12);
+		pAsset->SetTextColor(1.0f);
+	}
+	{
+		CAssetPath AssetPath;
+		CAsset_GuiLabelStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiLabelStyle>(&AssetPath, PackageId);
+		pAsset->SetName("group");
+		pAsset->SetPadding(2);
+		pAsset->SetSpacing(4);
+		pAsset->SetFontSize(14);
 		pAsset->SetTextColor(1.0f);
 	}
 	{
@@ -1588,6 +1630,27 @@ int main(int argc, char* argv[])
 			pAsset->SetName("dialog");
 			pAsset->SetRectPath(RectDialogPath);
 			pAsset->SetPadding(6);
+		}
+	}
+	
+	//DialogPanel
+	CAssetPath DialogPanelBoxPath;
+	{
+		
+		{
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&DialogPanelBoxPath, PackageId);
+			pAsset->SetName("dialogPanel");
+			pAsset->SetRectPath(RectDialogPanelPath);
+		}
+	}
+	
+	//PanelHeader
+	{
+		CAssetPath AssetPath;
+		{
+			CAsset_GuiBoxStyle* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_GuiBoxStyle>(&AssetPath, PackageId);
+			pAsset->SetName("panelHeader");
+			pAsset->SetPadding(4);
 		}
 	}
 	

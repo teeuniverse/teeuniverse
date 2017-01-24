@@ -18,7 +18,9 @@
 
 #include <client/components/graphics.h>
 #include <client/components/assetsrenderer.h>
+#include <client/components/textrenderer.h>
 #include <shared/components/assetsmanager.h>
+#include <shared/components/localization.h>
 #include <shared/geometry/linetesselation.h>
 
 #include "maprenderer.h"
@@ -97,7 +99,7 @@ vec2 CMapRenderer::TilePosToScreenPos(vec2 TilePos) const
 
 template<class TILE>
 void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, vec4 LayerColor, bool Repeat)
-{	
+{
 	const CAsset_ZoneType* pZoneType = pMapRenderer->AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 	
 	float USpacing = 0.0f;
@@ -430,6 +432,85 @@ void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsse
 void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat)
 {
 	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, Repeat);
+}
+
+void CMapRenderer::RenderZoneIntData(CAssetPath ZonePath, CAssetPath ZoneTypePath)
+{
+	const CAsset_MapZoneTiles* pZoneLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(ZonePath);
+	if(!pZoneLayer)
+		return;
+	
+	const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
+	if(!pZoneType)
+		return;
+	
+	const array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles = pZoneLayer->GetTileArray();
+	const array2d<int>& Data = pZoneLayer->GetDataIntArray();
+	if(Data.get_depth() <= 0)
+		return;
+	
+	float TileSize = 32.0f*m_CameraZoom;
+
+	//Draw tile layer
+	vec2 MinMapPos = ScreenPosToMapPos(vec2(GetCanvas().x, GetCanvas().y));
+	vec2 MaxMapPos = ScreenPosToMapPos(vec2(GetCanvas().x + GetCanvas().w, GetCanvas().y + GetCanvas().h));
+	vec2 MinTilePos = MapPosToTilePos(MinMapPos);
+	vec2 MaxTilePos = MapPosToTilePos(MaxMapPos);
+	int MinX = clamp((int)MinTilePos.x-1, 0, Data.get_width()-1);
+	int MaxX = clamp((int)MaxTilePos.x+1, 0, Data.get_width()-1);
+	int MinY = clamp((int)MinTilePos.y-1, 0, Data.get_height()-1);
+	int MaxY = clamp((int)MaxTilePos.y+1, 0, Data.get_height()-1);
+	
+	int NumCellsX = 1;
+	int NumCellsY = 1;
+	while(NumCellsX * NumCellsY < Data.get_depth())
+	{
+		if(NumCellsX <= NumCellsY)
+			NumCellsX *= 2;
+		else
+			NumCellsY *= 2;
+	}
+	float SubTileSizeX = TileSize/NumCellsX;
+	float SubTileSizeY = TileSize/NumCellsY;
+	
+	for(int j=MinY; j<=MaxY; j++)
+	{
+		for(int i=MinX; i<=MaxX; i++)
+		{
+			if(Tiles.get_clamp(i, j).GetIndex() <= 0)
+				continue;
+			
+			for(int d=0; d<Data.get_depth(); d++)
+			{
+				int dx = d%NumCellsX;
+				int dy = d/NumCellsX;
+				
+				float SubTilePosX = SubTileSizeX * dx + SubTileSizeX/2.0f;
+				float SubTilePosY = SubTileSizeY * dy;
+				
+				int NullValue = 0;
+				CSubPath DataIntPath = CAsset_ZoneType::SubPath_DataInt(d);
+				if(pZoneType->IsValidDataInt(DataIntPath))
+					NullValue = pZoneType->GetDataIntNullValue(DataIntPath);
+				
+				int Value = Data.get_clamp(i, j, d);
+				if(Value != NullValue)
+				{
+					vec2 TilePos = MapPosToScreenPos(vec2(i*32.0f, j*32.0f));
+					
+					dynamic_string Buffer;
+					Localization()->FormatInteger(Buffer, NULL, Value);
+					
+					CTextRenderer::CTextCache TextCache;
+					TextCache.SetText(Buffer.buffer());
+					TextCache.SetBoxSize(ivec2(SubTileSizeX, SubTileSizeY));
+					TextCache.SetFontSize(14.0f);
+					float TextWidth = TextRenderer()->GetTextWidth(&TextCache);
+					TextRenderer()->DrawText(&TextCache, ivec2(TilePos.x - TextWidth/2.0f + SubTilePosX, TilePos.y + SubTilePosY), 1.0f);
+				}
+			}
+		}
+	}
 }
 
 void CMapRenderer::RenderGrid(float Step, vec4 Color)

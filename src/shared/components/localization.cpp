@@ -724,6 +724,27 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 	}
 }
 
+void CLocalization::FormatInteger(dynamic_string& Buffer, const char* pLanguageCode, int Number)
+{
+	CLanguage* pLanguage = m_pMainLanguage;	
+	if(pLanguageCode)
+	{
+		for(int i=0; i<m_pLanguages.size(); i++)
+		{
+			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
+			{
+				pLanguage = m_pLanguages[i];
+				break;
+			}
+		}
+	}
+	if(!pLanguage)
+		return;
+	
+	int BufferIter = Buffer.length();
+	AppendInteger(Buffer, BufferIter, pLanguage, Number);
+}
+
 int CLocalization::ParseInteger(const char* pLanguageCode, const char* pText)
 {
 	CLanguage* pLanguage = m_pMainLanguage;	

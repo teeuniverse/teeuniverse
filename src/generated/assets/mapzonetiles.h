@@ -57,6 +57,7 @@ public:
 		ZONETYPEPATH,
 		TILE_WIDTH,
 		TILE_HEIGHT,
+		TILE_DEPTH,
 		TILE_PTR,
 		TILE_ARRAY,
 		TILE_INDEX,
@@ -64,6 +65,7 @@ public:
 		VISIBILITY,
 		DATAINT_WIDTH,
 		DATAINT_HEIGHT,
+		DATAINT_DEPTH,
 		DATAINT_PTR,
 		DATAINT_ARRAY,
 		DATAINT,
@@ -178,9 +180,9 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
-	array2d< CTile, allocator_copy<CTile> > m_Tile;
+	array2d< CTile, allocator_copy< CTile > > m_Tile;
 	bool m_Visibility;
-	array2d< int, allocator_default<int> > m_DataInt;
+	array2d< int, allocator_default< int > > m_DataInt;
 
 public:
 	template<typename T>
@@ -232,10 +234,12 @@ public:
 	
 	inline int GetTileHeight() const { return m_Tile.get_height(); }
 	
+	inline int GetTileDepth() const { return m_Tile.get_depth(); }
+	
 	inline const CAsset_MapZoneTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_copy<CTile> >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_copy<CTile> >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile, allocator_copy< CTile > >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile, allocator_copy< CTile > >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapZoneTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
@@ -247,10 +251,12 @@ public:
 	
 	inline int GetDataIntHeight() const { return m_DataInt.get_height(); }
 	
+	inline int GetDataIntDepth() const { return m_DataInt.get_depth(); }
+	
 	inline const int* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
 	
-	inline const array2d< int, allocator_default<int> >& GetDataIntArray() const { return m_DataInt; }
-	inline array2d< int, allocator_default<int> >& GetDataIntArray() { return m_DataInt; }
+	inline const array2d< int, allocator_default< int > >& GetDataIntArray() const { return m_DataInt; }
+	inline array2d< int, allocator_default< int > >& GetDataIntArray() { return m_DataInt; }
 	
 	inline int GetDataInt(const CSubPath& SubPath) const { return m_DataInt.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
@@ -262,6 +268,8 @@ public:
 	
 	inline void SetTileHeight(int Value) { m_Tile.resize_height(max(Value, 1)); }
 	
+	inline void SetTileDepth(int Value) { m_Tile.resize_depth(max(Value, 1)); }
+	
 	inline void SetTile(const CSubPath& SubPath, const CAsset_MapZoneTiles::CTile& Value) { m_Tile.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	
 	inline void SetTileIndex(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetIndex(Value); }
@@ -271,6 +279,8 @@ public:
 	inline void SetDataIntWidth(int Value) { m_DataInt.resize_width(max(Value, 1)); }
 	
 	inline void SetDataIntHeight(int Value) { m_DataInt.resize_height(max(Value, 1)); }
+	
+	inline void SetDataIntDepth(int Value) { m_DataInt.resize_depth(max(Value, 1)); }
 	
 	inline void SetDataInt(const CSubPath& SubPath, int Value) { m_DataInt.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	

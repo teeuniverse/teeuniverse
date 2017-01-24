@@ -44,11 +44,13 @@ public:
 	enum
 	{
 		TYPE_INDEX,
-		TYPE_INTDATA,
+		TYPE_DATAINT,
+		TYPE_GROUP,
 	};
 	
 	static inline CSubPath SubPath_Index(int Id0) { return CSubPath(TYPE_INDEX, Id0, 0, 0); }
-	static inline CSubPath SubPath_IntData(int Id0) { return CSubPath(TYPE_INTDATA, Id0, 0, 0); }
+	static inline CSubPath SubPath_DataInt(int Id0) { return CSubPath(TYPE_DATAINT, Id0, 0, 0); }
+	static inline CSubPath SubPath_Group(int Id0) { return CSubPath(TYPE_GROUP, Id0, 0, 0); }
 	
 	enum
 	{
@@ -62,17 +64,23 @@ public:
 		INDEX_TITLE,
 		INDEX_BORDERINDEX,
 		INDEX_BORDERCOLOR,
+		INDEX_GROUP,
 		INDEX,
 		IMAGEPATH,
-		INTDATA_ARRAYSIZE,
-		INTDATA_PTR,
-		INTDATA_ARRAY,
-		INTDATA_TITLE,
-		INTDATA_DESCRIPTION,
-		INTDATA_DEFAULTVALUE,
-		INTDATA_MINVALUE,
-		INTDATA_MAXVALUE,
-		INTDATA,
+		DATAINT_ARRAYSIZE,
+		DATAINT_PTR,
+		DATAINT_ARRAY,
+		DATAINT_TITLE,
+		DATAINT_DESCRIPTION,
+		DATAINT_DEFAULTVALUE,
+		DATAINT_MINVALUE,
+		DATAINT_MAXVALUE,
+		DATAINT_NULLVALUE,
+		DATAINT,
+		GROUP_ARRAYSIZE,
+		GROUP_PTR,
+		GROUP_ARRAY,
+		GROUP,
 	};
 	
 	class CIteratorIndex
@@ -94,24 +102,43 @@ public:
 	CIteratorIndex ReverseBeginIndex() const { return CIteratorIndex(m_Index.size()-1, true); }
 	CIteratorIndex ReverseEndIndex() const { return CIteratorIndex(-1, true); }
 	
-	class CIteratorIntData
+	class CIteratorDataInt
 	{
 	protected:
 		int m_Index;
 		bool m_Reverse;
 	public:
-		CIteratorIntData() : m_Index(0), m_Reverse(false) {}
-		CIteratorIntData(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
-		CIteratorIntData& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
-		CSubPath operator*() { return SubPath_IntData(m_Index); }
-		bool operator==(const CIteratorIntData& Iter2) { return Iter2.m_Index == m_Index; }
-		bool operator!=(const CIteratorIntData& Iter2) { return Iter2.m_Index != m_Index; }
+		CIteratorDataInt() : m_Index(0), m_Reverse(false) {}
+		CIteratorDataInt(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorDataInt& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_DataInt(m_Index); }
+		bool operator==(const CIteratorDataInt& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorDataInt& Iter2) { return Iter2.m_Index != m_Index; }
 	};
 	
-	CIteratorIntData BeginIntData() const { return CIteratorIntData(0, false); }
-	CIteratorIntData EndIntData() const { return CIteratorIntData(m_IntData.size(), false); }
-	CIteratorIntData ReverseBeginIntData() const { return CIteratorIntData(m_IntData.size()-1, true); }
-	CIteratorIntData ReverseEndIntData() const { return CIteratorIntData(-1, true); }
+	CIteratorDataInt BeginDataInt() const { return CIteratorDataInt(0, false); }
+	CIteratorDataInt EndDataInt() const { return CIteratorDataInt(m_DataInt.size(), false); }
+	CIteratorDataInt ReverseBeginDataInt() const { return CIteratorDataInt(m_DataInt.size()-1, true); }
+	CIteratorDataInt ReverseEndDataInt() const { return CIteratorDataInt(-1, true); }
+	
+	class CIteratorGroup
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorGroup() : m_Index(0), m_Reverse(false) {}
+		CIteratorGroup(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorGroup& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_Group(m_Index); }
+		bool operator==(const CIteratorGroup& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorGroup& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorGroup BeginGroup() const { return CIteratorGroup(0, false); }
+	CIteratorGroup EndGroup() const { return CIteratorGroup(m_Group.size(), false); }
+	CIteratorGroup ReverseBeginGroup() const { return CIteratorGroup(m_Group.size()-1, true); }
+	CIteratorGroup ReverseEndGroup() const { return CIteratorGroup(-1, true); }
 	
 	class CIndex
 	{
@@ -161,6 +188,7 @@ public:
 			tua_stringid m_Title;
 			tua_int32 m_BorderIndex;
 			tua_uint32 m_BorderColor;
+			tua_int32 m_Group;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIndex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_2& TuaType);
 		};
@@ -173,6 +201,7 @@ public:
 		string< _fixed_string_core<128> > m_Title;
 		int m_BorderIndex;
 		vec4 m_BorderColor;
+		int m_Group;
 	
 	public:
 		CIndex();
@@ -184,6 +213,7 @@ public:
 			m_Title.copy(Item.m_Title);
 			m_BorderIndex = Item.m_BorderIndex;
 			m_BorderColor = Item.m_BorderColor;
+			m_Group = Item.m_Group;
 		}
 		
 		void transfert(CAsset_ZoneType::CIndex& Item)
@@ -194,6 +224,7 @@ public:
 			m_Title.transfert(Item.m_Title);
 			m_BorderIndex = Item.m_BorderIndex;
 			m_BorderColor = Item.m_BorderColor;
+			m_Group = Item.m_Group;
 		}
 		
 		inline bool GetUsed() const { return m_Used; }
@@ -208,6 +239,8 @@ public:
 		
 		inline vec4 GetBorderColor() const { return m_BorderColor; }
 		
+		inline int GetGroup() const { return m_Group; }
+		
 		inline void SetUsed(bool Value) { m_Used = Value; }
 		
 		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
@@ -220,76 +253,82 @@ public:
 		
 		inline void SetBorderColor(vec4 Value) { m_BorderColor = Value; }
 		
+		inline void SetGroup(int Value) { m_Group = Value; }
+		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
 		}
 		
 	};
-	class CIntData
+	class CDataInt
 	{
 	public:
 		class CTuaType_0_1_0
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CIntData& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_1_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CDataInt& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_1_0& TuaType);
 		};
 		
 		class CTuaType_0_2_0
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIntData& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CDataInt& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 		class CTuaType_0_2_1
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIntData& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_1& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CDataInt& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 		class CTuaType_0_2_2
 		{
 		public:
-			tua_uint8 m_Title;
+			tua_stringid m_Title;
 			tua_stringid m_Description;
 			tua_int32 m_DefaultValue;
 			tua_int32 m_MinValue;
 			tua_int32 m_MaxValue;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIntData& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIntData& SysType, CTuaType_0_2_2& TuaType);
+			tua_int32 m_NullValue;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CDataInt& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 	
 	private:
-		bool m_Title;
+		string< _fixed_string_core<128> > m_Title;
 		string< _fixed_string_core<128> > m_Description;
 		int m_DefaultValue;
 		int m_MinValue;
 		int m_MaxValue;
+		int m_NullValue;
 	
 	public:
-		CIntData();
-		void copy(const CAsset_ZoneType::CIntData& Item)
+		CDataInt();
+		void copy(const CAsset_ZoneType::CDataInt& Item)
 		{
-			m_Title = Item.m_Title;
+			m_Title.copy(Item.m_Title);
 			m_Description.copy(Item.m_Description);
 			m_DefaultValue = Item.m_DefaultValue;
 			m_MinValue = Item.m_MinValue;
 			m_MaxValue = Item.m_MaxValue;
+			m_NullValue = Item.m_NullValue;
 		}
 		
-		void transfert(CAsset_ZoneType::CIntData& Item)
+		void transfert(CAsset_ZoneType::CDataInt& Item)
 		{
-			m_Title = Item.m_Title;
+			m_Title.transfert(Item.m_Title);
 			m_Description.transfert(Item.m_Description);
 			m_DefaultValue = Item.m_DefaultValue;
 			m_MinValue = Item.m_MinValue;
 			m_MaxValue = Item.m_MaxValue;
+			m_NullValue = Item.m_NullValue;
 		}
 		
-		inline bool GetTitle() const { return m_Title; }
+		inline const char* GetTitle() const { return m_Title.buffer(); }
 		
 		inline const char* GetDescription() const { return m_Description.buffer(); }
 		
@@ -299,7 +338,9 @@ public:
 		
 		inline int GetMaxValue() const { return m_MaxValue; }
 		
-		inline void SetTitle(bool Value) { m_Title = Value; }
+		inline int GetNullValue() const { return m_NullValue; }
+		
+		inline void SetTitle(const char* Value) { m_Title.copy(Value); }
 		
 		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
 		
@@ -308,6 +349,8 @@ public:
 		inline void SetMinValue(int Value) { m_MinValue = Value; }
 		
 		inline void SetMaxValue(int Value) { m_MaxValue = Value; }
+		
+		inline void SetNullValue(int Value) { m_NullValue = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -345,16 +388,18 @@ public:
 	public:
 		CTuaArray m_Index;
 		CAssetPath::CTuaType m_ImagePath;
-		CTuaArray m_IntData;
+		CTuaArray m_DataInt;
+		CTuaArray m_Group;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
 
 private:
-	array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> > m_Index;
+	array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > > m_Index;
 	CAssetPath m_ImagePath;
-	array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> > m_IntData;
+	array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > > m_DataInt;
+	array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > > m_Group;
 
 public:
 	template<typename T>
@@ -382,7 +427,8 @@ public:
 		CAsset::copy(Item);
 		m_Index.copy(Item.m_Index);
 		m_ImagePath = Item.m_ImagePath;
-		m_IntData.copy(Item.m_IntData);
+		m_DataInt.copy(Item.m_DataInt);
+		m_Group.copy(Item.m_Group);
 	}
 	
 	void transfert(CAsset_ZoneType& Item)
@@ -390,20 +436,23 @@ public:
 		CAsset::transfert(Item);
 		m_Index.transfert(Item.m_Index);
 		m_ImagePath = Item.m_ImagePath;
-		m_IntData.transfert(Item.m_IntData);
+		m_DataInt.transfert(Item.m_DataInt);
+		m_Group.transfert(Item.m_Group);
 	}
 	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
 	
 	inline const CAsset_ZoneType::CIndex* GetIndexPtr() const { return m_Index.base_ptr(); }
 	
-	inline const array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> >& GetIndexArray() const { return m_Index; }
-	inline array< CAsset_ZoneType::CIndex, allocator_copy<CAsset_ZoneType::CIndex> >& GetIndexArray() { return m_Index; }
+	inline const array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > >& GetIndexArray() const { return m_Index; }
+	inline array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > >& GetIndexArray() { return m_Index; }
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Index.size());
-		return m_Index[SubPath.GetId()];
+		{
+			return m_Index[SubPath.GetId()];
+		}
 	}
 	
 	inline bool GetIndexUsed(const CSubPath& SubPath) const
@@ -448,54 +497,85 @@ public:
 		else return 1.0f;
 	}
 	
+	inline int GetIndexGroup(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetGroup();
+		else return 0;
+	}
+	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
 	
-	inline int GetIntDataArraySize() const { return m_IntData.size(); }
+	inline int GetDataIntArraySize() const { return m_DataInt.size(); }
 	
-	inline const CAsset_ZoneType::CIntData* GetIntDataPtr() const { return m_IntData.base_ptr(); }
+	inline const CAsset_ZoneType::CDataInt* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
 	
-	inline const array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> >& GetIntDataArray() const { return m_IntData; }
-	inline array< CAsset_ZoneType::CIntData, allocator_copy<CAsset_ZoneType::CIntData> >& GetIntDataArray() { return m_IntData; }
+	inline const array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > >& GetDataIntArray() const { return m_DataInt; }
+	inline array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > >& GetDataIntArray() { return m_DataInt; }
 	
-	inline const CAsset_ZoneType::CIntData& GetIntData(const CSubPath& SubPath) const
+	inline const CAsset_ZoneType::CDataInt& GetDataInt(const CSubPath& SubPath) const
 	{
-		assert(SubPath.GetId() < m_IntData.size());
-		return m_IntData[SubPath.GetId()];
+		assert(SubPath.GetId() < m_DataInt.size());
+		{
+			return m_DataInt[SubPath.GetId()];
+		}
 	}
 	
-	inline bool GetIntDataTitle(const CSubPath& SubPath) const
+	inline const char* GetDataIntTitle(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			return m_IntData[SubPath.GetId()].GetTitle();
-		else return false;
-	}
-	
-	inline const char* GetIntDataDescription(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_IntData.size())
-			return m_IntData[SubPath.GetId()].GetDescription();
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetTitle();
 		else return NULL;
 	}
 	
-	inline int GetIntDataDefaultValue(const CSubPath& SubPath) const
+	inline const char* GetDataIntDescription(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			return m_IntData[SubPath.GetId()].GetDefaultValue();
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetDescription();
+		else return NULL;
+	}
+	
+	inline int GetDataIntDefaultValue(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetDefaultValue();
 		else return 0;
 	}
 	
-	inline int GetIntDataMinValue(const CSubPath& SubPath) const
+	inline int GetDataIntMinValue(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			return m_IntData[SubPath.GetId()].GetMinValue();
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetMinValue();
 		else return 0;
 	}
 	
-	inline int GetIntDataMaxValue(const CSubPath& SubPath) const
+	inline int GetDataIntMaxValue(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			return m_IntData[SubPath.GetId()].GetMaxValue();
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetMaxValue();
 		else return 0;
+	}
+	
+	inline int GetDataIntNullValue(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_DataInt.size())
+			return m_DataInt[SubPath.GetId()].GetNullValue();
+		else return 0;
+	}
+	
+	inline int GetGroupArraySize() const { return m_Group.size(); }
+	
+	inline const string< _fixed_string_core<128> >* GetGroupPtr() const { return m_Group.base_ptr(); }
+	
+	inline const array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > >& GetGroupArray() const { return m_Group; }
+	inline array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > >& GetGroupArray() { return m_Group; }
+	
+	inline const char* GetGroup(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_Group.size());
+		{
+			return m_Group[SubPath.GetId()].buffer();
+		}
 	}
 	
 	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
@@ -544,46 +624,68 @@ public:
 			m_Index[SubPath.GetId()].SetBorderColor(Value);
 	}
 	
+	inline void SetIndexGroup(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetGroup(Value);
+	}
+	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
-	inline void SetIntDataArraySize(int Value) { m_IntData.resize(Value); }
+	inline void SetDataIntArraySize(int Value) { m_DataInt.resize(Value); }
 	
-	inline void SetIntData(const CSubPath& SubPath, const CAsset_ZoneType::CIntData& Value)
+	inline void SetDataInt(const CSubPath& SubPath, const CAsset_ZoneType::CDataInt& Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
+		if(SubPath.GetId() < m_DataInt.size())
 		{
-			m_IntData[SubPath.GetId()].copy(Value);
+			m_DataInt[SubPath.GetId()].copy(Value);
 		}
 	}
 	
-	inline void SetIntDataTitle(const CSubPath& SubPath, bool Value)
+	inline void SetDataIntTitle(const CSubPath& SubPath, const char* Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			m_IntData[SubPath.GetId()].SetTitle(Value);
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetTitle(Value);
 	}
 	
-	inline void SetIntDataDescription(const CSubPath& SubPath, const char* Value)
+	inline void SetDataIntDescription(const CSubPath& SubPath, const char* Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			m_IntData[SubPath.GetId()].SetDescription(Value);
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetDescription(Value);
 	}
 	
-	inline void SetIntDataDefaultValue(const CSubPath& SubPath, int Value)
+	inline void SetDataIntDefaultValue(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			m_IntData[SubPath.GetId()].SetDefaultValue(Value);
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetDefaultValue(Value);
 	}
 	
-	inline void SetIntDataMinValue(const CSubPath& SubPath, int Value)
+	inline void SetDataIntMinValue(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			m_IntData[SubPath.GetId()].SetMinValue(Value);
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetMinValue(Value);
 	}
 	
-	inline void SetIntDataMaxValue(const CSubPath& SubPath, int Value)
+	inline void SetDataIntMaxValue(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() < m_IntData.size())
-			m_IntData[SubPath.GetId()].SetMaxValue(Value);
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetMaxValue(Value);
+	}
+	
+	inline void SetDataIntNullValue(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_DataInt.size())
+			m_DataInt[SubPath.GetId()].SetNullValue(Value);
+	}
+	
+	inline void SetGroupArraySize(int Value) { m_Group.resize(Value); }
+	
+	inline void SetGroup(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() < m_Group.size())
+		{
+			m_Group[SubPath.GetId()].copy(Value);
+		}
 	}
 	
 	inline int AddIndex()
@@ -593,28 +695,43 @@ public:
 		return Id;
 	}
 	
-	inline int AddIntData()
+	inline int AddDataInt()
 	{
-		int Id = m_IntData.size();
-		m_IntData.increment();
+		int Id = m_DataInt.size();
+		m_DataInt.increment();
+		return Id;
+	}
+	
+	inline int AddGroup()
+	{
+		int Id = m_Group.size();
+		m_Group.increment();
 		return Id;
 	}
 	
 	inline void AddAtIndex(int Index) { m_Index.insertat_and_init(Index); }
 	
-	inline void AddAtIntData(int Index) { m_IntData.insertat_and_init(Index); }
+	inline void AddAtDataInt(int Index) { m_DataInt.insertat_and_init(Index); }
+	
+	inline void AddAtGroup(int Index) { m_Group.insertat_and_init(Index); }
 	
 	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
 	
-	inline void DeleteIntData(const CSubPath& SubPath) { m_IntData.remove_index(SubPath.GetId()); }
+	inline void DeleteDataInt(const CSubPath& SubPath) { m_DataInt.remove_index(SubPath.GetId()); }
+	
+	inline void DeleteGroup(const CSubPath& SubPath) { m_Group.remove_index(SubPath.GetId()); }
 	
 	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { m_Index.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveIntData(const CSubPath& SubPath, int RelMove) { m_IntData.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveDataInt(const CSubPath& SubPath, int RelMove) { m_DataInt.relative_move(SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveGroup(const CSubPath& SubPath, int RelMove) { m_Group.relative_move(SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Index.size()); }
 	
-	inline bool IsValidIntData(const CSubPath& SubPath) const { return (SubPath.GetId() < m_IntData.size()); }
+	inline bool IsValidDataInt(const CSubPath& SubPath) const { return (SubPath.GetId() < m_DataInt.size()); }
+	
+	inline bool IsValidGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Group.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
@@ -623,9 +740,9 @@ public:
 			m_Index[i].AssetPathOperation(Operation);
 		}
 		Operation.Apply(m_ImagePath);
-		for(int i=0; i<m_IntData.size(); i++)
+		for(int i=0; i<m_DataInt.size(); i++)
 		{
-			m_IntData[i].AssetPathOperation(Operation);
+			m_DataInt[i].AssetPathOperation(Operation);
 		}
 	}
 	

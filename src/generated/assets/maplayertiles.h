@@ -65,6 +65,7 @@ public:
 		COLOR,
 		TILE_WIDTH,
 		TILE_HEIGHT,
+		TILE_DEPTH,
 		TILE_PTR,
 		TILE_ARRAY,
 		TILE_INDEX,
@@ -203,7 +204,7 @@ private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
 	vec4 m_Color;
-	array2d< CTile, allocator_copy<CTile> > m_Tile;
+	array2d< CTile, allocator_copy< CTile > > m_Tile;
 	bool m_Visibility;
 	int m_PositionX;
 	int m_PositionY;
@@ -264,10 +265,12 @@ public:
 	
 	inline int GetTileHeight() const { return m_Tile.get_height(); }
 	
+	inline int GetTileDepth() const { return m_Tile.get_depth(); }
+	
 	inline const CAsset_MapLayerTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_copy<CTile> >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_copy<CTile> >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile, allocator_copy< CTile > >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile, allocator_copy< CTile > >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapLayerTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
@@ -290,6 +293,8 @@ public:
 	inline void SetTileWidth(int Value) { m_Tile.resize_width(max(Value, 1)); }
 	
 	inline void SetTileHeight(int Value) { m_Tile.resize_height(max(Value, 1)); }
+	
+	inline void SetTileDepth(int Value) { m_Tile.resize_depth(max(Value, 1)); }
 	
 	inline void SetTile(const CSubPath& SubPath, const CAsset_MapLayerTiles::CTile& Value) { m_Tile.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	

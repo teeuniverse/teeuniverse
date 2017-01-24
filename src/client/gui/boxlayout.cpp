@@ -57,10 +57,11 @@ void CBoxLayout::Clear()
 	m_Childs.clear();
 }
 
-void CBoxLayout::Add(CWidget* pWidget)
+void CBoxLayout::Add(CWidget* pWidget, bool Filling)
 {
 	CChild& Child = m_Childs.increment();
 	Child.m_pWidget = pWidget;
+	Child.m_Filling = Filling;
 }
 
 void CBoxLayout::Update(bool ParentEnabled)
@@ -122,15 +123,24 @@ void CBoxLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visibili
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
 		
-		if(LineWidth + m_Childs[i].m_pWidget->GetBS().minw > m_ClipRect.w)
+		if(m_Childs[i].m_Filling)
 		{
-			m_ContentHeight += LineHeight;
+			m_ContentHeight += LineHeight + m_Childs[i].m_pWidget->GetBS().minh;
 			LineWidth = 0;
 			LineHeight = 0;
 		}
-		
-		LineWidth += m_Childs[i].m_pWidget->GetBS().minw;
-		LineHeight = max(LineHeight, m_Childs[i].m_pWidget->GetBS().minh);
+		else
+		{
+			if(LineWidth + m_Childs[i].m_pWidget->GetBS().minw > m_ClipRect.w)
+			{
+				m_ContentHeight += LineHeight;
+				LineWidth = 0;
+				LineHeight = 0;
+			}
+			
+			LineWidth += m_Childs[i].m_pWidget->GetBS().minw;
+			LineHeight = max(LineHeight, m_Childs[i].m_pWidget->GetBS().minh);
+		}
 	}
 	m_ContentHeight += LineHeight;
 	
@@ -163,39 +173,60 @@ void CBoxLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visibili
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
 		
-		if(LineWidth + m_Childs[i].m_pWidget->GetBS().minw > m_ClipRect.w)
+		if(m_Childs[i].m_Filling)
 		{
 			PosY += LineHeight;
 			m_ContentHeight += LineHeight;
+		
+			CRect ChildRect(
+				m_ClipRect.x,
+				PosY,
+				m_ClipRect.w,
+				m_Childs[i].m_pWidget->GetBS().minh
+			);
+			m_Childs[i].m_pWidget->UpdatePosition(ChildRect, m_ClipRect);
+			
+			PosY += m_Childs[i].m_pWidget->GetBS().minh;
+			m_ContentHeight += m_Childs[i].m_pWidget->GetBS().minh;
 			LineWidth = 0;
 			LineHeight = 0;
 		}
-		
-		if(Localization()->GetWritingDirection() == CLocalization::DIRECTION_RTL)
-		{
-			CRect ChildRect(
-				m_ClipRect.x + m_ClipRect.w - LineWidth - m_Childs[i].m_pWidget->GetBS().minw,
-				PosY,
-				m_Childs[i].m_pWidget->GetBS().minw,
-				m_Childs[i].m_pWidget->GetBS().minh
-			);
-			
-			m_Childs[i].m_pWidget->UpdatePosition(ChildRect, m_ClipRect);
-		}
 		else
 		{
-			CRect ChildRect(
-				m_ClipRect.x + LineWidth,
-				PosY,
-				m_Childs[i].m_pWidget->GetBS().minw,
-				m_Childs[i].m_pWidget->GetBS().minh
-			);
+			if(LineWidth + m_Childs[i].m_pWidget->GetBS().minw > m_ClipRect.w)
+			{
+				PosY += LineHeight;
+				m_ContentHeight += LineHeight;
+				LineWidth = 0;
+				LineHeight = 0;
+			}
 			
-			m_Childs[i].m_pWidget->UpdatePosition(ChildRect, m_ClipRect);
-		}
+			if(Localization()->GetWritingDirection() == CLocalization::DIRECTION_RTL)
+			{
+				CRect ChildRect(
+					m_ClipRect.x + m_ClipRect.w - LineWidth - m_Childs[i].m_pWidget->GetBS().minw,
+					PosY,
+					m_Childs[i].m_pWidget->GetBS().minw,
+					m_Childs[i].m_pWidget->GetBS().minh
+				);
+				
+				m_Childs[i].m_pWidget->UpdatePosition(ChildRect, m_ClipRect);
+			}
+			else
+			{
+				CRect ChildRect(
+					m_ClipRect.x + LineWidth,
+					PosY,
+					m_Childs[i].m_pWidget->GetBS().minw,
+					m_Childs[i].m_pWidget->GetBS().minh
+				);
+				
+				m_Childs[i].m_pWidget->UpdatePosition(ChildRect, m_ClipRect);
+			}
 		
-		LineWidth += m_Childs[i].m_pWidget->GetBS().minw;
-		LineHeight = max(LineHeight, m_Childs[i].m_pWidget->GetBS().minh);
+			LineWidth += m_Childs[i].m_pWidget->GetBS().minw;
+			LineHeight = max(LineHeight, m_Childs[i].m_pWidget->GetBS().minh);
+		}
 	}
 	m_ContentHeight += LineHeight;
 	

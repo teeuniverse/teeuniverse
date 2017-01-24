@@ -70,6 +70,7 @@ public:
 	void RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh);
 	void RenderObjectCurve(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos);
 	void RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh = false);
+	void RenderZoneIntData(CAssetPath ZonePath, CAssetPath ZoneTypePath);
 	
 	void RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh = false);
 	void RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh = false);

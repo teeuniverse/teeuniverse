@@ -71,10 +71,13 @@ public:
 	CAssetPath m_Path_Box_Panel;
 	CAssetPath m_Path_Box_Menu;
 	CAssetPath m_Path_Box_Dialog;
+	CAssetPath m_Path_Box_DialogPanel;
+	CAssetPath m_Path_Box_PanelHeader;
 	CAssetPath m_Path_Box_SubList;
 	CAssetPath m_Path_Box_Statusbar;
 	
 	CAssetPath m_Path_Label_Text;
+	CAssetPath m_Path_Label_Group;
 	CAssetPath m_Path_Label_Header;
 	CAssetPath m_Path_Label_DialogMessage;
 	CAssetPath m_Path_Label_Compose;

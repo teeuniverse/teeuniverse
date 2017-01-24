@@ -58,6 +58,7 @@ public:
 		TILINGENABLED,
 		DATA_WIDTH,
 		DATA_HEIGHT,
+		DATA_DEPTH,
 		DATA_PTR,
 		DATA_ARRAY,
 		DATA,
@@ -124,7 +125,7 @@ private:
 	int m_GridSpacing;
 	int m_TexelSize;
 	bool m_TilingEnabled;
-	array2d< uint8, allocator_default<uint8> > m_Data;
+	array2d< uint8, allocator_default< uint8 > > m_Data;
 	CTextureHandle m_Texture;
 
 public:
@@ -188,10 +189,12 @@ public:
 	
 	inline int GetDataHeight() const { return m_Data.get_height(); }
 	
+	inline int GetDataDepth() const { return m_Data.get_depth(); }
+	
 	inline const uint8* GetDataPtr() const { return m_Data.base_ptr(); }
 	
-	inline const array2d< uint8, allocator_default<uint8> >& GetDataArray() const { return m_Data; }
-	inline array2d< uint8, allocator_default<uint8> >& GetDataArray() { return m_Data; }
+	inline const array2d< uint8, allocator_default< uint8 > >& GetDataArray() const { return m_Data; }
+	inline array2d< uint8, allocator_default< uint8 > >& GetDataArray() { return m_Data; }
 	
 	inline uint8 GetData(const CSubPath& SubPath) const { return m_Data.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
@@ -212,6 +215,8 @@ public:
 	inline void SetDataWidth(int Value) { m_Data.resize_width(max(Value, 1)); }
 	
 	inline void SetDataHeight(int Value) { m_Data.resize_height(max(Value, 1)); }
+	
+	inline void SetDataDepth(int Value) { m_Data.resize_depth(max(Value, 1)); }
 	
 	inline void SetData(const CSubPath& SubPath, uint8 Value) { m_Data.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
 	

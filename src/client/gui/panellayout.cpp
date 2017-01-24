@@ -310,7 +310,10 @@ void CHPanelLayout::OnMouseMove()
 		}
 		
 		if(m_Childs[i].m_SliderRect.IsInside(Context()->GetMousePos()) || m_Childs[i].m_SliderClicked)
-			m_MouseOver = true;
+		{
+			if(i<m_Childs.size()-1)
+				m_MouseOver = true;
+		}
 		
 		m_Childs[i].m_pWidget->OnMouseMove();
 	}

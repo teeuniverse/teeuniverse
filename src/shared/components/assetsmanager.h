@@ -65,6 +65,8 @@ public:
 	int m_PackageId_UnivDDNet;
 	CAssetPath m_Path_ZoneType_DDGame;
 	CAssetPath m_Path_ZoneType_DDFront;
+	CAssetPath m_Path_ZoneType_DDTele;
+	CAssetPath m_Path_ZoneType_DDSwitch;
 	
 	int m_PackageId_UnivOpenFNG;
 	CAssetPath m_Path_ZoneType_OpenFNG;

@@ -94,14 +94,29 @@ public:
 class CExternalIntegerEdit : public CAbstractIntegerEdit
 {
 protected:
-	int* m_Memory;
+	int* m_pMemory;
 
 protected:
 	virtual int GetValue() const;
 	virtual void SetValue(int Value);
 	
 public:
-	CExternalIntegerEdit(class CGui *pConfig, int* m_Memory);
+	CExternalIntegerEdit(class CGui *pConfig, int* pMemory);
+};
+
+class CBoundedExternalIntegerEdit : public CAbstractIntegerEdit
+{
+protected:
+	int* m_pMemory;
+	int m_MinVal;
+	int m_MaxVal;
+
+protected:
+	virtual int GetValue() const;
+	virtual void SetValue(int Value);
+	
+public:
+	CBoundedExternalIntegerEdit(class CGui *pConfig, int* pMemory, int MinVal, int MaxVal);
 };
 
 }

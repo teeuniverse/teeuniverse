@@ -498,6 +498,19 @@ void CViewMap::RenderView()
 	
 	MapRenderer()->RenderMap_Zones(MapPath, Color);
 	
+	{
+		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+		if(pLayer)
+		{
+			const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(pLayer->GetZoneTypePath());
+			if(pZoneType && pZoneType->GetDataIntArraySize() > 0)
+			{
+				MapRenderer()->UnsetGroup();
+				MapRenderer()->RenderZoneIntData(AssetsEditor()->GetEditedAssetPath(), pLayer->GetZoneTypePath());
+			}
+		}
+	}
+	
 	//Draw grid
 	if(m_ShowGrid)
 	{

@@ -207,7 +207,7 @@ private:
 	CAssetPath m_WalkPath;
 	CAssetPath m_ControlledJumpPath;
 	CAssetPath m_UncontrolledJumpPath;
-	array< CAsset_Character::CPart, allocator_copy<CAsset_Character::CPart> > m_Part;
+	array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > > m_Part;
 
 public:
 	template<typename T>
@@ -262,13 +262,15 @@ public:
 	
 	inline const CAsset_Character::CPart* GetPartPtr() const { return m_Part.base_ptr(); }
 	
-	inline const array< CAsset_Character::CPart, allocator_copy<CAsset_Character::CPart> >& GetPartArray() const { return m_Part; }
-	inline array< CAsset_Character::CPart, allocator_copy<CAsset_Character::CPart> >& GetPartArray() { return m_Part; }
+	inline const array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > >& GetPartArray() const { return m_Part; }
+	inline array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > >& GetPartArray() { return m_Part; }
 	
 	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Part.size());
-		return m_Part[SubPath.GetId()];
+		{
+			return m_Part[SubPath.GetId()];
+		}
 	}
 	
 	inline const char* GetPartName(const CSubPath& SubPath) const

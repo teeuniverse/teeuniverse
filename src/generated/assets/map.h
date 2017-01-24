@@ -215,10 +215,10 @@ public:
 	
 
 private:
-	array< CAssetPath, allocator_default<CAssetPath> > m_BgGroup;
-	array< CAssetPath, allocator_default<CAssetPath> > m_FgGroup;
-	array< CAssetPath, allocator_default<CAssetPath> > m_ZoneLayer;
-	array< CAssetPath, allocator_default<CAssetPath> > m_EntityLayer;
+	array< CAssetPath, allocator_default< CAssetPath > > m_BgGroup;
+	array< CAssetPath, allocator_default< CAssetPath > > m_FgGroup;
+	array< CAssetPath, allocator_default< CAssetPath > > m_ZoneLayer;
+	array< CAssetPath, allocator_default< CAssetPath > > m_EntityLayer;
 	vec2 m_CameraPosition;
 	float m_CameraZoom;
 	bool m_ShowEntities;
@@ -276,52 +276,60 @@ public:
 	
 	inline const CAssetPath* GetBgGroupPtr() const { return m_BgGroup.base_ptr(); }
 	
-	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetBgGroupArray() const { return m_BgGroup; }
-	inline array< CAssetPath, allocator_default<CAssetPath> >& GetBgGroupArray() { return m_BgGroup; }
+	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetBgGroupArray() const { return m_BgGroup; }
+	inline array< CAssetPath, allocator_default< CAssetPath > >& GetBgGroupArray() { return m_BgGroup; }
 	
 	inline CAssetPath GetBgGroup(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_BgGroup.size());
-		return m_BgGroup[SubPath.GetId()];
+		{
+			return m_BgGroup[SubPath.GetId()];
+		}
 	}
 	
 	inline int GetFgGroupArraySize() const { return m_FgGroup.size(); }
 	
 	inline const CAssetPath* GetFgGroupPtr() const { return m_FgGroup.base_ptr(); }
 	
-	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetFgGroupArray() const { return m_FgGroup; }
-	inline array< CAssetPath, allocator_default<CAssetPath> >& GetFgGroupArray() { return m_FgGroup; }
+	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetFgGroupArray() const { return m_FgGroup; }
+	inline array< CAssetPath, allocator_default< CAssetPath > >& GetFgGroupArray() { return m_FgGroup; }
 	
 	inline CAssetPath GetFgGroup(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_FgGroup.size());
-		return m_FgGroup[SubPath.GetId()];
+		{
+			return m_FgGroup[SubPath.GetId()];
+		}
 	}
 	
 	inline int GetZoneLayerArraySize() const { return m_ZoneLayer.size(); }
 	
 	inline const CAssetPath* GetZoneLayerPtr() const { return m_ZoneLayer.base_ptr(); }
 	
-	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetZoneLayerArray() const { return m_ZoneLayer; }
-	inline array< CAssetPath, allocator_default<CAssetPath> >& GetZoneLayerArray() { return m_ZoneLayer; }
+	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetZoneLayerArray() const { return m_ZoneLayer; }
+	inline array< CAssetPath, allocator_default< CAssetPath > >& GetZoneLayerArray() { return m_ZoneLayer; }
 	
 	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_ZoneLayer.size());
-		return m_ZoneLayer[SubPath.GetId()];
+		{
+			return m_ZoneLayer[SubPath.GetId()];
+		}
 	}
 	
 	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
 	
 	inline const CAssetPath* GetEntityLayerPtr() const { return m_EntityLayer.base_ptr(); }
 	
-	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() const { return m_EntityLayer; }
-	inline array< CAssetPath, allocator_default<CAssetPath> >& GetEntityLayerArray() { return m_EntityLayer; }
+	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetEntityLayerArray() const { return m_EntityLayer; }
+	inline array< CAssetPath, allocator_default< CAssetPath > >& GetEntityLayerArray() { return m_EntityLayer; }
 	
 	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_EntityLayer.size());
-		return m_EntityLayer[SubPath.GetId()];
+		{
+			return m_EntityLayer[SubPath.GetId()];
+		}
 	}
 	
 	inline vec2 GetCameraPosition() const { return m_CameraPosition; }

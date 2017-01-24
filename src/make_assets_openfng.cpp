@@ -60,6 +60,12 @@ int main(int argc, char* argv[])
 		pAsset->SetName("openfng");
 		pAsset->SetImagePath(ImageZonesPath);
 		
+		int GroupId_Shrine = pAsset->AddGroup();
+		int GroupId_Placeholder = pAsset->AddGroup();
+		
+		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Shrine), "Shrines");
+		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Placeholder), "Placeholder");
+		
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexUsed(SubPath, false);
 		
@@ -76,6 +82,7 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
 			pAsset->SetIndexBorderColor(SubPath, vec4(98.0f/255.0f, 188.0f/255.0f, 0.0f/255.0f, 1.0f));
+			pAsset->SetIndexGroup(SubPath, GroupId_Shrine);
 		}
 		
 		{
@@ -85,6 +92,7 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
 			pAsset->SetIndexBorderColor(SubPath, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			pAsset->SetIndexGroup(SubPath, GroupId_Shrine);
 		}
 		
 		{
@@ -94,6 +102,7 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 1);
 			pAsset->SetIndexBorderColor(SubPath, vec4(0.0f, 0.0f, 1.0f, 1.0f));
+			pAsset->SetIndexGroup(SubPath, GroupId_Shrine);
 		}
 		
 		{
@@ -102,6 +111,7 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 0);
+			pAsset->SetIndexGroup(SubPath, GroupId_Placeholder);
 		}
 		
 		{
@@ -110,6 +120,7 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexColor(SubPath, 1.0f);
 			pAsset->SetIndexUsed(SubPath, true);
 			pAsset->SetIndexBorderIndex(SubPath, 0);
+			pAsset->SetIndexGroup(SubPath, GroupId_Placeholder);
 		}
 	}
 	

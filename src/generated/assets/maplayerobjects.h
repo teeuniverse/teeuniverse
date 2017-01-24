@@ -318,7 +318,7 @@ public:
 		vec2 m_Size;
 		float m_Angle;
 		CAssetPath m_StylePath;
-		array< CVertex, allocator_copy<CVertex> > m_Vertex;
+		array< CVertex, allocator_copy< CVertex > > m_Vertex;
 		int m_PathType;
 		int m_FillType;
 		int m_LineType;
@@ -374,13 +374,15 @@ public:
 		
 		inline const CAsset_MapLayerObjects::CVertex* GetVertexPtr() const { return m_Vertex.base_ptr(); }
 		
-		inline const array< CVertex, allocator_copy<CVertex> >& GetVertexArray() const { return m_Vertex; }
-		inline array< CVertex, allocator_copy<CVertex> >& GetVertexArray() { return m_Vertex; }
+		inline const array< CVertex, allocator_copy< CVertex > >& GetVertexArray() const { return m_Vertex; }
+		inline array< CVertex, allocator_copy< CVertex > >& GetVertexArray() { return m_Vertex; }
 		
 		inline const CAsset_MapLayerObjects::CVertex& GetVertex(const CSubPath& SubPath) const
 		{
 			assert(SubPath.GetId() < m_Vertex.size());
-			return m_Vertex[SubPath.GetId()];
+			{
+				return m_Vertex[SubPath.GetId()];
+			}
 		}
 		
 		inline vec2 GetVertexPosition(const CSubPath& SubPath) const
@@ -646,7 +648,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAsset_MapLayerObjects::CObject, allocator_copy<CAsset_MapLayerObjects::CObject> > m_Object;
+	array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > > m_Object;
 	bool m_Visibility;
 
 public:
@@ -695,13 +697,15 @@ public:
 	
 	inline const CAsset_MapLayerObjects::CObject* GetObjectPtr() const { return m_Object.base_ptr(); }
 	
-	inline const array< CAsset_MapLayerObjects::CObject, allocator_copy<CAsset_MapLayerObjects::CObject> >& GetObjectArray() const { return m_Object; }
-	inline array< CAsset_MapLayerObjects::CObject, allocator_copy<CAsset_MapLayerObjects::CObject> >& GetObjectArray() { return m_Object; }
+	inline const array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > >& GetObjectArray() const { return m_Object; }
+	inline array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > >& GetObjectArray() { return m_Object; }
 	
 	inline const CAsset_MapLayerObjects::CObject& GetObject(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Object.size());
-		return m_Object[SubPath.GetId()];
+		{
+			return m_Object[SubPath.GetId()];
+		}
 	}
 	
 	inline vec2 GetObjectPosition(const CSubPath& SubPath) const
@@ -774,12 +778,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CVertex, allocator_copy<CVertex> >& GetObjectVertexArray(const CSubPath& SubPath) const
+	inline const array< CVertex, allocator_copy< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();
 	}
-	inline array< CVertex, allocator_copy<CVertex> >& GetObjectVertexArray(const CSubPath& SubPath)
+	inline array< CVertex, allocator_copy< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();

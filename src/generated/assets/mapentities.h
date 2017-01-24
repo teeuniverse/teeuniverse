@@ -205,7 +205,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_Entity;
+	array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > > m_Entity;
 	bool m_Visibility;
 
 public:
@@ -252,13 +252,15 @@ public:
 	
 	inline const CAsset_MapEntities::CEntity* GetEntityPtr() const { return m_Entity.base_ptr(); }
 	
-	inline const array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> >& GetEntityArray() const { return m_Entity; }
-	inline array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> >& GetEntityArray() { return m_Entity; }
+	inline const array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > >& GetEntityArray() const { return m_Entity; }
+	inline array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > >& GetEntityArray() { return m_Entity; }
 	
 	inline const CAsset_MapEntities::CEntity& GetEntity(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Entity.size());
-		return m_Entity[SubPath.GetId()];
+		{
+			return m_Entity[SubPath.GetId()];
+		}
 	}
 	
 	inline CAssetPath GetEntityTypePath(const CSubPath& SubPath) const

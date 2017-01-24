@@ -364,8 +364,8 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_DefaultSkinPath;
-	array< CAsset_Skeleton::CBone, allocator_copy<CAsset_Skeleton::CBone> > m_Bone;
-	array< CAsset_Skeleton::CLayer, allocator_copy<CAsset_Skeleton::CLayer> > m_Layer;
+	array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > > m_Bone;
+	array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > > m_Layer;
 
 public:
 	template<typename T>
@@ -414,13 +414,15 @@ public:
 	
 	inline const CAsset_Skeleton::CBone* GetBonePtr() const { return m_Bone.base_ptr(); }
 	
-	inline const array< CAsset_Skeleton::CBone, allocator_copy<CAsset_Skeleton::CBone> >& GetBoneArray() const { return m_Bone; }
-	inline array< CAsset_Skeleton::CBone, allocator_copy<CAsset_Skeleton::CBone> >& GetBoneArray() { return m_Bone; }
+	inline const array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > >& GetBoneArray() const { return m_Bone; }
+	inline array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > >& GetBoneArray() { return m_Bone; }
 	
 	inline const CAsset_Skeleton::CBone& GetBone(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Bone.size());
-		return m_Bone[SubPath.GetId()];
+		{
+			return m_Bone[SubPath.GetId()];
+		}
 	}
 	
 	inline float GetBoneLength(const CSubPath& SubPath) const
@@ -504,13 +506,15 @@ public:
 	
 	inline const CAsset_Skeleton::CLayer* GetLayerPtr() const { return m_Layer.base_ptr(); }
 	
-	inline const array< CAsset_Skeleton::CLayer, allocator_copy<CAsset_Skeleton::CLayer> >& GetLayerArray() const { return m_Layer; }
-	inline array< CAsset_Skeleton::CLayer, allocator_copy<CAsset_Skeleton::CLayer> >& GetLayerArray() { return m_Layer; }
+	inline const array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > >& GetLayerArray() const { return m_Layer; }
+	inline array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > >& GetLayerArray() { return m_Layer; }
 	
 	inline const CAsset_Skeleton::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
-		return m_Layer[SubPath.GetId()];
+		{
+			return m_Layer[SubPath.GetId()];
+		}
 	}
 	
 	inline const char* GetLayerName(const CSubPath& SubPath) const

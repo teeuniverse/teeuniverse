@@ -155,7 +155,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAssetPath, allocator_default<CAssetPath> > m_Layer;
+	array< CAssetPath, allocator_default< CAssetPath > > m_Layer;
 	vec2 m_Position;
 	vec2 m_HardParallax;
 	bool m_Clipping;
@@ -217,13 +217,15 @@ public:
 	
 	inline const CAssetPath* GetLayerPtr() const { return m_Layer.base_ptr(); }
 	
-	inline const array< CAssetPath, allocator_default<CAssetPath> >& GetLayerArray() const { return m_Layer; }
-	inline array< CAssetPath, allocator_default<CAssetPath> >& GetLayerArray() { return m_Layer; }
+	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetLayerArray() const { return m_Layer; }
+	inline array< CAssetPath, allocator_default< CAssetPath > >& GetLayerArray() { return m_Layer; }
 	
 	inline CAssetPath GetLayer(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
-		return m_Layer[SubPath.GetId()];
+		{
+			return m_Layer[SubPath.GetId()];
+		}
 	}
 	
 	inline vec2 GetPosition() const { return m_Position; }

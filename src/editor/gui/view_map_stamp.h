@@ -29,6 +29,7 @@ class CCursorTool_MapStamp : public CViewMap::CCursorTool
 protected:
 	bool m_DragEnabled;
 	bool m_SelectionEnabled;
+	array2d<int> m_IntDataSelection;
 	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > m_TileSelection;
 	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_QuadSelection;
 	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_EntitySelection;
@@ -47,7 +48,7 @@ public:
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
-	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index);
+	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const array<int>& DataInt);
 	void PaletteCallback_SelectEntityType(CAssetPath ZoneTypePath);
 	void VFlipSelection();
 	void HFlipSelection();

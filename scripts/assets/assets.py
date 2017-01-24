@@ -378,7 +378,10 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 					res.append("return " + var + "[SubPath.GetId()].Get" + self.interface.name + "();")
 		else:
 			res.append("assert(SubPath.GetId() < " + var + ".size());")
-			res.append("return " + var + "[SubPath.GetId()];")
+			res.append("{")
+			for l in self.interface.generateGet(var + "[SubPath.GetId()]", defaultValue):
+				res.append("	" + l)
+			res.append("}")
 		return res
 			
 class AddInterface_Array(GetSetInterface):
@@ -422,7 +425,7 @@ class AddInterface_ArrayChild(GetSetInterface):
 	
 class TypeArray(Type):
 	def __init__(self, t):
-		Type.__init__(self, "array< "+t.fullType()+", allocator_"+t.allocator()+"<"+t.fullType()+"> >")
+		Type.__init__(self, "array< "+t.fullType()+", allocator_"+t.allocator()+"< "+t.fullType()+" > >")
 		self.t = t
 	def numSubPathId(self):
 		return 1
@@ -587,7 +590,7 @@ class GetSetInterface_Array2dDim(GetSetInterface_Func):
 		
 class TypeArray2d(Type):
 	def __init__(self, t):
-		Type.__init__(self, "array2d< "+t.tname+", allocator_"+t.allocator()+"<"+t.tname+"> >")
+		Type.__init__(self, "array2d< "+t.tname+", allocator_"+t.allocator()+"< "+t.tname+" > >")
 		self.t = t
 	def numSubPathId(self):
 		return 2
@@ -599,6 +602,7 @@ class TypeArray2d(Type):
 		res = [
 			GetSetInterface_Array2dDim("Width", "int", "int", "get_width", "resize_width"),
 			GetSetInterface_Array2dDim("Height", "int", "int", "get_height", "resize_height"),
+			GetSetInterface_Array2dDim("Depth", "int", "int", "get_depth", "resize_depth"),
 			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr", "NULL"),
 			GetSetInterface_SimpleRef("Array", self.tname, self.tname)
 		]
@@ -923,9 +927,9 @@ class GetSetInterface_Class(GetSetInterface):
 		self.subpath = 1
 		self.t = t
 	def generateSet(self, var, value):
-		return self.t.generateCopy(var + "[SubPath.GetId()]", value)
+		return self.t.generateCopy(var, value)
 	def generateGet(self, var, defaultValue):
-		return [ "return " + var + "[SubPath.GetId()];" ]
+		return [ "return " + var + ";"]
 
 class Class(Type):
 	def __init__(self, name):
@@ -2035,12 +2039,13 @@ mapEntities.addMember("0.1.0", "Visibility", TypeBool(), "true")
 assetsList.append(mapEntities)
 
 # ZONE TYPE ############################################################
-zoneType_intData = Class("IntData")
-zoneType_intData.addMember("0.2.2", "Title", TypeBool(), "true")
-zoneType_intData.addMember("0.2.2", "Description", TypeString(128))
-zoneType_intData.addMember("0.2.2", "DefaultValue", TypeInt32(), "0")
-zoneType_intData.addMember("0.2.2", "MinValue", TypeInt32(), "0")
-zoneType_intData.addMember("0.2.2", "MaxValue", TypeInt32(), "256")
+zoneType_dataInt = Class("DataInt")
+zoneType_dataInt.addMember("0.2.2", "Title", TypeString(128))
+zoneType_dataInt.addMember("0.2.2", "Description", TypeString(128))
+zoneType_dataInt.addMember("0.2.2", "DefaultValue", TypeInt32(), "0")
+zoneType_dataInt.addMember("0.2.2", "MinValue", TypeInt32(), "0")
+zoneType_dataInt.addMember("0.2.2", "MaxValue", TypeInt32(), "255")
+zoneType_dataInt.addMember("0.2.2", "NullValue", TypeInt32(), "0")
 
 zoneType_index = Class("Index")
 zoneType_index.addMember("0.1.0", "Used", TypeBool(), "true")
@@ -2049,14 +2054,16 @@ zoneType_index.addMember("0.1.0", "Color", TypeColor(), "1.0f")
 zoneType_index.addMember("0.2.0", "Title", TypeString(128))
 zoneType_index.addMember("0.2.0", "BorderIndex", TypeInt32(), "0")
 zoneType_index.addMember("0.2.0", "BorderColor", TypeColor(), "1.0f")
+zoneType_index.addMember("0.2.2", "Group", TypeInt32(), "-1")
 
 zoneType = ClassAsset("ZoneType", len(assetsList))
 zoneType.setInheritance(mainAsset)
 zoneType.addClass(zoneType_index)
-zoneType.addClass(zoneType_intData)
+zoneType.addClass(zoneType_dataInt)
 zoneType.addMember("0.1.0", "Index", TypeArray(zoneType_index))
 zoneType.addMember("0.2.0", "ImagePath", TypeAssetPath())
-zoneType.addMember("0.2.2", "IntData", TypeArray(zoneType_intData))
+zoneType.addMember("0.2.2", "DataInt", TypeArray(zoneType_dataInt))
+zoneType.addMember("0.2.2", "Group", TypeArray(TypeString(128)))
 
 assetsList.append(zoneType)
 

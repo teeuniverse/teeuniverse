@@ -1239,21 +1239,45 @@ public:
 				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(m_pAssetsEditor->GetEditedAssetPath());
 				if(pZoneType)
 				{
-					CAsset_ZoneType::CIteratorIndex Iter;
-					for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
 					{
-						if(pZoneType->GetIndexUsed(*Iter))
+						CAsset_ZoneType::CIteratorIndex Iter;
+						for(Iter = pZoneType->BeginIndex(); Iter != pZoneType->EndIndex(); ++Iter)
 						{
-							CLocalizableString LString(_("#{int:Index} - {str:Title}"));
-							LString.AddInteger("Index", (*Iter).GetId());
-							LString.AddString("Title", pZoneType->GetIndexTitle(*Iter));
-							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconZoneTiles), false);
+							if(pZoneType->GetIndexUsed(*Iter))
+							{
+								CLocalizableString LString(_("#{int:Index} - {str:Title}"));
+								LString.AddInteger("Index", (*Iter).GetId());
+								LString.AddString("Title", pZoneType->GetIndexTitle(*Iter));
+								Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconZoneTiles), false);
+							}
+							else
+							{
+								CLocalizableString LString(_("#{int:Index} - No used"));
+								LString.AddInteger("Index", (*Iter).GetId());
+								Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+							}
 						}
-						else
+					}
+					
+					{
+						CAsset_ZoneType::CIteratorGroup Iter;
+						for(Iter = pZoneType->BeginGroup(); Iter != pZoneType->EndGroup(); ++Iter)
 						{
-							CLocalizableString LString(_("#{int:Index} - No used"));
+							CLocalizableString LString(_("Group {int:Index} - {str:Title}"));
 							LString.AddInteger("Index", (*Iter).GetId());
-							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+							LString.AddString("Title", pZoneType->GetGroup(*Iter));
+							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconFolder), false);
+						}
+					}
+					
+					{
+						CAsset_ZoneType::CIteratorDataInt Iter;
+						for(Iter = pZoneType->BeginDataInt(); Iter != pZoneType->EndDataInt(); ++Iter)
+						{
+							CLocalizableString LString(_("Integer Data {int:Index} - {str:Title}"));
+							LString.AddInteger("Index", (*Iter).GetId());
+							LString.AddString("Title", pZoneType->GetDataIntTitle(*Iter));
+							Add(new CSubItem(m_pAssetsEditor, *Iter, LString, m_pAssetsEditor->m_Path_Sprite_IconDefault), false);
 						}
 					}
 					

@@ -481,7 +481,7 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
-	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_Quad;
+	array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > > m_Quad;
 	bool m_Visibility;
 
 public:
@@ -534,13 +534,15 @@ public:
 	
 	inline const CAsset_MapLayerQuads::CQuad* GetQuadPtr() const { return m_Quad.base_ptr(); }
 	
-	inline const array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> >& GetQuadArray() const { return m_Quad; }
-	inline array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> >& GetQuadArray() { return m_Quad; }
+	inline const array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() const { return m_Quad; }
+	inline array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() { return m_Quad; }
 	
 	inline const CAsset_MapLayerQuads::CQuad& GetQuad(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Quad.size());
-		return m_Quad[SubPath.GetId()];
+		{
+			return m_Quad[SubPath.GetId()];
+		}
 	}
 	
 	inline vec2 GetQuadPivot(const CSubPath& SubPath) const

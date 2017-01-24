@@ -278,6 +278,7 @@ public:
 	
 	//format
 	void Format(dynamic_string& Buffer, const char* pLanguageCode, const CLocalizableString& LString);
+	void FormatInteger(dynamic_string& Buffer, const char* pLanguageCode, int Number);
 	
 	int ParseInteger(const char* pLanguageCode, const char* pText);
 	float ParseFloat(const char* pLanguageCode, const char* pText);

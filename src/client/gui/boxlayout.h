@@ -34,6 +34,7 @@ protected:
 	{
 	public:
 		CWidget* m_pWidget;
+		bool m_Filling;
 	};
 	
 protected:
@@ -58,7 +59,7 @@ public:
 	virtual void OnInputEvent(const CInput::CEvent& Event);
 	
 	void Clear();
-	void Add(CWidget* pWidget);
+	void Add(CWidget* pWidget, bool Filling = false);
 	
 	void SetBoxStyle(CAssetPath BoxStylePath) { m_BoxStylePath = BoxStylePath; }
 	CAssetPath GetBoxStyle() const { return m_BoxStylePath; }

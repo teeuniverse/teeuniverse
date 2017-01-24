@@ -706,6 +706,8 @@ void CAssetsManager::Load_UnivDDNet()
 		{
 			m_Path_ZoneType_DDGame = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddGame");
 			m_Path_ZoneType_DDFront = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddFront");
+			m_Path_ZoneType_DDTele = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddTele");
+			m_Path_ZoneType_DDSwitch = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddSwitch");
 		}
 	}
 }

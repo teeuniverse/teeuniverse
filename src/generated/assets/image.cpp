@@ -211,6 +211,8 @@ int CAsset_Image::GetValue(int ValueType, const CSubPath& SubPath, int DefaultVa
 			return GetDataWidth();
 		case DATA_HEIGHT:
 			return GetDataHeight();
+		case DATA_DEPTH:
+			return GetDataDepth();
 		case DATA:
 			return GetData(SubPath);
 		case TEXTURE_ID:
@@ -241,6 +243,9 @@ bool CAsset_Image::SetValue(int ValueType, const CSubPath& SubPath, int Value)
 			return true;
 		case DATA_HEIGHT:
 			SetDataHeight(Value);
+			return true;
+		case DATA_DEPTH:
+			SetDataDepth(Value);
 			return true;
 		case DATA:
 			SetData(SubPath, Value);
