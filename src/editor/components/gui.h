@@ -308,6 +308,7 @@ public:
 	int m_Mode;
 	bool m_RefreshList;
 	int m_CompatibilityMode;
+	bool m_ReadOnly;
 	
 public:
 	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format);
