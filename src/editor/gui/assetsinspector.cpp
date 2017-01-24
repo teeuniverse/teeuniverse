@@ -957,23 +957,26 @@ protected:
 		virtual void Update(bool ParentEnabled)
 		{
 			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
-			switch(pLayer->GetObjectVertexSmoothness(m_SubPath))
+			if(pLayer)
 			{
-				case CBezierVertex::TYPE_CORNER:
-					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexCorner);
-					break;
-				case CBezierVertex::TYPE_CONTROLLED_FREE:
-					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexFree);
-					break;
-				case CBezierVertex::TYPE_CONTROLLED_ALIGNED:
-					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexAligned);
-					break;
-				case CBezierVertex::TYPE_CONTROLLED_SYMETRIC:
-					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSymetric);
-					break;
-				case CBezierVertex::TYPE_AUTOSMOOTH:
-					SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSmooth);
-					break;
+				switch(pLayer->GetObjectVertexSmoothness(m_SubPath))
+				{
+					case CBezierVertex::TYPE_CORNER:
+						SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexCorner);
+						break;
+					case CBezierVertex::TYPE_CONTROLLED_FREE:
+						SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexFree);
+						break;
+					case CBezierVertex::TYPE_CONTROLLED_ALIGNED:
+						SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexAligned);
+						break;
+					case CBezierVertex::TYPE_CONTROLLED_SYMETRIC:
+						SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSymetric);
+						break;
+					case CBezierVertex::TYPE_AUTOSMOOTH:
+						SetIcon(m_pAssetsEditor->m_Path_Sprite_IconVertexSmooth);
+						break;
+				}
 			}
 			
 			CSubItem::Update(ParentEnabled);
