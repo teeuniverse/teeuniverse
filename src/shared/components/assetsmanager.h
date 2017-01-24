@@ -40,6 +40,7 @@ public:
 		MAPFORMAT_TW=0,
 		MAPFORMAT_DDNET,
 		MAPFORMAT_OPENFNG,
+		MAPFORMAT_NINSLASH,
 	};
 	
 private:
@@ -70,6 +71,9 @@ public:
 	
 	int m_PackageId_UnivOpenFNG;
 	CAssetPath m_Path_ZoneType_OpenFNG;
+	
+	int m_PackageId_UnivNinslash;
+	CAssetPath m_Path_ZoneType_Ninslash;
 	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;
@@ -120,6 +124,15 @@ public:
 	CAssetPath m_Path_Image_WinterMountains1;
 	CAssetPath m_Path_Image_WinterMountains2;
 	CAssetPath m_Path_Image_WinterMountains3;
+	
+	int m_PackageId_EnvLab;
+	CAssetPath m_Path_Image_LabMisc;
+	CAssetPath m_Path_Image_LabMain;
+	CAssetPath m_Path_Image_LabBackground;
+	
+	int m_PackageId_EnvFactory;
+	CAssetPath m_Path_Image_FactoryMain;
+	CAssetPath m_Path_Image_FactoryBackground;
 	
 private:	
 	array<CAssetsPackage*> m_pPackages;
@@ -179,6 +192,7 @@ public:
 	void Load_UnivTeeWorlds();
 	void Load_UnivDDNet();
 	void Load_UnivOpenFNG();
+	void Load_UnivNinslash();
 	
 	void Load_EnvClouds();
 	void Load_EnvDesert();
@@ -191,6 +205,8 @@ public:
 	void Load_EnvStars();
 	void Load_EnvSun();
 	void Load_EnvWinter();
+	void Load_EnvLab();
+	void Load_EnvFactory();
 	
 	CAssetPath DuplicateAsset(const CAssetPath& Path, int PackageId, int Token = -1);
 	

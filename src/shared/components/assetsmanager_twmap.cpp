@@ -19,6 +19,7 @@
 #include <shared/components/storage.h>
 #include <external/ddnet/datafile.h>
 #include <external/ddnet/mapitems.h>
+#include <external/ninslash/mapitems.h>
 #include <shared/geometry/linetesselation.h>
 
 #include "assetsmanager.h"
@@ -38,6 +39,7 @@ public:
 	CAssetPath m_DDTelePath;
 	CAssetPath m_DDSwitchPath;
 	CAssetPath m_OpenFNGPath;
+	CAssetPath m_NinslashPath;
 	CAssetPath m_UnknownPath;
 	
 	CAsset_MapZoneTiles* m_pTeeWorldsZone;
@@ -46,6 +48,7 @@ public:
 	CAsset_MapZoneTiles* m_pDDTeleZone;
 	CAsset_MapZoneTiles* m_pDDSwitchZone;
 	CAsset_MapZoneTiles* m_pOpenFNGZone;
+	CAsset_MapZoneTiles* m_pNinslashZone;
 	CAsset_MapZoneTiles* m_pUnknownZone;
 	
 	CLoadMap_ZoneList(CAssetsManager* pAssetsManager, CAsset_Map* pMap, CAssetPath MapPath) :
@@ -58,6 +61,7 @@ public:
 		m_pDDTeleZone(NULL),
 		m_pDDSwitchZone(NULL),
 		m_pOpenFNGZone(NULL),
+		m_pNinslashZone(NULL),
 		m_pUnknownZone(NULL)
 	{
 		
@@ -102,6 +106,8 @@ public:
 			m_pDDSwitchZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDSwitchPath);
 		if(m_pOpenFNGZone && &m_pOpenFNGZone != ppZone)
 			m_pOpenFNGZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_OpenFNGPath);
+		if(m_pNinslashZone && &m_pNinslashZone != ppZone)
+			m_pNinslashZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_NinslashPath);
 		if(m_pUnknownZone && &m_pUnknownZone != ppZone)
 			m_pUnknownZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_UnknownPath);
 	}
@@ -165,7 +171,10 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	if(pItem->m_Version != 1)
 		return -1;
 
-	Load_UnivTeeWorlds();
+	if(Format == MAPFORMAT_NINSLASH)
+		Load_UnivNinslash();
+	else
+		Load_UnivTeeWorlds();
 	
 	char aBuf[128];
 
@@ -332,6 +341,31 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 				{
 					Load_EnvWinter();
 					pImagePath[i] = m_Path_Image_WinterMountains3;
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(pFilename, "lab") == 0)
+				{
+					Load_EnvLab();
+					pImagePath[i] = m_Path_Image_LabMisc;
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(pFilename, "lab_main") == 0)
+				{
+					Load_EnvLab();
+					pImagePath[i] = m_Path_Image_LabMain;
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(pFilename, "lab_background") == 0)
+				{
+					Load_EnvLab();
+					pImagePath[i] = m_Path_Image_LabBackground;
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(pFilename, "factory_main") == 0)
+				{
+					Load_EnvFactory();
+					pImagePath[i] = m_Path_Image_FactoryMain;
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(pFilename, "factory_background") == 0)
+				{
+					Load_EnvFactory();
+					pImagePath[i] = m_Path_Image_FactoryBackground;
 				}
 				
 				ArchiveFile.UnloadData(pItem->m_ImageName);
@@ -573,194 +607,205 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									
 									bool WriteInUnknown = false;
 									
-									switch(pTiles[j*Width+i].m_Index)
+									if(Format == MAPFORMAT_NINSLASH)
 									{
-										case ddnet::ENTITY_SPAWN + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_SPAWN_RED + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_SPAWN_BLUE + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_HEALTH_1 + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_ARMOR_1 + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_POWERUP_NINJA + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_WEAPON_GRENADE + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_WEAPON_RIFLE + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_WEAPON_SHOTGUN + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_FLAGSTAND_BLUE + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::ENTITY_FLAGSTAND_RED + ddnet::ENTITY_OFFSET:
-										{
-											CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-											pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
-											pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
-											break;
-										}
-										case ddnet::TILE_AIR:
-										case ddnet::TILE_SOLID:
-										case ddnet::TILE_DEATH:
-										case ddnet::TILE_NOHOOK:
-										{
-											Zones.CreateZone(&Zones.m_pTeeWorldsZone, Zones.m_TeeWorldsPath, "teeworlds", m_Path_ZoneType_TeeWorlds, Width, Height);
-											if(Zones.m_pTeeWorldsZone)
-												Zones.m_pTeeWorldsZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										//OpenFNG and DDNet
-										case 8:
-										{
-											if(Format == MAPFORMAT_OPENFNG)
-											{
-												Load_UnivOpenFNG();
-												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
-												if(Zones.m_pOpenFNGZone)
-													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										case ddnet::TILE_FREEZE:
-										{
-											if(Format == MAPFORMAT_DDNET)
-											{
-												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
-												if(Zones.m_pDDGameZone)
-													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else if(Format == MAPFORMAT_OPENFNG)
-											{
-												Load_UnivOpenFNG();
-												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
-												if(Zones.m_pOpenFNGZone)
-													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										case 10:
-										{
-											if(Format == MAPFORMAT_OPENFNG)
-											{
-												Load_UnivOpenFNG();
-												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
-												if(Zones.m_pOpenFNGZone)
-													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										case ddnet::TILE_UNFREEZE:
-										case ddnet::TILE_DFREEZE:
-										{
-											if(Format == MAPFORMAT_DDNET)
-											{
-												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
-												if(Zones.m_pDDGameZone)
-													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else if(Format == MAPFORMAT_OPENFNG)
-											{
-												Load_UnivOpenFNG();
-												Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
-												if(Zones.m_pOpenFNGZone)
-													Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										case ddnet::TILE_DUNFREEZE:
-										{
-											if(Format == MAPFORMAT_DDNET)
-											{
-												Load_UnivDDNet();
-												Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
-												if(Zones.m_pDDGameZone)
-													Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-												else
-													WriteInUnknown = true;
-											}
-											else
-												WriteInUnknown = true;
-											break;
-										}
-										default:
+										Zones.CreateZone(&Zones.m_pNinslashZone, Zones.m_NinslashPath, "ninslash", m_Path_ZoneType_Ninslash, Width, Height);
+										if(Zones.m_pNinslashZone)
+											Zones.m_pNinslashZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+										else
 											WriteInUnknown = true;
+									}
+									else
+									{
+										switch(pTiles[j*Width+i].m_Index)
+										{
+											case ddnet::ENTITY_SPAWN + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_SPAWN_RED + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_SPAWN_BLUE + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_HEALTH_1 + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_ARMOR_1 + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_POWERUP_NINJA + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_WEAPON_GRENADE + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_WEAPON_RIFLE + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_WEAPON_SHOTGUN + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_FLAGSTAND_BLUE + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::ENTITY_FLAGSTAND_RED + ddnet::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
+												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
+												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ddnet::TILE_AIR:
+											case ddnet::TILE_SOLID:
+											case ddnet::TILE_DEATH:
+											case ddnet::TILE_NOHOOK:
+											{
+												Zones.CreateZone(&Zones.m_pTeeWorldsZone, Zones.m_TeeWorldsPath, "teeworlds", m_Path_ZoneType_TeeWorlds, Width, Height);
+												if(Zones.m_pTeeWorldsZone)
+													Zones.m_pTeeWorldsZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											//OpenFNG and DDNet
+											case 8:
+											{
+												if(Format == MAPFORMAT_OPENFNG)
+												{
+													Load_UnivOpenFNG();
+													Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+													if(Zones.m_pOpenFNGZone)
+														Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											case ddnet::TILE_FREEZE:
+											{
+												if(Format == MAPFORMAT_DDNET)
+												{
+													Load_UnivDDNet();
+													Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+													if(Zones.m_pDDGameZone)
+														Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else if(Format == MAPFORMAT_OPENFNG)
+												{
+													Load_UnivOpenFNG();
+													Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+													if(Zones.m_pOpenFNGZone)
+														Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											case 10:
+											{
+												if(Format == MAPFORMAT_OPENFNG)
+												{
+													Load_UnivOpenFNG();
+													Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+													if(Zones.m_pOpenFNGZone)
+														Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											case ddnet::TILE_UNFREEZE:
+											case ddnet::TILE_DFREEZE:
+											{
+												if(Format == MAPFORMAT_DDNET)
+												{
+													Load_UnivDDNet();
+													Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+													if(Zones.m_pDDGameZone)
+														Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else if(Format == MAPFORMAT_OPENFNG)
+												{
+													Load_UnivOpenFNG();
+													Zones.CreateZone(&Zones.m_pOpenFNGZone, Zones.m_OpenFNGPath, "openfng", m_Path_ZoneType_OpenFNG, Width, Height);
+													if(Zones.m_pOpenFNGZone)
+														Zones.m_pOpenFNGZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											case ddnet::TILE_DUNFREEZE:
+											{
+												if(Format == MAPFORMAT_DDNET)
+												{
+													Load_UnivDDNet();
+													Zones.CreateZone(&Zones.m_pDDGameZone, Zones.m_DDGamePath, "ddnetGame", m_Path_ZoneType_DDGame, Width, Height);
+													if(Zones.m_pDDGameZone)
+														Zones.m_pDDGameZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+													else
+														WriteInUnknown = true;
+												}
+												else
+													WriteInUnknown = true;
+												break;
+											}
+											default:
+												WriteInUnknown = true;
+										}
 									}
 									
 									if(WriteInUnknown)

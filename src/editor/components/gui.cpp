@@ -507,28 +507,26 @@ public:
 	}
 };
 
-class COpenSavePackageDialog_FormatToggle : public gui::CToggle
+class COpenSavePackageDialog_FormatComboBox : public gui::CComboBox
 {
 protected:
 	int* m_pValueContainer;
-	int m_Value;
 	
 protected:
-	virtual bool GetValue()
+	virtual int GetValue() const
 	{
-		return (*m_pValueContainer == m_Value);
+		return *m_pValueContainer;
 	}
 	
-	virtual void SetValue(bool Value)
+	virtual void SetValue(int Value)
 	{
-		*m_pValueContainer = m_Value;
+		*m_pValueContainer = Value;
 	}
 	
 public:
-	COpenSavePackageDialog_FormatToggle(CGui* pContext, const CLocalizableString& LString, int* pValueContainer, int Value) :
-		gui::CToggle(pContext, LString),
-		m_pValueContainer(pValueContainer),
-		m_Value(Value)
+	COpenSavePackageDialog_FormatComboBox(CGui* pContext, int* pValueContainer) :
+		gui::CComboBox(pContext),
+		m_pValueContainer(pValueContainer)
 	{
 		
 	}
@@ -653,12 +651,14 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		pLayout->Add(pHList, false);
 		
 		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Compatibility mode:"));
-		pLabel->NoTextClipping();
-		pHList->Add(pLabel, false);
+		pHList->Add(pLabel, true);
 		
-		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("TeeWorlds"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_TW), true);
-		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("DDNet"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_DDNET), true);
-		pHList->Add(new COpenSavePackageDialog_FormatToggle(Context(), _LSTRING("OpenFNG"), &m_CompatibilityMode, CAssetsManager::MAPFORMAT_OPENFNG), true);
+		gui::CComboBox* pComboBox = new COpenSavePackageDialog_FormatComboBox(Context(), &m_CompatibilityMode);
+		pComboBox->Add(_LSTRING("TeeWorlds"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pComboBox->Add(_LSTRING("DDNet"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pComboBox->Add(_LSTRING("OpenFNG"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pComboBox->Add(_LSTRING("Ninslash"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pHList->Add(pComboBox, true);
 	
 		pLayout->AddSeparator();
 	}

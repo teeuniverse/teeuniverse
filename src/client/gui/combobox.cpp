@@ -57,6 +57,8 @@ public:
 	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< CComboBox::CItem, allocator_copy<CComboBox::CItem> >& EnumDescriptions, CAssetPath ButtonStyle) :
 		CPopup(pContext, CreatorRect, CreatorRect.w, -1, CPopup::ALIGNMENT_BOTTOM)
 	{
+		SetLevel(LEVEL_HIGHEST);
+		
 		CVListLayout* pLayout = new CVListLayout(Context());
 		Add(pLayout);
 		

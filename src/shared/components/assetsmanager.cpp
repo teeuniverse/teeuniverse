@@ -30,6 +30,7 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_UnivTeeWorlds(-1),
 	m_PackageId_UnivDDNet(-1),
 	m_PackageId_UnivOpenFNG(-1),
+	m_PackageId_UnivNinslash(-1),
 	m_PackageId_EnvClouds(-1),
 	m_PackageId_EnvDesert(-1),
 	m_PackageId_EnvGeneric(-1),
@@ -40,7 +41,9 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_EnvSnow(-1),
 	m_PackageId_EnvStars(-1),
 	m_PackageId_EnvSun(-1),
-	m_PackageId_EnvWinter(-1)
+	m_PackageId_EnvWinter(-1),
+	m_PackageId_EnvLab(-1),
+	m_PackageId_EnvFactory(-1)
 {
 	SetName("AssetsManager");
 }
@@ -673,6 +676,33 @@ void CAssetsManager::Load_EnvWinter()
 	}
 }
 
+void CAssetsManager::Load_EnvLab()
+{
+	if(m_PackageId_EnvLab < 0)
+	{
+		m_PackageId_EnvLab = Load_AssetsFile("env_lab", CStorage::TYPE_ALL);
+		if(m_PackageId_EnvLab >= 0)
+		{
+			m_Path_Image_LabMisc = FindAsset<CAsset_Image>(m_PackageId_EnvLab, "labMisc");
+			m_Path_Image_LabMain = FindAsset<CAsset_Image>(m_PackageId_EnvLab, "labMain");
+			m_Path_Image_LabBackground = FindAsset<CAsset_Image>(m_PackageId_EnvLab, "labBackground");
+		}
+	}
+}
+
+void CAssetsManager::Load_EnvFactory()
+{
+	if(m_PackageId_EnvFactory < 0)
+	{
+		m_PackageId_EnvFactory = Load_AssetsFile("env_factory", CStorage::TYPE_ALL);
+		if(m_PackageId_EnvFactory >= 0)
+		{
+			m_Path_Image_FactoryMain = FindAsset<CAsset_Image>(m_PackageId_EnvFactory, "factoryMain");
+			m_Path_Image_FactoryBackground = FindAsset<CAsset_Image>(m_PackageId_EnvFactory, "factoryBackground");
+		}
+	}
+}
+
 void CAssetsManager::Load_UnivTeeWorlds()
 {
 	if(m_PackageId_UnivTeeWorlds < 0)
@@ -720,6 +750,18 @@ void CAssetsManager::Load_UnivOpenFNG()
 		if(m_PackageId_UnivOpenFNG >= 0)
 		{
 			m_Path_ZoneType_OpenFNG = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "openfng");
+		}
+	}
+}
+
+void CAssetsManager::Load_UnivNinslash()
+{
+	if(m_PackageId_UnivNinslash < 0)
+	{
+		m_PackageId_UnivNinslash = Load_AssetsFile("ninslash", CStorage::TYPE_ALL);
+		if(m_PackageId_UnivNinslash >= 0)
+		{
+			m_Path_ZoneType_Ninslash = FindAsset<CAsset_ZoneType>(m_PackageId_UnivNinslash, "ninslash");
 		}
 	}
 }
