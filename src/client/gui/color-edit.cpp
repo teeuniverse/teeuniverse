@@ -922,7 +922,7 @@ public:
 			WheelIcon = pStyle->GetWheelIconPath();
 		}
 		
-		CTabs* pTab = new CTabs(Context());
+		CExternalTabs* pTab = new CExternalTabs(Context(), &(Context()->m_Cfg_ColorChooserTab));
 		
 		//RGB
 		{

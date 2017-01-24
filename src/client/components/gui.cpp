@@ -48,8 +48,10 @@ CGui::~CGui()
 bool CGui::InitConfig(int argc, const char** argv)
 {
 	m_Cfg_Scale = GUI_DEFAULT_SCALE;
+	m_Cfg_ColorChooserTab = 3;
 	
 	CLI()->RegisterConfigInteger("gui_scale", "GUI Scaling factor (default = 128)", &m_Cfg_Scale, 0, 1024);
+	CLI()->RegisterConfigInteger("gui_colorchooser_tab", "Default tab opened for color chooser (0 = rgb, 1 = hsv, 2 = square, 3 = wheel)", &m_Cfg_ColorChooserTab, 0, 3);
 		
 	return true;
 }
@@ -59,6 +61,7 @@ void CGui::SaveConfig(class CCLI_Output* pOutput)
 	fixed_string128 Buffer;
 	
 	str_format(Buffer.buffer(), Buffer.maxsize(), "gui_scale %d", m_Cfg_Scale); pOutput->Print(Buffer.buffer());
+	str_format(Buffer.buffer(), Buffer.maxsize(), "gui_colorchooser_tab %d", m_Cfg_ColorChooserTab); pOutput->Print(Buffer.buffer());
 }
 	
 bool CGui::Init()

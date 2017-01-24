@@ -27,7 +27,7 @@ namespace gui
 /* TABS ***************************************************************/
 
 	//Button
-CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const char* pName, CAssetPath IconPath) :
+CAbstractTabs::CTabButton::CTabButton(CGui* pContext, CAbstractTabs *pTabs, int Id, const char* pName, CAssetPath IconPath) :
 	CButton(pContext, IconPath),
 	m_pTabs(pTabs),
 	m_Id(Id)
@@ -35,7 +35,7 @@ CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const char* 
 	SetText(pName);
 }
 
-CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const CLocalizableString& Name, CAssetPath IconPath) :
+CAbstractTabs::CTabButton::CTabButton(CGui* pContext, CAbstractTabs *pTabs, int Id, const CLocalizableString& Name, CAssetPath IconPath) :
 	CButton(pContext, IconPath),
 	m_pTabs(pTabs),
 	m_Id(Id)
@@ -43,22 +43,21 @@ CTabs::CTabButton::CTabButton(CGui* pContext, CTabs *pTabs, int Id, const CLocal
 	SetText(Name);
 }
 
-void CTabs::CTabButton::MouseClickAction()
+void CAbstractTabs::CTabButton::MouseClickAction()
 {
 	m_pTabs->OpenTab(m_Id);
 }
 
 	//Tabs
-CTabs::CTabs(CGui *pContext) :
+CAbstractTabs::CAbstractTabs(CGui *pContext) :
 	CWidget(pContext),
 	m_TabsStylePath(Context()->GetTabsStyle()),
-	m_SelectedTab(-1),
 	m_pButtonList(NULL)
 {
 	m_pButtonList = new CHListLayout(pContext);
 }
 
-void CTabs::Destroy()
+void CAbstractTabs::Destroy()
 {
 	if(m_pButtonList)
 		m_pButtonList->Destroy();
@@ -69,15 +68,15 @@ void CTabs::Destroy()
 	CWidget::Destroy();
 }
 
-void CTabs::OpenTab(int TabId)
+void CAbstractTabs::OpenTab(int TabId)
 {
 	if(TabId >= 0 && TabId < m_Tabs.size())
-		m_SelectedTab = TabId;
+		SetSelectedTab(TabId);
 	else
-		m_SelectedTab = -1;
+		SetSelectedTab(-1);
 }
 
-void CTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizableString* pLocalizableName, CAssetPath IconPath)
+void CAbstractTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizableString* pLocalizableName, CAssetPath IconPath)
 {
 	bool Fill = true;
 	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
@@ -99,23 +98,23 @@ void CTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizableString
 	if(pTabsStyle)
 		Tab.m_pTabButton->SetButtonStyle(pTabsStyle->GetInactiveButtonPath());
 	
-	if(m_SelectedTab < 0)
-		m_SelectedTab = TabId;
+	if(GetSelectedTab() < 0)
+		SetSelectedTab(TabId);
 }
 
-void CTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath)
+void CAbstractTabs::AddTab(CWidget* pWidget, const char* pName, CAssetPath IconPath)
 {
 	AddTab(pWidget, pName, NULL, IconPath);
 }
 
-void CTabs::AddTab(CWidget* pWidget, const CLocalizableString& LocalizableString, CAssetPath IconPath)
+void CAbstractTabs::AddTab(CWidget* pWidget, const CLocalizableString& LocalizableString, CAssetPath IconPath)
 {
 	AddTab(pWidget, NULL, &LocalizableString, IconPath);
 }
 
-void CTabs::Clear()
+void CAbstractTabs::Clear()
 {
-	m_SelectedTab = -1;
+	SetSelectedTab(-1);
 	for(int i=0; i<m_Tabs.size(); i++)
 	{
 		m_Tabs[i].m_pWidget->Destroy();
@@ -124,7 +123,7 @@ void CTabs::Clear()
 	m_pButtonList->Clear();
 }
 
-void CTabs::UpdateBoundingSize()
+void CAbstractTabs::UpdateBoundingSize()
 {	
 	m_BoundingSizeRect.BSNoConstraint();
 	
@@ -143,11 +142,11 @@ void CTabs::UpdateBoundingSize()
 	if(pLayoutStyle)
 		m_BoundingSizeRect.BSAddSpacing(0, Context()->ApplyGuiScale(pLayoutStyle->GetSpacing()));
 	
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->UpdateBoundingSize();
+		m_Tabs[GetSelectedTab()].m_pWidget->UpdateBoundingSize();
 		
-		CRect BSSelectedTab = m_Tabs[m_SelectedTab].m_pWidget->GetBS();
+		CRect BSSelectedTab = m_Tabs[GetSelectedTab()].m_pWidget->GetBS();
 		
 		if(pContentStyle)
 		{
@@ -165,7 +164,7 @@ void CTabs::UpdateBoundingSize()
 	}
 }
 
-void CTabs::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRect)
+void CAbstractTabs::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRect)
 {
 	CWidget::UpdatePosition(BoundingRect, VisibilityRect);
 	
@@ -209,13 +208,13 @@ void CTabs::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityRec
 		ChildRect.RemoveMargin(Context()->ApplyGuiScale(pContentStyle->GetPadding()));
 	}
 	
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->UpdatePosition(ChildRect, ChildRect);
+		m_Tabs[GetSelectedTab()].m_pWidget->UpdatePosition(ChildRect, ChildRect);
 	}
 }
 
-void CTabs::Update(bool ParentEnabled)
+void CAbstractTabs::Update(bool ParentEnabled)
 {
 	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
 	if(pTabsStyle)
@@ -237,8 +236,8 @@ void CTabs::Update(bool ParentEnabled)
 		}
 	}
 	
-	if(m_SelectedTab >= 0 && m_SelectedTab < m_Tabs.size() && m_Tabs[m_SelectedTab].m_pWidget->IsDisabled())
-		m_SelectedTab = FirstEnabledTab;
+	if(GetSelectedTab() >= 0 && GetSelectedTab() < m_Tabs.size() && m_Tabs[GetSelectedTab()].m_pWidget->IsDisabled())
+		SetSelectedTab(FirstEnabledTab);
 	
 	if(pTabsStyle)
 	{
@@ -246,7 +245,7 @@ void CTabs::Update(bool ParentEnabled)
 		{
 			if(m_Tabs[i].m_pTabButton)
 			{
-				if(i == m_SelectedTab)
+				if(i == GetSelectedTab())
 					m_Tabs[i].m_pTabButton->SetButtonStyle(pTabsStyle->GetActiveButtonPath());
 				else
 					m_Tabs[i].m_pTabButton->SetButtonStyle(pTabsStyle->GetInactiveButtonPath());
@@ -257,7 +256,7 @@ void CTabs::Update(bool ParentEnabled)
 	m_pButtonList->Update(ParentEnabled && IsEnabled());
 }
 
-void CTabs::Render()
+void CAbstractTabs::Render()
 {
 	const CAsset_GuiTabsStyle* pTabsStyle = AssetsManager()->GetAsset<CAsset_GuiTabsStyle>(m_TabsStylePath);
 	const CAsset_GuiBoxStyle* pLayoutStyle = 0;
@@ -290,50 +289,64 @@ void CTabs::Render()
 		
 	m_pButtonList->Render();
 	
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->Render();
+		m_Tabs[GetSelectedTab()].m_pWidget->Render();
 	}
 }
 
-void CTabs::OnMouseMove()
+void CAbstractTabs::OnMouseMove()
 {
 	m_pButtonList->OnMouseMove();
 		
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->OnMouseMove();
+		m_Tabs[GetSelectedTab()].m_pWidget->OnMouseMove();
 	}
 }
 
-void CTabs::OnButtonClick(int Button)
+void CAbstractTabs::OnButtonClick(int Button)
 {
 	m_pButtonList->OnButtonClick(Button);
 		
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->OnButtonClick(Button);
+		m_Tabs[GetSelectedTab()].m_pWidget->OnButtonClick(Button);
 	}
 }
 
-void CTabs::OnButtonRelease(int Button)
+void CAbstractTabs::OnButtonRelease(int Button)
 {
 	m_pButtonList->OnButtonRelease(Button);
 		
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->OnButtonRelease(Button);
+		m_Tabs[GetSelectedTab()].m_pWidget->OnButtonRelease(Button);
 	}
 }
 
-void CTabs::OnInputEvent(const CInput::CEvent& Event)
+void CAbstractTabs::OnInputEvent(const CInput::CEvent& Event)
 {
 	m_pButtonList->OnInputEvent(Event);
 		
-	if(m_SelectedTab >= 0)
+	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[m_SelectedTab].m_pWidget->OnInputEvent(Event);
+		m_Tabs[GetSelectedTab()].m_pWidget->OnInputEvent(Event);
 	}
+}
+
+CTabs::CTabs(CGui *pConfig) :
+	CAbstractTabs(pConfig),
+	m_SelectedTab(-1)
+{
+	
+}
+
+CExternalTabs::CExternalTabs(CGui *pConfig, int* pSelectedTab) :
+	CAbstractTabs(pConfig),
+	m_pSelectedTab(pSelectedTab)
+{
+	
 }
 
 }

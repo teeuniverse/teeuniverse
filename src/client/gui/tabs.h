@@ -27,19 +27,19 @@
 namespace gui
 {
 
-class CTabs : public CWidget
+class CAbstractTabs : public CWidget
 {
 private:
 	class CTabButton : public CButton
 	{
 	protected:
-		CTabs* m_pTabs;
+		CAbstractTabs* m_pTabs;
 		int m_Id;
 		virtual void MouseClickAction();
 		
 	public:
-		CTabButton(CGui* pContext, CTabs *m_pTabs, int Id, const char* pName, CAssetPath IconPath);
-		CTabButton(CGui* pContext, CTabs *m_pTabs, int Id, const CLocalizableString& Name, CAssetPath IconPath);
+		CTabButton(CGui* pContext, CAbstractTabs *m_pTabs, int Id, const char* pName, CAssetPath IconPath);
+		CTabButton(CGui* pContext, CAbstractTabs *m_pTabs, int Id, const CLocalizableString& Name, CAssetPath IconPath);
 	};
 	
 	struct CTab
@@ -52,15 +52,17 @@ protected:
 	CAssetPath m_TabsStylePath;
 	CRect m_ClipRect;
 	array<CTab> m_Tabs;
-	int m_SelectedTab;
 	CHListLayout* m_pButtonList;
 	
 protected:
 	void RegenerateButtons();
 	void AddTab(CWidget* pWidget, const char* pName, const CLocalizableString* pLocalizableName, CAssetPath IconPath);
 	
+	virtual int GetSelectedTab() const = 0;
+	virtual void SetSelectedTab(int Tab) = 0;
+	
 public:
-	CTabs(class CGui *pConfig);
+	CAbstractTabs(class CGui *pConfig);
 	
 	virtual void Destroy();
 	virtual void UpdateBoundingSize();
@@ -80,6 +82,30 @@ public:
 	
 	void SetTabsStyle(CAssetPath TabsStylePath) { m_TabsStylePath = TabsStylePath; }
 	CAssetPath GetTabsStyle() const { return m_TabsStylePath; }
+};
+
+class CTabs : public CAbstractTabs
+{
+protected:
+	int m_SelectedTab;
+	
+	virtual int GetSelectedTab() const { return m_SelectedTab; }
+	virtual void SetSelectedTab(int Tab) { m_SelectedTab = Tab; }
+
+public:
+	CTabs(class CGui *pConfig);
+};
+
+class CExternalTabs : public CAbstractTabs
+{
+protected:
+	int* m_pSelectedTab;
+	
+	virtual int GetSelectedTab() const { return *m_pSelectedTab; }
+	virtual void SetSelectedTab(int Tab) { *m_pSelectedTab = Tab; }
+
+public:
+	CExternalTabs(class CGui *pConfig, int* pSelectedTab);
 };
 
 }
