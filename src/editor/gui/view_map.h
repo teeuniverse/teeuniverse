@@ -48,6 +48,7 @@ protected:
 	bool m_ShowGrid;
 	bool m_ShowMeshes;
 	int m_ShowEntities;
+	bool m_ZoomLockedToUnit;
 	
 	class CMapRenderer* m_pMapRenderer;
 	
@@ -85,6 +86,7 @@ public:
 	
 	float GetCameraZoom();
 	void SetCameraZoom(float Value);
+	void SetCameraZoomToUnit();
 };
 
 #endif

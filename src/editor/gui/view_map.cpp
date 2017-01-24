@@ -73,7 +73,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		m_pViewMap->SetCameraZoom(1.0f);
+		m_pViewMap->SetCameraZoomToUnit();
 	}
 	
 public:
@@ -288,6 +288,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_ShowGrid(false),
 	m_ShowMeshes(false),
 	m_ShowEntities(3),
+	m_ZoomLockedToUnit(false),
 	m_pMapRenderer(NULL),
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
@@ -475,7 +476,7 @@ void CViewMap::RenderView()
 	CAssetPath MapPath = GetMapPath();
 	
 	vec2 CameraPosition = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
-	float CameraZoom = AssetsManager()->GetAssetValue<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+	float CameraZoom = GetCameraZoom();
 	
 	MapRenderer()->SetTime(0.0f);
 	MapRenderer()->SetLocalTime((double)time_get()/(double)time_freq());
@@ -681,18 +682,17 @@ void CViewMap::OnButtonClick(int Button)
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
 	{
-		CAssetPath MapPath = GetMapPath();
-		float CameraZoom = AssetsManager()->GetAssetValue<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+		float CameraZoom = GetCameraZoom();
 		
 		if(Button == KEY_MOUSE_WHEEL_UP)
 		{
 			CameraZoom *= 1.1f;
-			AssetsManager()->SetAssetValue_Hard<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, CameraZoom);
+			SetCameraZoom(CameraZoom);
 		}
 		if(Button == KEY_MOUSE_WHEEL_DOWN)
 		{
 			CameraZoom /= 1.1f;
-			AssetsManager()->SetAssetValue_Hard<float>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAZOOM, CameraZoom);
+			SetCameraZoom(CameraZoom);
 		}
 		else if(Button == KEY_MOUSE_3 || (Button == KEY_MOUSE_1 && Input()->KeyIsPressed(KEY_LCTRL)))
 		{
@@ -746,10 +746,17 @@ void CViewMap::OnMouseMove()
 
 float CViewMap::GetCameraZoom()
 {
-	return AssetsManager()->GetAssetValue<float>(GetMapPath(), CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f);
+	return (m_ZoomLockedToUnit ? 1.0f : AssetsManager()->GetAssetValue<float>(GetMapPath(), CSubPath::Null(), CAsset_Map::CAMERAZOOM, 1.0f));
 }
 
 void CViewMap::SetCameraZoom(float Value)
 {
+	Value = clamp(Value, 0.01f, 100.0f);
+	m_ZoomLockedToUnit = false;
 	AssetsManager()->SetAssetValue_Hard<float>(GetMapPath(), CSubPath::Null(), CAsset_Map::CAMERAZOOM, Value);
+}
+
+void CViewMap::SetCameraZoomToUnit()
+{
+	m_ZoomLockedToUnit = !m_ZoomLockedToUnit;
 }
