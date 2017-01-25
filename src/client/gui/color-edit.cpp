@@ -895,6 +895,51 @@ public:
 	}
 };
 
+class CHexaEdit : public gui::CAbstractTextEdit
+{
+protected:
+	CAbstractColorEdit* m_pColorEdit;
+	
+protected:
+	virtual void SaveFromTextBuffer()
+	{
+		const char* pText = GetText();
+		pText = str_skip_whitespaces((char*) pText);
+		if(pText && *pText == '#')
+			pText++;
+		pText = str_skip_whitespaces((char*) pText);
+		
+		uint32 Value = str_to_int_base(pText, 16);
+		m_pColorEdit->SetValue(vec4(
+			static_cast<float>((Value>>24) & 255)/255.0f,
+			static_cast<float>((Value>>16) & 255)/255.0f,
+			static_cast<float>((Value>>8) & 255)/255.0f,
+			static_cast<float>(Value & 255)/255.0f
+		));
+	}
+	
+	virtual void CopyToTextBuffer()
+	{
+		vec4 Color = m_pColorEdit->GetValue();
+		uint32 Value = static_cast<uint32>(Color.a * 255.0f);
+		Value += (static_cast<uint32>(Color.b * 255.0f)<<8);
+		Value += (static_cast<uint32>(Color.g * 255.0f)<<16);
+		Value += (static_cast<uint32>(Color.r * 255.0f)<<24);
+		
+		char aBuf[16];
+		str_format(aBuf, sizeof(aBuf), "#%08X", Value);
+		SetText(aBuf);
+	}
+	
+public:
+	CHexaEdit(CAbstractColorEdit* pColorEdit) :
+		gui::CAbstractTextEdit(pColorEdit->Context()),
+		m_pColorEdit(pColorEdit)
+	{
+		
+	}
+};
+
 /* POPUP **************************************************************/
 
 class CColorPopup : public CPopup
@@ -973,6 +1018,15 @@ public:
 				
 				pVLayout->Add(new CAlphaSliderEdit(m_pColorEdit), false);
 			}
+			
+			{
+				gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+				pVLayout->Add(pLayout, false);
+				
+				gui::CLabel* pLabel = new gui::CLabel(Context(), "Code:");
+				pLayout->Add(pLabel, true);
+				pLayout->Add(new CHexaEdit(m_pColorEdit), true);
+			}
 		}
 		
 		//HSV
@@ -1024,9 +1078,18 @@ public:
 				
 				pVLayout->Add(new CAlphaSliderEdit(m_pColorEdit), false);
 			}
+			
+			{
+				gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+				pVLayout->Add(pLayout, false);
+				
+				gui::CLabel* pLabel = new gui::CLabel(Context(), "Code:");
+				pLayout->Add(pLabel, true);
+				pLayout->Add(new CHexaEdit(m_pColorEdit), true);
+			}
 		}
 		
-		//HSV
+		//Square
 		{
 			gui::CVListLayout* pVLayout = new gui::CVListLayout(Context());
 			pTab->AddTab(pVLayout, "Square", SquareIcon);
@@ -1049,9 +1112,18 @@ public:
 				
 				pVLayout->Add(new CAlphaSliderEdit(m_pColorEdit), false);
 			}
+			
+			{
+				gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+				pVLayout->Add(pLayout, false);
+				
+				gui::CLabel* pLabel = new gui::CLabel(Context(), "Code:");
+				pLayout->Add(pLabel, true);
+				pLayout->Add(new CHexaEdit(m_pColorEdit), true);
+			}
 		}
 		
-		//HSV
+		//Wheel
 		{
 			gui::CVListLayout* pVLayout = new gui::CVListLayout(Context());
 			pTab->AddTab(pVLayout, "Wheel", WheelIcon);
@@ -1068,6 +1140,15 @@ public:
 				pLayout->Add(new CRGBIntegerEdit(m_pColorEdit, 3), true);
 				
 				pVLayout->Add(new CAlphaSliderEdit(m_pColorEdit), false);
+			}
+			
+			{
+				gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+				pVLayout->Add(pLayout, false);
+				
+				gui::CLabel* pLabel = new gui::CLabel(Context(), "Code:");
+				pLayout->Add(pLabel, true);
+				pLayout->Add(new CHexaEdit(m_pColorEdit), true);
 			}
 		}
 		

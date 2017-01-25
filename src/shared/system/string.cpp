@@ -298,7 +298,8 @@ const char *str_find_nocase(const char *haystack, const char *needle)
 	return 0;
 }
 
-int str_toint(const char *str) { return atoi(str); }
+int str_to_int(const char *str) { return atoi(str); }
+int str_to_int_base(const char *str, int base)  { return strtol(str, NULL, base); }
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
 

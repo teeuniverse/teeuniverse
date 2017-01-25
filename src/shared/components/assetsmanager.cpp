@@ -919,7 +919,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 		if(pCharIter >= pName)\
 		{\
 			Buffer.append_num(pName, pCharIter - pName + 1);\
-			DuplicateNum = atoi(pCharIter + 1);\
+			DuplicateNum = str_to_int(pCharIter + 1);\
 		}\
 		else\
 			Buffer.copy(pName);\

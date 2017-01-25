@@ -182,8 +182,8 @@ int str_utf8_forward(const char *str, int cursor);
 */
 int str_utf8_rewind(const char *str, int cursor);
 
-int str_toint(const char *str);
-
+int str_to_int(const char *str);
+int str_to_int_base(const char *str, int base);
 
 /*
 	Function: str_find_nocase

@@ -102,7 +102,7 @@ bool CCommandLineInterpreter::CCommand::GetInteger(const char** ppArgs, int* pRe
 		return false;
 	}
 	
-	*pResult = str_toint(Buffer.buffer());
+	*pResult = str_to_int(Buffer.buffer());
 	return true;
 }
 
