@@ -50,6 +50,7 @@ CAsset_MapLayerQuads::CQuad::CQuad()
 	m_Color1 = 1.0f;
 	m_Color2 = 1.0f;
 	m_Color3 = 1.0f;
+	m_Color = 1.0f;
 }
 
 CAsset_MapLayerQuads::CAsset_MapLayerQuads()
@@ -385,6 +386,7 @@ void CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* p
 	SysType.m_Color2 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color2);
 	SysType.m_Color3 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color3);
 	pLoadingContext->ReadAssetPath(TuaType.m_AnimationPath, SysType.m_AnimationPath);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
 
@@ -436,6 +438,7 @@ void CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* 
 	TuaType.m_Color2 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color2);
 	TuaType.m_Color3 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color3);
 	pLoadingContext->WriteAssetPath(SysType.m_AnimationPath, TuaType.m_AnimationPath);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 }
 
 void CAsset_MapLayerQuads::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_2_2& TuaType)
@@ -707,6 +710,8 @@ vec4 CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, vec4
 			return GetQuadColor2(SubPath);
 		case QUAD_COLOR3:
 			return GetQuadColor3(SubPath);
+		case QUAD_COLOR:
+			return GetQuadColor(SubPath);
 	}
 	return CAsset::GetValue<vec4>(ValueType, SubPath, DefaultValue);
 }
@@ -727,6 +732,9 @@ bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, vec4
 			return true;
 		case QUAD_COLOR3:
 			SetQuadColor3(SubPath, Value);
+			return true;
+		case QUAD_COLOR:
+			SetQuadColor(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<vec4>(ValueType, SubPath, Value);

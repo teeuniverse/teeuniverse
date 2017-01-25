@@ -625,6 +625,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_SIZE, m_QuadSelection[i].GetSize(), m_Token);
 						AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_ANGLE, m_QuadSelection[i].GetAngle(), m_Token);
 						AssetsManager()->SetAssetValue<CAssetPath>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, m_QuadSelection[i].GetAnimationPath(), m_Token);
+						AssetsManager()->SetAssetValue<vec4>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_COLOR, m_QuadSelection[i].GetColor(), m_Token);
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_VERTEX0, m_QuadSelection[i].GetVertex0(), m_Token);
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_VERTEX1, m_QuadSelection[i].GetVertex1(), m_Token);
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_VERTEX2, m_QuadSelection[i].GetVertex2(), m_Token);

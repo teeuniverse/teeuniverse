@@ -47,7 +47,7 @@ void CAsset_MapLayerQuads::CQuad::GetTransform(CAssetsManager* pAssetsManager, f
 
 void CAsset_MapLayerQuads::CQuad::GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const
 {
-	*pColor = 1.0f;
+	*pColor = m_Color;
 	*pState = CAsset_SkeletonAnimation::LAYERSTATE_VISIBLE;
 	
 	if(!m_AnimationPath.IsNull())

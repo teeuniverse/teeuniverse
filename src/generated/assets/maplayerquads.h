@@ -102,6 +102,7 @@ public:
 		QUAD_COLOR2,
 		QUAD_COLOR3,
 		QUAD_ANIMATIONPATH,
+		QUAD_COLOR,
 		QUAD,
 		VISIBILITY,
 	};
@@ -216,6 +217,7 @@ public:
 			tua_uint32 m_Color2;
 			tua_uint32 m_Color3;
 			CAssetPath::CTuaType m_AnimationPath;
+			tua_uint32 m_Color;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_2_2& TuaType);
 		};
@@ -238,6 +240,7 @@ public:
 		vec4 m_Color2;
 		vec4 m_Color3;
 		CAssetPath m_AnimationPath;
+		vec4 m_Color;
 	
 	public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -261,6 +264,7 @@ public:
 			m_Color2 = Item.m_Color2;
 			m_Color3 = Item.m_Color3;
 			m_AnimationPath = Item.m_AnimationPath;
+			m_Color = Item.m_Color;
 		}
 		
 		void transfert(CAsset_MapLayerQuads::CQuad& Item)
@@ -281,6 +285,7 @@ public:
 			m_Color2 = Item.m_Color2;
 			m_Color3 = Item.m_Color3;
 			m_AnimationPath = Item.m_AnimationPath;
+			m_Color = Item.m_Color;
 		}
 		
 		inline vec2 GetPivot() const { return m_Pivot; }
@@ -355,6 +360,8 @@ public:
 		
 		inline CAssetPath GetAnimationPath() const { return m_AnimationPath; }
 		
+		inline vec4 GetColor() const { return m_Color; }
+		
 		inline void SetPivot(vec2 Value) { m_Pivot = Value; }
 		
 		inline void SetPivotX(float Value) { m_Pivot.x = Value; }
@@ -426,6 +433,8 @@ public:
 		inline void SetColor3(vec4 Value) { m_Color3 = Value; }
 		
 		inline void SetAnimationPath(const CAssetPath& Value) { m_AnimationPath = Value; }
+		
+		inline void SetColor(vec4 Value) { m_Color = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -797,6 +806,13 @@ public:
 		else return CAssetPath::Null();
 	}
 	
+	inline vec4 GetQuadColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Quad.size())
+			return m_Quad[SubPath.GetId()].GetColor();
+		else return 1.0f;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
@@ -1027,6 +1043,12 @@ public:
 	{
 		if(SubPath.GetId() < m_Quad.size())
 			m_Quad[SubPath.GetId()].SetAnimationPath(Value);
+	}
+	
+	inline void SetQuadColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() < m_Quad.size())
+			m_Quad[SubPath.GetId()].SetColor(Value);
 	}
 	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }

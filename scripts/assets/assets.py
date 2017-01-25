@@ -1949,6 +1949,7 @@ mapLayerQuads_quad.addMember("0.1.0", "Color1", TypeColor(), "1.0f")
 mapLayerQuads_quad.addMember("0.1.0", "Color2", TypeColor(), "1.0f")
 mapLayerQuads_quad.addMember("0.1.0", "Color3", TypeColor(), "1.0f")
 mapLayerQuads_quad.addMember("0.1.0", "AnimationPath", TypeAssetPath())
+mapLayerQuads_quad.addMember("0.2.2", "Color", TypeColor(), "1.0f")
 mapLayerQuads_quad.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"

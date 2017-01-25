@@ -869,6 +869,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_PIVOT_X, CAsset_MapLayerQuads::QUAD_PIVOT_Y, _LSTRING("Position"));
 		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _LSTRING("Size"));
 		AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _LSTRING("Angle"));
+		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR, _LSTRING("Color"));
 		AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _LSTRING("Animation"));
 	}
 	
