@@ -61,7 +61,6 @@ public:
 	
 public:
 	
-	
 	CAssetPath m_Path_Rect_TextSelection;
 	CAssetPath m_Path_Rect_Selection;
 	CAssetPath m_Path_Rect_Border;
@@ -129,6 +128,7 @@ public:
 	CAssetPath m_Path_Sprite_IconQuad;
 	CAssetPath m_Path_Sprite_IconTiles;
 	CAssetPath m_Path_Sprite_IconZoneTiles;
+	CAssetPath m_Path_Sprite_IconZoneObject;
 	CAssetPath m_Path_Sprite_IconZoneType;
 	CAssetPath m_Path_Sprite_IconEntityType;
 	CAssetPath m_Path_Sprite_IconGuiRect;

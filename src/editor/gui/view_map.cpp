@@ -395,6 +395,13 @@ CAssetPath CViewMap::GetMapPath()
 				return pLayer->GetParentPath();
 			break;
 		}
+		case CAsset_MapZoneObjects::TypeId:
+		{
+			const CAsset_MapZoneObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneObjects>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				return pLayer->GetParentPath();
+			break;
+		}
 		case CAsset_MapEntities::TypeId:
 		{
 			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
@@ -499,6 +506,7 @@ void CViewMap::RenderView()
 	
 	MapRenderer()->RenderMap_Zones(MapPath, Color);
 	
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
 	{
 		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)

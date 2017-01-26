@@ -2383,6 +2383,56 @@ guiComboBoxStyle.addMember("0.2.0", "EnumPath", TypeAssetPath())
 
 assetsList.append(guiComboBoxStyle)
 
+# MAP ZONE POLYGON #####################################################
+mapZoneObjects_vertex = Class("Vertex")
+mapZoneObjects_vertex.addMember("0.2.2", "Position", TypeVec2(), "0.0f")
+mapZoneObjects_vertex.addMember("0.2.2", "Smoothness", TypeInt32(), "CBezierVertex::TYPE_CORNER")
+mapZoneObjects_vertex.addMember("0.2.2", "ControlPoint0", TypeVec2(), "vec2(-16.0f, 0.0f)")
+mapZoneObjects_vertex.addMember("0.2.2", "ControlPoint1", TypeVec2(), "vec2(16.0f, 0.0f)")
+mapZoneObjects_vertex.addMember("0.2.2", "Weight", TypeFloat(), "1.0f")
+
+mapZoneObjects_object = Class("Object")
+mapZoneObjects_object.addMember("0.2.2", "Position", TypeVec2(), "0.0f")
+mapZoneObjects_object.addMember("0.2.2", "Size", TypeVec2(), "1.0f")
+mapZoneObjects_object.addMember("0.2.2", "Angle", TypeFloat(), "0.0f")
+mapZoneObjects_object.addMember("0.2.2", "Vertex", TypeArray(mapZoneObjects_vertex))
+mapZoneObjects_object.addMember("0.2.2", "PathType", TypeInt32(), "PATHTYPE_OPEN")
+mapZoneObjects_object.addMember("0.2.2", "FillType", TypeInt32(), "FILLTYPE_NONE")
+mapZoneObjects_object.addMember("0.2.2", "ZoneIndex", TypeUInt8(), "1")
+mapZoneObjects_object.addPublicFunc([
+	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
+	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"
+])
+
+mapZoneObjects = ClassAsset("MapZoneObjects", len(assetsList))
+mapZoneObjects.addHeader("shared/geometry/bezier.h")
+mapZoneObjects.setInheritance(mainAsset)
+mapZoneObjects.addClass(mapZoneObjects_vertex)
+mapZoneObjects.addClass(mapZoneObjects_object)
+mapZoneObjects.addMember("0.2.2", "ParentPath", TypeAssetPath())
+mapZoneObjects.addMember("0.2.2", "ZoneTypePath", TypeAssetPath())
+mapZoneObjects.addMember("0.2.2", "Object", TypeArray(mapZoneObjects_object))
+mapZoneObjects.addMember("0.2.2", "Visibility", TypeBool(), "true")
+mapZoneObjects.addPublicFunc([
+	"void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
+	"void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
+])
+mapZoneObjects.addPublicLines([
+	"enum",
+	"{",
+	"	FILLTYPE_NONE = 0,",
+	"	FILLTYPE_INSIDE,",
+	"	FILLTYPE_OUTSIDE,",
+	
+	"	PATHTYPE_OPEN = 0,",
+	"	PATHTYPE_CLOSED,",
+	"	PATHTYPE_INFINITE,",
+	"};",
+	""
+])
+
+assetsList.append(mapZoneObjects)
+
 #########################################
 
 f = file("src/generated/assets/allassets.h", "w")

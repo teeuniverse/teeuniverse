@@ -62,5 +62,6 @@
 #include <generated/assets/maplayerobjects.h>
 #include <generated/assets/material.h>
 #include <generated/assets/guicomboboxstyle.h>
+#include <generated/assets/mapzoneobjects.h>
 
 #endif

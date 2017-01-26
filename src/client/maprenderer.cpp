@@ -927,6 +927,56 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 		RenderObject(pLayer->GetObject(*Iter), Pos, DrawMesh);
 }
 
+void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const array<CAsset_MapZoneObjects::CObject, allocator_copy<CAsset_MapZoneObjects::CObject> >& Objects, vec2 Pos, vec4 Color)
+{
+	array<CTexturedQuad> Quads;
+	
+	for(int i=0; i<Objects.size(); i++)
+	{
+		GenerateZoneQuads_Object(AssetsManager(), GetTime(), Quads, Objects[i], ZoneTypePath);
+	}
+	
+	CAssetPath CurrentImagePath;
+	for(int i=0; i<Quads.size(); i++)
+	{
+		if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
+			Graphics()->QuadsEnd();
+		if(i==0 || CurrentImagePath != Quads[i].m_ImagePath)
+		{
+			AssetsRenderer()->TextureSet(Quads[i].m_ImagePath);
+			CurrentImagePath = Quads[i].m_ImagePath;
+			Graphics()->QuadsBegin();
+		}
+		
+		Graphics()->SetColor4(
+			Quads[i].m_Color[0],
+			Quads[i].m_Color[1],
+			Quads[i].m_Color[2],
+			Quads[i].m_Color[3],
+			true
+		);
+		
+		Graphics()->QuadsSetSubsetFree(
+			Quads[i].m_Texture[0].x, Quads[i].m_Texture[0].y,
+			Quads[i].m_Texture[1].x, Quads[i].m_Texture[1].y,
+			Quads[i].m_Texture[2].x, Quads[i].m_Texture[2].y,
+			Quads[i].m_Texture[3].x, Quads[i].m_Texture[3].y,
+			Quads[i].m_TextureIndex
+		);
+		
+		CGraphics::CFreeformItem Freeform(
+			MapPosToScreenPos(Quads[i].m_Position[0]),
+			MapPosToScreenPos(Quads[i].m_Position[1]),
+			MapPosToScreenPos(Quads[i].m_Position[2]),
+			MapPosToScreenPos(Quads[i].m_Position[3])
+		);
+		Graphics()->QuadsDrawFreeform(&Freeform, 1);
+	}
+	
+	if(Quads.size())
+		Graphics()->QuadsEnd();
+}
+
 void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 {
 	const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(GroupPath);
@@ -1026,13 +1076,28 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, vec4 Color)
 	for(Iter = pMap->BeginZoneLayer(); Iter != pMap->EndZoneLayer(); ++Iter)
 	{
 		CAssetPath ZonePath = pMap->GetZoneLayer(*Iter);
-		const CAsset_MapZoneTiles* pZone = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(ZonePath);
-		if(!pZone)
-			continue;
-	
-		if(!pZone->GetVisibility())
-			continue;
 		
-		RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, true);
+		if(ZonePath.GetType() == CAsset_MapZoneTiles::TypeId)
+		{
+			const CAsset_MapZoneTiles* pZone = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(ZonePath);
+			if(!pZone)
+				continue;
+		
+			if(!pZone->GetVisibility())
+				continue;
+			
+			RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, true);
+		}
+		else if(ZonePath.GetType() == CAsset_MapZoneObjects::TypeId)
+		{
+			const CAsset_MapZoneObjects* pZone = AssetsManager()->GetAsset<CAsset_MapZoneObjects>(ZonePath);
+			if(!pZone)
+				continue;
+		
+			if(!pZone->GetVisibility())
+				continue;
+			
+			RenderObjects_Zone(pZone->GetZoneTypePath(), pZone->GetObjectArray(), 0.0f, Color);
+		}
 	}
 }

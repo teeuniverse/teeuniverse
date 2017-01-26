@@ -41,6 +41,7 @@ void TesselateQuad(const CTexturedQuad& Input, array<CTexturedQuad>& Output, int
 			
 			CTexturedQuad& Quad = Output.increment();
 			Quad.m_ImagePath = Input.m_ImagePath;
+			Quad.m_TextureIndex = -1;
 			
 			Quad.m_Position[0] = mix(mix(Input.m_Position[0], Input.m_Position[1], x0), mix(Input.m_Position[2], Input.m_Position[3], x0), y0);
 			Quad.m_Position[1] = mix(mix(Input.m_Position[0], Input.m_Position[1], x1), mix(Input.m_Position[2], Input.m_Position[3], x1), y0);

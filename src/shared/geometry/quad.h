@@ -22,6 +22,12 @@
 #include <shared/math/vector.h>
 #include <shared/assets/assetpath.h>
 
+class CQuad
+{
+public:
+	vec2 m_Position[4];
+};
+
 class CTexturedQuad
 {
 public:
@@ -29,6 +35,7 @@ public:
 	vec2 m_Position[4];
 	vec2 m_Texture[4];
 	CAssetPath m_ImagePath;
+	int m_TextureIndex;
 };
 
 void RotateQuadTexture(CTexturedQuad& Quad);

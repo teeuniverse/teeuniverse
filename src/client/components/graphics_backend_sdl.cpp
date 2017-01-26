@@ -252,10 +252,32 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 	{
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+		
+		switch(State.m_WrapModeU)
+		{
+		case CGraphics::WRAP_REPEAT:
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			break;
+		case CGraphics::WRAP_CLAMP:
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			break;
+		default:
+			dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeU);
+		};
 
+		switch(State.m_WrapModeV)
+		{
+		case CGraphics::WRAP_REPEAT:
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			break;
+		case CGraphics::WRAP_CLAMP:
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			break;
+		default:
+			dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeV);
+		};
+		
+		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 	}
 
 	// screen mapping

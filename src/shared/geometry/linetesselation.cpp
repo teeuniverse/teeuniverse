@@ -84,6 +84,35 @@ void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVerte
 	}
 }
 
+void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& OutputQuads)
+{
+	if(Vertices.size() < 3)
+		return;
+	
+	vec2 Barycenter = vec2(0.0f, 0.0f);
+	for(int i=0; i<Vertices.size(); i++)
+		Barycenter += Vertices[i].m_Position;
+	Barycenter = Barycenter / Vertices.size();
+	
+	int i=0;
+	do
+	{
+		int V0 = i;
+		int V1 = i+1;
+		int V2 = min(i+2, Vertices.size()-1);
+		
+		CQuad& Quad = OutputQuads.increment();
+		
+		Quad.m_Position[0] = Vertices[V0].m_Position;
+		Quad.m_Position[1] = Vertices[V1].m_Position;
+		Quad.m_Position[2] = Barycenter;
+		Quad.m_Position[3] = Vertices[V2].m_Position;
+		
+		i += 2;
+	}
+	while(i < Vertices.size()-1);
+}
+
 void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo)
 {
 	SpriteInfo.m_UMin = 0.0f;
@@ -877,6 +906,7 @@ void GenerateMaterialQuads_Line(
 									
 									CTexturedQuad Quad;
 									Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+									Quad.m_TextureIndex = -1;
 									
 									Quad.m_Color[0] = Color0 * pSprite->GetColor();
 									Quad.m_Color[1] = Color1 * pSprite->GetColor();
@@ -919,6 +949,7 @@ void GenerateMaterialQuads_Line(
 							{
 								CTexturedQuad Quad;
 								Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+								Quad.m_TextureIndex = -1;
 								
 								Quad.m_Color[0] = Color0 * pSprite->GetColor();
 								Quad.m_Color[1] = Color1 * pSprite->GetColor();
@@ -973,6 +1004,7 @@ void GenerateMaterialQuads_Line(
 							Pos += DirY * pSprite->GetPosition().y;
 							
 							Quad.m_ImagePath = SpriteInfo.m_ImagePath;
+							Quad.m_TextureIndex = -1;
 							
 							Quad.m_Color[0] = Color1*pSprite->GetColor();
 							Quad.m_Color[1] = Quad.m_Color[0];
@@ -1067,6 +1099,7 @@ void GenerateMaterialQuads(
 				Quad.m_Color[3] = pMaterial->GetTextureColor();
 				
 				Quad.m_ImagePath = pMaterial->GetTexturePath();
+				Quad.m_TextureIndex = -1;
 				
 				i += 2;
 			}
@@ -1133,4 +1166,159 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	GenerateMaterialCurve_Object(pAssetsManager, Time, LineVertices, Object);
 	
 	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed, ShowLine, Object.GetOrthoTesselation());
+}
+
+void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object)
+{
+	const array< CAsset_MapZoneObjects::CVertex, allocator_copy<CAsset_MapZoneObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
+	bool Closed = (Object.GetPathType() == CAsset_MapZoneObjects::PATHTYPE_CLOSED);
+	
+	vec2 ObjPosition;
+	matrix2x2 Transform;
+	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
+	
+	array<CBezierVertex> BezierVertices;
+	
+	for(int i=0; i<ObjectVertices.size(); i++)
+	{
+		CBezierVertex& Vertex = BezierVertices.increment();
+		Vertex.m_Position = ObjectVertices[i].GetPosition();
+		Vertex.m_Weight = ObjectVertices[i].GetWeight();
+		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
+		Vertex.m_aControlPoints[0] = Vertex.m_Position + ObjectVertices[i].GetControlPoint0();
+		Vertex.m_aControlPoints[1] = Vertex.m_Position + ObjectVertices[i].GetControlPoint1();
+		if(Vertex.m_Type >= CBezierVertex::NUM_TYPES || Vertex.m_Type < 0)
+			Vertex.m_Type = CBezierVertex::TYPE_CORNER;
+	}
+	if(Closed && BezierVertices.size() > 0)
+	{
+		CBezierVertex& Vertex = BezierVertices.increment();
+		Vertex = BezierVertices[0];
+	}
+	
+	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
+	TesselateBezierCurve(BezierVertices, OutputLines, 32.0f);
+	ComputeLineNormals<CLineVertex>(OutputLines, Closed);
+}
+
+void GenerateZoneQuads(
+	const CAssetsManager* pAssetsManager,
+	array<CTexturedQuad>& OutputQuads,
+	const array<CLineVertex>& Vertices,
+	const matrix2x2& Transform,
+	vec2 ObjPosition,
+	CAssetPath ZoneTypePath,
+	int Index,
+	bool Closed
+)
+{
+	const CAsset_ZoneType* pZoneType = pAssetsManager->GetAsset<CAsset_ZoneType>(ZoneTypePath);
+	if(!pZoneType)
+		return;
+		
+	bool IndexFound = false;
+	vec4 ZoneColor = 1.0f;
+	vec4 BorderColor = 1.0f;
+	if(pZoneType)
+	{
+		CSubPath IndexPath = CAsset_ZoneType::SubPath_Index(Index);
+		if(pZoneType->IsValidIndex(IndexPath))
+		{
+			ZoneColor = pZoneType->GetIndexColor(IndexPath);
+			BorderColor = pZoneType->GetIndexBorderColor(IndexPath);
+			IndexFound = true;
+		}
+	}
+	
+	if(!IndexFound)
+	{
+		ZoneColor = vec4(0.0f, 0.0f, 0.0f, 0.5f);
+		BorderColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	
+	//Render polygon
+	if(Closed)
+	{
+		if(Vertices.size() >= 3)
+		{
+			vec2 Barycenter = vec2(0.0f, 0.0f);
+			for(int i=0; i<Vertices.size(); i++)
+				Barycenter += Vertices[i].m_Position;
+			Barycenter = ObjPosition + Transform*(Barycenter / Vertices.size());
+			
+			float TextureSize = 1.0f/32.0f;
+			
+			int i=0;
+			do
+			{
+				int V0 = i;
+				int V1 = i+1;
+				int V2 = min(i+2, Vertices.size()-1);
+				
+				CTexturedQuad& Quad = OutputQuads.increment();
+				
+				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position);
+				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position);
+				Quad.m_Position[2] = Barycenter;
+				Quad.m_Position[3] = ObjPosition + Transform*(Vertices[V2].m_Position);
+				
+				Quad.m_Texture[0] = Quad.m_Position[0] * TextureSize;
+				Quad.m_Texture[1] = Quad.m_Position[1] * TextureSize;
+				Quad.m_Texture[2] = Quad.m_Position[2] * TextureSize;
+				Quad.m_Texture[3] = Quad.m_Position[3] * TextureSize;
+				
+				Quad.m_Color[0] = ZoneColor;
+				Quad.m_Color[1] = ZoneColor;
+				Quad.m_Color[2] = ZoneColor;
+				Quad.m_Color[3] = ZoneColor;
+				
+				Quad.m_ImagePath = pZoneType->GetImagePath();
+				Quad.m_TextureIndex = Index;
+				
+				i += 2;
+			}
+			while(i < Vertices.size()-1);
+		}
+		
+		if(Vertices.size() >= 2)
+		{
+			for(int i=0; i<Vertices.size()-1; i++)
+			{
+				int V0 = i;
+				int V1 = (i+1);
+				
+				CTexturedQuad& Quad = OutputQuads.increment();
+				
+				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position);
+				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position);
+				Quad.m_Position[2] = ObjPosition + Transform*(Vertices[V0].m_Position - Vertices[V0].m_Thickness*8.0f);
+				Quad.m_Position[3] = ObjPosition + Transform*(Vertices[V1].m_Position - Vertices[V1].m_Thickness*8.0f);
+				
+				Quad.m_Texture[0] = 0.0f;
+				Quad.m_Texture[1] = 0.0f;
+				Quad.m_Texture[2] = 0.0f;
+				Quad.m_Texture[3] = 0.0f;
+				
+				Quad.m_Color[0] = BorderColor;
+				Quad.m_Color[1] = BorderColor;
+				Quad.m_Color[2] = BorderColor;
+				Quad.m_Color[3] = BorderColor;
+				
+				Quad.m_TextureIndex = -1;
+			}
+		}
+	}
+}
+
+void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath)
+{
+	bool Closed = (Object.GetPathType() == CAsset_MapZoneObjects::PATHTYPE_CLOSED);
+	vec2 ObjPosition;
+	matrix2x2 Transform;
+	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
+	
+	array<CLineVertex> LineVertices;
+	GenerateZoneCurve_Object(pAssetsManager, Time, LineVertices, Object);
+	
+	GenerateZoneQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, ZoneTypePath, Object.GetZoneIndex(), Closed);
 }

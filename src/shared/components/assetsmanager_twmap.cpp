@@ -538,6 +538,73 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							}
 						}						
 					}
+					else if(pLayerItem->m_Type == ddnet::LAYERTYPE_QUADS)
+					{
+						ddnet::CMapItemLayerQuads *pQuadsItem = (ddnet::CMapItemLayerQuads *)pLayerItem;
+
+						//Name
+						aBuf[0] = 0;
+
+						if(pQuadsItem->m_Version >= 2)
+							IntsToStr(pQuadsItem->m_aName, sizeof(pQuadsItem->m_aName)/sizeof(int), aBuf);
+						
+						//Search the name in all assets
+						CAssetPath ZoneTypePath;
+						for(int p=0; p<GetNumPackages(); p++)
+						{
+							if(!IsValidPackage(p))
+								continue;
+							
+							ZoneTypePath = FindAsset<CAsset_ZoneType>(p, aBuf);
+							if(ZoneTypePath.IsNotNull())
+								break;
+						}
+						
+						CAssetPath ZonePath;
+						CAsset_MapZoneObjects* pZone = NewAsset_Hard<CAsset_MapZoneObjects>(&ZonePath, PackageId);
+						AssetsManager()->TryChangeAssetName_Hard(ZonePath, aBuf);
+						CSubPath MapSubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
+						pMap->SetZoneLayer(MapSubPath, ZonePath);
+						pZone->SetParentPath(MapPath);
+						pZone->SetZoneTypePath(ZoneTypePath);
+						
+						//Quads
+						ddnet::CQuad *pQuads = (ddnet::CQuad *) ArchiveFile.GetDataSwapped(pQuadsItem->m_Data);
+						for(int i=0; i<pQuadsItem->m_NumQuads; i++)
+						{
+							CSubPath ObjectPath = CAsset_MapZoneObjects::SubPath_Object(pZone->AddObject());
+							
+							vec2 Pivot;
+							Pivot.x = fx2f(pQuads[i].m_aPoints[4].x);
+							Pivot.y = fx2f(pQuads[i].m_aPoints[4].y);
+							
+							pZone->SetObjectPosition(ObjectPath, Pivot);
+							pZone->SetObjectPathType(ObjectPath, CAsset_MapZoneObjects::PATHTYPE_CLOSED);
+							pZone->SetObjectFillType(ObjectPath, CAsset_MapZoneObjects::FILLTYPE_INSIDE);
+							pZone->SetObjectZoneIndex(ObjectPath, pQuads[i].m_ColorEnvOffset);
+							
+							{
+								CSubPath VertexPath = CAsset_MapZoneObjects::SubPath_ObjectVertex(ObjectPath.GetId(), pZone->AddObjectVertex(ObjectPath));
+								pZone->SetObjectVertexPosition(VertexPath, vec2(fx2f(pQuads[i].m_aPoints[0].x), fx2f(pQuads[i].m_aPoints[0].y)) - Pivot);
+								pZone->SetObjectVertexSmoothness(VertexPath, CBezierVertex::TYPE_CORNER);
+							}
+							{
+								CSubPath VertexPath = CAsset_MapZoneObjects::SubPath_ObjectVertex(ObjectPath.GetId(), pZone->AddObjectVertex(ObjectPath));
+								pZone->SetObjectVertexPosition(VertexPath, vec2(fx2f(pQuads[i].m_aPoints[1].x), fx2f(pQuads[i].m_aPoints[1].y)) - Pivot);
+								pZone->SetObjectVertexSmoothness(VertexPath, CBezierVertex::TYPE_CORNER);
+							}
+							{
+								CSubPath VertexPath = CAsset_MapZoneObjects::SubPath_ObjectVertex(ObjectPath.GetId(), pZone->AddObjectVertex(ObjectPath));
+								pZone->SetObjectVertexPosition(VertexPath, vec2(fx2f(pQuads[i].m_aPoints[3].x), fx2f(pQuads[i].m_aPoints[3].y)) - Pivot);
+								pZone->SetObjectVertexSmoothness(VertexPath, CBezierVertex::TYPE_CORNER);
+							}
+							{
+								CSubPath VertexPath = CAsset_MapZoneObjects::SubPath_ObjectVertex(ObjectPath.GetId(), pZone->AddObjectVertex(ObjectPath));
+								pZone->SetObjectVertexPosition(VertexPath, vec2(fx2f(pQuads[i].m_aPoints[2].x), fx2f(pQuads[i].m_aPoints[2].y)) - Pivot);
+								pZone->SetObjectVertexSmoothness(VertexPath, CBezierVertex::TYPE_CORNER);
+							}
+						}
+					}
 				}					
 			}
 			else
@@ -1580,80 +1647,87 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		CAsset_Map::CIteratorZoneLayer ZoneIter;
 		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
 		{
-			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-			if(!pZone)
-				continue;
-			
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+			if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneTiles::TypeId)
 			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
+				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+				if(!pZone)
+					continue;
+				
+				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
 				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
+					for(int j=0; j<pZone->GetTileHeight(); j++)
 					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						
-						switch(pZone->GetTileIndex(TilePath))
+						for(int i=0; i<pZone->GetTileWidth(); i++)
 						{
-							case 1:
-								pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
-								break;
-							case 2:
-								if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
-									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
-								break;
-							case 3:
-								pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
-								break;
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							
+							switch(pZone->GetTileIndex(TilePath))
+							{
+								case 1:
+									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
+									break;
+								case 2:
+									if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
+									break;
+								case 3:
+									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
+									break;
+							}
 						}
 					}
 				}
-			}
-			else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
+				else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
+					for(int j=0; j<pZone->GetTileHeight(); j++)
 					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+						for(int i=0; i<pZone->GetTileWidth(); i++)
+						{
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+						}
 					}
 				}
-			}
-			else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
+				else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
+					for(int j=0; j<pZone->GetTileHeight(); j++)
 					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+						for(int i=0; i<pZone->GetTileWidth(); i++)
+						{
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+						}
 					}
 				}
-			}
-			else if(pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
+				else if(pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
+					for(int j=0; j<pZone->GetTileHeight(); j++)
 					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+						for(int i=0; i<pZone->GetTileWidth(); i++)
+						{
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+						}
 					}
 				}
-			}
-			else if(pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
-			{
-				for(int j=0; j<pZone->GetTileHeight(); j++)
+				else if(pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
+					for(int j=0; j<pZone->GetTileHeight(); j++)
 					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+						for(int i=0; i<pZone->GetTileWidth(); i++)
+						{
+							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+							pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+						}
 					}
 				}
+				else
+					ZoneGroupNeeded = true;
 			}
-			else
+			else if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneObjects::TypeId)
+			{
 				ZoneGroupNeeded = true;
+			}
 		}
 	
 		//TeeWorlds entities
@@ -1855,73 +1929,154 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		CAsset_Map::CIteratorZoneLayer ZoneIter;
 		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
 		{
-			const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
-			if(!pZone)
-				continue;
-			if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
-				continue;
-			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-				continue;
-			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-				continue;
-			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-				continue;
-			if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
-				continue;
-			
-			int Width = pZone->GetTileWidth();
-			int Height = pZone->GetTileHeight();
-	
-			ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
-			
-			for(int j=0; j<Height; j++)
+			if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneTiles::TypeId)
 			{
-				for(int i=0; i<Width; i++)
+				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+				if(!pZone)
+					continue;
+				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
+					continue;
+				
+				int Width = pZone->GetTileWidth();
+				int Height = pZone->GetTileHeight();
+		
+				ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
+				
+				for(int j=0; j<Height; j++)
 				{
-					pTiles[j*Width+i].m_Index = 0;
-					pTiles[j*Width+i].m_Flags = 0;
-					pTiles[j*Width+i].m_Skip = 0;
-					pTiles[j*Width+i].m_Reserved = 0;
+					for(int i=0; i<Width; i++)
+					{
+						pTiles[j*Width+i].m_Index = 0;
+						pTiles[j*Width+i].m_Flags = 0;
+						pTiles[j*Width+i].m_Skip = 0;
+						pTiles[j*Width+i].m_Reserved = 0;
+					}
 				}
-			}
-			
-			for(int j=0; j<pZone->GetTileHeight(); j++)
-			{
-				for(int i=0; i<pZone->GetTileWidth(); i++)
+				
+				for(int j=0; j<pZone->GetTileHeight(); j++)
 				{
-					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-					pTiles[j*Width+i].m_Index = pZone->GetTileIndex(TilePath);
+					for(int i=0; i<pZone->GetTileWidth(); i++)
+					{
+						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+						pTiles[j*Width+i].m_Index = pZone->GetTileIndex(TilePath);
+					}
 				}
+		
+				ddnet::CMapItemLayerTilemap LItem;
+				
+				LItem.m_Version = 3;
+				LItem.m_Flags = 0;
+				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
+				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Width = Width;
+				LItem.m_Height = Height;
+				LItem.m_Color.r = 255;
+				LItem.m_Color.g = 255;
+				LItem.m_Color.b = 255;
+				LItem.m_Color.a = 255;
+				LItem.m_ColorEnv = -1;
+				LItem.m_ColorEnvOffset = 0;
+				LItem.m_Image = -1;
+				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
+				
+				{
+					const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
+					if(pZoneName)
+						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pZoneName);
+					else
+						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
+				}
+				
+				ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
+				
+				delete[] pTiles;
 			}
-	
-			ddnet::CMapItemLayerTilemap LItem;
-			
-			LItem.m_Version = 3;
-			LItem.m_Flags = 0;
-			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
-			LItem.m_Width = Width;
-			LItem.m_Height = Height;
-			LItem.m_Color.r = 255;
-			LItem.m_Color.g = 255;
-			LItem.m_Color.b = 255;
-			LItem.m_Color.a = 255;
-			LItem.m_ColorEnv = -1;
-			LItem.m_ColorEnvOffset = 0;
-			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
-			
+			else if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneObjects::TypeId)
 			{
-				const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
-				if(pZoneName)
-					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pZoneName);
-				else
-					StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
+				const CAsset_MapZoneObjects* pZone = GetAsset<CAsset_MapZoneObjects>(pMap->GetZoneLayer(*ZoneIter));
+				if(!pZone)
+					continue;
+				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+					continue;
+				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
+					continue;
+				
+				array<ddnet::CQuad> Quads;
+				
+				CAsset_MapZoneObjects::CIteratorObject Iter;
+				for(Iter = pZone->BeginObject(); Iter != pZone->EndObject(); ++Iter)
+				{
+					const CAsset_MapZoneObjects::CObject& Object = pZone->GetObject(*Iter);
+					
+					vec2 ObjPosition;
+					matrix2x2 Transform;
+					Object.GetTransform(this, 0.0f, &Transform, &ObjPosition);
+					
+					array<CLineVertex> LineVertices;
+					array<CQuad> ObjectQuads;
+					
+					GenerateZoneCurve_Object(this, 0.0f, LineVertices, Object);
+					PolygonQuadrangulation(LineVertices, ObjectQuads);
+					
+					for(int i=0; i<ObjectQuads.size(); i++)
+					{
+						ddnet::CQuad& Quad = Quads.increment();
+						
+						Quad.m_aPoints[4].x = f2fx(ObjPosition.x);
+						Quad.m_aPoints[4].y = f2fx(ObjPosition.y);
+						
+						for(int j=0; j<4; j++)
+						{
+							vec2 Pos = ObjPosition + Transform*ObjectQuads[i].m_Position[j];
+							Quad.m_aPoints[j].x = f2fx(Pos.x);
+							Quad.m_aPoints[j].y = f2fx(Pos.y);
+							Quad.m_aTexcoords[j].x = 0.0f;
+							Quad.m_aTexcoords[j].y = 0.0f;
+							Quad.m_aColors[j].r = 255.0f;
+							Quad.m_aColors[j].g = 255.0f;
+							Quad.m_aColors[j].b = 255.0f;
+							Quad.m_aColors[j].a = 255.0f;
+						}
+						
+						Quad.m_PosEnv = -1;
+						Quad.m_PosEnvOffset = 0;
+						Quad.m_ColorEnv = -1;
+						Quad.m_ColorEnvOffset = Object.GetZoneIndex();
+					}					
+				}
+				
+				ddnet::CMapItemLayerQuads LItem;
+				LItem.m_Version = 2;
+				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
+				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Image = -1;
+				LItem.m_NumQuads = Quads.size();
+				LItem.m_Data = ArchiveFile.AddDataSwapped(Quads.size()*sizeof(ddnet::CQuad), &Quads[0]);
+				
+				{
+					const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
+					if(pZoneName)
+						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pZoneName);
+					else
+						StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "unknown");
+				}
+				
+				ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerQuads), &LItem);
 			}
-			
-			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
-			
-			delete[] pTiles;
 		}
 			
 		ddnet::CMapItemGroup GItem;

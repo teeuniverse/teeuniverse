@@ -23,9 +23,13 @@
 #include <shared/tl/array.h>
 #include <shared/geometry/quad.h>
 #include <generated/assets/maplayerobjects.h>
+#include <generated/assets/mapzoneobjects.h>
 #include <generated/assets/material.h>
+#include <generated/assets/zonetype.h>
 
-void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
+void TesselateBezierCurve(const array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
+
+void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& OutputQuads);
 
 class CSpriteInfo
 {
@@ -51,8 +55,23 @@ void GenerateMaterialQuads(
 	bool ShowLine,
 	int OrthoTesselation
 );
+
+void GenerateZoneQuads(
+	const class CAssetsManager* pAssetsManager,
+	array<CTexturedQuad>& OutputQuads,
+	const array<CLineVertex>& Vertices,
+	const matrix2x2& Transform,
+	vec2 ObjPosition,
+	CAssetPath ZoneTypePath,
+	int Index,
+	bool Closed
+);
+
 void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
 void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
+
+void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object);
+void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath);
 
 //If the parameter "Closed" is true, the first and last vertices must be equals
 template<typename VERTEX>

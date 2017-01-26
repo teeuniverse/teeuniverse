@@ -174,6 +174,7 @@ int main(int argc, char* argv[])
 	CREATE_SPRITE(PackageId, "iconMatSpriteAlignLine", ImageEditorPath, 0*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconMatSpriteAlignObject", ImageEditorPath, 1*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconMatSpriteAlignStretched", ImageEditorPath, 2*2, 3*2, 2, 2);
+	CREATE_SPRITE(PackageId, "iconZoneObject", ImageEditorPath, 3*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineTileBg", ImageEditorPath, 4*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineTileFg", ImageEditorPath, 5*2, 3*2, 2, 2);
 	CREATE_SPRITE(PackageId, "iconLineTileCapEnd", ImageEditorPath, 6*2, 3*2, 2, 2);

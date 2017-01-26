@@ -347,6 +347,7 @@ CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
 	m_pTabs[TAB_MAPLAYERQUADS_ASSET] = CreateTab_MapLayerQuads_Asset();
 	m_pTabs[TAB_MAPLAYEROBJECTS_ASSET] = CreateTab_MapLayerObjects_Asset();
 	m_pTabs[TAB_MAPZONETILES_ASSET] = CreateTab_MapZoneTiles_Asset();
+	m_pTabs[TAB_MAPZONEOBJECTS_ASSET] = CreateTab_MapZoneObjects_Asset();
 	m_pTabs[TAB_MAPENTITIES_ASSET] = CreateTab_MapEntities_Asset();
 	m_pTabs[TAB_ZONETYPE_ASSET] = CreateTab_ZoneType_Asset();
 	m_pTabs[TAB_ENTITYTYPE_ASSET] = CreateTab_EntityType_Asset();
@@ -417,6 +418,9 @@ void CAssetsInspector::Update(bool ParentEnabled)
 				break;
 			case CAsset_MapZoneTiles::TypeId:
 				m_pTabs[TAB_MAPZONETILES_ASSET]->Enable();
+				break;
+			case CAsset_MapZoneObjects::TypeId:
+				m_pTabs[TAB_MAPZONEOBJECTS_ASSET]->Enable();
 				break;
 			case CAsset_MapEntities::TypeId:
 				m_pTabs[TAB_MAPENTITIES_ASSET]->Enable();
@@ -914,18 +918,19 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 
 /* MAP LAYER OBJECTS **************************************************/
 
-class CSubItemList_MapLayerObjects_Object : public CSubItemList
+template<typename ASSET>
+class CSubItemList_Object : public CSubItemList
 {
 protected:
 	virtual void GenerateList()
 	{
 		Clear();
-		const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+		const ASSET* pLayer = AssetsManager()->template GetAsset< ASSET >(m_pAssetsEditor->GetEditedAssetPath());
 		if(pLayer)
 		{
 			CLocalizableString LString(_("Object {int:Id}"));
 			
-			CAsset_MapLayerObjects::CIteratorObject Iter;
+			typename ASSET::CIteratorObject Iter;
 			int Counter = 1;
 			for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
 			{
@@ -938,12 +943,13 @@ protected:
 	}
 
 public:
-	CSubItemList_MapLayerObjects_Object(CGuiEditor* pAssetsEditor) :
-		CSubItemList(pAssetsEditor, CAsset_MapLayerObjects::TypeId)
+	CSubItemList_Object(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, ASSET::TypeId)
 	{ }	
 };
 
-class CSubItemList_MapLayerObjects_Vertex : public gui::CVScrollLayout
+template<typename ASSET>
+class CSubItemList_Object_Vertex : public gui::CVScrollLayout
 {
 protected:
 	class CVertexItem : public CSubItem
@@ -957,7 +963,7 @@ protected:
 		
 		virtual void Update(bool ParentEnabled)
 		{
-			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+			const ASSET* pLayer = AssetsManager()->template GetAsset<ASSET>(m_pAssetsEditor->GetEditedAssetPath());
 			if(pLayer)
 			{
 				switch(pLayer->GetObjectVertexSmoothness(m_SubPath))
@@ -992,7 +998,7 @@ protected:
 	bool m_UpdateNeeded;
 	
 public:
-	CSubItemList_MapLayerObjects_Vertex(CGuiEditor* pAssetsEditor) :
+	CSubItemList_Object_Vertex(CGuiEditor* pAssetsEditor) :
 		gui::CVScrollLayout(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
 		m_UpdateNeeded(true)
@@ -1004,11 +1010,11 @@ public:
 	{
 		if(ParentEnabled && IsEnabled())
 		{
-			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == ASSET::TypeId)
 			{
 				if(
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerObjects::TYPE_OBJECT ||
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerObjects::TYPE_OBJECT_VERTEX
+					m_pAssetsEditor->GetEditedSubPath().GetType() == ASSET::TYPE_OBJECT ||
+					m_pAssetsEditor->GetEditedSubPath().GetType() == ASSET::TYPE_OBJECT_VERTEX
 				)
 				{
 					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
@@ -1040,11 +1046,11 @@ public:
 				}	
 			}
 			
-			CSubPath ObjectPath = CAsset_MapLayerObjects::SubPath_Object(m_ObjectId);
+			CSubPath ObjectPath = ASSET::SubPath_Object(m_ObjectId);
 			
 			if(m_ObjectId >= 0)
 			{
-				const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(m_pAssetsEditor->GetEditedAssetPath());
+				const ASSET* pLayer = AssetsManager()->template GetAsset<ASSET>(m_pAssetsEditor->GetEditedAssetPath());
 				if(pLayer && pLayer->IsValidObject(ObjectPath))
 				{
 					if(m_UpdateNeeded)
@@ -1052,12 +1058,12 @@ public:
 						Clear();
 						char aBuf[128];
 							
-						const CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(ObjectPath);
+						const typename ASSET::CObject& Object = pLayer->GetObject(ObjectPath);
 						
 						for(int i=0; i<Object.GetVertexArraySize(); i++)
 						{
 							str_format(aBuf, sizeof(aBuf), "Vertex %d", i+1);
-							CSubPath VertexPath = CAsset_MapLayerObjects::SubPath_ObjectVertex(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
+							CSubPath VertexPath = ASSET::SubPath_ObjectVertex(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
 							
 							Add(new CVertexItem(m_pAssetsEditor, VertexPath, aBuf), false);
 						}
@@ -1086,8 +1092,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 	AddField_AssetProperties(pTab);
 	
 	AddField_MapGroups(pTab, CAsset_MapLayerObjects::PARENTPATH, _LSTRING("Group"));
-	pTab->Add(new CSubItemList_MapLayerObjects_Object(AssetsEditor()), true);
-	pTab->Add(new CSubItemList_MapLayerObjects_Vertex(AssetsEditor()), true);
+	pTab->Add(new CSubItemList_Object<CAsset_MapLayerObjects>(AssetsEditor()), true);
+	pTab->Add(new CSubItemList_Object_Vertex<CAsset_MapLayerObjects>(AssetsEditor()), true);
 	
 	gui::CVListLayout* pObjectEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapLayerObjects::TYPE_OBJECT);
 	pTab->Add(pObjectEditor, false);
@@ -1148,13 +1154,53 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
 	pTab->Disable();
-	AddTab(pTab, _LSTRING("Map Zone Tiles"), AssetsEditor()->m_Path_Sprite_IconTiles);
+	AddTab(pTab, _LSTRING("Map Zone Tiles"), AssetsEditor()->m_Path_Sprite_IconZoneTiles);
 	
 	AddField_AssetProperties(pTab);
 		
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_WIDTH, _LSTRING("Width"));	
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_HEIGHT, _LSTRING("Height"));
 	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, _LSTRING("Zone type"));
+	
+	return pTab;
+}
+
+/* MAP ZONE OBJECTS ***************************************************/
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneObjects_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Map Zone Objects"), AssetsEditor()->m_Path_Sprite_IconZoneObject);
+	
+	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, _LSTRING("Zone type"));
+	pTab->Add(new CSubItemList_Object<CAsset_MapZoneObjects>(AssetsEditor()), true);
+	pTab->Add(new CSubItemList_Object_Vertex<CAsset_MapZoneObjects>(AssetsEditor()), true);
+	
+	gui::CVListLayout* pObjectEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapZoneObjects::TYPE_OBJECT);
+	pTab->Add(pObjectEditor, false);
+	
+	AddField_Vec2(pObjectEditor, CAsset_MapZoneObjects::OBJECT_POSITION_X, CAsset_MapZoneObjects::OBJECT_POSITION_Y, _LSTRING("Position"));	
+	AddField_Vec2(pObjectEditor, CAsset_MapZoneObjects::OBJECT_SIZE_X, CAsset_MapZoneObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
+	AddField_Angle(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ANGLE, _LSTRING("Angle"));
+	AddField_Integer(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ZONEINDEX, _LSTRING("Zone Index"));
+	
+	gui::CVListLayout* pVertexEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapZoneObjects::TYPE_OBJECT_VERTEX);
+	pTab->Add(pVertexEditor, false);
+	
+	AddField_Vec2(pVertexEditor, CAsset_MapZoneObjects::OBJECT_VERTEX_POSITION_X, CAsset_MapZoneObjects::OBJECT_VERTEX_POSITION_Y, _LSTRING("Position"));
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapZoneObjects::OBJECT_VERTEX_SMOOTHNESS);
+		pComboBox->Add(_LSTRING("Corner"), AssetsEditor()->m_Path_Sprite_IconVertexCorner);
+		pComboBox->Add(_LSTRING("Free"), AssetsEditor()->m_Path_Sprite_IconVertexFree);
+		pComboBox->Add(_LSTRING("Aligned"), AssetsEditor()->m_Path_Sprite_IconVertexAligned);
+		pComboBox->Add(_LSTRING("Symetric"), AssetsEditor()->m_Path_Sprite_IconVertexSymetric);
+		pComboBox->Add(_LSTRING("Automatic"), AssetsEditor()->m_Path_Sprite_IconVertexSmooth);
+		AddField(pVertexEditor, pComboBox, _LSTRING("Smoothness type"));
+	}
 	
 	return pTab;
 }

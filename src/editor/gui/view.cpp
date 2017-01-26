@@ -218,6 +218,7 @@ void CViewManager::Update(bool ParentEnabled)
 		case CAsset_MapLayerQuads::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
+		case CAsset_MapZoneObjects::TypeId:
 		case CAsset_MapEntities::TypeId:
 			m_pCurrentView = m_pViewMap;
 			break;

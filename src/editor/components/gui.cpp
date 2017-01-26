@@ -1713,6 +1713,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconQuad = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconQuad");
 		m_Path_Sprite_IconTiles = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTiles");
 		m_Path_Sprite_IconZoneTiles = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneTiles");
+		m_Path_Sprite_IconZoneObject = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneObject");
 		m_Path_Sprite_IconZoneType = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoneType");
 		m_Path_Sprite_IconEntityType = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityType");
 		m_Path_Sprite_IconGuiRect = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconGuiRect");
@@ -1903,6 +1904,9 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 				break;
 			case CAsset_MapZoneTiles::TypeId:
 				IconPath = m_Path_Sprite_IconZoneTiles;
+				break;
+			case CAsset_MapZoneObjects::TypeId:
+				IconPath = m_Path_Sprite_IconZoneObject;
 				break;
 			case CAsset_MapEntities::TypeId:
 				IconPath = m_Path_Sprite_IconEntities;
