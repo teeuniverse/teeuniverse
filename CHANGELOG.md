@@ -1,5 +1,22 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Object zone layers
+- Option to create a ZIP file that contains the current package and all its dependencies
+- Button to apply dilate and border_add to images
+- Support of DDNet front, switch and tele layer
+- Support of Ninslash maps
+- Each quad get its own global color in addition of the color set for each vertex
+
+## Changed
+- Pressing the 1:1 zoom button two times get back the old zoom value
+- The last selected tab in the color picker is always the default tab, even after restarting the editor
+- Default packages are now opened in read-only mode by default
+
+### Fixed
+- Zoom-out can freeze the editor
+
 ## [0.2.1]
 ### Added
 - Images can be replaced and exported
