@@ -114,6 +114,7 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 		{
 			USpacing = pImage->GetGridSpacing() * pImage->GetGridWidth() / static_cast<float>(pImage->GetDataWidth());
 			VSpacing = pImage->GetGridSpacing() * pImage->GetGridHeight() / static_cast<float>(pImage->GetDataHeight());
+			pMapRenderer->Graphics()->WrapMode(CGraphics::WRAP_CLAMP, CGraphics::WRAP_CLAMP);
 		}
 	}
 	else
@@ -220,6 +221,7 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 		}
 	}
 	pMapRenderer->Graphics()->QuadsEnd();
+	pMapRenderer->Graphics()->WrapNormal();
 	
 	pMapRenderer->Graphics()->TextureClear();
 	pMapRenderer->Graphics()->QuadsBegin();
@@ -557,6 +559,7 @@ void CMapRenderer::RenderGrid(float Step, vec4 Color)
 void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat)
 {
 	AssetsRenderer()->TextureSet(ImagePath);
+	Graphics()->WrapMode(CGraphics::WRAP_CLAMP, CGraphics::WRAP_CLAMP);
 	
 	Graphics()->QuadsBegin();
 
@@ -682,6 +685,7 @@ void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, 
 	}
 	
 	Graphics()->QuadsEnd();
+	Graphics()->WrapNormal();
 }
 
 void CMapRenderer::RenderQuads(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads, vec2 LayerPos, CAssetPath ImagePath, vec4 LayerColor)
