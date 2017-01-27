@@ -1644,6 +1644,8 @@ void CGuiEditor::LoadAssets()
 	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
 	if(PackageId >= 0)
 	{
+		m_Path_Image_Checker = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "checker");
+		
 		m_Path_Rect_TextSelection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "textSelection");
 		m_Path_Rect_Selection = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "selection");
 		m_Path_Rect_Border = AssetsManager()->FindAsset<CAsset_GuiRectStyle>(PackageId, "border");

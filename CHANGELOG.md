@@ -10,6 +10,7 @@
 - Each quad get its own global color in addition of the color set for each vertex
 
 ## Changed
+- View background changed for a checkerboard
 - Pressing the 1:1 zoom button two times get back the old zoom value
 - The last selected tab in the color picker is always the default tab, even after restarting the editor
 - Default packages are now opened in read-only mode by default

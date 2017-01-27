@@ -278,14 +278,30 @@ void CViewManager::UpdatePosition(const gui::CRect& BoundingRect, const gui::CRe
 void CViewManager::Render()
 {
 	const CAsset_GuiBoxStyle* pBoxStyle = AssetsManager()->GetAsset<CAsset_GuiBoxStyle>(m_BoxStylePath);
+	gui::CRect Rect = m_DrawRect;
 	if(pBoxStyle)
 	{
-		gui::CRect Rect = m_DrawRect;
 		Rect.RemoveMargin(Context()->ApplyGuiScale(pBoxStyle->GetMargin()));
 	
 		AssetsRenderer()->DrawGuiRect(&Rect, pBoxStyle->GetRectPath());
 			
 		Rect.RemoveMargin(Context()->ApplyGuiScale(pBoxStyle->GetPadding()));
+	}
+	
+	{
+		AssetsRenderer()->TextureSet(AssetsEditor()->m_Path_Image_Checker);
+		Graphics()->QuadsBegin();
+		
+		float UMin = Rect.x / 16.0f;
+		float UMax = (Rect.x + Rect.w) / 16.0f;
+		float VMin = Rect.y / 16.0f;
+		float VMax = (Rect.y + Rect.h) / 16.0f;
+		Graphics()->QuadsSetSubset(UMin, VMin, UMax, VMax);
+		
+		CGraphics::CQuadItem QuadItem(Rect.x+Rect.w/2, Rect.y+Rect.h/2, Rect.w, Rect.h);
+		Graphics()->QuadsDraw(&QuadItem, 1);
+		
+		Graphics()->QuadsEnd();
 	}
 	
 	if(m_pCurrentView)
