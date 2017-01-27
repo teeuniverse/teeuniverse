@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
-	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_sport/zones.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones", "images/univ_sport/zones.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 	
 	//Sport
 	{
