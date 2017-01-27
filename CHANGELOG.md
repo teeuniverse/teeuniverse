@@ -5,6 +5,7 @@
 - Support of DDNet front, switch and tele layer
 - Support of Ninslash maps
 - Support of FNG2 maps
+- Support of DummyCapture maps
 - Object zone layers
 - Option to create a ZIP file that contains the current package and all its dependencies
 - Button to apply dilate and border_add to images
