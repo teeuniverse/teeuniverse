@@ -69,16 +69,11 @@ int main(int argc, char* argv[])
 		
 		int GroupId_Physics = pAsset->AddGroup();
 		int GroupId_Damage = pAsset->AddGroup();
-		int GroupId_Weapon = pAsset->AddGroup();
 		int GroupId_Entities = pAsset->AddGroup();
 		
 		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Physics), "Physics");
 		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Damage), "Damage");
-		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Weapon), "Weapons");
 		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Entities), "Entities");
-		
-		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-		pAsset->SetIndexUsed(SubPath, false);
 		
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
@@ -141,41 +136,17 @@ int main(int argc, char* argv[])
 			CREATE_ZONEINDEX_NOUSE()
 		}
 		
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Spawn");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Red spawn");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Blue spawn");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Red flagstand");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Blue flagstand");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 			pAsset->SetIndexTitle(SubPath, "Armor");
 			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
 		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Health");
-			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
-		}
+		CREATE_ZONEINDEX_NOUSE()
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 			pAsset->SetIndexTitle(SubPath, "Mine");
@@ -239,42 +210,13 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexTitle(SubPath, "Powerup");
 			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
 		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Chainsaw");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Shotgun");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Grenades");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Rifle");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Electric");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Laser");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		{
-			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
-			pAsset->SetIndexTitle(SubPath, "Flamer");
-			pAsset->SetIndexGroup(SubPath, GroupId_Weapon);
-		}
-		
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
+		CREATE_ZONEINDEX_NOUSE()
 		CREATE_ZONEINDEX_NOUSE()
 		
 		{
