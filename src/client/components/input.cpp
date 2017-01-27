@@ -74,6 +74,8 @@ CInput::CInput(CClientKernel* pKernel) :
 
 	m_LastRelease = 0;
 	m_ReleaseDelta = -1;
+	m_WantedCursor = -1;
+	m_CurrentCursor = CURSOR_DEFAULT;
 
 	m_NumEvents = 0;
 	m_TextEdited = false;
@@ -121,7 +123,7 @@ void CInput::Shutdown()
 
 void CInput::SetCursorType(int CursorType)
 {
-	SDL_SetCursor(m_Cursors[CursorType]);
+	m_WantedCursor = CursorType;
 }
 
 bool CInput::GetMousePosition(float *x, float *y)
@@ -300,6 +302,18 @@ bool CInput::PreUpdate()
 			}
 
 		}
+	}
+	
+	return true;
+}
+
+bool CInput::PostUpdate()
+{
+	if(m_WantedCursor >= 0 && m_WantedCursor != m_CurrentCursor)
+	{
+		m_CurrentCursor = m_WantedCursor;
+		m_WantedCursor = -1;
+		SDL_SetCursor(m_Cursors[m_CurrentCursor]);
 	}
 	
 	return true;

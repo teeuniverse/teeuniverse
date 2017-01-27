@@ -17,6 +17,7 @@
 
 ### Fixed
 - Zoom-out can freeze the editor
+- Flickering cursor on some environments
 
 ## [0.2.1]
 ### Added

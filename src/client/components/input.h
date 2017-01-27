@@ -104,6 +104,8 @@ private:
 	dynamic_string m_EditedText;
 	array<SDL_Rect> m_TextEditingQueue;
 	SDL_Cursor* m_Cursors[NUM_CURSORS];
+	int m_WantedCursor;
+	int m_CurrentCursor;
 	
 	int64 m_LastRelease;
 	int64 m_ReleaseDelta;
@@ -139,11 +141,12 @@ public:
 public:
 	CInput(CClientKernel* pKernel);
 
-	bool InitConfig(int argc, const char** argv);
-	void SaveConfig(class CCLI_Output* pOutput);
-	bool Init();
-	void Shutdown();
-	bool PreUpdate();
+	virtual bool InitConfig(int argc, const char** argv);
+	virtual void SaveConfig(class CCLI_Output* pOutput);
+	virtual bool Init();
+	virtual void Shutdown();
+	virtual bool PreUpdate();
+	virtual bool PostUpdate();
 
 	bool KeyIsPressed(int Key) const { return KeyState(Key); }
 	bool KeyPress(int Key, bool CheckCounter) const { return CheckCounter ? (m_aInputCount[Key] == m_InputCounter) : m_aInputCount[Key]; }
