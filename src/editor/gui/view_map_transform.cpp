@@ -813,6 +813,9 @@ void CCursorTool_MapEraser::OnViewButtonClick(int Button)
 			
 		if(!QuadFound.IsNull())
 		{
+			CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+			
 			AssetsManager()->DeleteSubItem(AssetsEditor()->GetEditedAssetPath(), QuadFound);
 			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
 		}
@@ -828,6 +831,9 @@ void CCursorTool_MapEraser::OnViewButtonClick(int Button)
 			
 		if(!EntitiyFound.IsNull())
 		{
+			CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+			
 			AssetsManager()->DeleteSubItem(AssetsEditor()->GetEditedAssetPath(), EntitiyFound);
 			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
 		}

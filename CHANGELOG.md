@@ -21,6 +21,7 @@
 - Zoom-out can freeze the editor
 - Flickering cursor on some environments
 - Undo after creating a path block the tool
+- List of quads/entities is not refreshed after deleting an element
 
 ## [0.2.1]
 ### Added
