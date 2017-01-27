@@ -585,6 +585,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(ZoneLayerPath, "zone", Token);
+					pLayer->SetTileDepth(1);
 					pLayer->SetTileWidth(64);
 					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
@@ -1122,6 +1123,7 @@ protected:
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(LayerPath, "tiles", Token);
+					pLayer->SetTileDepth(1);
 					pLayer->SetTileWidth(64);
 					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
