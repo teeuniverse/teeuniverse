@@ -69,10 +69,20 @@ int main(int argc, char* argv[])
 		SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 		pAsset->SetIndexUsed(SubPath, false);
 		
-		for(int i=0; i<7; i++)
+		for(int i=0; i<6; i++)
 		{
 			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
 			pAsset->SetIndexUsed(SubPath, false);
+		}
+		
+		{
+			SubPath = CAsset_ZoneType::SubPath_Index(pAsset->AddIndex());
+			pAsset->SetIndexTitle(SubPath, "Golden Shrine");
+			pAsset->SetIndexColor(SubPath, 1.0f);
+			pAsset->SetIndexUsed(SubPath, true);
+			pAsset->SetIndexBorderIndex(SubPath, 1);
+			pAsset->SetIndexBorderColor(SubPath, vec4(250.0f/255.0f, 159.0f/255.0f, 0.0f/255.0f, 1.0f));
+			pAsset->SetIndexGroup(SubPath, GroupId_Shrine);
 		}
 		
 		{

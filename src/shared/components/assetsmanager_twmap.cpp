@@ -893,6 +893,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 												break;
 											}
 											//OpenFNG and DDNet
+											case 7:
 											case 8:
 											{
 												if(Format == MAPFORMAT_OPENFNG)
@@ -1688,6 +1689,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							GameWidth = max(pZone->GetTileWidth(), GameWidth);
 							GameHeight = max(pZone->GetTileHeight(), GameHeight);
 						}
+						else if(Format == MAPFORMAT_OPENFNG && m_PackageId_UnivOpenFNG >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNG)
+						{
+							GameWidth = max(pZone->GetTileWidth(), GameWidth);
+							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 						{
 							GameWidth = max(pZone->GetTileWidth(), GameWidth);
@@ -1793,9 +1799,9 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								
 								switch(pZone->GetTileIndex(TilePath))
 								{
+									case 0:
 									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN:
 									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_RED:
 									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_BLUE:
@@ -1845,6 +1851,18 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
+					else if(Format == MAPFORMAT_OPENFNG && m_PackageId_UnivOpenFNG >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNG)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
 					else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 					{
 						for(int j=0; j<pZone->GetTileHeight(); j++)
@@ -1852,7 +1870,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -1863,7 +1882,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -1874,7 +1894,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -1885,7 +1906,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
