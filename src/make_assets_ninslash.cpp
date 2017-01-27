@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	
 	CAssetPath ImageZonesPath = CreateNewImage(pKernel, PackageId, "zones", "images/univ_ninslash/zones.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_ninslash/entities.png", CStorage::TYPE_ALL, 8, 4);
 	
 	//Zones
 	{
@@ -310,6 +311,163 @@ int main(int argc, char* argv[])
 			pAsset->SetIndexTitle(SubPath, "Door 3");
 			pAsset->SetIndexGroup(SubPath, GroupId_Entities);
 		}
+	}
+	
+	//EntityType, Spawn
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoSpawn", ImageEntitiesPath, 0, 0, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsSpawn");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Blue Spawn
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoBlueSpawn", ImageEntitiesPath, 1, 0, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsBlueSpawn");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Red Spawn
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRedSpawn", ImageEntitiesPath, 2, 0, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsRedSpawn");
+		pAsset->SetCollisionRadius(64.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoChainsaw", ImageEntitiesPath, 0, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsChainsaw");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoShotgun", ImageEntitiesPath, 1, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsShotgun");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoGrenade", ImageEntitiesPath, 2, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsGrenade");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRifle", ImageEntitiesPath, 3, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsRifle");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoElectric", ImageEntitiesPath, 4, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsElectric");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoLaser", ImageEntitiesPath, 5, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsLaser");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Weapon
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoFlamer", ImageEntitiesPath, 6, 3, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsFlamer");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Red Flag
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoRedFlag", ImageEntitiesPath, 7, 0, 1, 2);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsRedFlag");
+		pAsset->SetCollisionRadius(42.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Blue Flag
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoBlueFlag", ImageEntitiesPath, 7, 2, 1, 2);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsBlueFlag");
+		pAsset->SetCollisionRadius(42.0f);
+		pAsset->SetGizmoPath(GizmoPath);
+	}
+	//EntityType, Heart
+	{
+		CAssetPath GizmoPath;
+		CAssetPath AssetPath;
+		
+		CREATE_SPRITE_PATH(GizmoPath, PackageId, "gizmoHeart", ImageEntitiesPath, 0, 1, 1, 1);
+		
+		CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+		pAsset->SetName("nsHealth");
+		pAsset->SetCollisionRadius(20.0f);
+		pAsset->SetGizmoPath(GizmoPath);
 	}
 	
 	pKernel->AssetsManager()->Save_AssetsFile(PackageId);

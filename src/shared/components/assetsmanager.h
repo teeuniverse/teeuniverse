@@ -74,6 +74,19 @@ public:
 	
 	int m_PackageId_UnivNinslash;
 	CAssetPath m_Path_ZoneType_Ninslash;
+	CAssetPath m_Path_EntityType_NSSpawn;
+	CAssetPath m_Path_EntityType_NSSpawnRed;
+	CAssetPath m_Path_EntityType_NSSpawnBlue;
+	CAssetPath m_Path_EntityType_NSChainsaw;
+	CAssetPath m_Path_EntityType_NSShotgun;
+	CAssetPath m_Path_EntityType_NSElectric;
+	CAssetPath m_Path_EntityType_NSGrenade;
+	CAssetPath m_Path_EntityType_NSRifle;
+	CAssetPath m_Path_EntityType_NSLaser;
+	CAssetPath m_Path_EntityType_NSFlamer;
+	CAssetPath m_Path_EntityType_NSHeart;
+	CAssetPath m_Path_EntityType_NSFlagBlue;
+	CAssetPath m_Path_EntityType_NSFlagRed;
 	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;

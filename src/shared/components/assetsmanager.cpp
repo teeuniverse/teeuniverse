@@ -762,6 +762,20 @@ void CAssetsManager::Load_UnivNinslash()
 		if(m_PackageId_UnivNinslash >= 0)
 		{
 			m_Path_ZoneType_Ninslash = FindAsset<CAsset_ZoneType>(m_PackageId_UnivNinslash, "ninslash");
+			
+			m_Path_EntityType_NSSpawn = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsSpawn");
+			m_Path_EntityType_NSSpawnRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsRedSpawn");
+			m_Path_EntityType_NSSpawnBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsBlueSpawn");
+			m_Path_EntityType_NSGrenade = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsGrenade");
+			m_Path_EntityType_NSRifle = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsRifle");
+			m_Path_EntityType_NSLaser = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsLaser");
+			m_Path_EntityType_NSShotgun = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsShotgun");
+			m_Path_EntityType_NSChainsaw = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsChainsaw");
+			m_Path_EntityType_NSElectric = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsElectric");
+			m_Path_EntityType_NSFlamer = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsFlamer");
+			m_Path_EntityType_NSHeart = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsHealth");
+			m_Path_EntityType_NSFlagBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsBlueFlag");
+			m_Path_EntityType_NSFlagRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsRedFlag");
 		}
 	}
 }

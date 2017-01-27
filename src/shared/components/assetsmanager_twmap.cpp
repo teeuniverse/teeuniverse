@@ -658,13 +658,33 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							
 							pMap->SetCameraPosition(vec2(Width*32.0f, Height*32.0f)/2.0f);
 							
-							CAssetPath EntitiesPath;
-							CAsset_MapEntities* pEntities = NewAsset_Hard<CAsset_MapEntities>(&EntitiesPath, PackageId);
-							AssetsManager()->TryChangeAssetName_Hard(EntitiesPath, "entities");
-							pEntities->SetParentPath(MapPath);
+							CAssetPath EntitiesSpawnPath;
+							NewAsset_Hard<CAsset_MapEntities>(&EntitiesSpawnPath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(EntitiesSpawnPath, "spawn");
+							
+							CAssetPath EntitiesWeaponPath;
+							NewAsset_Hard<CAsset_MapEntities>(&EntitiesWeaponPath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(EntitiesWeaponPath, "weapons");
+							
+							CAssetPath EntitiesPickupPath;
+							NewAsset_Hard<CAsset_MapEntities>(&EntitiesPickupPath, PackageId);
+							AssetsManager()->TryChangeAssetName_Hard(EntitiesPickupPath, "pickups");
+							
+							CAsset_MapEntities* pEntitiesSpawn = GetAsset_Hard<CAsset_MapEntities>(EntitiesSpawnPath);
+							CAsset_MapEntities* pEntitiesWeapon = GetAsset_Hard<CAsset_MapEntities>(EntitiesWeaponPath);
+							CAsset_MapEntities* pEntitiesPickup = GetAsset_Hard<CAsset_MapEntities>(EntitiesPickupPath);
+							
+							pEntitiesSpawn->SetParentPath(MapPath);
+							pEntitiesWeapon->SetParentPath(MapPath);
+							pEntitiesPickup->SetParentPath(MapPath);
 					
-							CSubPath MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
-							pMap->SetEntityLayer(MapSubPath, EntitiesPath);			
+							CSubPath MapSubPath;
+							MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
+							pMap->SetEntityLayer(MapSubPath, EntitiesSpawnPath);	
+							MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());		
+							pMap->SetEntityLayer(MapSubPath, EntitiesWeaponPath);	
+							MapSubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());		
+							pMap->SetEntityLayer(MapSubPath, EntitiesPickupPath);			
 							
 							for(int j=0; j<Height; j++)
 							{
@@ -676,11 +696,108 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 									
 									if(Format == MAPFORMAT_NINSLASH)
 									{
-										Zones.CreateZone(&Zones.m_pNinslashZone, Zones.m_NinslashPath, "ninslash", m_Path_ZoneType_Ninslash, Width, Height);
-										if(Zones.m_pNinslashZone)
-											Zones.m_pNinslashZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
-										else
-											WriteInUnknown = true;
+										switch(pTiles[j*Width+i].m_Index)
+										{
+											case ninslash::ENTITY_SPAWN + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_NSSpawn);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_SPAWN_RED + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_NSSpawnRed);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_SPAWN_BLUE + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_NSSpawnBlue);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_FLAGSTAND_RED + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_NSFlagRed);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_FLAGSTAND_BLUE + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_NSFlagBlue);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_HEALTH_1 + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_NSHeart);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_CHAINSAW + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSChainsaw);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_SHOTGUN + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSShotgun);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_GRENADE + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSGrenade);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_LASER + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSLaser);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_RIFLE + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSRifle);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_ELECTRIC + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSElectric);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											case ninslash::ENTITY_WEAPON_FLAMER + ninslash::ENTITY_OFFSET:
+											{
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_NSFlamer);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												break;
+											}
+											default:
+											{
+												Zones.CreateZone(&Zones.m_pNinslashZone, Zones.m_NinslashPath, "ninslash", m_Path_ZoneType_Ninslash, Width, Height);
+												if(Zones.m_pNinslashZone)
+													Zones.m_pNinslashZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Index);
+												else
+													WriteInUnknown = true;
+											}
+										}
 									}
 									else
 									{
@@ -688,79 +805,79 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										{
 											case ddnet::ENTITY_SPAWN + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_SPAWN_RED + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnRed);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_SPAWN_BLUE + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawnBlue);
+												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_HEALTH_1 + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_TWHeart);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_ARMOR_1 + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_TWArmor);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_POWERUP_NINJA + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_TWNinja);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_WEAPON_GRENADE + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_TWGrenade);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_WEAPON_RIFLE + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_TWLaserRifle);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_WEAPON_SHOTGUN + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesWeapon->AddEntity());
+												pEntitiesWeapon->SetEntityTypePath(EntityPath, m_Path_EntityType_TWShotgun);
+												pEntitiesWeapon->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_FLAGSTAND_BLUE + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagBlue);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::ENTITY_FLAGSTAND_RED + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntities->AddEntity());
-												pEntities->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
-												pEntities->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesPickup->AddEntity());
+												pEntitiesPickup->SetEntityTypePath(EntityPath, m_Path_EntityType_TWFlagRed);
+												pEntitiesPickup->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
 												break;
 											}
 											case ddnet::TILE_AIR:
@@ -1499,12 +1616,15 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		return false;
 	}
 	
-	Load_UnivTeeWorlds();
+	if(Format == MAPFORMAT_NINSLASH)
+		Load_UnivNinslash();
+	else
+		Load_UnivTeeWorlds();
 	
 	array<CAssetPath> Images;
-	bool ZoneGroupNeeded = false;
 	bool EntityGroupNeeded = false;
 	array<CAsset_MapEntities::CEntity> PTUMTeeWorldsEntities;
+	array<CAssetPath> ZoneLayers;
 	
 	//Map version
 	ddnet::CMapItemVersion VerItem;
@@ -1553,30 +1673,41 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
 				if(pZone)
 				{
-					if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+					if(Format == MAPFORMAT_NINSLASH)
 					{
-						GameWidth = max(pZone->GetTileWidth(), GameWidth);
-						GameHeight = max(pZone->GetTileHeight(), GameHeight);
+						if(pZone->GetZoneTypePath() == m_Path_ZoneType_Ninslash)
+						{
+							GameWidth = max(pZone->GetTileWidth(), GameWidth);
+							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+						}
 					}
-					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					else
 					{
-						GameWidth = max(pZone->GetTileWidth(), GameWidth);
-						GameHeight = max(pZone->GetTileHeight(), GameHeight);
-					}
-					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-					{
-						FrontWidth = max(pZone->GetTileWidth(), FrontWidth);
-						FrontHeight = max(pZone->GetTileHeight(), FrontHeight);
-					}
-					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-					{
-						TeleWidth = max(pZone->GetTileWidth(), TeleWidth);
-						TeleHeight = max(pZone->GetTileHeight(), TeleHeight);
-					}
-					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
-					{
-						SwitchWidth = max(pZone->GetTileWidth(), TeleWidth);
-						SwitchHeight = max(pZone->GetTileHeight(), TeleHeight);
+						if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+						{
+							GameWidth = max(pZone->GetTileWidth(), GameWidth);
+							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+						}
+						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+						{
+							GameWidth = max(pZone->GetTileWidth(), GameWidth);
+							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+						}
+						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+						{
+							FrontWidth = max(pZone->GetTileWidth(), FrontWidth);
+							FrontHeight = max(pZone->GetTileHeight(), FrontHeight);
+						}
+						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+						{
+							TeleWidth = max(pZone->GetTileWidth(), TeleWidth);
+							TeleHeight = max(pZone->GetTileHeight(), TeleHeight);
+						}
+						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
+						{
+							SwitchWidth = max(pZone->GetTileWidth(), TeleWidth);
+							SwitchHeight = max(pZone->GetTileHeight(), TeleHeight);
+						}
 					}
 				}
 				
@@ -1653,80 +1784,118 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				if(!pZone)
 					continue;
 				
-				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+				if(Format == MAPFORMAT_NINSLASH)
 				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
+					if(pZone->GetZoneTypePath() == m_Path_ZoneType_Ninslash)
 					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
+						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							
-							switch(pZone->GetTileIndex(TilePath))
+							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
-								case 1:
-									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
-									break;
-								case 2:
-									if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
-										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
-									break;
-								case 3:
-									pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
-									break;
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								
+								switch(pZone->GetTileIndex(TilePath))
+								{
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_RED:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_BLUE:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_RED:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_BLUE:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_HEALTH_1:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_CHAINSAW:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_SHOTGUN:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_GRENADE:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_LASER:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_RIFLE:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_ELECTRIC:
+									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_FLAMER:
+										break;
+									default:
+										pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+								}
 							}
 						}
 					}
-				}
-				else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
-					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
-						}
-					}
-				}
-				else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
-					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
-						}
-					}
-				}
-				else if(pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
-					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
-						}
-					}
-				}
-				else if(pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
-				{
-					for(int j=0; j<pZone->GetTileHeight(); j++)
-					{
-						for(int i=0; i<pZone->GetTileWidth(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-							pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
-						}
-					}
+					else
+						ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
 				}
 				else
-					ZoneGroupNeeded = true;
+				{
+					if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								
+								switch(pZone->GetTileIndex(TilePath))
+								{
+									case 1:
+										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
+										break;
+									case 2:
+										if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+											pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
+										break;
+									case 3:
+										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
+										break;
+								}
+							}
+						}
+					}
+					else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
+					else if(Format == MAPFORMAT_DDNET && pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
+					else if(Format == MAPFORMAT_DDNET && pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
+					else if(Format == MAPFORMAT_DDNET && pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
+					else
+						ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
+				}
 			}
 			else if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneObjects::TypeId)
 			{
-				ZoneGroupNeeded = true;
+				ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
 			}
 		}
 	
@@ -1764,30 +1933,64 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					continue;
 				}
 				
-				if(EntityTypePath == m_Path_EntityType_TWSpawn)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
-				else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
-				else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
-				else if(EntityTypePath == m_Path_EntityType_TWShotgun)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
-				else if(EntityTypePath == m_Path_EntityType_TWGrenade)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
-				else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
-				else if(EntityTypePath == m_Path_EntityType_TWNinja)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
-				else if(EntityTypePath == m_Path_EntityType_TWHeart)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
-				else if(EntityTypePath == m_Path_EntityType_TWArmor)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
-				else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
-				else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
-					pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+				if(Format == MAPFORMAT_NINSLASH)
+				{
+					if(EntityTypePath == m_Path_EntityType_NSSpawn)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN;
+					else if(EntityTypePath == m_Path_EntityType_NSSpawnRed)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_RED;
+					else if(EntityTypePath == m_Path_EntityType_NSSpawnBlue)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_NSShotgun)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_SHOTGUN;
+					else if(EntityTypePath == m_Path_EntityType_NSGrenade)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_GRENADE;
+					else if(EntityTypePath == m_Path_EntityType_NSLaser)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_LASER;
+					else if(EntityTypePath == m_Path_EntityType_NSRifle)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_RIFLE;
+					else if(EntityTypePath == m_Path_EntityType_NSChainsaw)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_CHAINSAW;
+					else if(EntityTypePath == m_Path_EntityType_NSElectric)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_ELECTRIC;
+					else if(EntityTypePath == m_Path_EntityType_NSFlamer)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_FLAMER;
+					else if(EntityTypePath == m_Path_EntityType_NSHeart)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_HEALTH_1;
+					else if(EntityTypePath == m_Path_EntityType_NSFlagBlue)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_NSFlagRed)
+						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_RED;
+					else
+						EntityGroupNeeded = true;
+				}
 				else
-					EntityGroupNeeded = true;
+				{
+					if(EntityTypePath == m_Path_EntityType_TWSpawn)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWShotgun)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
+					else if(EntityTypePath == m_Path_EntityType_TWGrenade)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
+					else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
+					else if(EntityTypePath == m_Path_EntityType_TWNinja)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
+					else if(EntityTypePath == m_Path_EntityType_TWHeart)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
+					else if(EntityTypePath == m_Path_EntityType_TWArmor)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+					else
+						EntityGroupNeeded = true;
+				}
 			}
 		}
 		
@@ -1922,27 +2125,17 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	}
 	
 	//Step4: Save other zones in PTUM format
-	if(ZoneGroupNeeded)
+	if(ZoneLayers.size())
 	{
 		int StartLayer = LayerId;
 		
 		CAsset_Map::CIteratorZoneLayer ZoneIter;
-		for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+		for(int i=0; i<ZoneLayers.size(); i++)
 		{
-			if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneTiles::TypeId)
+			if(ZoneLayers[i].GetType() == CAsset_MapZoneTiles::TypeId)
 			{
-				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(ZoneLayers[i]);
 				if(!pZone)
-					continue;
-				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 					continue;
 				
 				int Width = pZone->GetTileWidth();
@@ -1999,20 +2192,10 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				
 				delete[] pTiles;
 			}
-			else if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneObjects::TypeId)
+			else if(ZoneLayers[i].GetType() == CAsset_MapZoneObjects::TypeId)
 			{
 				const CAsset_MapZoneObjects* pZone = GetAsset<CAsset_MapZoneObjects>(pMap->GetZoneLayer(*ZoneIter));
 				if(!pZone)
-					continue;
-				if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-					continue;
-				if(m_PackageId_UnivDDNet && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 					continue;
 				
 				array<ddnet::CQuad> Quads;
@@ -2371,6 +2554,22 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_mountains2")+1, (char*) "winter_mountains2");
 					if(str_comp(pImage->GetName(), "winterMountains3") == 0)
 						IItem.m_ImageName = ArchiveFile.AddData(str_length("winter_mountains3")+1, (char*) "winter_mountains3");
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(GetPackageName(Images[i].GetPackageId()), "env_lab") == 0)
+				{
+					if(str_comp(pImage->GetName(), "labMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("lab_main")+1, (char*) "lab_main");
+					if(str_comp(pImage->GetName(), "labMisc") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("lab")+1, (char*) "lab");
+					if(str_comp(pImage->GetName(), "labBackground") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("lab_background")+1, (char*) "lab_background");
+				}
+				else if(Format == MAPFORMAT_NINSLASH && str_comp(GetPackageName(Images[i].GetPackageId()), "env_factory") == 0)
+				{
+					if(str_comp(pImage->GetName(), "factoryMain") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("factory_main")+1, (char*) "factory_main");
+					if(str_comp(pImage->GetName(), "factoryBackground") == 0)
+						IItem.m_ImageName = ArchiveFile.AddData(str_length("factory_background")+1, (char*) "factory_background");
 				}
 				
 				if(IItem.m_ImageName == -1)
