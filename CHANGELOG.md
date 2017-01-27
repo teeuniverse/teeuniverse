@@ -20,6 +20,7 @@
 - OpenFNG map import
 - Zoom-out can freeze the editor
 - Flickering cursor on some environments
+- Undo after creating a path block the tool
 
 ## [0.2.1]
 ### Added

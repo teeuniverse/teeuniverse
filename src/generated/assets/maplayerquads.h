@@ -1066,7 +1066,7 @@ public:
 	
 	inline void RelMoveQuad(const CSubPath& SubPath, int RelMove) { m_Quad.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Quad.size()); }
+	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Quad.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

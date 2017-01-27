@@ -525,7 +525,7 @@ public:
 		
 		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { m_Vertex.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Vertex.size()); }
+		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Vertex.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -991,9 +991,9 @@ public:
 	
 	inline void RelMoveObjectVertex(const CSubPath& SubPath, int RelMove) { m_Object[SubPath.GetId()].RelMoveVertex(SubPath.PopId(), RelMove); }
 	
-	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Object.size()); }
+	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Object.size()); }
 	
-	inline bool IsValidObjectVertex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Object.size() && m_Object[SubPath.GetId()].IsValidVertex(SubPath.PopId())); }
+	inline bool IsValidObjectVertex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Object.size() && m_Object[SubPath.GetId()].IsValidVertex(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

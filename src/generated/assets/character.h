@@ -330,7 +330,7 @@ public:
 	
 	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { m_Part.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Part.size()); }
+	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Part.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

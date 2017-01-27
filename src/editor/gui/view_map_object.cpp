@@ -163,7 +163,7 @@ void CCursorTool_MapObjectAddVertex::OnViewButtonClick_Impl(int Button)
 	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	
 	int Token = AssetsManager()->GenerateToken();
-	if(m_CurrentObject.IsNull())
+	if(!pMapLayer->IsValidObject(m_CurrentObject))
 	{
 		m_CurrentObject = ASSET::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), ASSET::TYPE_OBJECT, Token));			
 		m_CurrentAssetPath = AssetsEditor()->GetEditedAssetPath();

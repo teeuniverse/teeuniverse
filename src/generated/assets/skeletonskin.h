@@ -548,7 +548,7 @@ public:
 	
 	inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Sprite.size()); }
+	inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

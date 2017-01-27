@@ -448,13 +448,13 @@ public:
 	
 	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { m_EntityLayer.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_BgGroup.size()); }
+	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_BgGroup.size()); }
 	
-	inline bool IsValidFgGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_FgGroup.size()); }
+	inline bool IsValidFgGroup(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_FgGroup.size()); }
 	
-	inline bool IsValidZoneLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_ZoneLayer.size()); }
+	inline bool IsValidZoneLayer(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ZoneLayer.size()); }
 	
-	inline bool IsValidEntityLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_EntityLayer.size()); }
+	inline bool IsValidEntityLayer(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_EntityLayer.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

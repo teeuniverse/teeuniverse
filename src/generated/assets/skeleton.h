@@ -646,9 +646,9 @@ public:
 	
 	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Bone.size()); }
+	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Bone.size()); }
 	
-	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size()); }
+	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Layer.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

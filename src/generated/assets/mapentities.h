@@ -344,7 +344,7 @@ public:
 	
 	inline void RelMoveEntity(const CSubPath& SubPath, int RelMove) { m_Entity.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Entity.size()); }
+	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Entity.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

@@ -482,7 +482,7 @@ public:
 		
 		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() < m_KeyFrame.size()); }
+		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_KeyFrame.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -754,7 +754,7 @@ public:
 		
 		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { m_KeyFrame.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() < m_KeyFrame.size()); }
+		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_KeyFrame.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -1246,17 +1246,17 @@ public:
 	
 	inline void RelMoveLayerAnimationKeyFrame(const CSubPath& SubPath, int RelMove) { m_LayerAnimation[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
 	
-	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.GetId() < m_LocalBoneAnim.size()); }
+	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LocalBoneAnim.size()); }
 	
-	inline bool IsValidLocalBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() < m_LocalBoneAnim.size() && m_LocalBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
+	inline bool IsValidLocalBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LocalBoneAnim.size() && m_LocalBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
 	
-	inline bool IsValidParentBoneAnim(const CSubPath& SubPath) const { return (SubPath.GetId() < m_ParentBoneAnim.size()); }
+	inline bool IsValidParentBoneAnim(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ParentBoneAnim.size()); }
 	
-	inline bool IsValidParentBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() < m_ParentBoneAnim.size() && m_ParentBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
+	inline bool IsValidParentBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ParentBoneAnim.size() && m_ParentBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
 	
-	inline bool IsValidLayerAnimation(const CSubPath& SubPath) const { return (SubPath.GetId() < m_LayerAnimation.size()); }
+	inline bool IsValidLayerAnimation(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LayerAnimation.size()); }
 	
-	inline bool IsValidLayerAnimationKeyFrame(const CSubPath& SubPath) const { return (SubPath.GetId() < m_LayerAnimation.size() && m_LayerAnimation[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
+	inline bool IsValidLayerAnimationKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LayerAnimation.size() && m_LayerAnimation[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

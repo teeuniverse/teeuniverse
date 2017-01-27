@@ -727,11 +727,11 @@ public:
 	
 	inline void RelMoveGroup(const CSubPath& SubPath, int RelMove) { m_Group.relative_move(SubPath.GetId(), RelMove); }
 	
-	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Index.size()); }
+	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
 	
-	inline bool IsValidDataInt(const CSubPath& SubPath) const { return (SubPath.GetId() < m_DataInt.size()); }
+	inline bool IsValidDataInt(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_DataInt.size()); }
 	
-	inline bool IsValidGroup(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Group.size()); }
+	inline bool IsValidGroup(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Group.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

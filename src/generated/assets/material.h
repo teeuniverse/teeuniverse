@@ -668,7 +668,7 @@ public:
 		
 		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
 		
-		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Sprite.size()); }
+		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -1170,11 +1170,11 @@ public:
 	
 	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
 	
-	inline bool IsValidLabel(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Label.size()); }
+	inline bool IsValidLabel(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Label.size()); }
 	
-	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size()); }
+	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Layer.size()); }
 	
-	inline bool IsValidLayerSprite(const CSubPath& SubPath) const { return (SubPath.GetId() < m_Layer.size() && m_Layer[SubPath.GetId()].IsValidSprite(SubPath.PopId())); }
+	inline bool IsValidLayerSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Layer.size() && m_Layer[SubPath.GetId()].IsValidSprite(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

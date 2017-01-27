@@ -403,7 +403,7 @@ class AddInterface_Array(GetSetInterface):
 		return [ var + ".relative_move(SubPath.GetId(), RelMove);" ]
 	def generateValid(self, var):
 		return [ 
-			"return (SubPath.GetId() < "+var+".size());"
+			"return (SubPath.IsNotNull() && SubPath.GetId() < "+var+".size());"
 		]
 			
 class AddInterface_ArrayChild(GetSetInterface):
@@ -421,7 +421,7 @@ class AddInterface_ArrayChild(GetSetInterface):
 	def generateRelMove(self, var):
 		return [ var + "[SubPath.GetId()].RelMove" + self.interface.name + "(SubPath.PopId(), RelMove);" ]
 	def generateValid(self, var):
-		return [ "return (SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
+		return [ "return (SubPath.IsNotNull() && SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
 	
 class TypeArray(Type):
 	def __init__(self, t):
@@ -580,7 +580,7 @@ class AddInterface_Array2dChild(GetSetInterface):
 	def generateRelMove(self, var):
 		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).RelMove" + self.interface.name + "(SubPath.DoublePopId(), RelMove);" ]
 	def generateValid(self, var):
-		return [ "return " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId());" ]
+		return [ "return (SubPath.IsNotNull() && " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId()));" ]
 		
 class GetSetInterface_Array2dDim(GetSetInterface_Func):
 	def __init__(self, suffix, returnType, paramType, getFunc, setFunc):
@@ -709,7 +709,7 @@ class AddInterface_Member(GetSetInterface):
 	def generateRelMove(self, var):
 		return [ var + ".RelMove" + self.interface.name + "(SubPath, RelMove);" ]
 	def generateValid(self, var):
-		return [ "return " + var + ".IsValid" + self.interface.name + "();" ]
+		return [ "return SubPath.IsNotNull() && " + var + ".IsValid" + self.interface.name + "();" ]
 		
 class Member:
 	def __init__(self, version, name, t):
