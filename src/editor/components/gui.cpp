@@ -543,7 +543,6 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 	m_Format(Format),
 	m_Mode(Mode),
 	m_RefreshList(true),
-	m_CompatibilityMode(CAssetsManager::MAPFORMAT_DDNET),
 	m_ReadOnly(false)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
@@ -658,7 +657,7 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Compatibility mode:"));
 		pHList->Add(pLabel, true);
 		
-		gui::CComboBox* pComboBox = new COpenSavePackageDialog_FormatComboBox(Context(), &m_CompatibilityMode);
+		gui::CComboBox* pComboBox = new COpenSavePackageDialog_FormatComboBox(Context(), &m_pAssetsEditor->m_Cfg_DefaultCompatibilityMode);
 		pComboBox->Add(_LSTRING("TeeWorlds"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("DDNet"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("OpenFNG / FNG2"), m_pAssetsEditor->m_Path_Sprite_IconMap);
@@ -855,7 +854,7 @@ void COpenSavePackageDialog::Save()
 			TextIter = Buffer.append_at(TextIter, "/");
 			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 			TextIter = Buffer.append_at(TextIter, ".map");
-			if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), m_CompatibilityMode))
+			if(!AssetsManager()->Save_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->GetEditedPackageId(), m_pAssetsEditor->m_Cfg_DefaultCompatibilityMode))
 			{
 				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be saved")));
 			}
@@ -937,7 +936,7 @@ void COpenSavePackageDialog::Open()
 			TextIter = Buffer.append_at(TextIter, "/");
 			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 			TextIter = Buffer.append_at(TextIter, ".map");
-			int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_CompatibilityMode);
+			int PackageId = AssetsManager()->Load_Map(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, m_pAssetsEditor->m_Cfg_DefaultCompatibilityMode);
 			if(PackageId < 0)
 				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The map can't be imported")));
 			else
@@ -1632,9 +1631,21 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	if(!CGui::InitConfig(argc, argv))
 		return false;
 	
+	m_Cfg_DefaultCompatibilityMode = CAssetsManager::MAPFORMAT_DDNET;
+	
+	CLI()->RegisterConfigInteger("editor_default_compatibility_mode", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultCompatibilityMode, 0, CAssetsManager::NUM_MAPFORMAT-1);
+	
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
 	
 	return true;
+}
+
+void CGuiEditor::SaveConfig(class CCLI_Output* pOutput)
+{
+	CGui::SaveConfig(pOutput);
+	
+	fixed_string128 Buffer;
+	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_compatibility_mode %d", m_Cfg_DefaultCompatibilityMode); pOutput->Print(Buffer.buffer());
 }
 
 void CGuiEditor::LoadAssets()

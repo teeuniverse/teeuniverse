@@ -60,6 +60,9 @@ public:
 	gui::CLabel* m_pCoordinatesLabel;
 	
 public:
+	int m_Cfg_DefaultCompatibilityMode;
+	
+public:
 	CAssetPath m_Path_Image_Checker;
 	
 	CAssetPath m_Path_Rect_TextSelection;
@@ -245,6 +248,7 @@ public:
 	virtual ~CGuiEditor();
 	
 	virtual bool InitConfig(int argc, const char** argv);
+	virtual void SaveConfig(class CCLI_Output* pOutput);
 	
 	virtual void LoadAssets();
 	virtual gui::CWidget* CreateMainWidget();
@@ -310,7 +314,6 @@ public:
 	int m_Format;
 	int m_Mode;
 	bool m_RefreshList;
-	int m_CompatibilityMode;
 	bool m_ReadOnly;
 	
 public:
