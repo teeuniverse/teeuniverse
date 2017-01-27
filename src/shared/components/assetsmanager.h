@@ -89,6 +89,9 @@ public:
 	CAssetPath m_Path_EntityType_NSFlagBlue;
 	CAssetPath m_Path_EntityType_NSFlagRed;
 	
+	int m_PackageId_UnivSport;
+	CAssetPath m_Path_ZoneType_Sport;
+	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;
 	CAssetPath m_Path_Image_Cloud2;
@@ -207,6 +210,7 @@ public:
 	void Load_UnivDDNet();
 	void Load_UnivOpenFNG();
 	void Load_UnivNinslash();
+	void Load_UnivSport();
 	
 	void Load_EnvClouds();
 	void Load_EnvDesert();

@@ -31,6 +31,7 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_UnivDDNet(-1),
 	m_PackageId_UnivOpenFNG(-1),
 	m_PackageId_UnivNinslash(-1),
+	m_PackageId_UnivSport(-1),
 	m_PackageId_EnvClouds(-1),
 	m_PackageId_EnvDesert(-1),
 	m_PackageId_EnvGeneric(-1),
@@ -776,6 +777,18 @@ void CAssetsManager::Load_UnivNinslash()
 			m_Path_EntityType_NSHeart = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsHealth");
 			m_Path_EntityType_NSFlagBlue = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsBlueFlag");
 			m_Path_EntityType_NSFlagRed = FindAsset<CAsset_EntityType>(m_PackageId_UnivNinslash, "nsRedFlag");
+		}
+	}
+}
+
+void CAssetsManager::Load_UnivSport()
+{
+	if(m_PackageId_UnivSport < 0)
+	{
+		m_PackageId_UnivSport = Load_AssetsFile("sport", CStorage::TYPE_ALL);
+		if(m_PackageId_UnivSport >= 0)
+		{
+			m_Path_ZoneType_Sport = FindAsset<CAsset_ZoneType>(m_PackageId_UnivSport, "sport");
 		}
 	}
 }

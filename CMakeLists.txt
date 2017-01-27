@@ -331,6 +331,7 @@ make_assets(ddnet)
 make_assets(infclass)
 make_assets(openfng)
 make_assets(ninslash)
+make_assets(sport)
 
 message(STATUS " * tools ready for compilation")
 
