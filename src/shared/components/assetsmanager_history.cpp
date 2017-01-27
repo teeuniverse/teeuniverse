@@ -38,7 +38,7 @@ void CAssetsHistory::CEntry::Reset()
 			}
 			#undef MACRO_ASSETTYPE
 			
-			m_Operations[i].m_pAsset = 0;
+			m_Operations[i].m_pAsset = NULL;
 		}
 	}
 	m_Operations.clear();
@@ -57,13 +57,19 @@ CAssetsHistory::CAssetsHistory(CAssetsManager* pAssetsManager) :
 CAssetsHistory::~CAssetsHistory()
 {
 	for(int i=0; i<m_Size; i++)
-		m_Entries[i].Reset();
+	{
+		int Index = (MAXHISTORYSIZE+m_LastEntry-1-i)%MAXHISTORYSIZE;
+		m_Entries[Index].Reset();
+	}
 }
 
 void CAssetsHistory::Flush()
 {
 	for(int i=0; i<m_Size; i++)
-		m_Entries[i].Reset();
+	{
+		int Index = (MAXHISTORYSIZE+m_LastEntry-1-i)%MAXHISTORYSIZE;
+		m_Entries[Index].Reset();
+	}
 	
 	m_Size = 0;
 	m_LastEntry = 0;
@@ -123,7 +129,6 @@ void CAssetsHistory::AddOperation_EditAsset(CAssetPath AssetPath, int Token)
 				Operation.m_AssetPath = AssetPath;\
 				Operation.m_pAsset = pStoredAsset;\
 				Operation.m_Operation = OPERATION_EDITASSET;\
-				dbg_msg("History", "EditAsset. Token:%d, HistorySize:%d, Pointer:%p", Token, m_Size, Operation.m_pAsset);\
 			}\
 			break;\
 		}
@@ -185,8 +190,6 @@ void CAssetsHistory::AddOperation_AddAsset(CAssetPath AssetPath, int Token)
 		
 		#undef MACRO_ASSETTYPE
 	}
-	
-	dbg_msg("History", "AddAsset. Token:%d, HistorySize:%d", Token, m_Size);
 }
 
 void CAssetsHistory::Undo()
@@ -201,12 +204,10 @@ void CAssetsHistory::Undo()
 			if(m_Entries[m_LastEntry].m_Operations[i].m_Operation == OPERATION_EDITASSET)\
 			{\
 				CAsset_##Name* pOldAsset = (CAsset_##Name*) m_Entries[m_LastEntry].m_Operations[i].m_pAsset;\
-				dbg_msg("History", "Undo (EditOperation). HistorySize:%d, Pointer:%p", m_Size-1, pOldAsset);\
 				AssetsManager()->SetAsset_Hard<CAsset_##Name>(m_Entries[m_LastEntry].m_Operations[i].m_AssetPath, pOldAsset);\
 			}\
 			else if(m_Entries[m_LastEntry].m_Operations[i].m_Operation == OPERATION_ADDASSET)\
 			{\
-				dbg_msg("History", "Undo (AddOperation). HistorySize:%d", m_Size-1);\
 				AssetsManager()->DeleteAsset_Hard(m_Entries[m_LastEntry].m_Operations[i].m_AssetPath);\
 			}\
 			break;\
