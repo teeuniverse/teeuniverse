@@ -433,7 +433,7 @@ void CCursorTool_MapObjectEditVertex::OnViewButtonClick_Impl(int Button)
 	
 	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	
-	if(m_CurrentVertex.IsNotNull())
+	if(pMapLayer->IsValidObject(m_CurrentVertex))
 	{
 		const typename ASSET::CObject& Object = pMapLayer->GetObject(ASSET::SubPath_Object(m_CurrentVertex.GetId()));
 		vec2 Position;
