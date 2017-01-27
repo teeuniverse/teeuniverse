@@ -378,7 +378,7 @@ bool CAssetsManager::Save_AssetsFile(int PackageId)
 	return Save_AssetsFile(m_pPackages[PackageId]->GetName(), CStorage::TYPE_SAVE, PackageId);
 }
 
-int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType, unsigned Crc)
+int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType, unsigned Crc, CErrorStack* pErrorStack)
 {
 	dynamic_string PackageName;
 	dynamic_string FullPath;
@@ -446,6 +446,12 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	CArchiveFile ArchiveFile;
 	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), StorageType))
 	{
+		if(pErrorStack)
+		{
+			CLocalizableString LString(_("Can't open the package {str:Filename}"));
+			LString.AddString("Filename", FullPath.buffer());
+			pErrorStack->AddError(LString);
+		}
 		dbg_msg("AssetsManager", "can't open the file %s (storage type:%d)", FullPath.buffer(), StorageType);
 		return PackageId;
 	}
@@ -485,7 +491,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		uint32 PackageCrc = ArchiveFile.ReadUInt32(pItem->m_PackageCrc);
 		if(pPackageName != NULL)
 		{
-			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, CStorage::TYPE_ALL, PackageCrc));
+			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, CStorage::TYPE_ALL, PackageCrc, pErrorStack));
 		}
 	}
 	
@@ -503,10 +509,10 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	return PackageId;
 }
 
-int CAssetsManager::Load_AssetsFile(const char* pFileName, int StorageType, unsigned Crc)
+int CAssetsManager::Load_AssetsFile(const char* pFileName, int StorageType, unsigned Crc, CErrorStack* pErrorStack)
 {	
 	//Load all dependencies
-	int PackageId = Load_AssetsFile_Core(pFileName, StorageType, Crc);
+	int PackageId = Load_AssetsFile_Core(pFileName, StorageType, Crc, pErrorStack);
 	
 	//Then resolve assets name and finalize
 	for(int i=0; i<m_pPackages.size(); i++)

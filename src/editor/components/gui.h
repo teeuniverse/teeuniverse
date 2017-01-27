@@ -371,6 +371,7 @@ class CErrorDialog : public CMessageDialog
 {
 public:
 	CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString);
+	CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString, const CErrorStack& ErrorStack);
 };
 
 class CConfirmationDialog : public gui::CPopup

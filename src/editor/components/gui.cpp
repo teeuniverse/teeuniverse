@@ -332,7 +332,7 @@ PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int 
 CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
 	CMessageDialog(pAssetsEditor)
 {
-	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+	gui::CVListLayout* pLayout = new gui::CVListLayout(Context());
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 	Add(pLayout);
 	
@@ -342,6 +342,44 @@ CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& 
 	pMessage->SetLabelStyle(m_pAssetsEditor->m_Path_Label_DialogMessage);
 	pMessage->NoTextClipping();
 	pLayout->Add(pMessage, true);
+	
+	pLayout->AddSeparator();
+	
+	//Buttonlist
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CFiller(Context()), true);
+		pHList->Add(new CClose(this), false);
+	}
+}
+
+CErrorDialog::CErrorDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString, const CErrorStack& ErrorStack) :
+	CMessageDialog(pAssetsEditor)
+{
+	gui::CVListLayout* pLayout = new gui::CVListLayout(Context());
+	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+	Add(pLayout);
+	
+	pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("Error")), false);
+	
+	gui::CLabel* pMessage = new gui::CLabel(Context(), LString);
+	pMessage->SetLabelStyle(m_pAssetsEditor->m_Path_Label_DialogMessage);
+	pMessage->NoTextClipping();
+	pLayout->Add(pMessage, false);
+	
+	pLayout->AddSeparator();
+	
+	{
+		gui::CVScrollLayout* pErrorList = new gui::CVScrollLayout(Context());
+		pLayout->Add(pErrorList, true);
+		
+		for(int i=0; i<ErrorStack.Size(); i++)
+		{
+			pErrorList->Add(new gui::CLabel(Context(), ErrorStack.GetMessage(i)), false);
+		}
+	}
 	
 	pLayout->AddSeparator();
 	
@@ -955,14 +993,18 @@ void COpenSavePackageDialog::Open()
 		}
 		case FORMAT_PACKAGE:
 		{
+			CErrorStack ErrorStack;
+			
 			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
 			TextIter = Buffer.append_at(TextIter, "/");
 			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 			TextIter = Buffer.append_at(TextIter, ".tup");
-			int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE);
-			if(PackageId < 0)
-				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded")));
-			else
+			int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, 0, &ErrorStack);
+			
+			if(PackageId < 0 || ErrorStack.Size())
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded properly"), ErrorStack));
+			
+			if(PackageId >= 0)
 			{
 				m_pAssetsEditor->SetEditedPackage(PackageId);
 				

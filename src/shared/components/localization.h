@@ -38,6 +38,7 @@ public:
 		TYPE_INTEGER,
 		TYPE_FLOAT,
 		TYPE_SECONDS,
+		TYPE_NONE,
 	};
 	
 	struct CParameter 
@@ -64,27 +65,46 @@ public:
 		dynamic_string m_Name;
 		int m_Type;
 		
-		inline void copy(const CParameter& Param)
+		CParameter()
 		{
-			m_String = Param.m_String;
-			m_Type = Param.m_Type;
-			m_Name.copy(Param.m_Name);
-		}
-		
-		inline void transfert(CParameter& Param)
-		{
-			m_Integer = Param.m_Integer;
-			m_Type = Param.m_Type;
-			m_Name.transfert(Param.m_Name);
-			
-			if(m_Type == TYPE_STRING)
-				Param.m_String.m_pValue = NULL;
+			m_Type = TYPE_NONE;
 		}
 		
 		~CParameter()
 		{
 			if(m_Type == TYPE_STRING && m_String.m_pValue)
 				delete[] m_String.m_pValue;
+		}
+		
+		inline void copy(const CParameter& Param)
+		{			
+			m_Name.copy(Param.m_Name);
+			
+			if(m_Type == TYPE_STRING)
+			{
+				if(m_String.m_pValue)
+					delete[] m_String.m_pValue;
+			}
+			
+			m_Type = Param.m_Type;
+			if(Param.m_Type == TYPE_STRING)
+			{
+				int Length = str_length(Param.m_String.m_pValue);
+				m_String.m_pValue = new char[Length+1];
+				str_copy(m_String.m_pValue, Param.m_String.m_pValue, Length+1);
+			}
+			else
+				m_String = Param.m_String;
+		}
+		
+		inline void transfert(CParameter& Param)
+		{
+			m_String = Param.m_String;
+			m_Type = Param.m_Type;
+			m_Name.transfert(Param.m_Name);
+			
+			if(Param.m_Type == TYPE_STRING)
+				Param.m_String.m_pValue = NULL;
 		}
 	};
 	
