@@ -66,13 +66,13 @@ void CAbstractLabel::ApplyLocalization()
 
 void CAbstractLabel::Update(bool ParentEnabled)
 {
-	if(ParentEnabled && m_Localize && Context()->LocalizationUpdated())
+	if(ParentEnabled && IsEnabled() && m_Localize && Context()->LocalizationUpdated())
 		OnTextUpdated();
 	
 	if(m_pIconWidget)
-		m_pIconWidget->Update(ParentEnabled);
+		m_pIconWidget->Update(ParentEnabled && IsEnabled());
 	
-	if(m_SelectionEnabled && m_VisibilityRect.IsInside(Context()->GetMousePos()))
+	if(ParentEnabled && IsEnabled() && m_SelectionEnabled && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 		Context()->SetCursor(this, CInput::CURSOR_TEXT);
 }
 

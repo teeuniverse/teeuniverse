@@ -221,7 +221,7 @@ void CAbstractTabs::Update(bool ParentEnabled)
 		m_pButtonList->SetBoxStyle(pTabsStyle->GetButtonListPath());
 		
 	for(int i=0; i<m_Tabs.size(); i++)
-		m_Tabs[i].m_pWidget->Update(ParentEnabled && IsEnabled());
+		m_Tabs[i].m_pWidget->Update(ParentEnabled && IsEnabled() && (i == GetSelectedTab()));
 	
 	int FirstEnabledTab = -1;
 	for(int i=0; i<m_Tabs.size(); i++)

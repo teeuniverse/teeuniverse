@@ -61,6 +61,7 @@ public:
 	
 public:
 	int m_Cfg_DefaultCompatibilityMode;
+	dynamic_string m_Cfg_DefaultAuthor;
 	
 public:
 	CAssetPath m_Path_Image_Checker;

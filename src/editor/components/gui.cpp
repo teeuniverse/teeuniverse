@@ -35,6 +35,7 @@
 #include <editor/gui/view.h>
 #include <editor/gui/timeline.h>
 #include <editor/gui/assetsinspector.h>
+#include <editor/gui/preferences.h>
 
 /* COMMANDS ***********************************************************/
 
@@ -1077,6 +1078,7 @@ protected:
 	{
 		int PackageId = AssetsManager()->NewPackage("mypackage");
 		AssetsManager()->SetPackageReadOnly(PackageId, false);
+		AssetsManager()->SetPackageAuthor(PackageId, m_pAssetsEditor->m_Cfg_DefaultAuthor.buffer());
 		AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 		m_pAssetsEditor->SetEditedPackage(PackageId);
 		m_pAssetsEditor->RefreshPackageTree();
@@ -1146,14 +1148,15 @@ public:
 		switch(m_Format)
 		{
 			case COpenSavePackageDialog::FORMAT_IMAGE:
-				SetText(_LSTRING("Import Image"));
+				SetText(_LSTRING("New Image"));
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconImage);
 				break;
 			case COpenSavePackageDialog::FORMAT_MAP_TW:
 				SetText(_LSTRING("Import TeeWorlds Map"));
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
 				break;
 		}
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
-		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLoad);
 	}
 	
 	virtual void Update(bool ParentEnabled)
@@ -1290,6 +1293,29 @@ public:
 			Editable(false);
 		
 		gui::CButton::Update(ParentEnabled);
+	}
+};
+
+class CPreferencesButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CPopup_Menu* m_pPopupMenu;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		m_pAssetsEditor->DisplayPopup(new CPreferences(m_pAssetsEditor));
+		m_pPopupMenu->Close();
+	}
+
+public:
+	CPreferencesButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
+		gui::CButton(pAssetsEditor, _LSTRING("Preferences"), pAssetsEditor->m_Path_Sprite_IconSystem),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pPopupMenu(pPopupMenu)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 	}
 };
 
@@ -1508,10 +1534,11 @@ protected:
 		
 		pMenu->List()->Add(new CUndoButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->AddSeparator();
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _LSTRING("New Map")));
-		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _LSTRING("New Map")));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Material::TypeId, _LSTRING("New Material")));
+		pMenu->List()->AddSeparator();
+		pMenu->List()->Add(new CPreferencesButton(m_pAssetsEditor, pMenu));
 		
 		m_pAssetsEditor->DisplayPopup(pMenu);
 	}
@@ -1677,6 +1704,7 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	m_Cfg_DefaultCompatibilityMode = CAssetsManager::MAPFORMAT_DDNET;
 	
 	CLI()->RegisterConfigInteger("editor_default_compatibility_mode", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultCompatibilityMode, 0, CAssetsManager::NUM_MAPFORMAT-1);
+	CLI()->RegisterConfigString("editor_default_author", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultAuthor);
 	
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
 	
@@ -1689,6 +1717,7 @@ void CGuiEditor::SaveConfig(class CCLI_Output* pOutput)
 	
 	fixed_string128 Buffer;
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_compatibility_mode %d", m_Cfg_DefaultCompatibilityMode); pOutput->Print(Buffer.buffer());
+	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_author %s", m_Cfg_DefaultAuthor.buffer()); pOutput->Print(Buffer.buffer());
 }
 
 void CGuiEditor::LoadAssets()

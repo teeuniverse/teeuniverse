@@ -150,4 +150,23 @@ void CHSlider::OnMouseMove()
 	}
 }
 
+/* EXTERNAL H SLIDER **************************************************/
+
+CExternalHSlider::CExternalHSlider(class CGui *pContext, int* pValue, int Min, int Max) :
+	CHSlider(pContext, Min, Max),
+	m_pValue(pValue)
+{
+	
+}
+
+int CExternalHSlider::GetValue() const
+{
+	return clamp(*m_pValue, m_Min, m_Max);
+}
+
+void CExternalHSlider::SetValue(int Value)
+{
+	*m_pValue = clamp(Value, m_Min, m_Max);
+}
+
 }

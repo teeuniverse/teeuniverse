@@ -63,6 +63,19 @@ public:
 	virtual void OnMouseMove();
 };
 
+class CExternalHSlider : public CHSlider
+{
+protected:
+	int* m_pValue;
+
+protected:
+	virtual int GetValue() const ;
+	virtual void SetValue(int Value);
+	
+public:
+	CExternalHSlider(class CGui *pContext, int* pValue, int Min, int Max);
+};
+
 }
 
 #endif
