@@ -45,6 +45,13 @@ public:
 	virtual void Print(const char* pText, int Type = CLI_LINETYPE_NORMAL) = 0;
 };
 
+class CCLI_StdOutput : public CCLI_Output
+{
+public:
+	CCLI_StdOutput() {}
+	virtual void Print(const char* pText, int Type = CLI_LINETYPE_NORMAL);
+};
+
 class CCommandLineInterpreter : public CSharedKernel::CComponent
 {
 public:
@@ -109,6 +116,7 @@ public:
 protected:
 	typedef hashtable<CCommand*, 128> CHashTable;
 	CHashTable m_Commands;
+	CCLI_StdOutput m_StdOutput;
 
 protected:
 	int ExecuteImpl(const char* pCommandLine, CCLI_Output* pOutput, bool Help);
@@ -118,8 +126,6 @@ public:
 	virtual ~CCommandLineInterpreter();
 	
 	virtual bool InitConfig(int argc, const char** argv);
-	virtual bool Init();
-	virtual void Shutdown();
 	
 	void Register(const char* pCommandName, CCommand* pCommand);
 	void RegisterConfigInteger(const char* pCommandName, const char* pDescription, int* pValue, int Min, int Max);

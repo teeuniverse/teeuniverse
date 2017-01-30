@@ -48,11 +48,12 @@ public:
 		
 		char* pKeyName = Buffer.buffer();
 		int Modifier = CBindsManager::MODIFIER_NONE;
-		if(str_comp(Buffer.buffer(), "ctrl+") == 0)
+		if(str_comp_num(Buffer.buffer(), "ctrl+", 5) == 0)
 		{
 			Modifier = CBindsManager::MODIFIER_CTRL;
 			pKeyName += 5;
 		}
+		
 		int Key = m_pBindManager->Input()->KeyID(pKeyName);
 		if(Key == KEY_UNKNOWN)
 		{
@@ -112,8 +113,6 @@ CBindsManager::CBindsManager(CClientKernel* pKernel) :
 
 bool CBindsManager::InitConfig(int argc, const char** argv)
 {
-	UnbindAll();
-	
 	//TODO: Add default binds
 	
 	CLI()->Register("bind", new CCommand_Bind(this));
@@ -157,7 +156,7 @@ bool CBindsManager::PreUpdate()
 			else
 			{
 				if(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].length() > 0)
-					CLI()->Execute(m_aKeyToCommand[MODIFIER_CTRL][Event.m_Key].buffer());
+					CLI()->Execute(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].buffer());
 			}
 		}
 	}

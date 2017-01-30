@@ -19,6 +19,7 @@
 #include <shared/system/debug.h>
 #include <shared/system/string.h>
 #include <shared/components/assetsmanager.h>
+#include <shared/components/cli.h>
 #include <editor/kernel.h>
 
 #include <cstdlib>
@@ -46,6 +47,8 @@ int main(int argc, char* argv[])
 	
 	pKernel->AssetsManager()->EnableAssetsHistory();
 	
+	pKernel->CLI()->ExecuteFile("config/settings_editor.cfg");
+	
 	bool Running = true;
 	do
 	{
@@ -53,6 +56,8 @@ int main(int argc, char* argv[])
 		Running = Running && pKernel->PostUpdate();
 	}
 	while(Running);
+	
+	pKernel->CLI()->Execute("save_config config/settings_editor.cfg");
 	
 	pKernel->Shutdown();
 	delete pKernel;

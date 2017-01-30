@@ -55,7 +55,7 @@ public:
 	{ }
 };
 
-	//Echo
+	//editor_save
 class CCommand_SavePackage : public CCommandLineInterpreter::CCommand
 {
 protected:
@@ -93,6 +93,29 @@ public:
 	
 	virtual const char* Usage() { return "editor_save"; }
 	virtual const char* Description() { return "Save the current package"; }
+};
+
+	//editor_quit
+class CCommand_Quit : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CCommand_Quit(CGuiEditor* pAssetsEditor) :
+		CCommandLineInterpreter::CCommand(),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		m_pAssetsEditor->Quit();
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "editor_quit"; }
+	virtual const char* Description() { return "Quit the program"; }
 };
 
 /* CONTEXT MENU *******************************************************/
@@ -1703,8 +1726,10 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->RegisterConfigString("editor_default_author", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultAuthor);
 	
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
+	CLI()->Register("editor_quit", new CCommand_Quit(this));
 	
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
+	BindsManager()->Bind(KEY_Q, CBindsManager::MODIFIER_CTRL, "editor_quit");
 	
 	return true;
 }

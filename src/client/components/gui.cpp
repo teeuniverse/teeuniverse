@@ -25,6 +25,8 @@
 #include <client/gui/popup.h>
 #include <shared/components/cli.h>
 
+/* GUI ****************************************************************/
+
 CGui::CGui(CClientKernel* pKernel) :
 	CClientKernel::CComponent(pKernel),
 	m_LocalizationUpdated(false),

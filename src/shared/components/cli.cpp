@@ -19,8 +19,17 @@
 #include <shared/kernel.h>
 #include <shared/components/cli.h>
 #include <shared/components/storage.h>
+#include <iostream>
 
 /* OUTPUTS ************************************************************/
+	
+void CCLI_StdOutput::Print(const char* pText, int Type)
+{
+	if(Type == CLI_LINETYPE_ERROR)
+		std::cerr << pText << std::endl;
+	else
+		std::cout << pText << std::endl;
+}
 
 class CFileOutput : public CCLI_Output
 {
@@ -353,26 +362,6 @@ bool CCommandLineInterpreter::InitConfig(int argc, const char** argv)
 	
 	return true;
 }
-
-bool CCommandLineInterpreter::Init()
-{
-	if(SharedKernel()->Type() == KERNEL_GAME)
-		ExecuteFile("config/settings.cfg");
-	else if(SharedKernel()->Type() == KERNEL_EDITOR)
-		ExecuteFile("config/settings_editor.cfg");
-	
-	return true;
-}
-
-void CCommandLineInterpreter::Shutdown()
-{
-	fixed_string128 Buffer;
-	if(SharedKernel()->Type() == KERNEL_GAME)
-		str_format(Buffer.buffer(), Buffer.maxsize(), "save_config %s", "config/settings.cfg");
-	else if(SharedKernel()->Type() == KERNEL_EDITOR)
-		str_format(Buffer.buffer(), Buffer.maxsize(), "save_config %s", "config/settings_editor.cfg");
-	Execute(Buffer.buffer());
-}
 	
 void CCommandLineInterpreter::Register(const char* pCommandName, CCommand* pCommand)
 {
@@ -510,7 +499,11 @@ int CCommandLineInterpreter::Help(const char* pCommandLine, CCLI_Output* pOutput
 
 int CCommandLineInterpreter::Execute(const char* pCommandLine, CCLI_Output* pOutput)
 {
-	return ExecuteImpl(pCommandLine, pOutput, false);
+	CCLI_Output* pFinalOutput = pOutput;
+	//~ if(!pFinalOutput)
+		//~ pFinalOutput = &m_StdOutput;
+	
+	return ExecuteImpl(pCommandLine, pFinalOutput, false);
 }
 
 bool CCommandLineInterpreter::ExecuteFile(const char* pFilename, CCLI_Output* pOutput)

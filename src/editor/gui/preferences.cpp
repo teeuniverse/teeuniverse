@@ -75,6 +75,12 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			pHList->Add(new gui::CBindEdit(Context(), "editor_save", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Quit the program")), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_quit", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
 		
 		pTabs->AddTab(pLayout, _LSTRING("Keybindings"), AssetsEditor()->m_Path_Sprite_IconSystem);
 	}

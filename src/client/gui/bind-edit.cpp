@@ -66,12 +66,19 @@ void CAbstractBindEdit::Update(bool ParentEnabled)
 	else
 	{
 		CBindsManager::CKey Key = GetValue();
-		dynamic_string Buffer;
-		int Iter = 0;
-		if(Key.m_Modifier == CBindsManager::MODIFIER_CTRL)
-			Iter = Buffer.append_at(Iter, "Ctrl + ");
-		Iter = Buffer.append_at(Iter, Input()->KeyName(Key.m_KeyID));
-		SetText(Buffer.buffer());
+		if(Key.m_KeyID == KEY_LAST)
+		{
+			SetText("");
+		}
+		else
+		{
+			dynamic_string Buffer;
+			int Iter = 0;
+			if(Key.m_Modifier == CBindsManager::MODIFIER_CTRL)
+				Iter = Buffer.append_at(Iter, "Ctrl + ");
+			Iter = Buffer.append_at(Iter, Input()->KeyName(Key.m_KeyID));
+			SetText(Buffer.buffer());
+		}
 	}
 	
 	RefreshLabelStyle();
