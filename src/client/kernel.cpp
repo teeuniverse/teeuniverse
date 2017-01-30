@@ -25,6 +25,7 @@
 #include <client/components/input.h>
 #include <client/components/input.h>
 #include <client/components/gui.h>
+#include <client/components/bindsmanager.h>
 
 CClientKernel::CClientKernel()
 {
@@ -35,4 +36,5 @@ CClientKernel::CClientKernel()
 	m_pComponents.add_by_copy(m_pTextRenderer = new CTextRenderer(this));
 	m_pComponents.add_by_copy(m_pAssetsRenderer = new CAssetsRenderer(this));
 	m_pComponents.add_by_copy(m_pInput = new CInput(this));
+	m_pComponents.add_by_copy(m_pBindsManager = new CBindsManager(this));
 }

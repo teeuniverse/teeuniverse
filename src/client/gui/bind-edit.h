@@ -19,6 +19,7 @@
 #ifndef __CLIENT_GUI_BINDEDIT__
 #define __CLIENT_GUI_BINDEDIT__
 
+#include <client/components/bindsmanager.h>
 #include "button.h"
 	
 namespace gui
@@ -30,13 +31,14 @@ protected:
 	bool m_Clicked;
 	bool m_MouseOver;
 	bool m_CatchInput;
+	bool m_AcceptModifier;
 	CAssetPath m_ButtonStylePath;
 	
 protected:
 	CAbstractBindEdit(class CGui *pConfig);
 	
-	virtual int GetValue() const = 0;
-	virtual void SetValue(int Key) = 0;
+	virtual CBindsManager::CKey GetValue() = 0;
+	virtual void SetValue(CBindsManager::CKey Key) = 0;
 	
 public:
 	virtual void Update(bool ParentEnabled);
@@ -56,8 +58,16 @@ public:
 
 class CBindEdit : public CAbstractBindEdit
 {
+protected:
+	dynamic_string m_Command;
+	int m_BindNum;
+
+protected:
+	virtual CBindsManager::CKey GetValue();
+	virtual void SetValue(CBindsManager::CKey Key);
+
 public:
-	CBindEdit(class CGui *pConfig);
+	CBindEdit(class CGui *pConfig, const char* pCommand, int BindNum, bool Modifier);
 };
 
 }

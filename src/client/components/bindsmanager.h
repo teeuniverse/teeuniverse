@@ -19,35 +19,50 @@
 #ifndef __CLIENT_BINDSMANAGER__
 #define __CLIENT_BINDSMANAGER__
 
-#include <game/kernel.h>
+#include <client/kernel.h>
 #include <client/keys.h>
 #include <shared/tl/array.h>
 #include <shared/tl/hashtable.h>
 
-class CBindsManager : public CGameKernel::CComponent
+class CBindsManager : public CClientKernel::CComponent
 {
-protected:
-	struct CBind
+public:
+	enum
 	{
-		int m_Keys[2];
+		MODIFIER_NONE=0,
+		MODIFIER_CTRL,
+		NUM_MODIFIER,
+	};
+	
+	struct CKey
+	{
+		int m_KeyID;
+		int m_Modifier;
 	};
 	
 protected:
-	dynamic_string m_aKeyToCommand[KEY_LAST];
+	struct CBind
+	{
+		CKey m_Keys[2];
+	};
+	
+protected:
+	dynamic_string m_aKeyToCommand[NUM_MODIFIER][KEY_LAST];
 	hashtable<CBind, KEY_LAST> m_CommandToKey;
 
 public:
-	CBindsManager(CGameKernel* pKernel);
+	CBindsManager(CClientKernel* pKernel);
 	
 	virtual bool InitConfig(int argc, const char** argv);
 	virtual void SaveConfig(class CCLI_Output* pOutput);
+	virtual bool PreUpdate();
 	
-	void Bind(int Key, const char* pCommand, int BindNum = 0);
-	void UnbindKey(int Key);
+	void Bind(int Key, int Modifier, const char* pCommand, int BindNum = 0);
+	void UnbindKey(int Key, int Modifier);
 	void UnbindCommand(const char* pCommand, int BindNum = -1);
 	void UnbindAll();
 	
-	int CommandToKey(const char* pCommand, int BindNum = 0) const;
+	bool CommandToKey(const char* pCommand, CKey& Key, int BindNum = 0) const;
 	
 	void OnConfigSave();
 };

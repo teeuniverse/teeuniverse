@@ -22,7 +22,6 @@
 #include <client/kernel.h>
 
 //TAG_NEW_GAME_COMPONENT
-class CBindsManager;
 class CCountryFlags;
 class CGuiGame;
 
@@ -40,7 +39,6 @@ public:
 		inline const CGameKernel* Kernel() const { return m_pKernel; }
 		
 		//TAG_NEW_GAME_COMPONENT
-		inline CBindsManager* BindsManager() { return m_pKernel->BindsManager(); }
 		inline CCountryFlags* CountryFlags() { return m_pKernel->CountryFlags(); }
 		inline CGuiGame* Gui() { return m_pKernel->Gui(); }
 	};
@@ -54,7 +52,6 @@ public:
 
 private:
 	//TAG_NEW_GAME_COMPONENT
-	CBindsManager* m_pBindsManager;
 	CCountryFlags* m_pCountryFlags;
 	CGuiGame* m_pGui;
 	
@@ -62,12 +59,10 @@ public:
 	CGameKernel();
 	
 	//TAG_NEW_GAME_COMPONENT
-	inline CBindsManager* BindsManager() { return m_pBindsManager; }
 	inline CCountryFlags* CountryFlags() { return m_pCountryFlags; }
 	inline CGuiGame* Gui() { return m_pGui; }
 	
 	//TAG_NEW_GAME_COMPONENT
-	inline const CBindsManager* BindsManager() const { return m_pBindsManager; }
 	inline const CCountryFlags* CountryFlags() const { return m_pCountryFlags; }
 	inline const CGuiGame* Gui() const { return m_pGui; }
 };

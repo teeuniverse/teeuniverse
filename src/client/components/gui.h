@@ -55,6 +55,7 @@ public:
 		inline CInput* Input() { return m_pContext->Input(); }
 		inline CTextRenderer* TextRenderer() { return m_pContext->TextRenderer(); }
 		inline CAssetsRenderer* AssetsRenderer() { return m_pContext->AssetsRenderer(); }
+		inline CBindsManager* BindsManager() { return m_pContext->BindsManager(); }
 		
 		inline CGui* Context() { return m_pContext; }
 	};

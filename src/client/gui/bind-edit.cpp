@@ -65,7 +65,13 @@ void CAbstractBindEdit::Update(bool ParentEnabled)
 	}
 	else
 	{
-		SetText(Input()->KeyName(GetValue()));
+		CBindsManager::CKey Key = GetValue();
+		dynamic_string Buffer;
+		int Iter = 0;
+		if(Key.m_Modifier == CBindsManager::MODIFIER_CTRL)
+			Iter = Buffer.append_at(Iter, "Ctrl + ");
+		Iter = Buffer.append_at(Iter, Input()->KeyName(Key.m_KeyID));
+		SetText(Buffer.buffer());
 	}
 	
 	RefreshLabelStyle();
@@ -129,8 +135,30 @@ void CAbstractBindEdit::OnInputEvent(const CInput::CEvent& Event)
 		}
 		else if(Event.m_Key > 0)
 		{
-			SetValue(Event.m_Key);
-			m_CatchInput = false;
+			if(m_AcceptModifier)
+			{
+				if(Event.m_Key != KEY_LCTRL)
+				{
+					CBindsManager::CKey Key;
+					Key.m_KeyID = Event.m_Key;
+					
+					if(Input()->KeyIsPressed(KEY_LCTRL))
+						Key.m_Modifier = CBindsManager::MODIFIER_CTRL;
+					else
+						Key.m_Modifier = CBindsManager::MODIFIER_NONE;
+					
+					SetValue(Key);
+					m_CatchInput = false;
+				}
+			}
+			else
+			{
+				CBindsManager::CKey Key;
+				Key.m_KeyID = Event.m_Key;
+				Key.m_Modifier = CBindsManager::MODIFIER_NONE;
+				SetValue(Key);
+				m_CatchInput = false;
+			}
 		}
 	}
 	else if(Context()->HasFocus(this) && (Event.m_Key == KEY_RETURN || Event.m_Key == KEY_KP_ENTER) && (Event.m_Flags & CInput::FLAG_RELEASE))
@@ -151,10 +179,25 @@ void CAbstractBindEdit::OnFocusStop()
 
 /* BIND EDIT **********************************************************/
 
-CBindEdit::CBindEdit(CGui* pContext) :
+CBindsManager::CKey CBindEdit::GetValue()
+{
+	CBindsManager::CKey Key;
+	Key.m_KeyID = KEY_LAST;
+	BindsManager()->CommandToKey(m_Command.buffer(), Key, m_BindNum);
+	return Key;
+}
+
+void CBindEdit::SetValue(CBindsManager::CKey Key)
+{
+	BindsManager()->Bind(Key.m_KeyID, Key.m_Modifier, m_Command.buffer(), m_BindNum);
+}
+
+CBindEdit::CBindEdit(CGui* pContext, const char* pCommand, int BindNum, bool Modifier) :
 	CAbstractBindEdit(pContext)
 {
-	
+	m_Command.copy(pCommand);
+	m_BindNum = BindNum;
+	m_AcceptModifier = Modifier;
 }
 
 }

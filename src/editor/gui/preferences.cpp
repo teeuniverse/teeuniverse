@@ -22,6 +22,7 @@
 #include <client/gui/text-edit.h>
 #include <client/gui/filler.h>
 #include <client/gui/slider.h>
+#include <client/gui/bind-edit.h>
 
 class CCloseButton : public gui::CButton
 {
@@ -64,8 +65,19 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 		pTabs->AddTab(pLayout, _LSTRING("General"), AssetsEditor()->m_Path_Sprite_IconSystem);
 	}
 	
-	//~ //Keybindings
-	//~ pTabs->AddTab(new gui::CLabel(Context(), "Keybindings"), _LSTRING("Keybindings"), AssetsEditor()->m_Path_Sprite_IconLabel);
+	//Keybindings
+	{
+		gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
+		
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Save package")), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_save", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		
+		pTabs->AddTab(pLayout, _LSTRING("Keybindings"), AssetsEditor()->m_Path_Sprite_IconSystem);
+	}
 	
 	//Graphics
 	{

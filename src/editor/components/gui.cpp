@@ -29,6 +29,7 @@
 #include <client/gui/combobox.h>
 #include <client/keys.h>
 #include <client/components/input.h>
+#include <client/components/bindsmanager.h>
 #include <client/gui/panellayout.h>
 #include <client/loading_tools.h>
 #include <editor/gui/assetslist.h>
@@ -1638,11 +1639,6 @@ void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 		Context()->m_Cfg_Scale += 4;
 		return;
 	}
-	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_S && (Event.m_Flags & CInput::FLAG_RELEASE))
-	{
-		CLI()->Execute("editor_save");
-		return;
-	}
 	
 	gui::CVListLayout::OnInputEvent(Event);
 }
@@ -1707,6 +1703,8 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->RegisterConfigString("editor_default_author", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultAuthor);
 	
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
+	
+	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
 	
 	return true;
 }

@@ -19,7 +19,6 @@
 #include <game/kernel.h>
 
 //TAG_NEW_GAME_COMPONENT
-#include <game/components/bindsmanager.h>
 #include <game/components/countryflags.h>
 #include <game/components/gui.h>
 
@@ -28,7 +27,6 @@ CGameKernel::CGameKernel()
 	SetType(KERNEL_GAME);
 	
 	//TAG_NEW_GAME_COMPONENT
-	m_pComponents.add_by_copy(m_pBindsManager = new CBindsManager(this));
 	m_pComponents.add_by_copy(m_pCountryFlags = new CCountryFlags(this));
 	m_pComponents.add_by_copy(m_pGui = new CGuiGame(this));
 }

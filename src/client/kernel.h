@@ -26,6 +26,7 @@ class CGraphics;
 class CTextRenderer;
 class CAssetsRenderer;
 class CInput;
+class CBindsManager;
 
 class CClientKernel: public CSharedKernel
 {
@@ -45,6 +46,7 @@ public:
 		inline CTextRenderer* TextRenderer() { return m_pClientKernel->TextRenderer(); }
 		inline CAssetsRenderer* AssetsRenderer() { return m_pClientKernel->AssetsRenderer(); }
 		inline CInput* Input() { return m_pClientKernel->Input(); }
+		inline CBindsManager* BindsManager() { return m_pClientKernel->BindsManager(); }
 	};
 	
 	class CComponent : public CGuest, public CSharedKernel::IComponent
@@ -59,6 +61,7 @@ private:
 	CTextRenderer* m_pTextRenderer;
 	CAssetsRenderer* m_pAssetsRenderer;
 	CInput* m_pInput;
+	CBindsManager* m_pBindsManager;
 	
 public:	
 	CClientKernel();
@@ -68,12 +71,14 @@ public:
 	inline CTextRenderer* TextRenderer() { return m_pTextRenderer; }
 	inline CAssetsRenderer* AssetsRenderer() { return m_pAssetsRenderer; }
 	inline CInput* Input() { return m_pInput; }
+	inline CBindsManager* BindsManager() { return m_pBindsManager; }
 	
 	//TAG_NEW_CLIENT_COMPONENT
 	inline const CGraphics* Graphics() const { return m_pGraphics; }
 	inline const CTextRenderer* TextRenderer() const { return m_pTextRenderer; }
 	inline const CAssetsRenderer* AssetsRenderer() const { return m_pAssetsRenderer; }
 	inline const CInput* Input() const { return m_pInput; }
+	inline const CBindsManager* BindsManager() const { return m_pBindsManager; }
 };
 
 #endif
