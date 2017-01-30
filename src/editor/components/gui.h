@@ -62,6 +62,12 @@ public:
 public:
 	int m_Cfg_DefaultCompatibilityMode;
 	dynamic_string m_Cfg_DefaultAuthor;
+
+public:
+	int m_BindCall_ApplyVFlip;
+	int m_BindCall_ApplyHFlip;
+	int m_BindCall_ApplyCWRotation;
+	int m_BindCall_ApplyCCWRotation;
 	
 public:
 	CAssetPath m_Path_Image_Checker;
@@ -244,12 +250,17 @@ public:
 	CAssetPath m_Path_Sprite_GizmoVertexBezierFg;
 	CAssetPath m_Path_Sprite_GizmoVertexControl;
 
+protected:
+	void ResetBindCalls();
+
 public:
 	CGuiEditor(CEditorKernel* pKernel);
 	virtual ~CGuiEditor();
 	
 	virtual bool InitConfig(int argc, const char** argv);
+	virtual bool Init();
 	virtual void SaveConfig(class CCLI_Output* pOutput);
+	virtual bool PostUpdate();
 	
 	virtual void LoadAssets();
 	virtual gui::CWidget* CreateMainWidget();

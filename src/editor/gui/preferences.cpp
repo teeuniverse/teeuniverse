@@ -71,14 +71,38 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 		
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pHList->Add(new gui::CLabel(Context(), _LSTRING("Save package")), true);
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Save package"), AssetsEditor()->m_Path_Sprite_IconSave), true);
 			pHList->Add(new gui::CBindEdit(Context(), "editor_save", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pHList->Add(new gui::CLabel(Context(), _LSTRING("Quit the program")), true);
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Quit the program"), AssetsEditor()->m_Path_Sprite_IconDelete), true);
 			pHList->Add(new gui::CBindEdit(Context(), "editor_quit", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply vertical flip to the selection"), AssetsEditor()->m_Path_Sprite_IconVFlip), true);
+			pHList->Add(new gui::CBindEdit(Context(), "vflip", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply horizontal flip to the selection"), AssetsEditor()->m_Path_Sprite_IconHFlip), true);
+			pHList->Add(new gui::CBindEdit(Context(), "hflip", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply clock-wise rotation to the selection"), AssetsEditor()->m_Path_Sprite_IconRotateCW), true);
+			pHList->Add(new gui::CBindEdit(Context(), "cwrotation", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply counter clock-wise rotation to the selection"), AssetsEditor()->m_Path_Sprite_IconRotateCCW), true);
+			pHList->Add(new gui::CBindEdit(Context(), "ccwrotation", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
 		

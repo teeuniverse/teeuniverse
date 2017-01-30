@@ -43,7 +43,6 @@ public:
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();
-	virtual void OnViewInputEvent(const CInput::CEvent& Event);
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();

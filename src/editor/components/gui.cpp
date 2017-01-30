@@ -118,6 +118,31 @@ public:
 	virtual const char* Description() { return "Quit the program"; }
 };
 
+#define DEFINE_CMD_BINDCALL(className, bindCall, name, desc) class className : public CCommandLineInterpreter::CCommand \
+{ \
+protected: \
+	CGuiEditor* m_pAssetsEditor; \
+ \
+public: \
+	className(CGuiEditor* pAssetsEditor) : \
+		m_pAssetsEditor(pAssetsEditor) \
+	{ } \
+	 \
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput) \
+	{ \
+		m_pAssetsEditor->bindCall++; \
+		return CLI_SUCCESS; \
+	} \
+	 \
+	virtual const char* Usage() { return name; } \
+	virtual const char* Description() { return desc; } \
+};
+
+DEFINE_CMD_BINDCALL(CCommand_VFlip, m_BindCall_ApplyVFlip, "vflip", "Apply vertical flip to the current selection")
+DEFINE_CMD_BINDCALL(CCommand_HFlip, m_BindCall_ApplyHFlip, "hflip", "Apply horizontal flip to the current selection")
+DEFINE_CMD_BINDCALL(CCommand_CWRotation, m_BindCall_ApplyCWRotation, "cwrotation", "Apply a clockwise rotation to the current selection")
+DEFINE_CMD_BINDCALL(CCommand_CCWRotation, m_BindCall_ApplyCCWRotation, "ccwrotation", "Apply a counter-clockwise rotation to the current selection")
+
 /* CONTEXT MENU *******************************************************/
 
 CContextMenu::CContextMenu(CGuiEditor* pAssetsEditor) :
@@ -1727,9 +1752,36 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
 	CLI()->Register("editor_quit", new CCommand_Quit(this));
+	CLI()->Register("vflip", new CCommand_VFlip(this));
+	CLI()->Register("hflip", new CCommand_HFlip(this));
+	CLI()->Register("cwrotation", new CCommand_CWRotation(this));
+	CLI()->Register("ccwrotation", new CCommand_CCWRotation(this));
 	
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
 	BindsManager()->Bind(KEY_Q, CBindsManager::MODIFIER_CTRL, "editor_quit");
+	
+	BindsManager()->Bind(KEY_N, CBindsManager::MODIFIER_NONE, "vflip");
+	BindsManager()->Bind(KEY_M, CBindsManager::MODIFIER_NONE, "hflip");
+	BindsManager()->Bind(KEY_R, CBindsManager::MODIFIER_NONE, "ccwrotation");
+	BindsManager()->Bind(KEY_T, CBindsManager::MODIFIER_NONE, "cwrotation");
+	
+	return true;
+}
+
+void CGuiEditor::ResetBindCalls()
+{
+	m_BindCall_ApplyVFlip = 0;
+	m_BindCall_ApplyHFlip = 0;
+	m_BindCall_ApplyCWRotation = 0;
+	m_BindCall_ApplyCCWRotation = 0;
+}
+
+bool CGuiEditor::Init()
+{
+	if(!CGui::Init())
+		return false;
+	
+	ResetBindCalls();
 	
 	return true;
 }
@@ -1741,6 +1793,18 @@ void CGuiEditor::SaveConfig(class CCLI_Output* pOutput)
 	fixed_string128 Buffer;
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_compatibility_mode %d", m_Cfg_DefaultCompatibilityMode); pOutput->Print(Buffer.buffer());
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_author %s", m_Cfg_DefaultAuthor.buffer()); pOutput->Print(Buffer.buffer());
+	
+	
+}
+
+bool CGuiEditor::PostUpdate()
+{
+	if(!CGui::PostUpdate())
+		return false;
+	
+	ResetBindCalls();
+	
+	return true;
 }
 
 void CGuiEditor::LoadAssets()

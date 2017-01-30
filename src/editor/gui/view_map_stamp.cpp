@@ -1248,6 +1248,30 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 			m_pOptions->Disable();
 	}
 	
+	if(ParentEnabled && IsEnabled())
+	{
+		while(AssetsEditor()->m_BindCall_ApplyHFlip > 0)
+		{
+			AssetsEditor()->m_BindCall_ApplyHFlip--;
+			HFlipSelection();
+		}
+		while(AssetsEditor()->m_BindCall_ApplyVFlip > 0)
+		{
+			AssetsEditor()->m_BindCall_ApplyVFlip--;
+			VFlipSelection();
+		}
+		while(AssetsEditor()->m_BindCall_ApplyCWRotation > 0)
+		{
+			AssetsEditor()->m_BindCall_ApplyCWRotation--;
+			RotateCWSelection();
+		}
+		while(AssetsEditor()->m_BindCall_ApplyCCWRotation > 0)
+		{
+			AssetsEditor()->m_BindCall_ApplyCCWRotation--;
+			RotateCCWSelection();
+		}
+	}
+	
 	CCursorTool::Update(ParentEnabled);
 }
 	
@@ -1604,18 +1628,6 @@ void CCursorTool_MapStamp::RotateCWSelection()
 			break;
 		}
 	}
-}
-
-void CCursorTool_MapStamp::OnViewInputEvent(const CInput::CEvent& Event)
-{
-	if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_N)
-		VFlipSelection();
-	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_M)
-		HFlipSelection();
-	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_R)
-		RotateCCWSelection();
-	else if(Event.m_Flags&CInput::FLAG_PRESS && Event.m_Key == KEY_T)
-		RotateCWSelection();
 }
 
 void CCursorTool_MapStamp::OnMouseMove()
