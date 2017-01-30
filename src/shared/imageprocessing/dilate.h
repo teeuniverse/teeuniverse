@@ -23,8 +23,8 @@ template<typename IMG>
 void ImageProcessing_Dilate(IMG& Image, int NumIterations)
 {
 	IMG TmpImages[2];
-	
-	for(int i=0; i<sizeof(TmpImages)/sizeof(IMG); i++)
+
+	for(unsigned int i=0; i<sizeof(TmpImages)/sizeof(IMG); i++)
 		TmpImages[i].copy(Image);
 	
 	const int sx[] = {0, -1, 1, 0};
@@ -47,8 +47,8 @@ void ImageProcessing_Dilate(IMG& Image, int NumIterations)
 				
 				if(TmpImages[CurrTmp].get_clamp(x, y, AlphaDepth))
 					continue;
-				
-				for(int k=0; k<sizeof(sx)/sizeof(int); k++)
+
+				for(unsigned int k=0; k<sizeof(sx)/sizeof(int); k++)
 				{
 					if(TmpImages[CurrTmp].get_clamp(x+sx[k], y+sy[k], AlphaDepth))
 					{

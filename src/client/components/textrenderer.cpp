@@ -116,8 +116,8 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 	{
 		m_Width = m_PPB;
 		m_Height = m_PPB;
-		m_pData = new char[m_Width*m_Height];
-		
+		m_pData = new unsigned char[m_Width*m_Height];
+
 		mem_zero(m_pData, m_Width*m_Height);
 		m_Texture = Graphics()->LoadTextureRaw(m_Width, m_Height, 1, 1, CImageInfo::FORMAT_ALPHA, m_pData, CImageInfo::FORMAT_ALPHA, CGraphics::TEXLOAD_NOMIPMAPS);
 		
@@ -135,7 +135,7 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 			NewWidth <<= 1;
 		
 		//Allocate a new buffer and copy the old inside
-		char* pNewData = new char[NewWidth*NewHeight];
+		unsigned char* pNewData = new unsigned char[NewWidth*NewHeight];
 		mem_zero(pNewData, NewWidth*NewHeight);
 			
 			//Block are arranged differently to be still accessible iterativly
