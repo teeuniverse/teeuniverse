@@ -95,7 +95,7 @@ protected:
 		ivec2 m_Granularity;
 		int m_Block;
 		int m_BlockPos;
-		char* m_pData;
+		unsigned char* m_pData;
 		vec2 m_UVMin;
 		vec2 m_UVMax;
 		
@@ -122,7 +122,7 @@ protected:
 		int m_RenderTick;
 		int m_Width;
 		int m_Height;
-		char* m_pData;
+		unsigned char* m_pData;
 		CTextureHandle m_Texture;
 		int m_MemoryUsage;
 		int m_Version;

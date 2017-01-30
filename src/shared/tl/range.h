@@ -53,7 +53,7 @@
 */
 struct concept_empty
 {
-	template<typename T> static void check(T &t) { if(0) t.empty(); };
+	template<typename T> static void check(T &t) { if(0) t.empty(); }
 };
 
 /*
@@ -67,7 +67,7 @@ struct concept_empty
 */
 struct concept_index
 {
-	template<typename T> static void check(T &t) { if(0) t.index(0); };
+	template<typename T> static void check(T &t) { if(0) t.index(0); }
 };
 
 /*
@@ -81,7 +81,7 @@ struct concept_index
 */
 struct concept_size
 {
-	template<typename T> static void check(T &t) { if(0) t.size(); };
+	template<typename T> static void check(T &t) { if(0) t.size(); }
 };
 
 /*
@@ -95,7 +95,7 @@ struct concept_size
 */
 struct concept_slice
 {
-	template<typename T> static void check(T &t) { if(0) t.slice(0, 0); };
+	template<typename T> static void check(T &t) { if(0) t.slice(0, 0); }
 };
 
 /*
@@ -109,7 +109,7 @@ struct concept_slice
 */
 struct concept_sorted
 {
-	template<typename T> static void check(T &t) { if(0) t.sorted(); };
+	template<typename T> static void check(T &t) { if(0) t.sorted(); }
 };
 
 /*
@@ -125,7 +125,7 @@ struct concept_sorted
 */
 struct concept_forwarditeration
 {
-	template<typename T> static void check(T &t) { if(0) { t.front(); t.pop_front(); } };
+	template<typename T> static void check(T &t) { if(0) { t.front(); t.pop_front(); } }
 };
 
 /*
@@ -141,7 +141,7 @@ struct concept_forwarditeration
 */
 struct concept_backwarditeration
 {
-	template<typename T> static void check(T &t) { if(0) { t.back(); t.pop_back(); } };
+	template<typename T> static void check(T &t) { if(0) { t.back(); t.pop_back(); } }
 };
 
 
