@@ -168,13 +168,13 @@ public:
 	void transfert(CAsset_Image& Item)
 	{
 		CAsset::transfert(Item);
-		m_GridWidth = Item.m_GridWidth;
-		m_GridHeight = Item.m_GridHeight;
-		m_GridSpacing = Item.m_GridSpacing;
-		m_TexelSize = Item.m_TexelSize;
-		m_TilingEnabled = Item.m_TilingEnabled;
+		m_GridWidth = std::move(Item.m_GridWidth);
+		m_GridHeight = std::move(Item.m_GridHeight);
+		m_GridSpacing = std::move(Item.m_GridSpacing);
+		m_TexelSize = std::move(Item.m_TexelSize);
+		m_TilingEnabled = std::move(Item.m_TilingEnabled);
 		m_Data.transfert(Item.m_Data);
-		m_Texture = Item.m_Texture;
+		m_Texture = std::move(Item.m_Texture);
 	}
 	
 	inline int GetGridWidth() const { return m_GridWidth; }

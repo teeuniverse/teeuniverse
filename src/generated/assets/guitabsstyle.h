@@ -157,13 +157,13 @@ public:
 	void transfert(CAsset_GuiTabsStyle& Item)
 	{
 		CAsset::transfert(Item);
-		m_LayoutPath = Item.m_LayoutPath;
-		m_ContentPath = Item.m_ContentPath;
-		m_ButtonListPath = Item.m_ButtonListPath;
-		m_InactiveButtonPath = Item.m_InactiveButtonPath;
-		m_ActiveButtonPath = Item.m_ActiveButtonPath;
-		m_ButtonListFill = Item.m_ButtonListFill;
-		m_ButtonListText = Item.m_ButtonListText;
+		m_LayoutPath = std::move(Item.m_LayoutPath);
+		m_ContentPath = std::move(Item.m_ContentPath);
+		m_ButtonListPath = std::move(Item.m_ButtonListPath);
+		m_InactiveButtonPath = std::move(Item.m_InactiveButtonPath);
+		m_ActiveButtonPath = std::move(Item.m_ActiveButtonPath);
+		m_ButtonListFill = std::move(Item.m_ButtonListFill);
+		m_ButtonListText = std::move(Item.m_ButtonListText);
 	}
 	
 	inline CAssetPath GetLayoutPath() const { return m_LayoutPath; }

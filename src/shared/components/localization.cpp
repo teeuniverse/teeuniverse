@@ -307,7 +307,7 @@ bool CLocalization::InitConfig(int argc, const char** argv)
 
 void CLocalization::SaveConfig(CCLI_Output* pOutput)
 {
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	str_format(Buffer.buffer(), Buffer.maxsize(), "language %s", m_Cfg_MainLanguage.buffer());
 	pOutput->Print(Buffer.buffer());
 }

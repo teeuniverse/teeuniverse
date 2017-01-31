@@ -92,7 +92,7 @@ bool CInput::InitConfig(int argc, const char** argv)
 
 void CInput::SaveConfig(CCLI_Output* pOutput)
 {
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	
 	str_format(Buffer.buffer(), Buffer.maxsize(), "inp_mousesens %d", m_Cfg_Mousesens); pOutput->Print(Buffer.buffer());
 }

@@ -193,12 +193,12 @@ public:
 		
 		void transfert(CAsset_MapLayerObjects::CVertex& Item)
 		{
-			m_Position = Item.m_Position;
-			m_Weight = Item.m_Weight;
-			m_Color = Item.m_Color;
-			m_Smoothness = Item.m_Smoothness;
-			m_ControlPoint0 = Item.m_ControlPoint0;
-			m_ControlPoint1 = Item.m_ControlPoint1;
+			m_Position = std::move(Item.m_Position);
+			m_Weight = std::move(Item.m_Weight);
+			m_Color = std::move(Item.m_Color);
+			m_Smoothness = std::move(Item.m_Smoothness);
+			m_ControlPoint0 = std::move(Item.m_ControlPoint0);
+			m_ControlPoint1 = std::move(Item.m_ControlPoint1);
 		}
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -343,15 +343,15 @@ public:
 		
 		void transfert(CAsset_MapLayerObjects::CObject& Item)
 		{
-			m_Position = Item.m_Position;
-			m_Size = Item.m_Size;
-			m_Angle = Item.m_Angle;
-			m_StylePath = Item.m_StylePath;
+			m_Position = std::move(Item.m_Position);
+			m_Size = std::move(Item.m_Size);
+			m_Angle = std::move(Item.m_Angle);
+			m_StylePath = std::move(Item.m_StylePath);
 			m_Vertex.transfert(Item.m_Vertex);
-			m_PathType = Item.m_PathType;
-			m_FillType = Item.m_FillType;
-			m_LineType = Item.m_LineType;
-			m_OrthoTesselation = Item.m_OrthoTesselation;
+			m_PathType = std::move(Item.m_PathType);
+			m_FillType = std::move(Item.m_FillType);
+			m_LineType = std::move(Item.m_LineType);
+			m_OrthoTesselation = std::move(Item.m_OrthoTesselation);
 		}
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -688,9 +688,9 @@ public:
 	void transfert(CAsset_MapLayerObjects& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
+		m_ParentPath = std::move(Item.m_ParentPath);
 		m_Object.transfert(Item.m_Object);
-		m_Visibility = Item.m_Visibility;
+		m_Visibility = std::move(Item.m_Visibility);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

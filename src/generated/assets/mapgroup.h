@@ -203,14 +203,14 @@ public:
 	void transfert(CAsset_MapGroup& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
+		m_ParentPath = std::move(Item.m_ParentPath);
 		m_Layer.transfert(Item.m_Layer);
-		m_Position = Item.m_Position;
-		m_HardParallax = Item.m_HardParallax;
-		m_Clipping = Item.m_Clipping;
-		m_ClipPosition = Item.m_ClipPosition;
-		m_ClipSize = Item.m_ClipSize;
-		m_Visibility = Item.m_Visibility;
+		m_Position = std::move(Item.m_Position);
+		m_HardParallax = std::move(Item.m_HardParallax);
+		m_Clipping = std::move(Item.m_Clipping);
+		m_ClipPosition = std::move(Item.m_ClipPosition);
+		m_ClipSize = std::move(Item.m_ClipSize);
+		m_Visibility = std::move(Item.m_Visibility);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

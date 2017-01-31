@@ -60,7 +60,7 @@ bool CGui::InitConfig(int argc, const char** argv)
 
 void CGui::SaveConfig(class CCLI_Output* pOutput)
 {
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	
 	str_format(Buffer.buffer(), Buffer.maxsize(), "gui_scale %d", m_Cfg_Scale); pOutput->Print(Buffer.buffer());
 	str_format(Buffer.buffer(), Buffer.maxsize(), "gui_colorchooser_tab %d", m_Cfg_ColorChooserTab); pOutput->Print(Buffer.buffer());

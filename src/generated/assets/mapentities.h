@@ -136,8 +136,8 @@ public:
 		
 		void transfert(CAsset_MapEntities::CEntity& Item)
 		{
-			m_TypePath = Item.m_TypePath;
-			m_Position = Item.m_Position;
+			m_TypePath = std::move(Item.m_TypePath);
+			m_Position = std::move(Item.m_Position);
 		}
 		
 		inline CAssetPath GetTypePath() const { return m_TypePath; }
@@ -243,9 +243,9 @@ public:
 	void transfert(CAsset_MapEntities& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
+		m_ParentPath = std::move(Item.m_ParentPath);
 		m_Entity.transfert(Item.m_Entity);
-		m_Visibility = Item.m_Visibility;
+		m_Visibility = std::move(Item.m_Visibility);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

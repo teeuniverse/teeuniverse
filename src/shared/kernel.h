@@ -62,7 +62,7 @@ public:
 	class IComponent
 	{
 	private:
-		fixed_string128 m_Name;
+		dynamic_string m_Name;
 		
 	public:
 		virtual ~IComponent() {}
@@ -75,7 +75,7 @@ public:
 		virtual bool PostUpdate() { return true; }
 		virtual void Shutdown() {}
 		
-		void SetName(const char* pName) { m_Name.copy(pName); }
+		void SetName(const char* pName) { m_Name = pName; }
 		const char* GetName() { return m_Name.buffer(); }
 	};
 	

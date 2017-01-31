@@ -196,9 +196,9 @@ public:
 	
 	private:
 		bool m_Used;
-		string< _fixed_string_core<128> > m_Description;
+		_dynamic_string<128> m_Description;
 		vec4 m_Color;
-		string< _fixed_string_core<128> > m_Title;
+		_dynamic_string<128> m_Title;
 		int m_BorderIndex;
 		vec4 m_BorderColor;
 		int m_Group;
@@ -208,9 +208,9 @@ public:
 		void copy(const CAsset_ZoneType::CIndex& Item)
 		{
 			m_Used = Item.m_Used;
-			m_Description.copy(Item.m_Description);
+			m_Description = Item.m_Description;
 			m_Color = Item.m_Color;
-			m_Title.copy(Item.m_Title);
+			m_Title = Item.m_Title;
 			m_BorderIndex = Item.m_BorderIndex;
 			m_BorderColor = Item.m_BorderColor;
 			m_Group = Item.m_Group;
@@ -218,13 +218,13 @@ public:
 		
 		void transfert(CAsset_ZoneType::CIndex& Item)
 		{
-			m_Used = Item.m_Used;
-			m_Description.transfert(Item.m_Description);
-			m_Color = Item.m_Color;
-			m_Title.transfert(Item.m_Title);
-			m_BorderIndex = Item.m_BorderIndex;
-			m_BorderColor = Item.m_BorderColor;
-			m_Group = Item.m_Group;
+			m_Used = std::move(Item.m_Used);
+			m_Description = std::move(Item.m_Description);
+			m_Color = std::move(Item.m_Color);
+			m_Title = std::move(Item.m_Title);
+			m_BorderIndex = std::move(Item.m_BorderIndex);
+			m_BorderColor = std::move(Item.m_BorderColor);
+			m_Group = std::move(Item.m_Group);
 		}
 		
 		inline bool GetUsed() const { return m_Used; }
@@ -243,11 +243,11 @@ public:
 		
 		inline void SetUsed(bool Value) { m_Used = Value; }
 		
-		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
+		inline void SetDescription(const char* Value) { m_Description = Value; }
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
 		
-		inline void SetTitle(const char* Value) { m_Title.copy(Value); }
+		inline void SetTitle(const char* Value) { m_Title = Value; }
 		
 		inline void SetBorderIndex(int Value) { m_BorderIndex = Value; }
 		
@@ -299,8 +299,8 @@ public:
 		
 	
 	private:
-		string< _fixed_string_core<128> > m_Title;
-		string< _fixed_string_core<128> > m_Description;
+		_dynamic_string<128> m_Title;
+		_dynamic_string<128> m_Description;
 		int m_DefaultValue;
 		int m_MinValue;
 		int m_MaxValue;
@@ -310,8 +310,8 @@ public:
 		CDataInt();
 		void copy(const CAsset_ZoneType::CDataInt& Item)
 		{
-			m_Title.copy(Item.m_Title);
-			m_Description.copy(Item.m_Description);
+			m_Title = Item.m_Title;
+			m_Description = Item.m_Description;
 			m_DefaultValue = Item.m_DefaultValue;
 			m_MinValue = Item.m_MinValue;
 			m_MaxValue = Item.m_MaxValue;
@@ -320,12 +320,12 @@ public:
 		
 		void transfert(CAsset_ZoneType::CDataInt& Item)
 		{
-			m_Title.transfert(Item.m_Title);
-			m_Description.transfert(Item.m_Description);
-			m_DefaultValue = Item.m_DefaultValue;
-			m_MinValue = Item.m_MinValue;
-			m_MaxValue = Item.m_MaxValue;
-			m_NullValue = Item.m_NullValue;
+			m_Title = std::move(Item.m_Title);
+			m_Description = std::move(Item.m_Description);
+			m_DefaultValue = std::move(Item.m_DefaultValue);
+			m_MinValue = std::move(Item.m_MinValue);
+			m_MaxValue = std::move(Item.m_MaxValue);
+			m_NullValue = std::move(Item.m_NullValue);
 		}
 		
 		inline const char* GetTitle() const { return m_Title.buffer(); }
@@ -340,9 +340,9 @@ public:
 		
 		inline int GetNullValue() const { return m_NullValue; }
 		
-		inline void SetTitle(const char* Value) { m_Title.copy(Value); }
+		inline void SetTitle(const char* Value) { m_Title = Value; }
 		
-		inline void SetDescription(const char* Value) { m_Description.copy(Value); }
+		inline void SetDescription(const char* Value) { m_Description = Value; }
 		
 		inline void SetDefaultValue(int Value) { m_DefaultValue = Value; }
 		
@@ -399,7 +399,7 @@ private:
 	array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > > m_Index;
 	CAssetPath m_ImagePath;
 	array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > > m_DataInt;
-	array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > > m_Group;
+	array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > > m_Group;
 
 public:
 	virtual ~CAsset_ZoneType() {}
@@ -437,7 +437,7 @@ public:
 	{
 		CAsset::transfert(Item);
 		m_Index.transfert(Item.m_Index);
-		m_ImagePath = Item.m_ImagePath;
+		m_ImagePath = std::move(Item.m_ImagePath);
 		m_DataInt.transfert(Item.m_DataInt);
 		m_Group.transfert(Item.m_Group);
 	}
@@ -567,10 +567,10 @@ public:
 	
 	inline int GetGroupArraySize() const { return m_Group.size(); }
 	
-	inline const string< _fixed_string_core<128> >* GetGroupPtr() const { return m_Group.base_ptr(); }
+	inline const _dynamic_string<128>* GetGroupPtr() const { return m_Group.base_ptr(); }
 	
-	inline const array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > >& GetGroupArray() const { return m_Group; }
-	inline array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > >& GetGroupArray() { return m_Group; }
+	inline const array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > >& GetGroupArray() const { return m_Group; }
+	inline array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > >& GetGroupArray() { return m_Group; }
 	
 	inline const char* GetGroup(const CSubPath& SubPath) const
 	{
@@ -686,7 +686,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Group.size())
 		{
-			m_Group[SubPath.GetId()].copy(Value);
+			m_Group[SubPath.GetId()] = Value;
 		}
 	}
 	

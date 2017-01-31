@@ -36,7 +36,7 @@ protected:
 		
 		entry& operator=(const entry& old)
 		{
-			m_Key.copy(old.m_Key);
+			m_Key = old.m_Key;
 			ALLOCATOR::copy(m_Data, old.m_Data);
 			return *this;
 		}
@@ -100,7 +100,7 @@ public:
 		}
 		
 		entry& NewEntry = m_Table[Hash].increment();
-		NewEntry.m_Key.copy(pKey);
+		NewEntry.m_Key = pKey;
 		ALLOCATOR::copy(NewEntry.m_Data, Data);
 		return &NewEntry.m_Data;
 	}

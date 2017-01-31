@@ -143,7 +143,7 @@ void CAssetsManager::SetPackageName_Hard(int PackageId, const char* pName)
 	
 	char aNumBuffer[32];
 	dynamic_string Buffer;
-	Buffer.copy(pName);
+	Buffer = pName;
 	
 	int NumDuplicates = 0;
 	bool DuplicateFound = true;
@@ -185,7 +185,7 @@ void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName,
 	
 	char aNumBuffer[32];
 	dynamic_string Buffer;
-	Buffer.copy(pName);
+	Buffer = pName;
 	
 	int NumDuplicates = 0;
 	bool DuplicateFound = true;
@@ -231,7 +231,7 @@ void CAssetsManager::TryChangeAssetName_Hard(CAssetPath AssetPath, const char* p
 {
 	char aNumBuffer[32];
 	dynamic_string Buffer;
-	Buffer.copy(pName);
+	Buffer = pName;
 	
 	int NumDuplicates = 0;
 	bool DuplicateFound = true;
@@ -385,7 +385,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	
 	if(StorageType == CStorage::TYPE_ABSOLUTE)
 	{
-		FullPath.copy(pFileName);
+		FullPath = pFileName;
 		
 		int Length = str_length(pFileName);
 		int i=Length-1;
@@ -437,7 +437,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		FullPath.append(pFileName);
 		FullPath.append(".tup");
 		
-		PackageName.copy(pFileName);
+		PackageName = pFileName;
 	}
 	
 	int PackageId = -1;
@@ -955,7 +955,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 			DuplicateNum = str_to_int(pCharIter + 1);\
 		}\
 		else\
-			Buffer.copy(pName);\
+			Buffer = pName;\
 		bool NameFound;\
 		do\
 		{\

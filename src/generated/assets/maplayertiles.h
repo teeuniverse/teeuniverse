@@ -130,8 +130,8 @@ public:
 		
 		void transfert(CAsset_MapLayerTiles::CTile& Item)
 		{
-			m_Index = Item.m_Index;
-			m_Flags = Item.m_Flags;
+			m_Index = std::move(Item.m_Index);
+			m_Flags = std::move(Item.m_Flags);
 		}
 		
 		inline uint8 GetIndex() const { return m_Index; }
@@ -248,13 +248,13 @@ public:
 	void transfert(CAsset_MapLayerTiles& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ImagePath = Item.m_ImagePath;
-		m_Color = Item.m_Color;
+		m_ParentPath = std::move(Item.m_ParentPath);
+		m_ImagePath = std::move(Item.m_ImagePath);
+		m_Color = std::move(Item.m_Color);
 		m_Tile.transfert(Item.m_Tile);
-		m_Visibility = Item.m_Visibility;
-		m_PositionX = Item.m_PositionX;
-		m_PositionY = Item.m_PositionY;
+		m_Visibility = std::move(Item.m_Visibility);
+		m_PositionX = std::move(Item.m_PositionX);
+		m_PositionY = std::move(Item.m_PositionY);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

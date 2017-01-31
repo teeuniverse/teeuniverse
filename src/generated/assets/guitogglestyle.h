@@ -157,13 +157,13 @@ public:
 	void transfert(CAsset_GuiToggleStyle& Item)
 	{
 		CAsset::transfert(Item);
-		m_IdleTrueStylePath = Item.m_IdleTrueStylePath;
-		m_MouseOverTrueStylePath = Item.m_MouseOverTrueStylePath;
-		m_IconTruePath = Item.m_IconTruePath;
-		m_IdleFalseStylePath = Item.m_IdleFalseStylePath;
-		m_MouseOverFalseStylePath = Item.m_MouseOverFalseStylePath;
-		m_IconFalsePath = Item.m_IconFalsePath;
-		m_SwitchIcon = Item.m_SwitchIcon;
+		m_IdleTrueStylePath = std::move(Item.m_IdleTrueStylePath);
+		m_MouseOverTrueStylePath = std::move(Item.m_MouseOverTrueStylePath);
+		m_IconTruePath = std::move(Item.m_IconTruePath);
+		m_IdleFalseStylePath = std::move(Item.m_IdleFalseStylePath);
+		m_MouseOverFalseStylePath = std::move(Item.m_MouseOverFalseStylePath);
+		m_IconFalsePath = std::move(Item.m_IconFalsePath);
+		m_SwitchIcon = std::move(Item.m_SwitchIcon);
 	}
 	
 	inline CAssetPath GetIdleTrueStylePath() const { return m_IdleTrueStylePath; }

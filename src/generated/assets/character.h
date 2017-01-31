@@ -123,27 +123,27 @@ public:
 		
 	
 	private:
-		string< _fixed_string_core<128> > m_Name;
+		_dynamic_string<128> m_Name;
 		CAssetPath m_DefaultPath;
 	
 	public:
 		void copy(const CAsset_Character::CPart& Item)
 		{
-			m_Name.copy(Item.m_Name);
+			m_Name = Item.m_Name;
 			m_DefaultPath = Item.m_DefaultPath;
 		}
 		
 		void transfert(CAsset_Character::CPart& Item)
 		{
-			m_Name.transfert(Item.m_Name);
-			m_DefaultPath = Item.m_DefaultPath;
+			m_Name = std::move(Item.m_Name);
+			m_DefaultPath = std::move(Item.m_DefaultPath);
 		}
 		
 		inline const char* GetName() const { return m_Name.buffer(); }
 		
 		inline CAssetPath GetDefaultPath() const { return m_DefaultPath; }
 		
-		inline void SetName(const char* Value) { m_Name.copy(Value); }
+		inline void SetName(const char* Value) { m_Name = Value; }
 		
 		inline void SetDefaultPath(const CAssetPath& Value) { m_DefaultPath = Value; }
 		
@@ -245,10 +245,10 @@ public:
 	void transfert(CAsset_Character& Item)
 	{
 		CAsset::transfert(Item);
-		m_IdlePath = Item.m_IdlePath;
-		m_WalkPath = Item.m_WalkPath;
-		m_ControlledJumpPath = Item.m_ControlledJumpPath;
-		m_UncontrolledJumpPath = Item.m_UncontrolledJumpPath;
+		m_IdlePath = std::move(Item.m_IdlePath);
+		m_WalkPath = std::move(Item.m_WalkPath);
+		m_ControlledJumpPath = std::move(Item.m_ControlledJumpPath);
+		m_UncontrolledJumpPath = std::move(Item.m_UncontrolledJumpPath);
 		m_Part.transfert(Item.m_Part);
 	}
 	

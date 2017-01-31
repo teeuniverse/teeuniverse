@@ -211,9 +211,9 @@ public:
 		
 		void transfert(CAsset_Material::CLabel& Item)
 		{
-			m_Color = Item.m_Color;
-			m_AngleStart = Item.m_AngleStart;
-			m_AngleEnd = Item.m_AngleEnd;
+			m_Color = std::move(Item.m_Color);
+			m_AngleStart = std::move(Item.m_AngleStart);
+			m_AngleEnd = std::move(Item.m_AngleEnd);
 		}
 		
 		inline vec4 GetColor() const { return m_Color; }
@@ -325,16 +325,16 @@ public:
 		
 		void transfert(CAsset_Material::CSprite& Item)
 		{
-			m_Path = Item.m_Path;
-			m_Size = Item.m_Size;
-			m_Color = Item.m_Color;
-			m_Flags = Item.m_Flags;
-			m_Position = Item.m_Position;
-			m_Alignment = Item.m_Alignment;
-			m_Filling = Item.m_Filling;
-			m_TileType = Item.m_TileType;
-			m_TileLabel0 = Item.m_TileLabel0;
-			m_TileLabel1 = Item.m_TileLabel1;
+			m_Path = std::move(Item.m_Path);
+			m_Size = std::move(Item.m_Size);
+			m_Color = std::move(Item.m_Color);
+			m_Flags = std::move(Item.m_Flags);
+			m_Position = std::move(Item.m_Position);
+			m_Alignment = std::move(Item.m_Alignment);
+			m_Filling = std::move(Item.m_Filling);
+			m_TileType = std::move(Item.m_TileType);
+			m_TileLabel0 = std::move(Item.m_TileLabel0);
+			m_TileLabel1 = std::move(Item.m_TileLabel1);
 		}
 		
 		inline CAssetPath GetPath() const { return m_Path; }
@@ -784,12 +784,12 @@ public:
 		CAsset::transfert(Item);
 		m_Label.transfert(Item.m_Label);
 		m_Layer.transfert(Item.m_Layer);
-		m_TexturePath = Item.m_TexturePath;
-		m_TextureColor = Item.m_TextureColor;
-		m_TextureSize = Item.m_TextureSize;
-		m_TextureAngle = Item.m_TextureAngle;
-		m_TextureSpacing = Item.m_TextureSpacing;
-		m_TextureEnabled = Item.m_TextureEnabled;
+		m_TexturePath = std::move(Item.m_TexturePath);
+		m_TextureColor = std::move(Item.m_TextureColor);
+		m_TextureSize = std::move(Item.m_TextureSize);
+		m_TextureAngle = std::move(Item.m_TextureAngle);
+		m_TextureSpacing = std::move(Item.m_TextureSpacing);
+		m_TextureEnabled = std::move(Item.m_TextureEnabled);
 	}
 	
 	inline int GetLabelArraySize() const { return m_Label.size(); }

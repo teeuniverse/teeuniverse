@@ -143,11 +143,11 @@ public:
 	void transfert(CAsset_GuiSliderStyle& Item)
 	{
 		CAsset::transfert(Item);
-		m_RectPath = Item.m_RectPath;
-		m_DefaultRailPath = Item.m_DefaultRailPath;
-		m_CursorPath = Item.m_CursorPath;
-		m_Margin = Item.m_Margin;
-		m_Padding = Item.m_Padding;
+		m_RectPath = std::move(Item.m_RectPath);
+		m_DefaultRailPath = std::move(Item.m_DefaultRailPath);
+		m_CursorPath = std::move(Item.m_CursorPath);
+		m_Margin = std::move(Item.m_Margin);
+		m_Padding = std::move(Item.m_Padding);
 	}
 	
 	inline CAssetPath GetRectPath() const { return m_RectPath; }

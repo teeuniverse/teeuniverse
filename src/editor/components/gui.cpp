@@ -1816,11 +1816,9 @@ void CGuiEditor::SaveConfig(class CCLI_Output* pOutput)
 {
 	CGui::SaveConfig(pOutput);
 	
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_compatibility_mode %d", m_Cfg_DefaultCompatibilityMode); pOutput->Print(Buffer.buffer());
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_author %s", m_Cfg_DefaultAuthor.buffer()); pOutput->Print(Buffer.buffer());
-	
-	
 }
 
 bool CGuiEditor::PostUpdate()

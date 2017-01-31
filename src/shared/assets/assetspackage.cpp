@@ -46,10 +46,10 @@ void CAssetsPackage::Load_AssetsFile(class CAssetsSaveLoadContext* pLoadingConte
 	if(AssetsVersion < 0 || AssetsVersion >= ASSETSVERSION_NOT_SUPPORTED)
 		return;
 	
-	m_Author.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Author));
-	m_Credits.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Credits));
-	m_License.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_License));
-	m_Version.copy(pLoadingContext->ArchiveFile()->GetString(pItem->m_Version));
+	m_Author = pLoadingContext->ArchiveFile()->GetString(pItem->m_Author);
+	m_Credits = pLoadingContext->ArchiveFile()->GetString(pItem->m_Credits);
+	m_License = pLoadingContext->ArchiveFile()->GetString(pItem->m_License);
+	m_Version = pLoadingContext->ArchiveFile()->GetString(pItem->m_Version);
 	
 	//TAG_ASSETSVERSION
 	switch(AssetsVersion)

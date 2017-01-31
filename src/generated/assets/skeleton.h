@@ -181,7 +181,7 @@ public:
 		vec2 m_Translation;
 		vec2 m_Scale;
 		float m_Angle;
-		string< _fixed_string_core<128> > m_Name;
+		_dynamic_string<128> m_Name;
 		vec4 m_Color;
 	
 	public:
@@ -193,19 +193,19 @@ public:
 			m_Translation = Item.m_Translation;
 			m_Scale = Item.m_Scale;
 			m_Angle = Item.m_Angle;
-			m_Name.copy(Item.m_Name);
+			m_Name = Item.m_Name;
 			m_Color = Item.m_Color;
 		}
 		
 		void transfert(CAsset_Skeleton::CBone& Item)
 		{
-			m_Length = Item.m_Length;
-			m_Anchor = Item.m_Anchor;
-			m_Translation = Item.m_Translation;
-			m_Scale = Item.m_Scale;
-			m_Angle = Item.m_Angle;
-			m_Name.transfert(Item.m_Name);
-			m_Color = Item.m_Color;
+			m_Length = std::move(Item.m_Length);
+			m_Anchor = std::move(Item.m_Anchor);
+			m_Translation = std::move(Item.m_Translation);
+			m_Scale = std::move(Item.m_Scale);
+			m_Angle = std::move(Item.m_Angle);
+			m_Name = std::move(Item.m_Name);
+			m_Color = std::move(Item.m_Color);
 		}
 		
 		inline float GetLength() const { return m_Length; }
@@ -248,7 +248,7 @@ public:
 		
 		inline void SetAngle(float Value) { m_Angle = Value; }
 		
-		inline void SetName(const char* Value) { m_Name.copy(Value); }
+		inline void SetName(const char* Value) { m_Name = Value; }
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
 		
@@ -294,22 +294,22 @@ public:
 		
 	
 	private:
-		string< _fixed_string_core<128> > m_Name;
+		_dynamic_string<128> m_Name;
 	
 	public:
 		void copy(const CAsset_Skeleton::CLayer& Item)
 		{
-			m_Name.copy(Item.m_Name);
+			m_Name = Item.m_Name;
 		}
 		
 		void transfert(CAsset_Skeleton::CLayer& Item)
 		{
-			m_Name.transfert(Item.m_Name);
+			m_Name = std::move(Item.m_Name);
 		}
 		
 		inline const char* GetName() const { return m_Name.buffer(); }
 		
-		inline void SetName(const char* Value) { m_Name.copy(Value); }
+		inline void SetName(const char* Value) { m_Name = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -402,8 +402,8 @@ public:
 	void transfert(CAsset_Skeleton& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_DefaultSkinPath = Item.m_DefaultSkinPath;
+		m_ParentPath = std::move(Item.m_ParentPath);
+		m_DefaultSkinPath = std::move(Item.m_DefaultSkinPath);
 		m_Bone.transfert(Item.m_Bone);
 		m_Layer.transfert(Item.m_Layer);
 	}

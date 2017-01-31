@@ -150,11 +150,11 @@ public:
 	void transfert(CAsset_GuiLineStyle& Item)
 	{
 		CAsset::transfert(Item);
-		m_Flags = Item.m_Flags;
-		m_BorderColor = Item.m_BorderColor;
-		m_ImageLPath = Item.m_ImageLPath;
-		m_ImageMPath = Item.m_ImageMPath;
-		m_ImageRPath = Item.m_ImageRPath;
+		m_Flags = std::move(Item.m_Flags);
+		m_BorderColor = std::move(Item.m_BorderColor);
+		m_ImageLPath = std::move(Item.m_ImageLPath);
+		m_ImageMPath = std::move(Item.m_ImageMPath);
+		m_ImageRPath = std::move(Item.m_ImageRPath);
 	}
 	
 	inline int GetFlags() const { return m_Flags; }

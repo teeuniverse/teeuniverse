@@ -375,7 +375,7 @@ bool fs_getcwd(dynamic_string& result)
 		return false;
 	}
 		
-	result.copy((const char*) aBuf);
+	result = (const char*) aBuf;
 	return true;
 }
 

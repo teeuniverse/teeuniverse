@@ -119,7 +119,7 @@ public:
 		
 		void transfert(CAsset_MapZoneTiles::CTile& Item)
 		{
-			m_Index = Item.m_Index;
+			m_Index = std::move(Item.m_Index);
 		}
 		
 		inline uint8 GetIndex() const { return m_Index; }
@@ -221,10 +221,10 @@ public:
 	void transfert(CAsset_MapZoneTiles& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ZoneTypePath = Item.m_ZoneTypePath;
+		m_ParentPath = std::move(Item.m_ParentPath);
+		m_ZoneTypePath = std::move(Item.m_ZoneTypePath);
 		m_Tile.transfert(Item.m_Tile);
-		m_Visibility = Item.m_Visibility;
+		m_Visibility = std::move(Item.m_Visibility);
 		m_DataInt.transfert(Item.m_DataInt);
 	}
 	

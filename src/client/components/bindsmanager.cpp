@@ -157,7 +157,7 @@ bool CBindsManager::InitConfig(int argc, const char** argv)
 
 void CBindsManager::SaveConfig(CCLI_Output* pOutput)
 {
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	
 	for(int i=0; i<KEY_LAST; i++)
 	{

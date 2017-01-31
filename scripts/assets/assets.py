@@ -87,6 +87,18 @@ class GetSetInterface_Struct(GetSetInterface):
 	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "." + self.getMem + ";" ]
 
+class GetSetInterface_String(GetSetInterface):
+	def __init__(self):
+		GetSetInterface.__init__(self, "")
+		self.getSetType = "const char*"
+		self.returnType = "const char*"
+		self.paramType = "const char*"
+		self.defaultValue = "NULL"
+	def generateSet(self, var, value):
+		return [ var + " = " + value + ";" ]
+	def generateGet(self, var, defaultValue):
+		return [ "return " + var + ".buffer();" ]
+
 class GetSetInterface_Func(GetSetInterface):
 	def __init__(self, suffix, returnType, paramType, getFunc, setFunc, defaultValue):
 		GetSetInterface.__init__(self, suffix)
@@ -135,7 +147,7 @@ class Type:
 		if self.allocator() == "copy":
 			return [var + ".transfert(" + value + ");"]
 		else:
-			return [var + " = " + value + ";"]
+			return [var + " = std::move(" + value + ");"]
 	def generateAssetPathOp(self, var, operation):
 		return []
 	def generateDeclaration(self, var):
@@ -302,15 +314,13 @@ class TypeSubPath(Type):
 
 class TypeString(Type):
 	def __init__(self, size):
-		Type.__init__(self, "string< _fixed_string_core<" + str(size) + "> >")
+		Type.__init__(self, "_dynamic_string<" + str(size) + ">")
 		self.size = size
 	def headers(self):
 		return ["shared/system/string.h"]
-	def allocator(self):
-		return "copy"
 	def getSetInterfaces(self):
 		return [
-			GetSetInterface_Func("", "const char*", "const char*", "buffer", "copy", "NULL")
+			GetSetInterface_String()
 		]
 	def tuaType(self, version):
 		return "tua_stringid"

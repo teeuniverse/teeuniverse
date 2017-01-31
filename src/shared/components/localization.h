@@ -78,7 +78,7 @@ public:
 		
 		inline void copy(const CParameter& Param)
 		{			
-			m_Name.copy(Param.m_Name);
+			m_Name = Param.m_Name;
 			
 			if(m_Type == TYPE_STRING)
 			{
@@ -101,7 +101,7 @@ public:
 		{
 			m_String = Param.m_String;
 			m_Type = Param.m_Type;
-			m_Name.transfert(Param.m_Name);
+			m_Name = std::move(Param.m_Name);
 			
 			if(Param.m_Type == TYPE_STRING)
 				Param.m_String.m_pValue = NULL;
@@ -118,7 +118,7 @@ public:
 	
 	CLocalizableString(const char* pText)
 	{
-		m_Text.copy(pText);
+		m_Text = pText;
 	}
 	
 	~CLocalizableString()
@@ -128,13 +128,13 @@ public:
 		
 	inline void copy(const CLocalizableString& LString)
 	{
-		m_Text.copy(LString.m_Text);
+		m_Text = LString.m_Text;
 		m_Parameters.copy(LString.m_Parameters);
 	}
 	
 	inline void transfert(CLocalizableString& LString)
 	{
-		m_Text.transfert(LString.m_Text);
+		m_Text = LString.m_Text;
 		m_Parameters.transfert(LString.m_Parameters);
 	}
 	
@@ -144,7 +144,7 @@ public:
 	inline void AddInteger(const char* pName, int Value)
 	{
 		CParameter& Param = m_Parameters.increment();
-		Param.m_Name.copy(pName);
+		Param.m_Name = pName;
 		Param.m_Integer.m_Value = Value;
 		Param.m_Type = TYPE_INTEGER;
 	}
@@ -152,7 +152,7 @@ public:
 	inline void AddFloat(const char* pName, float Value)
 	{
 		CParameter& Param = m_Parameters.increment();
-		Param.m_Name.copy(pName);
+		Param.m_Name = pName;
 		Param.m_Float.m_Value = Value;
 		Param.m_Type = TYPE_FLOAT;
 	}
@@ -160,7 +160,7 @@ public:
 	inline void AddString(const char* pName, const char* pValue)
 	{
 		CParameter& Param = m_Parameters.increment();
-		Param.m_Name.copy(pName);
+		Param.m_Name = pName;
 		int Length = str_length(pValue);
 		Param.m_String.m_pValue = new char[Length+1];
 		str_copy(Param.m_String.m_pValue, pValue, Length+1);
@@ -266,7 +266,7 @@ protected:
 
 public:
 	array<CLanguage*> m_pLanguages;
-	fixed_string128 m_Cfg_MainLanguage;
+	dynamic_string m_Cfg_MainLanguage;
 
 protected:
 	const char* LocalizeWithDepth(const char* pLanguageCode, const char* pText, int Depth);

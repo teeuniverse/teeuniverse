@@ -827,7 +827,7 @@ bool CGraphics::InitConfig(int argc, const char** argv)
 
 void CGraphics::SaveConfig(class CCLI_Output* pOutput)
 {
-	fixed_string128 Buffer;
+	dynamic_string Buffer;
 	
 	str_format(Buffer.buffer(), Buffer.maxsize(), "gfx_screen %d", m_Cfg_Screen); pOutput->Print(Buffer.buffer());
 	str_format(Buffer.buffer(), Buffer.maxsize(), "gfx_screen_width %d", m_Cfg_ScreenWidth); pOutput->Print(Buffer.buffer());

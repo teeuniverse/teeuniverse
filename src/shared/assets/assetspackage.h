@@ -119,7 +119,7 @@ public:
 	inline bool Identify(const char* pName, uint32 Crc) const { return (Crc == 0 || Crc == m_Crc) && (m_Name == pName); }
 	inline void SetIdentity(const char* pName, uint32 Crc = 0)
 	{
-		m_Name.copy(pName);
+		m_Name = pName;
 		m_Crc = Crc;
 	}
 	
@@ -128,10 +128,10 @@ public:
 	inline const char* GetLicense() const { return m_License.buffer(); }
 	inline const char* GetVersion() const { return m_Version.buffer(); }
 	
-	inline void SetAuthor(const char* pValue) { return m_Author.copy(pValue); }
-	inline void SetCredits(const char* pValue) { return m_Credits.copy(pValue); }
-	inline void SetLicense(const char* pValue) { return m_License.copy(pValue); }
-	inline void SetVersion(const char* pValue) { return m_Version.copy(pValue); }
+	inline void SetAuthor(const char* pValue) { m_Author = pValue; }
+	inline void SetCredits(const char* pValue) { m_Credits = pValue; }
+	inline void SetLicense(const char* pValue) { m_License = pValue; }
+	inline void SetVersion(const char* pValue) { m_Version = pValue; }
 	
 	template<typename ASSET>
 	const ASSET* GetAsset(const CAssetPath& Path) const

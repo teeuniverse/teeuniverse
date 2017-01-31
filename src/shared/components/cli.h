@@ -76,7 +76,7 @@ public:
 	{
 	protected:
 		STRING* m_pValue;
-		fixed_string128 m_Usage;
+		dynamic_string m_Usage;
 		const char* m_pDescription;
 		
 	public:

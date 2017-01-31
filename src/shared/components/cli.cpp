@@ -168,7 +168,7 @@ protected:
 	int m_DefaultValue;
 	int m_Min;
 	int m_Max;
-	fixed_string128 m_Usage;
+	dynamic_string m_Usage;
 	const char* m_pDescription;
 	
 public:

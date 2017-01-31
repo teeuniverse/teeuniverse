@@ -252,10 +252,10 @@ public:
 			
 			void transfert(CAsset_SkeletonAnimation::CBoneAnimation::CFrame& Item)
 			{
-				m_Translation = Item.m_Translation;
-				m_Scale = Item.m_Scale;
-				m_Angle = Item.m_Angle;
-				m_Alignment = Item.m_Alignment;
+				m_Translation = std::move(Item.m_Translation);
+				m_Scale = std::move(Item.m_Scale);
+				m_Angle = std::move(Item.m_Angle);
+				m_Alignment = std::move(Item.m_Alignment);
 			}
 			
 			inline vec2 GetTranslation() const { return m_Translation; }
@@ -345,7 +345,7 @@ public:
 			void transfert(CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Item)
 			{
 				CAsset_SkeletonAnimation::CBoneAnimation::CFrame::transfert(Item);
-				m_Time = Item.m_Time;
+				m_Time = std::move(Item.m_Time);
 			}
 			
 			inline int GetTime() const { return m_Time; }
@@ -419,8 +419,8 @@ public:
 		void transfert(CAsset_SkeletonAnimation::CBoneAnimation& Item)
 		{
 			m_KeyFrame.transfert(Item.m_KeyFrame);
-			m_BonePath = Item.m_BonePath;
-			m_CycleType = Item.m_CycleType;
+			m_BonePath = std::move(Item.m_BonePath);
+			m_CycleType = std::move(Item.m_CycleType);
 		}
 		
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
@@ -550,8 +550,8 @@ public:
 			
 			void transfert(CAsset_SkeletonAnimation::CLayerAnimation::CFrame& Item)
 			{
-				m_Color = Item.m_Color;
-				m_State = Item.m_State;
+				m_Color = std::move(Item.m_Color);
+				m_State = std::move(Item.m_State);
 			}
 			
 			inline vec4 GetColor() const { return m_Color; }
@@ -617,7 +617,7 @@ public:
 			void transfert(CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& Item)
 			{
 				CAsset_SkeletonAnimation::CLayerAnimation::CFrame::transfert(Item);
-				m_Time = Item.m_Time;
+				m_Time = std::move(Item.m_Time);
 			}
 			
 			inline int GetTime() const { return m_Time; }
@@ -691,8 +691,8 @@ public:
 		void transfert(CAsset_SkeletonAnimation::CLayerAnimation& Item)
 		{
 			m_KeyFrame.transfert(Item.m_KeyFrame);
-			m_LayerPath = Item.m_LayerPath;
-			m_CycleType = Item.m_CycleType;
+			m_LayerPath = std::move(Item.m_LayerPath);
+			m_CycleType = std::move(Item.m_CycleType);
 		}
 		
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
@@ -854,7 +854,7 @@ public:
 	void transfert(CAsset_SkeletonAnimation& Item)
 	{
 		CAsset::transfert(Item);
-		m_SkeletonPath = Item.m_SkeletonPath;
+		m_SkeletonPath = std::move(Item.m_SkeletonPath);
 		m_LocalBoneAnim.transfert(Item.m_LocalBoneAnim);
 		m_ParentBoneAnim.transfert(Item.m_ParentBoneAnim);
 		m_LayerAnimation.transfert(Item.m_LayerAnimation);

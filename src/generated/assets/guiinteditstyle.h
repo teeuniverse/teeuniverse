@@ -121,8 +121,8 @@ public:
 	void transfert(CAsset_GuiIntEditStyle& Item)
 	{
 		CAsset::transfert(Item);
-		m_IncreaseButtonStylePath = Item.m_IncreaseButtonStylePath;
-		m_DecreaseButtonStylePath = Item.m_DecreaseButtonStylePath;
+		m_IncreaseButtonStylePath = std::move(Item.m_IncreaseButtonStylePath);
+		m_DecreaseButtonStylePath = std::move(Item.m_DecreaseButtonStylePath);
 	}
 	
 	inline CAssetPath GetIncreaseButtonStylePath() const { return m_IncreaseButtonStylePath; }

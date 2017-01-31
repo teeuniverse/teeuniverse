@@ -40,17 +40,7 @@ TEST(!str_check_pathname("an/evil/../path"))
 TEST(!str_check_pathname(".."))
 
 {
-	string<_fixed_string_core<16> > String;
-	
-	String.copy("test");
-	TEST_WITH_OUTPUT(String == "test", String.buffer())
-	
-	String.append(" hello");
-	TEST_WITH_OUTPUT(String == "test hello", String.buffer())
-}
-
-{
-	string<_dynamic_string_core<16> > String;
+	_dynamic_string<16> String;
 	
 	String.copy("test");
 	TEST_WITH_OUTPUT(String == "test", String.buffer())

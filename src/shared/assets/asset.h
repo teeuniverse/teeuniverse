@@ -23,6 +23,8 @@
 #include <shared/assets/assetpath.h>
 #include <shared/archivefile.h>
 
+#include <utility>
+
 class CAsset
 {
 public:
@@ -65,7 +67,7 @@ public:
 
 private:
 	class CAssetsManager* m_pAssetsManager;
-	fixed_string128 m_Name;
+	dynamic_string m_Name;
 
 public:
 	CAsset() : m_pAssetsManager(0) { }
@@ -74,20 +76,20 @@ public:
 	inline void copy(const CAsset& Asset)
 	{
 		m_pAssetsManager = Asset.m_pAssetsManager;
-		m_Name.copy(Asset.m_Name);
+		m_Name = Asset.m_Name;
 	}
 	
 	inline void transfert(CAsset& Asset)
 	{
 		m_pAssetsManager = Asset.m_pAssetsManager;
-		m_Name.transfert(Asset.m_Name);
+		m_Name = std::move(Asset.m_Name);
 	}
 
 	void Update() { }
 	void Unload() { }
 	
 	inline const char* GetName() const { return m_Name.buffer(); }
-	inline void SetName(const char* pName) { m_Name.copy(pName); }
+	inline void SetName(const char* pName) { m_Name = pName; }
 	
 	inline void SetAssetsManager(class CAssetsManager* pAssetsManager) { m_pAssetsManager = pAssetsManager; }
 	

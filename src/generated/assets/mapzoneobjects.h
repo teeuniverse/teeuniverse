@@ -174,11 +174,11 @@ public:
 		
 		void transfert(CAsset_MapZoneObjects::CVertex& Item)
 		{
-			m_Position = Item.m_Position;
-			m_Smoothness = Item.m_Smoothness;
-			m_ControlPoint0 = Item.m_ControlPoint0;
-			m_ControlPoint1 = Item.m_ControlPoint1;
-			m_Weight = Item.m_Weight;
+			m_Position = std::move(Item.m_Position);
+			m_Smoothness = std::move(Item.m_Smoothness);
+			m_ControlPoint0 = std::move(Item.m_ControlPoint0);
+			m_ControlPoint1 = std::move(Item.m_ControlPoint1);
+			m_Weight = std::move(Item.m_Weight);
 		}
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -295,13 +295,13 @@ public:
 		
 		void transfert(CAsset_MapZoneObjects::CObject& Item)
 		{
-			m_Position = Item.m_Position;
-			m_Size = Item.m_Size;
-			m_Angle = Item.m_Angle;
+			m_Position = std::move(Item.m_Position);
+			m_Size = std::move(Item.m_Size);
+			m_Angle = std::move(Item.m_Angle);
 			m_Vertex.transfert(Item.m_Vertex);
-			m_PathType = Item.m_PathType;
-			m_FillType = Item.m_FillType;
-			m_ZoneIndex = Item.m_ZoneIndex;
+			m_PathType = std::move(Item.m_PathType);
+			m_FillType = std::move(Item.m_FillType);
+			m_ZoneIndex = std::move(Item.m_ZoneIndex);
 		}
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -613,10 +613,10 @@ public:
 	void transfert(CAsset_MapZoneObjects& Item)
 	{
 		CAsset::transfert(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ZoneTypePath = Item.m_ZoneTypePath;
+		m_ParentPath = std::move(Item.m_ParentPath);
+		m_ZoneTypePath = std::move(Item.m_ZoneTypePath);
 		m_Object.transfert(Item.m_Object);
-		m_Visibility = Item.m_Visibility;
+		m_Visibility = std::move(Item.m_Visibility);
 	}
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

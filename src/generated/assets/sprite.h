@@ -154,11 +154,11 @@ public:
 	void transfert(CAsset_Sprite& Item)
 	{
 		CAsset::transfert(Item);
-		m_ImagePath = Item.m_ImagePath;
-		m_X = Item.m_X;
-		m_Y = Item.m_Y;
-		m_Width = Item.m_Width;
-		m_Height = Item.m_Height;
+		m_ImagePath = std::move(Item.m_ImagePath);
+		m_X = std::move(Item.m_X);
+		m_Y = std::move(Item.m_Y);
+		m_Width = std::move(Item.m_Width);
+		m_Height = std::move(Item.m_Height);
 	}
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }

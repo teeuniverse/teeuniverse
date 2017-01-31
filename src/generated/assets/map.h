@@ -268,10 +268,10 @@ public:
 		m_FgGroup.transfert(Item.m_FgGroup);
 		m_ZoneLayer.transfert(Item.m_ZoneLayer);
 		m_EntityLayer.transfert(Item.m_EntityLayer);
-		m_CameraPosition = Item.m_CameraPosition;
-		m_CameraZoom = Item.m_CameraZoom;
-		m_ShowEntities = Item.m_ShowEntities;
-		m_ShowZones = Item.m_ShowZones;
+		m_CameraPosition = std::move(Item.m_CameraPosition);
+		m_CameraZoom = std::move(Item.m_CameraZoom);
+		m_ShowEntities = std::move(Item.m_ShowEntities);
+		m_ShowZones = std::move(Item.m_ShowZones);
 	}
 	
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
