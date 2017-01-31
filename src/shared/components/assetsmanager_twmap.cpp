@@ -1284,10 +1284,23 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							pMapLayer->SetQuadUV2(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[2].x), fx2f(pQuads[i].m_aTexcoords[2].y)));
 							pMapLayer->SetQuadUV3(QuadPath, vec2(fx2f(pQuads[i].m_aTexcoords[3].x), fx2f(pQuads[i].m_aTexcoords[3].y)));
 							
-							pMapLayer->SetQuadColor0(QuadPath, IntsToColor(pQuads[i].m_aColors[0].r, pQuads[i].m_aColors[0].g, pQuads[i].m_aColors[0].b, pQuads[i].m_aColors[0].a));
-							pMapLayer->SetQuadColor1(QuadPath, IntsToColor(pQuads[i].m_aColors[1].r, pQuads[i].m_aColors[1].g, pQuads[i].m_aColors[1].b, pQuads[i].m_aColors[1].a));
-							pMapLayer->SetQuadColor2(QuadPath, IntsToColor(pQuads[i].m_aColors[2].r, pQuads[i].m_aColors[2].g, pQuads[i].m_aColors[2].b, pQuads[i].m_aColors[2].a));
-							pMapLayer->SetQuadColor3(QuadPath, IntsToColor(pQuads[i].m_aColors[3].r, pQuads[i].m_aColors[3].g, pQuads[i].m_aColors[3].b, pQuads[i].m_aColors[3].a));
+							vec4 QuadColor = 1.0f;
+							vec4 VertexColor[4];
+							for(int v=0; v<4; v++)
+								VertexColor[v] = IntsToColor(pQuads[i].m_aColors[v].r, pQuads[i].m_aColors[v].g, pQuads[i].m_aColors[v].b, pQuads[i].m_aColors[v].a);
+							
+							if(VertexColor[0] == VertexColor[1] && VertexColor[0] == VertexColor[2] && VertexColor[0] == VertexColor[3])
+							{
+								QuadColor = VertexColor[0];
+								for(int v=0; v<4; v++)
+									VertexColor[v] = 1.0f;
+							}
+							
+							pMapLayer->SetQuadColor(QuadPath, QuadColor);
+							pMapLayer->SetQuadColor0(QuadPath, VertexColor[0]);
+							pMapLayer->SetQuadColor1(QuadPath, VertexColor[1]);
+							pMapLayer->SetQuadColor2(QuadPath, VertexColor[2]);
+							pMapLayer->SetQuadColor3(QuadPath, VertexColor[3]);
 						}
 						
 						//Image
@@ -1416,40 +1429,40 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				pQuads[i].m_aPoints[0].y = f2fx(Pos.y);
 				pQuads[i].m_aTexcoords[0].x = f2fx(Quad.GetUV0X());
 				pQuads[i].m_aTexcoords[0].y = f2fx(Quad.GetUV0Y());
-				pQuads[i].m_aColors[0].r = Quad.GetColor0().r*255.0f;
-				pQuads[i].m_aColors[0].g = Quad.GetColor0().g*255.0f;
-				pQuads[i].m_aColors[0].b = Quad.GetColor0().b*255.0f;
-				pQuads[i].m_aColors[0].a = Quad.GetColor0().a*255.0f;
+				pQuads[i].m_aColors[0].r = Quad.GetColor().r*Quad.GetColor0().r*255.0f;
+				pQuads[i].m_aColors[0].g = Quad.GetColor().g*Quad.GetColor0().g*255.0f;
+				pQuads[i].m_aColors[0].b = Quad.GetColor().b*Quad.GetColor0().b*255.0f;
+				pQuads[i].m_aColors[0].a = Quad.GetColor().a*Quad.GetColor0().a*255.0f;
 				
 				Pos = rotate(Quad.GetVertex1() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
 				pQuads[i].m_aPoints[1].x = f2fx(Pos.x);
 				pQuads[i].m_aPoints[1].y = f2fx(Pos.y);
 				pQuads[i].m_aTexcoords[1].x = f2fx(Quad.GetUV1X());
 				pQuads[i].m_aTexcoords[1].y = f2fx(Quad.GetUV1Y());
-				pQuads[i].m_aColors[1].r = Quad.GetColor1().r*255.0f;
-				pQuads[i].m_aColors[1].g = Quad.GetColor1().g*255.0f;
-				pQuads[i].m_aColors[1].b = Quad.GetColor1().b*255.0f;
-				pQuads[i].m_aColors[1].a = Quad.GetColor1().a*255.0f;
+				pQuads[i].m_aColors[1].r = Quad.GetColor().r*Quad.GetColor1().r*255.0f;
+				pQuads[i].m_aColors[1].g = Quad.GetColor().g*Quad.GetColor1().g*255.0f;
+				pQuads[i].m_aColors[1].b = Quad.GetColor().b*Quad.GetColor1().b*255.0f;
+				pQuads[i].m_aColors[1].a = Quad.GetColor().a*Quad.GetColor1().a*255.0f;
 				
 				Pos = rotate(Quad.GetVertex2() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
 				pQuads[i].m_aPoints[2].x = f2fx(Pos.x);
 				pQuads[i].m_aPoints[2].y = f2fx(Pos.y);
 				pQuads[i].m_aTexcoords[2].x = f2fx(Quad.GetUV2X());
 				pQuads[i].m_aTexcoords[2].y = f2fx(Quad.GetUV2Y());
-				pQuads[i].m_aColors[2].r = Quad.GetColor2().r*255.0f;
-				pQuads[i].m_aColors[2].g = Quad.GetColor2().g*255.0f;
-				pQuads[i].m_aColors[2].b = Quad.GetColor2().b*255.0f;
-				pQuads[i].m_aColors[2].a = Quad.GetColor2().a*255.0f;
+				pQuads[i].m_aColors[2].r = Quad.GetColor().r*Quad.GetColor2().r*255.0f;
+				pQuads[i].m_aColors[2].g = Quad.GetColor().g*Quad.GetColor2().g*255.0f;
+				pQuads[i].m_aColors[2].b = Quad.GetColor().b*Quad.GetColor2().b*255.0f;
+				pQuads[i].m_aColors[2].a = Quad.GetColor().a*Quad.GetColor2().a*255.0f;
 				
 				Pos = rotate(Quad.GetVertex3() * Quad.GetSize(), Quad.GetAngle()) + Quad.GetPivot();
 				pQuads[i].m_aPoints[3].x = f2fx(Pos.x);
 				pQuads[i].m_aPoints[3].y = f2fx(Pos.y);
 				pQuads[i].m_aTexcoords[3].x = f2fx(Quad.GetUV3X());
 				pQuads[i].m_aTexcoords[3].y = f2fx(Quad.GetUV3Y());
-				pQuads[i].m_aColors[3].r = Quad.GetColor3().r*255.0f;
-				pQuads[i].m_aColors[3].g = Quad.GetColor3().g*255.0f;
-				pQuads[i].m_aColors[3].b = Quad.GetColor3().b*255.0f;
-				pQuads[i].m_aColors[3].a = Quad.GetColor3().a*255.0f;
+				pQuads[i].m_aColors[3].r = Quad.GetColor().r*Quad.GetColor3().r*255.0f;
+				pQuads[i].m_aColors[3].g = Quad.GetColor().g*Quad.GetColor3().g*255.0f;
+				pQuads[i].m_aColors[3].b = Quad.GetColor().b*Quad.GetColor3().b*255.0f;
+				pQuads[i].m_aColors[3].a = Quad.GetColor().a*Quad.GetColor3().a*255.0f;
 				
 				pQuads[i].m_aPoints[4].x = f2fx(Quad.GetPivotX());
 				pQuads[i].m_aPoints[4].y = f2fx(Quad.GetPivotY());
