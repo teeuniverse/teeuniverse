@@ -26,7 +26,7 @@
 	
 CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
-	m_pHistory(0),
+	m_pHistory(NULL),
 	m_PackageId_UnivTeeWorlds(-1),
 	m_PackageId_UnivDDNet(-1),
 	m_PackageId_UnivOpenFNG(-1),

@@ -58,7 +58,7 @@ CAssetsHistory::~CAssetsHistory()
 {
 	for(int i=0; i<m_Size; i++)
 	{
-		int Index = (MAXHISTORYSIZE+m_LastEntry-1-i)%MAXHISTORYSIZE;
+		int Index = (MAXHISTORYSIZE+m_LastEntry-i)%MAXHISTORYSIZE;
 		m_Entries[Index].Reset();
 	}
 }
@@ -67,7 +67,7 @@ void CAssetsHistory::Flush()
 {
 	for(int i=0; i<m_Size; i++)
 	{
-		int Index = (MAXHISTORYSIZE+m_LastEntry-1-i)%MAXHISTORYSIZE;
+		int Index = (MAXHISTORYSIZE+m_LastEntry-i)%MAXHISTORYSIZE;
 		m_Entries[Index].Reset();
 	}
 	
