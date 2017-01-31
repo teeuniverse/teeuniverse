@@ -35,6 +35,8 @@ public:
 		
 	public:
 		CGuest(CGameKernel* pKernel) : CClientKernel::CGuest(pKernel), m_pKernel(pKernel) { }
+		virtual ~CGuest() {}
+		
 		inline CGameKernel* Kernel() { return m_pKernel; }
 		inline const CGameKernel* Kernel() const { return m_pKernel; }
 		
@@ -57,6 +59,7 @@ private:
 	
 public:	
 	CGameKernel();
+	virtual ~CGameKernel() {}
 	
 	//TAG_NEW_GAME_COMPONENT
 	inline CCountryFlags* CountryFlags() { return m_pCountryFlags; }

@@ -368,6 +368,8 @@ private:
 	array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > > m_Layer;
 
 public:
+	virtual ~CAsset_Skeleton() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

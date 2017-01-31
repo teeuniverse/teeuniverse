@@ -89,6 +89,8 @@ private:
 	float m_CollisionRadius;
 
 public:
+	virtual ~CAsset_EntityType() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

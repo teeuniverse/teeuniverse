@@ -95,6 +95,8 @@ private:
 	CAssetPath m_SkeletonSkinPath;
 
 public:
+	virtual ~CAsset_CharacterPart() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

@@ -22,25 +22,6 @@
 
 void CAssetsHistory::CEntry::Reset()
 {
-	for(int i=0; i<m_Operations.size(); i++)
-	{
-		if(m_Operations[i].m_pAsset)
-		{
-			#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
-			{\
-				CAsset_##Name* pAsset = (CAsset_##Name*) m_Operations[i].m_pAsset;\
-				delete pAsset;\
-				break;\
-			}
-			switch(m_Operations[i].m_AssetPath.GetType())
-			{
-				#include <generated/assets/assetsmacro.h>
-			}
-			#undef MACRO_ASSETTYPE
-			
-			m_Operations[i].m_pAsset = NULL;
-		}
-	}
 	m_Operations.clear();
 	m_Token = NO_TOKEN;
 }
@@ -56,11 +37,7 @@ CAssetsHistory::CAssetsHistory(CAssetsManager* pAssetsManager) :
 
 CAssetsHistory::~CAssetsHistory()
 {
-	for(int i=0; i<m_Size; i++)
-	{
-		int Index = (MAXHISTORYSIZE+m_LastEntry-i)%MAXHISTORYSIZE;
-		m_Entries[Index].Reset();
-	}
+	Flush();
 }
 
 void CAssetsHistory::Flush()
@@ -100,7 +77,7 @@ void CAssetsHistory::AddOperation_EditAsset(CAssetPath AssetPath, int Token)
 	if(m_Size > 0 && Token != NEW_TOKEN && m_Entries[m_LastEntry].m_Token == Token)
 	{
 		NewEntryNeeded = false;
-		for(int i=0; i<m_Entries[m_LastEntry].m_Operations.size(); i++)
+		for(unsigned int i=0; i<m_Entries[m_LastEntry].m_Operations.size(); i++)
 		{
 			if(
 				m_Entries[m_LastEntry].m_Operations[i].m_AssetPath == AssetPath &&
@@ -123,11 +100,12 @@ void CAssetsHistory::AddOperation_EditAsset(CAssetPath AssetPath, int Token)
 			const CAsset_##Name* pAsset = AssetsManager()->GetAsset<CAsset_##Name>(AssetPath);\
 			if(pAsset)\
 			{\
-				CAsset_##Name* pStoredAsset = new CAsset_##Name;\
-				pStoredAsset->copy(*pAsset);\
-				COperation& Operation = m_Entries[m_LastEntry].m_Operations.increment();\
+				m_Entries[m_LastEntry].m_Operations.emplace_back();\
+				COperation& Operation = m_Entries[m_LastEntry].m_Operations.back();\
 				Operation.m_AssetPath = AssetPath;\
-				Operation.m_pAsset = pStoredAsset;\
+				CAsset_##Name* pSavedAsset = new CAsset_##Name;\
+				pSavedAsset->copy(*pAsset);\
+				Operation.m_pAsset.reset(pSavedAsset);\
 				Operation.m_Operation = OPERATION_EDITASSET;\
 			}\
 			break;\
@@ -152,7 +130,7 @@ void CAssetsHistory::AddOperation_AddAsset(CAssetPath AssetPath, int Token)
 	if(m_Size > 0 && Token != NEW_TOKEN && m_Entries[m_LastEntry].m_Token == Token)
 	{
 		NewEntryNeeded = false;
-		for(int i=0; i<m_Entries[m_LastEntry].m_Operations.size(); i++)
+		for(unsigned int i=0; i<m_Entries[m_LastEntry].m_Operations.size(); i++)
 		{
 			if(
 				m_Entries[m_LastEntry].m_Operations[i].m_AssetPath == AssetPath &&
@@ -175,9 +153,9 @@ void CAssetsHistory::AddOperation_AddAsset(CAssetPath AssetPath, int Token)
 			const CAsset_##Name* pAsset = AssetsManager()->GetAsset<CAsset_##Name>(AssetPath);\
 			if(pAsset)\
 			{\
-				COperation& Operation = m_Entries[m_LastEntry].m_Operations.increment();\
+				m_Entries[m_LastEntry].m_Operations.emplace_back();\
+				COperation& Operation = m_Entries[m_LastEntry].m_Operations.back();\
 				Operation.m_AssetPath = AssetPath;\
-				Operation.m_pAsset = 0;\
 				Operation.m_Operation = OPERATION_ADDASSET;\
 			}\
 			break;\
@@ -203,7 +181,7 @@ void CAssetsHistory::Undo()
 		{\
 			if(m_Entries[m_LastEntry].m_Operations[i].m_Operation == OPERATION_EDITASSET)\
 			{\
-				CAsset_##Name* pOldAsset = (CAsset_##Name*) m_Entries[m_LastEntry].m_Operations[i].m_pAsset;\
+				const CAsset_##Name* pOldAsset = dynamic_cast<CAsset_##Name*>(m_Entries[m_LastEntry].m_Operations[i].m_pAsset.get());\
 				AssetsManager()->SetAsset_Hard<CAsset_##Name>(m_Entries[m_LastEntry].m_Operations[i].m_AssetPath, pOldAsset);\
 			}\
 			else if(m_Entries[m_LastEntry].m_Operations[i].m_Operation == OPERATION_ADDASSET)\

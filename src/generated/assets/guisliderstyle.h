@@ -107,6 +107,8 @@ private:
 	int m_Padding;
 
 public:
+	virtual ~CAsset_GuiSliderStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

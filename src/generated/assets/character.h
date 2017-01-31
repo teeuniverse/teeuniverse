@@ -210,6 +210,8 @@ private:
 	array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > > m_Part;
 
 public:
+	virtual ~CAsset_Character() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

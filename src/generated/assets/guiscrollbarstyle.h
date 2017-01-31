@@ -113,6 +113,8 @@ private:
 	int m_Padding;
 
 public:
+	virtual ~CAsset_GuiScrollbarStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

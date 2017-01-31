@@ -47,6 +47,8 @@ public:
 		
 	public:
 		CGuest(CSharedKernel* pSharedKernel) : m_pSharedKernel(pSharedKernel) { }
+		virtual ~CGuest() { }
+		
 		inline CSharedKernel* SharedKernel() { return m_pSharedKernel; }
 		inline const CSharedKernel* SharedKernel() const { return m_pSharedKernel; }
 	

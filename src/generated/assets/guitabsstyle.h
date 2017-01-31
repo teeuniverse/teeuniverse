@@ -119,6 +119,8 @@ private:
 	bool m_ButtonListText;
 
 public:
+	virtual ~CAsset_GuiTabsStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

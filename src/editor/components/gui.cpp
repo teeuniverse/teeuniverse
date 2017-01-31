@@ -37,6 +37,7 @@
 #include <editor/gui/timeline.h>
 #include <editor/gui/assetsinspector.h>
 #include <editor/gui/preferences.h>
+#include <shared/tl/sorted_array.h>
 
 /* COMMANDS ***********************************************************/
 

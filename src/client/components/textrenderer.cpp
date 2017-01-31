@@ -63,24 +63,24 @@ void CTextRenderer::CGlyphCache::UpdateVersion()
 	m_Version++;
 }
 
-void CTextRenderer::CGlyphCache::UpdateGlyph(CTextRenderer::CGlyph* pGlyph)
+void CTextRenderer::CGlyphCache::UpdateGlyph(CTextRenderer::CGlyph& Glyph)
 {
 	int NumBlockX = m_Width/m_PPB;
-	int NumGlyphX = m_GPB/pGlyph->m_Granularity.x;
-	int BlockPosX = pGlyph->m_BlockPos % NumGlyphX;
-	int BlockPosY = pGlyph->m_BlockPos / NumGlyphX;
+	int NumGlyphX = m_GPB/Glyph.m_Granularity.x;
+	int BlockPosX = Glyph.m_BlockPos % NumGlyphX;
+	int BlockPosY = Glyph.m_BlockPos / NumGlyphX;
 	
-	int DataX = (pGlyph->m_Block % NumBlockX)*m_PPB + (BlockPosX * pGlyph->m_Granularity.x)*m_PPG;
-	int DataY = (pGlyph->m_Block / NumBlockX)*m_PPB + (BlockPosY * pGlyph->m_Granularity.y)*m_PPG;
-	pGlyph->m_pData = m_pData + DataY * m_Width + DataX;
+	int DataX = (Glyph.m_Block % NumBlockX)*m_PPB + (BlockPosX * Glyph.m_Granularity.x)*m_PPG;
+	int DataY = (Glyph.m_Block / NumBlockX)*m_PPB + (BlockPosY * Glyph.m_Granularity.y)*m_PPG;
+	Glyph.m_pData = m_pData + DataY * m_Width + DataX;
 	
 	float UScale = 1.0f/m_Width;
 	float VScale = 1.0f/m_Height;
 	
-	pGlyph->m_UVMin.x = DataX * UScale;
-	pGlyph->m_UVMin.y = DataY * VScale;
-	pGlyph->m_UVMax.x = (DataX + pGlyph->m_Width) * UScale;
-	pGlyph->m_UVMax.y = (DataY + pGlyph->m_Height) * VScale;
+	Glyph.m_UVMin.x = DataX * UScale;
+	Glyph.m_UVMin.y = DataY * VScale;
+	Glyph.m_UVMax.x = (DataX + Glyph.m_Width) * UScale;
+	Glyph.m_UVMax.y = (DataY + Glyph.m_Height) * VScale;
 }
 
 const int s_Margin = 2;
@@ -144,7 +144,7 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 			int OldNumBlockX = m_Width/m_PPB;
 			int NewNumBlockX = NewWidth/m_PPB;
 			
-			for(int b=0; b<m_Blocks.size(); b++)
+			for(unsigned int b=0; b<m_Blocks.size(); b++)
 			{
 				for(int j=0; j<m_PPB; j++)
 				{
@@ -173,9 +173,9 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 		m_Height = NewHeight;
 		
 		//Update Glyphs
-		for(int i=0; i<m_Glyphs.size(); i++)
+		for(auto iter = m_Glyphs.begin(); iter != m_Glyphs.end(); ++iter)
 		{
-			UpdateGlyph(&m_Glyphs[i]);
+			UpdateGlyph(iter->second); //No problem with this cast, since we will not change any variable used to sort glyphes.
 		}
 		
 		//Update texture
@@ -189,13 +189,14 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 
 int CTextRenderer::CGlyphCache::NewBlock(ivec2 Granularity)
 {
-	int MaxNumBlock = (m_Width * m_Height) / (m_PPB * m_PPB);
+	unsigned int MaxNumBlock = (m_Width * m_Height) / (m_PPB * m_PPB);
 	
 	if(MaxNumBlock <= m_Blocks.size())
 		IncreaseCache();
 	
 	int BlockId = m_Blocks.size();
-	CBlock& pBlock = m_Blocks.increment();
+	m_Blocks.emplace_back();
+	CBlock& pBlock = m_Blocks.back();
 	
 	pBlock.m_Granularity = Granularity;
 	pBlock.m_Size = 0;
@@ -225,14 +226,13 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::NewGlyph(CGlyphId GlyphId, in
 		{
 			if(!m_Blocks[i].IsFull())
 			{
-				CGlyph& Glyph = m_Glyphs.add_by_copy(CGlyph(GlyphId));
-				
+				CGlyph& Glyph = m_Glyphs[GlyphId];
 				Glyph.m_Width = Width;
 				Glyph.m_Height = Height;
 				Glyph.m_Granularity = Granularity;
 				Glyph.m_Block = i;
 				Glyph.m_BlockPos = m_Blocks[i].m_Size;
-				UpdateGlyph(&Glyph);
+				UpdateGlyph(Glyph);
 		
 				m_Blocks[Glyph.m_Block].m_Size++;
 				
@@ -245,30 +245,29 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::NewGlyph(CGlyphId GlyphId, in
 	
 	//Second pass: find the oldest glyph with the same granularity
 	int OldestTick = m_RenderTick;
-	int OldestGlyph = -1;
-	for(int i=0; i<m_Glyphs.size(); i++)
+	auto OldestGlyph = m_Glyphs.end();
+	for(auto iter = m_Glyphs.begin(); iter != m_Glyphs.end(); ++iter)
 	{
-		if(m_Glyphs[i].m_Granularity == Granularity && m_Glyphs[i].m_RenderTick < OldestTick)
+		if(iter->second.m_Granularity == Granularity && iter->second.m_RenderTick < OldestTick)
 		{
-			OldestTick = m_Glyphs[i].m_RenderTick;
-			OldestGlyph = i;
+			OldestTick = iter->second.m_RenderTick;
+			OldestGlyph = iter;
 		}
 	}
 	
-	if(OldestGlyph >= 0) //Replace the glyph
+	if(OldestGlyph != m_Glyphs.end()) //Replace the glyph
 	{
-		CGlyph Glyph(GlyphId);
-		Glyph.m_Block = m_Glyphs[OldestGlyph].m_Block;
-		Glyph.m_BlockPos = m_Glyphs[OldestGlyph].m_BlockPos;
+		CGlyph& NewGlyph = m_Glyphs[GlyphId];
 		
-		m_Glyphs.remove_index(OldestGlyph);
-		
-		CGlyph& NewGlyph = m_Glyphs.add_by_copy(Glyph);
+		NewGlyph.m_Block = OldestGlyph->second.m_Block;
+		NewGlyph.m_BlockPos = OldestGlyph->second.m_BlockPos;
+		m_Glyphs.erase(OldestGlyph);
 		
 		NewGlyph.m_Width = Width;
 		NewGlyph.m_Height = Height;
 		NewGlyph.m_Granularity = Granularity;
-		UpdateGlyph(&NewGlyph);
+		
+		UpdateGlyph(NewGlyph);
 		UpdateVersion();
 		
 		return &NewGlyph;
@@ -277,15 +276,15 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::NewGlyph(CGlyphId GlyphId, in
 	{
 		int BlockId = NewBlock(Granularity);
 
-		CGlyph& NewGlyph = m_Glyphs.increment();
-		
+		CGlyph& NewGlyph = m_Glyphs[GlyphId];
 		NewGlyph.m_Width = Width;
 		NewGlyph.m_Height = Height;
 		NewGlyph.m_Granularity = Granularity;
 		NewGlyph.m_Block = BlockId;
 		NewGlyph.m_BlockPos = 0;
 		
-		UpdateGlyph(&NewGlyph);
+		UpdateGlyph(NewGlyph);
+		UpdateVersion();
 		
 		m_Blocks[NewGlyph.m_Block].m_Size++;
 		
@@ -295,28 +294,11 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::NewGlyph(CGlyphId GlyphId, in
 
 CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::FindGlyph(CGlyphId GlyphId)
 {
-	if(m_Glyphs.size() == 0)
-		return 0;
-	
-	int iMin = 0;
-	int iMax = m_Glyphs.size()-1;
-	
-	if(m_Glyphs[iMax] < GlyphId)
-		return 0;
-
-	while((iMax-iMin) > 1)
-	{
-		int Pivot = iMin + (iMax-iMin-1)/2;
-		if(m_Glyphs[Pivot] < GlyphId)
-			iMin = Pivot+1;
-		else
-			iMax = Pivot+1;
-	}
-	
-	if(m_Glyphs[iMin] == GlyphId)
-		return &m_Glyphs[iMin];
+	auto iter = m_Glyphs.find(GlyphId);
+	if(iter == m_Glyphs.end())
+		return nullptr;
 	else
-		return 0;
+		return &iter->second;
 }
 
 void CTextRenderer::CGlyphCache::UpdateTexture(CTextRenderer::CGlyph* pGlyph, const char* pData)
@@ -392,13 +374,7 @@ CTextRenderer::CTextRenderer(CClientKernel* pKernel) :
 }
 
 CTextRenderer::~CTextRenderer()
-{	
-	for(int i=0; i<m_Fonts.size(); i++)
-		delete m_Fonts[i];
-	
-	for(int i=0; i<m_GlyphCaches.size(); i++)
-		delete m_GlyphCaches[i];
-		
+{
 	m_Fonts.clear();
 	m_GlyphCaches.clear();
 }
@@ -410,20 +386,14 @@ static int s_aFontSizes[] = {8,9,10,11,12,13,14,15,16,17,18,19,20,36,64};
 bool CTextRenderer::Init()
 {	
 	//Cleaning
-	for(int i=0; i<m_Fonts.size(); i++)
-		delete m_Fonts[i];
-	
-	for(int i=0; i<m_GlyphCaches.size(); i++)
-		delete m_GlyphCaches[i];
-	
 	m_Fonts.clear();
 	m_GlyphCaches.clear();
 	
 	//Init caches
 	m_GlyphCaches.resize(NUM_FONT_SIZES);
-	for(int i=0; i<m_GlyphCaches.size(); i++)
+	for(unsigned int i=0; i<m_GlyphCaches.size(); i++)
 	{
-		m_GlyphCaches[i] = new CGlyphCache(ClientKernel());
+		m_GlyphCaches[i].reset(new CGlyphCache(ClientKernel()));
 		m_GlyphCaches[i]->Init(s_aFontSizes[i]);
 	}
 	
@@ -465,7 +435,7 @@ bool CTextRenderer::LoadFont(const char* pFilename)
 	pFont->m_pHBFont = hb_ft_font_create(pFont->m_FtFace, 0);
 #endif
 
-	m_Fonts.add_by_copy(pFont);
+	m_Fonts.emplace_back(pFont);
 	
 	return true;
 }
@@ -480,7 +450,7 @@ CTextRenderer::CGlyph* CTextRenderer::LoadGlyph(CGlyphCache* pCache, CGlyphId Gl
 		return 0;
 	}
 	
-	CFont* pFont = m_Fonts[GlyphId.m_FontId];
+	const CFont* pFont = m_Fonts[GlyphId.m_FontId].get();
 	if(FT_Set_Pixel_Sizes(pFont->m_FtFace, 0, pCache->m_FontSize) != FT_Err_Ok)
 	{
 		dbg_msg("TextRenderer", "Can't set pixel size %d", pCache->m_FontSize);
@@ -500,7 +470,6 @@ CTextRenderer::CGlyph* CTextRenderer::LoadGlyph(CGlyphCache* pCache, CGlyphId Gl
 	
 	CTextRenderer::CGlyph* pGlyph = pCache->NewGlyph(GlyphId, BBWidth, BBHeight);
 	
-	pGlyph->m_GlyphId = GlyphId;
 	pGlyph->m_AdvanceX = (pFont->m_FtFace->glyph->advance.x >> 6);
 	pGlyph->m_OffsetX = pFont->m_FtFace->glyph->bitmap_left - s_Margin;
 	pGlyph->m_OffsetY = pFont->m_FtFace->glyph->bitmap_top + s_Margin;
@@ -576,7 +545,7 @@ CTextRenderer::CGlyph* CTextRenderer::GetGlyph(CGlyphCache* pCache, CGlyphId Gly
 }
 
 #ifdef HARFBUZZ_ENABLED
-void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
+void CTextRenderer::UpdateTextCache_Shaper(std::vector<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
 {
 	//Use harfbuzz to shape the text (arabic, tamil, ...)
 	hb_buffer_t* m_pHBBuffer = hb_buffer_create();
@@ -593,7 +562,8 @@ void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, con
 
 	for(unsigned int i=0; i<GlyphCount; i++)
 	{
-		CShaperGlyph& Glyph = pGlyphChain->increment();
+		pGlyphChain->emplace_back();
+		CShaperGlyph& Glyph = pGlyphChain->back();
 		Glyph.m_GlyphId = CGlyphId(FontId, GlyphInfo[i].codepoint);
 		Glyph.m_CharPos = GlyphInfo[i].cluster;
 	}
@@ -601,7 +571,7 @@ void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, con
 	hb_buffer_destroy(m_pHBBuffer);
 }
 #else
-void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
+void CTextRenderer::UpdateTextCache_Shaper(std::vector<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId)
 {
 	for(int i=Start; i<Length; i++)
 	{
@@ -612,7 +582,7 @@ void CTextRenderer::UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, con
 }
 #endif
 
-void CTextRenderer::UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL)
+void CTextRenderer::UpdateTextCache_Font(std::vector<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL)
 {
 	int FontId = 0;
 	
@@ -646,11 +616,11 @@ void CTextRenderer::UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const
 		{
 			int FontIdFound = -1;
 			int FontIdIter = (FontId+1)%m_Fonts.size();
-			for(int i=0; i<m_Fonts.size(); i++)
+			for(unsigned int i=0; i<m_Fonts.size(); i++)
 			{
 				//It's possible that using FT_Get_Char_Index one time is more time consuming than testing this condition on all fonts
 				//But I'm not sure...
-				if(i == FontId)
+				if(static_cast<int>(i) == FontId)
 					continue;
 				
 				if(FT_Get_Char_Index(m_Fonts[FontIdIter]->m_FtFace, Char) > 0)
@@ -679,7 +649,7 @@ void CTextRenderer::UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const
 		UpdateTextCache_Shaper(pGlyphChain, pTextUTF16, SubStart, SubLength, IsRTL, FontId);
 }
 
-void CTextRenderer::UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const char* pText)
+void CTextRenderer::UpdateTextCache_BiDi(std::vector<CShaperGlyph>* pGlyphChain, const char* pText)
 {
 	//Use ICU for bidirectional text
 	//note: bidirectional texts appear for example when a latin username is displayed in a arabic text
@@ -733,7 +703,7 @@ void CTextRenderer::UpdateTextCache(CTextCache* pTextCache)
 	
 	if(!pTextCache->m_Rendered)
 		NeedUpdate = true;
-	if(pTextCache->m_GlyphCacheId < 0 || pTextCache->m_GlyphCacheId >= m_GlyphCaches.size())
+	if(pTextCache->m_GlyphCacheId < 0 || pTextCache->m_GlyphCacheId >= static_cast<int>(m_GlyphCaches.size()))
 		NeedUpdate = true;
 	else if(pTextCache->m_GlyphCacheVersion != m_GlyphCaches[pTextCache->m_GlyphCacheId]->m_Version)
 		NeedUpdate = true;
@@ -745,9 +715,9 @@ void CTextRenderer::UpdateTextCache(CTextCache* pTextCache)
 	
 	//Search the appropriate cached font size to render the text
 	CGlyphCache* pGlyphCache = 0;
-	for(int i=0; i<m_GlyphCaches.size(); i++)
+	for(unsigned int i=0; i<m_GlyphCaches.size(); i++)
 	{
-		pGlyphCache = m_GlyphCaches[i];
+		pGlyphCache = m_GlyphCaches[i].get();
 		pTextCache->m_GlyphCacheId = i;
 		
 		if(m_GlyphCaches[i]->m_FontSize >= pTextCache->m_FontSize)
@@ -757,7 +727,7 @@ void CTextRenderer::UpdateTextCache(CTextCache* pTextCache)
 		return;
 	
 	float RelativeSize = pTextCache->m_FontSize / pGlyphCache->m_FontSize;
-	array<CShaperGlyph> GlyphChain;
+	std::vector<CShaperGlyph> GlyphChain;
 	
 	//The text is separated in 3 levels:
 		//Level 1: the complete string the the ICU will process (UpdateTextCache_BiDi)
@@ -767,18 +737,19 @@ void CTextRenderer::UpdateTextCache(CTextCache* pTextCache)
 	
 	//Here, we use two passes in order to make sure that the glyph cache is in the same state for all letters
 		//First pass: Update the glyph cache
-	for(int i=0; i<GlyphChain.size(); i++)
+	for(unsigned int i=0; i<GlyphChain.size(); i++)
 		GetGlyph(pGlyphCache, GlyphChain[i].m_GlyphId);
 	
 		//Second pass: Generate the list of quads
 	float PosY = pTextCache->m_BoxSize.y/2 + static_cast<int>(pTextCache->m_FontSize*0.4f); //TODO: find a way to not hard code the generic glyph height.
 	float PosX = 0.0f;
-	for(int i=0; i<GlyphChain.size(); i++)
+	for(unsigned int i=0; i<GlyphChain.size(); i++)
 	{
 		CGlyph* pGlyph = GetGlyph(pGlyphCache, GlyphChain[i].m_GlyphId);
 		if(pGlyph)
 		{
-			CTextCache::CQuad& Quad = pTextCache->m_Quads.increment();
+			pTextCache->m_Quads.emplace_back();
+			CTextCache::CQuad& Quad = pTextCache->m_Quads.back();
 			Quad.m_AdvancePos = vec2(PosX, PosY);
 			Quad.m_QuadPos = vec2(PosX + pGlyph->m_OffsetX*RelativeSize, PosY - pGlyph->m_OffsetY*RelativeSize);
 			Quad.m_Size = vec2(pGlyph->m_Width*RelativeSize, pGlyph->m_Height*RelativeSize);
@@ -810,7 +781,7 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	int NearestQuad = 0;
 	float CharDistance = 999999.0f;
 	vec2 TestPos = vec2(MousePosition.x - TextPosition.x, MousePosition.y - TextPosition.y);
-	for(int i=0; i<pTextCache->m_Quads.size(); i++)
+	for(unsigned int i=0; i<pTextCache->m_Quads.size(); i++)
 	{
 		float Dist = std::abs(pTextCache->m_Quads[i].m_QuadPos.x + pTextCache->m_Quads[i].m_Size.x/2.0f - TestPos.x);
 		if(Dist < CharDistance)
@@ -824,7 +795,7 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromPosition(CTextCache* 
 	Cursor.m_Position.x = pTextCache->m_Quads[NearestQuad].m_AdvancePos.x;
 	if(TestPos.x > pTextCache->m_Quads[NearestQuad].m_QuadPos.x + pTextCache->m_Quads[NearestQuad].m_Size.x/2.0f)
 	{
-		if(NearestQuad == pTextCache->m_Quads.size()-1)
+		if(NearestQuad == static_cast<int>(pTextCache->m_Quads.size())-1)
 		{
 			CharPos++;
 			Cursor.m_Position.x = pTextCache->m_TextWidth;
@@ -874,7 +845,7 @@ CTextRenderer::CTextCursor CTextRenderer::GetTextCursorFromTextIter(CTextCache* 
 		Iter = str_utf8_forward(pText, Iter);
 	}
 	
-	for(int i=0; i<pTextCache->m_Quads.size(); i++)
+	for(unsigned int i=0; i<pTextCache->m_Quads.size(); i++)
 	{
 		if(pTextCache->m_Quads[i].m_CharPos == CharPos)
 		{
@@ -910,7 +881,7 @@ void CTextRenderer::DrawText(CTextCache* pTextCache, ivec2 Position, vec4 Color)
 		else
 			Graphics()->SetColor(Color, true);
 		
-		for(int i=0; i<pTextCache->m_Quads.size(); i++)
+		for(unsigned int i=0; i<pTextCache->m_Quads.size(); i++)
 		{
 			Graphics()->QuadsSetSubset(
 				pTextCache->m_Quads[i].m_UVMin.x,
@@ -934,7 +905,7 @@ bool CTextRenderer::PreUpdate()
 {
 	m_RenderTick++;
 	
-	for(int i=0; i<m_GlyphCaches.size(); i++)
+	for(unsigned int i=0; i<m_GlyphCaches.size(); i++)
 		m_GlyphCaches[i]->m_RenderTick = m_RenderTick;
 	
 	return true;

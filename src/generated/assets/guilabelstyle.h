@@ -147,6 +147,8 @@ private:
 	CAssetPath m_IconPath;
 
 public:
+	virtual ~CAsset_GuiLabelStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

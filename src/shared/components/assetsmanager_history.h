@@ -20,7 +20,11 @@
 #define __SHARED_COMPONENTS_ASSETSMANAGER_HISTORY__
 
 #include <shared/assets/assetpath.h>
+#include <shared/assets/asset.h>
 #include <shared/tl/array.h>
+
+#include <memory>
+#include <vector>
 
 class CAssetsHistory
 {
@@ -40,15 +44,13 @@ private:
 	{
 		int m_Operation;
 		CAssetPath m_AssetPath;
-		void* m_pAsset;
-	
-		COperation() : m_pAsset(0) { }
+		std::unique_ptr<CAsset> m_pAsset;
 	};
 	
 	struct CEntry
 	{
 		int m_Token;
-		array<COperation> m_Operations;
+		std::vector<COperation> m_Operations;
 		
 		CEntry() : m_Token(NO_TOKEN) { }
 		void Reset();

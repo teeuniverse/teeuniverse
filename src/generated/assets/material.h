@@ -743,6 +743,8 @@ private:
 	bool m_TextureEnabled;
 
 public:
+	virtual ~CAsset_Material() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

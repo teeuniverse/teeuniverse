@@ -101,6 +101,8 @@ private:
 	CAssetPath m_AttackAnimationPath;
 
 public:
+	virtual ~CAsset_Weapon() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

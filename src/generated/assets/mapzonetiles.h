@@ -185,6 +185,8 @@ private:
 	array2d< int, allocator_default< int > > m_DataInt;
 
 public:
+	virtual ~CAsset_MapZoneTiles() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

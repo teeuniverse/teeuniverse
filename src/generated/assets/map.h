@@ -225,6 +225,8 @@ private:
 	bool m_ShowZones;
 
 public:
+	virtual ~CAsset_Map() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

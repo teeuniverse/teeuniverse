@@ -402,6 +402,8 @@ private:
 	array< string< _fixed_string_core<128> >, allocator_copy< string< _fixed_string_core<128> > > > m_Group;
 
 public:
+	virtual ~CAsset_ZoneType() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

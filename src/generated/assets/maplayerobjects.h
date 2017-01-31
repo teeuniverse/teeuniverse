@@ -654,6 +654,8 @@ private:
 public:
 	void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
 	void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;
+	virtual ~CAsset_MapLayerObjects() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

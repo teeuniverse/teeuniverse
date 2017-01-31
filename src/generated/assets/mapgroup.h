@@ -164,6 +164,8 @@ private:
 	bool m_Visibility;
 
 public:
+	virtual ~CAsset_MapGroup() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

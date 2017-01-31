@@ -130,6 +130,8 @@ private:
 
 public:
 	vec4 GetColor(int x, int y) const;vec4 Sample(vec2 UV) const;
+	virtual ~CAsset_Image() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

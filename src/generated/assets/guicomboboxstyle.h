@@ -92,6 +92,8 @@ private:
 	CAssetPath m_EnumPath;
 
 public:
+	virtual ~CAsset_GuiComboBoxStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

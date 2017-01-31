@@ -1456,7 +1456,9 @@ class ClassAsset(Class):
 		self.addPublicLines(self.generateGetSetEnum())
 		for Mem in self.members:
 			self.addPublicLines(Mem.generateIterators())
-			
+		
+		self.addPublicFunc(["virtual ~"+self.tname+"() {}", ""])
+		
 		self.addPublicFunc([
 			"template<typename T>",
 			"T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const",

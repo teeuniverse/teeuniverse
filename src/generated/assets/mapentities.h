@@ -209,6 +209,8 @@ private:
 	bool m_Visibility;
 
 public:
+	virtual ~CAsset_MapEntities() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

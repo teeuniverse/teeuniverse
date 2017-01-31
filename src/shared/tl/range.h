@@ -34,9 +34,9 @@
 #ifndef __SHARED_TL_RANGE__
 #define __SHARED_TL_RANGE__
 
-/* FOREIGN CODE BEGIN: TeeWorlds **************************************/
+#include <shared/system/debug.h>
 
-#include "base.h"
+/* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
 /*
 	Group: Range concepts

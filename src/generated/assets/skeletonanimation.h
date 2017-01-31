@@ -820,6 +820,8 @@ public:
 	bool GetLocalBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const;
 	bool GetParentBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const;
 	bool GetLayerAnimFrame(int Id, float Time, CLayerAnimation::CFrame& Frame) const;
+	virtual ~CAsset_SkeletonAnimation() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

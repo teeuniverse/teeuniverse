@@ -118,6 +118,8 @@ private:
 public:
 	int GetPixelWidth() const;
 	int GetPixelHeight() const;
+	virtual ~CAsset_Sprite() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

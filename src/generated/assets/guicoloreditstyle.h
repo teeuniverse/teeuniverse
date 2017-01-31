@@ -113,6 +113,8 @@ private:
 	CAssetPath m_WheelIconPath;
 
 public:
+	virtual ~CAsset_GuiColorEditStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

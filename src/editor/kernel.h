@@ -34,6 +34,8 @@ public:
 		
 	public:
 		CGuest(CEditorKernel* pKernel) : CClientKernel::CGuest(pKernel), m_pEditorKernel(pKernel) { }
+		virtual ~CGuest() {}
+		
 		inline CEditorKernel* EditorKernel() { return m_pEditorKernel; }
 		inline const CEditorKernel* EditorKernel() const { return m_pEditorKernel; }
 		
@@ -58,6 +60,7 @@ private:
 	
 public:	
 	CEditorKernel();
+	virtual ~CEditorKernel() {}
 	
 	//TAG_NEW_EDITOR_COMPONENT
 	inline CGuiEditor* Gui() { return m_pGui; }

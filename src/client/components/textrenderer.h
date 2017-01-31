@@ -23,8 +23,10 @@
 #include <client/components/graphics.h>
 #include <client/gui/rect.h>
 #include <shared/math/vector.h>
-#include <shared/tl/array.h>
-#include <shared/tl/sorted_array.h>
+
+#include <memory>
+#include <vector>
+#include <map>
 
 //FreeType to load font and rasterization
 #include <ft2build.h>
@@ -88,7 +90,6 @@ protected:
 	class CGlyph
 	{
 	public:
-		CGlyphId m_GlyphId;
 		int m_RenderTick;
 		int m_Width;
 		int m_Height;
@@ -102,13 +103,6 @@ protected:
 		float m_AdvanceX;
 		float m_OffsetX;
 		float m_OffsetY;
-		
-		//For sorting: this speed up *a lot* the time needed to search a glyph
-		CGlyph() {}
-		CGlyph(const CGlyphId& GlyphId) : m_GlyphId(GlyphId) {}
-		inline bool operator==(const CGlyphId& GlyphId) const { return (m_GlyphId == GlyphId); }
-		inline bool operator<(const CGlyphId& GlyphId) const { return (m_GlyphId < GlyphId); }
-		inline bool operator<(const CGlyph& Glyph) const { return (m_GlyphId < Glyph.m_GlyphId); }
 	};
 	
 	class CGlyphCache : public CClientKernel::CGuest
@@ -127,13 +121,13 @@ protected:
 		int m_MemoryUsage;
 		int m_Version;
 		
-		array<CBlock> m_Blocks;
-		sorted_array<CGlyph> m_Glyphs;
+		std::vector<CBlock> m_Blocks;
+		std::map<CGlyphId, CGlyph> m_Glyphs;
 		
 	private:
 		void IncreaseCache();
 		int NewBlock(ivec2 Granularity);
-		void UpdateGlyph(CGlyph* pGlyph);
+		void UpdateGlyph(CGlyph& Glyph);
 		
 	public:
 		CGlyphCache(CClientKernel* pKernel);
@@ -170,7 +164,7 @@ public:
 		int m_GlyphCacheId;			//Any modification in the GlyphCache can make obsolete the TextCache
 		int m_GlyphCacheVersion;
 					
-		array<CQuad> m_Quads;		//Keep quads to redraw quickly
+		std::vector<CQuad> m_Quads;		//Keep quads to redraw quickly
 		float m_TextWidth;
 		
 	public:
@@ -189,8 +183,8 @@ public:
 	
 private:
 	FT_Library m_FTLibrary;
-	array<CFont*> m_Fonts;
-	array<CGlyphCache*> m_GlyphCaches;
+	std::vector< std::unique_ptr<CFont> > m_Fonts;
+	std::vector< std::unique_ptr<CGlyphCache> > m_GlyphCaches;
 	int m_RenderTick;
 
 private:
@@ -198,9 +192,9 @@ private:
 	CGlyph* FindGlyph(CGlyphCache* pCache, CGlyphId GlyphId);
 	CGlyph* GetGlyph(CGlyphCache* pCache, CGlyphId GlyphId);
 	
-	void UpdateTextCache_Shaper(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId);
-	void UpdateTextCache_Font(array<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL);
-	void UpdateTextCache_BiDi(array<CShaperGlyph>* pGlyphChain, const char* pText);
+	void UpdateTextCache_Shaper(std::vector<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL, int FontId);
+	void UpdateTextCache_Font(std::vector<CShaperGlyph>* pGlyphChain, const UChar* pTextUTF16, int Start, int Length, bool IsRTL);
+	void UpdateTextCache_BiDi(std::vector<CShaperGlyph>* pGlyphChain, const char* pText);
 
 public:
 	CTextRenderer(CClientKernel* pKernel);

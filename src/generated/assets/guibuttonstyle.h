@@ -100,6 +100,8 @@ private:
 	CAssetPath m_FocusStylePath;
 
 public:
+	virtual ~CAsset_GuiButtonStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

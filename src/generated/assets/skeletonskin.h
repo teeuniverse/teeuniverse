@@ -303,6 +303,8 @@ private:
 	array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > > m_Sprite;
 
 public:
+	virtual ~CAsset_SkeletonSkin() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

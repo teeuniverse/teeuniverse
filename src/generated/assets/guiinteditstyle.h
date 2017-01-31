@@ -89,6 +89,8 @@ private:
 	CAssetPath m_DecreaseButtonStylePath;
 
 public:
+	virtual ~CAsset_GuiIntEditStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

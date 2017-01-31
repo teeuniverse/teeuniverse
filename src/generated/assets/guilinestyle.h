@@ -114,6 +114,8 @@ private:
 	CAssetPath m_ImageRPath;
 
 public:
+	virtual ~CAsset_GuiLineStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

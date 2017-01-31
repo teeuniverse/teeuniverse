@@ -119,6 +119,8 @@ private:
 	bool m_SwitchIcon;
 
 public:
+	virtual ~CAsset_GuiToggleStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

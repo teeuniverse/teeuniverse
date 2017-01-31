@@ -113,6 +113,8 @@ private:
 	CAssetPath m_RectPath;
 
 public:
+	virtual ~CAsset_GuiBoxStyle() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{

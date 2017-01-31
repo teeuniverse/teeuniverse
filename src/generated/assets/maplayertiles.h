@@ -210,6 +210,8 @@ private:
 	int m_PositionY;
 
 public:
+	virtual ~CAsset_MapLayerTiles() {}
+	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
 	{
