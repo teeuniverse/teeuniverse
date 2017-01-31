@@ -79,6 +79,39 @@ public:
 	virtual const char* Description() { return "Associate a command to a key"; }
 };
 
+	//UnbindCmd
+class CCommand_UnbindCmd : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CBindsManager* m_pBindManager;
+
+public:
+	CCommand_UnbindCmd(CBindsManager* pBindManager) :
+		m_pBindManager(pBindManager)
+	{
+		
+	}
+	
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		dynamic_string Buffer;		
+		if(!GetString(&pArgs, Buffer))
+		{
+			if(pOutput)
+				pOutput->Print("Missing \"Command\" parameter", CLI_LINETYPE_ERROR);
+			Help(pOutput);
+			return CLI_FAILURE_WRONG_PARAMETER;
+		}
+		
+		m_pBindManager->UnbindCommand(Buffer.buffer());
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "unbind_cmd \"Command\""; }
+	virtual const char* Description() { return "Remove all binds associated with a given command"; }
+};
+
 	//UnbindAll
 class CCommand_UnbindAll : public CCommandLineInterpreter::CCommand
 {
@@ -116,6 +149,7 @@ bool CBindsManager::InitConfig(int argc, const char** argv)
 	//TODO: Add default binds
 	
 	CLI()->Register("bind", new CCommand_Bind(this));
+	CLI()->Register("unbind_cmd", new CCommand_UnbindCmd(this));
 	CLI()->Register("unbind_all", new CCommand_UnbindAll(this));
 	
 	return true;
@@ -125,7 +159,6 @@ void CBindsManager::SaveConfig(CCLI_Output* pOutput)
 {
 	fixed_string128 Buffer;
 	
-	pOutput->Print("unbind_all");
 	for(int i=0; i<KEY_LAST; i++)
 	{
 		if(m_aKeyToCommand[MODIFIER_NONE][i].length() > 0)

@@ -55,6 +55,29 @@ public:
 	{ }
 };
 
+	//editor_open
+class CCommand_OpenPackage : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CCommand_OpenPackage(CGuiEditor* pAssetsEditor) :
+		CCommandLineInterpreter::CCommand(),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_OPEN, COpenSavePackageDialog::FORMAT_PACKAGE));
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "editor_open"; }
+	virtual const char* Description() { return "Open a package"; }
+};
+
 	//editor_save
 class CCommand_SavePackage : public CCommandLineInterpreter::CCommand
 {
@@ -1750,6 +1773,7 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->RegisterConfigInteger("editor_default_compatibility_mode", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultCompatibilityMode, 0, CAssetsManager::NUM_MAPFORMAT-1);
 	CLI()->RegisterConfigString("editor_default_author", "Default Compatibility mode in Import/Export dialog", &m_Cfg_DefaultAuthor);
 	
+	CLI()->Register("editor_open", new CCommand_OpenPackage(this));
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
 	CLI()->Register("editor_quit", new CCommand_Quit(this));
 	CLI()->Register("vflip", new CCommand_VFlip(this));
@@ -1757,6 +1781,7 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->Register("cwrotation", new CCommand_CWRotation(this));
 	CLI()->Register("ccwrotation", new CCommand_CCWRotation(this));
 	
+	BindsManager()->Bind(KEY_O, CBindsManager::MODIFIER_CTRL, "editor_open");
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
 	BindsManager()->Bind(KEY_Q, CBindsManager::MODIFIER_CTRL, "editor_quit");
 	
