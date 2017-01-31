@@ -122,18 +122,6 @@ public:
 	
 	public:
 		CTile();
-		void copy(const CAsset_MapLayerTiles::CTile& Item)
-		{
-			m_Index = Item.m_Index;
-			m_Flags = Item.m_Flags;
-		}
-		
-		void transfert(CAsset_MapLayerTiles::CTile& Item)
-		{
-			m_Index = std::move(Item.m_Index);
-			m_Flags = std::move(Item.m_Flags);
-		}
-		
 		inline uint8 GetIndex() const { return m_Index; }
 		
 		inline uint8 GetFlags() const { return m_Flags; }
@@ -204,7 +192,7 @@ private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
 	vec4 m_Color;
-	array2d< CTile, allocator_copy< CTile > > m_Tile;
+	array2d< CTile, allocator_default< CTile > > m_Tile;
 	bool m_Visibility;
 	int m_PositionX;
 	int m_PositionY;
@@ -233,30 +221,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerTiles();
-	void copy(const CAsset_MapLayerTiles& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ImagePath = Item.m_ImagePath;
-		m_Color = Item.m_Color;
-		m_Tile.copy(Item.m_Tile);
-		m_Visibility = Item.m_Visibility;
-		m_PositionX = Item.m_PositionX;
-		m_PositionY = Item.m_PositionY;
-	}
-	
-	void transfert(CAsset_MapLayerTiles& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_ImagePath = std::move(Item.m_ImagePath);
-		m_Color = std::move(Item.m_Color);
-		m_Tile.transfert(Item.m_Tile);
-		m_Visibility = std::move(Item.m_Visibility);
-		m_PositionX = std::move(Item.m_PositionX);
-		m_PositionY = std::move(Item.m_PositionY);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
@@ -271,8 +235,8 @@ public:
 	
 	inline const CAsset_MapLayerTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_copy< CTile > >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_copy< CTile > >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile, allocator_default< CTile > >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile, allocator_default< CTile > >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapLayerTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	

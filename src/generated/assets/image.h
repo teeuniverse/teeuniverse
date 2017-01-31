@@ -153,30 +153,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_Image();
-	void copy(const CAsset_Image& Item)
-	{
-		CAsset::copy(Item);
-		m_GridWidth = Item.m_GridWidth;
-		m_GridHeight = Item.m_GridHeight;
-		m_GridSpacing = Item.m_GridSpacing;
-		m_TexelSize = Item.m_TexelSize;
-		m_TilingEnabled = Item.m_TilingEnabled;
-		m_Data.copy(Item.m_Data);
-		m_Texture = Item.m_Texture;
-	}
-	
-	void transfert(CAsset_Image& Item)
-	{
-		CAsset::transfert(Item);
-		m_GridWidth = std::move(Item.m_GridWidth);
-		m_GridHeight = std::move(Item.m_GridHeight);
-		m_GridSpacing = std::move(Item.m_GridSpacing);
-		m_TexelSize = std::move(Item.m_TexelSize);
-		m_TilingEnabled = std::move(Item.m_TilingEnabled);
-		m_Data.transfert(Item.m_Data);
-		m_Texture = std::move(Item.m_Texture);
-	}
-	
 	inline int GetGridWidth() const { return m_GridWidth; }
 	
 	inline int GetGridHeight() const { return m_GridHeight; }

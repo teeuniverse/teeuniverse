@@ -128,18 +128,6 @@ public:
 	
 	public:
 		CEntity();
-		void copy(const CAsset_MapEntities::CEntity& Item)
-		{
-			m_TypePath = Item.m_TypePath;
-			m_Position = Item.m_Position;
-		}
-		
-		void transfert(CAsset_MapEntities::CEntity& Item)
-		{
-			m_TypePath = std::move(Item.m_TypePath);
-			m_Position = std::move(Item.m_Position);
-		}
-		
 		inline CAssetPath GetTypePath() const { return m_TypePath; }
 		
 		inline vec2 GetPosition() const { return m_Position; }
@@ -205,7 +193,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > > m_Entity;
+	array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > > m_Entity;
 	bool m_Visibility;
 
 public:
@@ -232,30 +220,14 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapEntities();
-	void copy(const CAsset_MapEntities& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_Entity.copy(Item.m_Entity);
-		m_Visibility = Item.m_Visibility;
-	}
-	
-	void transfert(CAsset_MapEntities& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_Entity.transfert(Item.m_Entity);
-		m_Visibility = std::move(Item.m_Visibility);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline int GetEntityArraySize() const { return m_Entity.size(); }
 	
 	inline const CAsset_MapEntities::CEntity* GetEntityPtr() const { return m_Entity.base_ptr(); }
 	
-	inline const array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > >& GetEntityArray() const { return m_Entity; }
-	inline array< CAsset_MapEntities::CEntity, allocator_copy< CAsset_MapEntities::CEntity > >& GetEntityArray() { return m_Entity; }
+	inline const array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > >& GetEntityArray() const { return m_Entity; }
+	inline array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > >& GetEntityArray() { return m_Entity; }
 	
 	inline const CAsset_MapEntities::CEntity& GetEntity(const CSubPath& SubPath) const
 	{
@@ -303,7 +275,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Entity.size())
 		{
-			m_Entity[SubPath.GetId()].copy(Value);
+			m_Entity[SubPath.GetId()] = Value;
 		}
 	}
 	

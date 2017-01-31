@@ -72,18 +72,6 @@ private:
 public:
 	CAsset() : m_pAssetsManager(0) { }
 	virtual ~CAsset() { }
-	
-	inline void copy(const CAsset& Asset)
-	{
-		m_pAssetsManager = Asset.m_pAssetsManager;
-		m_Name = Asset.m_Name;
-	}
-	
-	inline void transfert(CAsset& Asset)
-	{
-		m_pAssetsManager = Asset.m_pAssetsManager;
-		m_Name = std::move(Asset.m_Name);
-	}
 
 	void Update() { }
 	void Unload() { }

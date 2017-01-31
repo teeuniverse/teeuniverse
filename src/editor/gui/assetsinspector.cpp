@@ -1479,7 +1479,7 @@ protected:
 				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *LayerIter, LString_Layer, m_pAssetsEditor->m_Path_Sprite_IconLayer));
 				LayerCounter++;
 				
-				const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& SpriteArray = pLayer->GetLayerSpriteArray(*LayerIter);
+				const array<CAsset_Material::CSprite>& SpriteArray = pLayer->GetLayerSpriteArray(*LayerIter);
 				for(int i=0; i<SpriteArray.size(); i++)
 				{
 					CSubPath SpriteSubPath = CAsset_Material::SubPath_LayerSprite((*LayerIter).GetId(), i);

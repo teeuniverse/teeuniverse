@@ -25,7 +25,7 @@ void ImageProcessing_Dilate(IMG& Image, int NumIterations)
 	IMG TmpImages[2];
 
 	for(unsigned int i=0; i<sizeof(TmpImages)/sizeof(IMG); i++)
-		TmpImages[i].copy(Image);
+		TmpImages[i] = Image;
 	
 	const int sx[] = {0, -1, 1, 0};
 	const int sy[] = {-1, 0, 0, 1};

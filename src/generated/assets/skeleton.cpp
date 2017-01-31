@@ -53,14 +53,14 @@ void CAsset_Skeleton::CBone::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadi
 	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
 	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
 	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
 
 void CAsset_Skeleton::CLayer::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton::CLayer& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 }
 
 
@@ -148,14 +148,14 @@ void CAsset_Skeleton::CBone::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadi
 	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
 	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
 	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
 
 void CAsset_Skeleton::CLayer::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton::CLayer& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 }
 
 
@@ -243,14 +243,14 @@ void CAsset_Skeleton::CBone::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadi
 	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
 	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
 	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
 
 void CAsset_Skeleton::CLayer::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Skeleton::CLayer& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 }
 
 
@@ -338,14 +338,14 @@ void CAsset_Skeleton::CBone::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadi
 	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
 	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
 	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
 
 void CAsset_Skeleton::CLayer::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Skeleton::CLayer& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 }
 
 

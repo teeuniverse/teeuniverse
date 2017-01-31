@@ -202,7 +202,7 @@ void CBindEdit::SetValue(CBindsManager::CKey Key)
 CBindEdit::CBindEdit(CGui* pContext, const char* pCommand, int BindNum, bool Modifier) :
 	CAbstractBindEdit(pContext)
 {
-	m_Command.copy(pCommand);
+	m_Command = pCommand;
 	m_BindNum = BindNum;
 	m_AcceptModifier = Modifier;
 }

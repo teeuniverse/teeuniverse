@@ -139,15 +139,9 @@ class Type:
 	def allocator(self):
 		return "default"
 	def generateCopy(self, var, value):
-		if self.allocator() == "copy":
-			return [var + ".copy(" + value + ");"]
-		else:
-			return [var + " = " + value + ";"]
+		return [var + " = " + value + ";"]
 	def generateTransfert(self, var, value):
-		if self.allocator() == "copy":
-			return [var + ".transfert(" + value + ");"]
-		else:
-			return [var + " = std::move(" + value + ");"]
+		return [var + " = std::move(" + value + ");"]
 	def generateAssetPathOp(self, var, operation):
 		return []
 	def generateDeclaration(self, var):
@@ -327,7 +321,7 @@ class TypeString(Type):
 	def generateWrite(self, varSys, varTua, version):
 		return [varTua + " = pLoadingContext->ArchiveFile()->AddString(" + varSys + ".buffer());"]
 	def generateRead(self, varSys, varTua, version):
-		return [varSys + ".copy(pLoadingContext->ArchiveFile()->GetString(" + varTua + "));"]
+		return [varSys + " = pLoadingContext->ArchiveFile()->GetString(" + varTua + ");"]
 
 class TypeTextureHandle(Type):
 	def __init__(self):
@@ -441,8 +435,6 @@ class TypeArray(Type):
 		return 1
 	def headers(self):
 		return ["shared/tl/array.h"]
-	def allocator(self):
-		return "copy"
 	def getSetInterfaces(self):
 		res = [
 			GetSetInterface_Func("ArraySize", "int", "int", "size", "resize", "0"),
@@ -606,8 +598,6 @@ class TypeArray2d(Type):
 		return 2
 	def headers(self):
 		return ["shared/tl/array2d.h"]
-	def allocator(self):
-		return "copy"
 	def getSetInterfaces(self):
 		res = [
 			GetSetInterface_Array2dDim("Width", "int", "int", "get_width", "resize_width"),
@@ -969,8 +959,6 @@ class Class(Type):
 		for Mem in self.members:
 			res.extend(Mem.headers());
 		return res
-	def allocator(self):
-		return "copy"
 	def getSetInterfaces(self):
 		res = [ GetSetInterface_Class(self) ]
 		for m in self.members:
@@ -1088,32 +1076,6 @@ class Class(Type):
 		self.publicLines.extend(lines)
 	def addPublicFunc(self, lines):
 		self.publicFunc.extend(lines)
-	def generateCopyFunc(self):
-		res = [
-			"void copy(const " + self.fullType() + "& Item)",
-			"{"
-		]
-		if self.inheritance:
-			res.append("	" + self.inheritance.fullType()+"::copy(Item);")
-		for Mem in self.members:
-			for l in Mem.generateCopy("Item." + Mem.memberName()):
-				res.append("	" + l)
-		res.append("}")
-		res.append("")
-		return res
-	def generateTransfertFunc(self):
-		res = [
-			"void transfert(" + self.fullType() + "& Item)",
-			"{"
-		]
-		if self.inheritance:
-			res.append("	" + self.inheritance.fullType()+"::transfert(Item);")
-		for Mem in self.members:
-			for l in Mem.generateTransfert("Item." + Mem.memberName()):
-				res.append("	" + l)
-		res.append("}")
-		res.append("")
-		return res
 	
 	def generateConstructor(self):
 		res = []
@@ -1175,8 +1137,6 @@ class Class(Type):
 		#Public func
 		if len(self.constructor) > 0:
 			self.addPublicFunc([self.tname+"();"])
-		self.addPublicFunc(self.generateCopyFunc())
-		self.addPublicFunc(self.generateTransfertFunc())
 		
 		for Mem in self.members:
 			self.addPublicFunc(Mem.generateGet())

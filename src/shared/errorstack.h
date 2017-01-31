@@ -19,9 +19,9 @@
 #ifndef __SHARED_ERRORSTACK__
 #define __SHARED_ERRORSTACK__
 
-#include <shared/tl/array.h>
 #include <shared/components/localization.h>
 
+#include <vector>
 
 class CErrorStack
 {	
@@ -30,40 +30,22 @@ public:
 	{
 	public:
 		CLocalizableString m_Message;
-
-		CErrorStackEntry()
-		{
-			
-		}
+	
+		CErrorStackEntry() = default;
 		
 		CErrorStackEntry(const CLocalizableString& LString)
 		{
-			m_Message.copy(LString);
-		}
-		
-		void copy(const CErrorStackEntry& Stack)
-		{
-			m_Message.copy(Stack.m_Message);
-		}
-		
-		void transfert(CErrorStackEntry& Stack)
-		{
-			m_Message.transfert(Stack.m_Message);
+			m_Message = LString;
 		}
 	};
 	
 private:
-	array< CErrorStackEntry, allocator_copy<CErrorStackEntry> > m_Errors;
+	std::vector<CErrorStackEntry> m_Errors;
 
-public:
-	CErrorStack()
-	{
-		
-	}
-	
+public:	
 	void AddError(const CLocalizableString& LString)
 	{
-		m_Errors.add_by_copy(LString);
+		m_Errors.push_back(LString);
 	}
 	
 	int Size() const

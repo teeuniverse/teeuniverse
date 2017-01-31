@@ -123,24 +123,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_Weapon& Item)
-	{
-		CAsset::copy(Item);
-		m_CharacterPath = Item.m_CharacterPath;
-		m_CursorPath = Item.m_CursorPath;
-		m_SkinPath = Item.m_SkinPath;
-		m_AttackAnimationPath = Item.m_AttackAnimationPath;
-	}
-	
-	void transfert(CAsset_Weapon& Item)
-	{
-		CAsset::transfert(Item);
-		m_CharacterPath = std::move(Item.m_CharacterPath);
-		m_CursorPath = std::move(Item.m_CursorPath);
-		m_SkinPath = std::move(Item.m_SkinPath);
-		m_AttackAnimationPath = std::move(Item.m_AttackAnimationPath);
-	}
-	
 	inline CAssetPath GetCharacterPath() const { return m_CharacterPath; }
 	
 	inline CAssetPath GetCursorPath() const { return m_CursorPath; }

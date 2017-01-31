@@ -33,23 +33,11 @@ public:
 	public:
 		CAssetPath m_IconPath;
 		CLocalizableString m_Description;
-		
-		inline void copy(const CItem& Item)
-		{
-			m_IconPath = Item.m_IconPath;
-			m_Description.copy(Item.m_Description);
-		}
-		
-		inline void transfert(CItem& Item)
-		{
-			m_IconPath = Item.m_IconPath;
-			m_Description.transfert(Item.m_Description);
-		}
 	};
 	
 protected:
 	CAssetPath m_ComboBoxStylePath;
-	array< CItem, allocator_copy<CItem> > m_EnumDescriptions;
+	array<CItem> m_EnumDescriptions;
 
 protected:
 	virtual void MouseClickAction();

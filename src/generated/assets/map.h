@@ -248,32 +248,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_Map();
-	void copy(const CAsset_Map& Item)
-	{
-		CAsset::copy(Item);
-		m_BgGroup.copy(Item.m_BgGroup);
-		m_FgGroup.copy(Item.m_FgGroup);
-		m_ZoneLayer.copy(Item.m_ZoneLayer);
-		m_EntityLayer.copy(Item.m_EntityLayer);
-		m_CameraPosition = Item.m_CameraPosition;
-		m_CameraZoom = Item.m_CameraZoom;
-		m_ShowEntities = Item.m_ShowEntities;
-		m_ShowZones = Item.m_ShowZones;
-	}
-	
-	void transfert(CAsset_Map& Item)
-	{
-		CAsset::transfert(Item);
-		m_BgGroup.transfert(Item.m_BgGroup);
-		m_FgGroup.transfert(Item.m_FgGroup);
-		m_ZoneLayer.transfert(Item.m_ZoneLayer);
-		m_EntityLayer.transfert(Item.m_EntityLayer);
-		m_CameraPosition = std::move(Item.m_CameraPosition);
-		m_CameraZoom = std::move(Item.m_CameraZoom);
-		m_ShowEntities = std::move(Item.m_ShowEntities);
-		m_ShowZones = std::move(Item.m_ShowZones);
-	}
-	
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
 	
 	inline const CAssetPath* GetBgGroupPtr() const { return m_BgGroup.base_ptr(); }

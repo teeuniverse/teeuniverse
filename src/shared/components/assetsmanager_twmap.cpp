@@ -85,7 +85,7 @@ public:
 		(*ppZone)->SetParentPath(m_MapPath);
 		(*ppZone)->SetZoneTypePath(ZoneType);
 
-		array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = (*ppZone)->GetTileArray();
+		array2d<CAsset_MapZoneTiles::CTile>& Data = (*ppZone)->GetTileArray();
 		Data.resize(Width, Height);
 		
 		if(pZoneType->GetDataIntArraySize() > 0)
@@ -125,7 +125,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	
 	if(StorageType == CStorage::TYPE_ABSOLUTE)
 	{
-		FullPath.copy(pFileName);
+		FullPath = pFileName;
 		
 		int Length = str_length(pFileName);
 		int i=Length-1;
@@ -143,7 +143,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 			PackageName.append_at_num(0, pFileName+i+1, Length-i-5);
 		}
 		else
-			PackageName.copy(pFileName+i);
+			PackageName = pFileName+i;
 	}
 	else
 	{
@@ -151,7 +151,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 		FullPath.append(pFileName);
 		FullPath.append(".map");
 		
-		PackageName.copy(pFileName);
+		PackageName = pFileName;
 	}
 	
 	int PackageId = NewPackage(PackageName.buffer());
@@ -531,7 +531,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						int Width = pTilemapItem->m_Width;
 						int Height = pTilemapItem->m_Height;
 						
-						array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pZone->GetTileArray();
+						array2d<CAsset_MapZoneTiles::CTile>& Data = pZone->GetTileArray();
 						Data.resize(Width, Height);
 						
 						for(int j=0; j<Height; j++)
@@ -1169,7 +1169,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							int Width = pTilemapItem->m_Width;
 							int Height = pTilemapItem->m_Height;
 							
-							array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Data = pMapLayer->GetTileArray();
+							array2d<CAsset_MapLayerTiles::CTile>& Data = pMapLayer->GetTileArray();
 							Data.resize(Width, Height);
 							
 							ddnet::CTile* pTiles = (ddnet::CTile*) ArchiveFile.GetData(pTilemapItem->m_Data);
@@ -1228,7 +1228,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							int Width = pTilemapItem->m_Width;
 							int Height = pTilemapItem->m_Height;
 							
-							array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pZone->GetTileArray();
+							array2d<CAsset_MapZoneTiles::CTile>& Data = pZone->GetTileArray();
 							Data.resize(Width, Height);
 							
 							for(int j=0; j<Height; j++)
@@ -2386,7 +2386,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		int StartLayer = LayerId;
 		
 		array<CAssetPath> EntityTypeList;
-		array< array<ddnet::CQuad>, allocator_copy< array<ddnet::CQuad> > > EntityQuads;
+		array< array<ddnet::CQuad> > EntityQuads;
 		
 		for(int i=0; i<PTUMTeeWorldsEntities.size(); i++)
 		{

@@ -202,20 +202,6 @@ public:
 	
 	public:
 		CLabel();
-		void copy(const CAsset_Material::CLabel& Item)
-		{
-			m_Color = Item.m_Color;
-			m_AngleStart = Item.m_AngleStart;
-			m_AngleEnd = Item.m_AngleEnd;
-		}
-		
-		void transfert(CAsset_Material::CLabel& Item)
-		{
-			m_Color = std::move(Item.m_Color);
-			m_AngleStart = std::move(Item.m_AngleStart);
-			m_AngleEnd = std::move(Item.m_AngleEnd);
-		}
-		
 		inline vec4 GetColor() const { return m_Color; }
 		
 		inline float GetAngleStart() const { return m_AngleStart; }
@@ -309,34 +295,6 @@ public:
 	
 	public:
 		CSprite();
-		void copy(const CAsset_Material::CSprite& Item)
-		{
-			m_Path = Item.m_Path;
-			m_Size = Item.m_Size;
-			m_Color = Item.m_Color;
-			m_Flags = Item.m_Flags;
-			m_Position = Item.m_Position;
-			m_Alignment = Item.m_Alignment;
-			m_Filling = Item.m_Filling;
-			m_TileType = Item.m_TileType;
-			m_TileLabel0 = Item.m_TileLabel0;
-			m_TileLabel1 = Item.m_TileLabel1;
-		}
-		
-		void transfert(CAsset_Material::CSprite& Item)
-		{
-			m_Path = std::move(Item.m_Path);
-			m_Size = std::move(Item.m_Size);
-			m_Color = std::move(Item.m_Color);
-			m_Flags = std::move(Item.m_Flags);
-			m_Position = std::move(Item.m_Position);
-			m_Alignment = std::move(Item.m_Alignment);
-			m_Filling = std::move(Item.m_Filling);
-			m_TileType = std::move(Item.m_TileType);
-			m_TileLabel0 = std::move(Item.m_TileLabel0);
-			m_TileLabel1 = std::move(Item.m_TileLabel1);
-		}
-		
 		inline CAssetPath GetPath() const { return m_Path; }
 		
 		inline vec2 GetSize() const { return m_Size; }
@@ -435,25 +393,15 @@ public:
 		
 	
 	private:
-		array< CSprite, allocator_copy< CSprite > > m_Sprite;
+		array< CSprite, allocator_default< CSprite > > m_Sprite;
 	
 	public:
-		void copy(const CAsset_Material::CLayer& Item)
-		{
-			m_Sprite.copy(Item.m_Sprite);
-		}
-		
-		void transfert(CAsset_Material::CLayer& Item)
-		{
-			m_Sprite.transfert(Item.m_Sprite);
-		}
-		
 		inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 		
 		inline const CAsset_Material::CSprite* GetSpritePtr() const { return m_Sprite.base_ptr(); }
 		
-		inline const array< CSprite, allocator_copy< CSprite > >& GetSpriteArray() const { return m_Sprite; }
-		inline array< CSprite, allocator_copy< CSprite > >& GetSpriteArray() { return m_Sprite; }
+		inline const array< CSprite, allocator_default< CSprite > >& GetSpriteArray() const { return m_Sprite; }
+		inline array< CSprite, allocator_default< CSprite > >& GetSpriteArray() { return m_Sprite; }
 		
 		inline const CAsset_Material::CSprite& GetSprite(const CSubPath& SubPath) const
 		{
@@ -567,7 +515,7 @@ public:
 		{
 			if(SubPath.GetId() < m_Sprite.size())
 			{
-				m_Sprite[SubPath.GetId()].copy(Value);
+				m_Sprite[SubPath.GetId()] = Value;
 			}
 		}
 		
@@ -733,8 +681,8 @@ public:
 	
 
 private:
-	array< CAsset_Material::CLabel, allocator_copy< CAsset_Material::CLabel > > m_Label;
-	array< CAsset_Material::CLayer, allocator_copy< CAsset_Material::CLayer > > m_Layer;
+	array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > > m_Label;
+	array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > > m_Layer;
 	CAssetPath m_TexturePath;
 	vec4 m_TextureColor;
 	vec2 m_TextureSize;
@@ -766,38 +714,12 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_Material();
-	void copy(const CAsset_Material& Item)
-	{
-		CAsset::copy(Item);
-		m_Label.copy(Item.m_Label);
-		m_Layer.copy(Item.m_Layer);
-		m_TexturePath = Item.m_TexturePath;
-		m_TextureColor = Item.m_TextureColor;
-		m_TextureSize = Item.m_TextureSize;
-		m_TextureAngle = Item.m_TextureAngle;
-		m_TextureSpacing = Item.m_TextureSpacing;
-		m_TextureEnabled = Item.m_TextureEnabled;
-	}
-	
-	void transfert(CAsset_Material& Item)
-	{
-		CAsset::transfert(Item);
-		m_Label.transfert(Item.m_Label);
-		m_Layer.transfert(Item.m_Layer);
-		m_TexturePath = std::move(Item.m_TexturePath);
-		m_TextureColor = std::move(Item.m_TextureColor);
-		m_TextureSize = std::move(Item.m_TextureSize);
-		m_TextureAngle = std::move(Item.m_TextureAngle);
-		m_TextureSpacing = std::move(Item.m_TextureSpacing);
-		m_TextureEnabled = std::move(Item.m_TextureEnabled);
-	}
-	
 	inline int GetLabelArraySize() const { return m_Label.size(); }
 	
 	inline const CAsset_Material::CLabel* GetLabelPtr() const { return m_Label.base_ptr(); }
 	
-	inline const array< CAsset_Material::CLabel, allocator_copy< CAsset_Material::CLabel > >& GetLabelArray() const { return m_Label; }
-	inline array< CAsset_Material::CLabel, allocator_copy< CAsset_Material::CLabel > >& GetLabelArray() { return m_Label; }
+	inline const array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > >& GetLabelArray() const { return m_Label; }
+	inline array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > >& GetLabelArray() { return m_Label; }
 	
 	inline const CAsset_Material::CLabel& GetLabel(const CSubPath& SubPath) const
 	{
@@ -832,8 +754,8 @@ public:
 	
 	inline const CAsset_Material::CLayer* GetLayerPtr() const { return m_Layer.base_ptr(); }
 	
-	inline const array< CAsset_Material::CLayer, allocator_copy< CAsset_Material::CLayer > >& GetLayerArray() const { return m_Layer; }
-	inline array< CAsset_Material::CLayer, allocator_copy< CAsset_Material::CLayer > >& GetLayerArray() { return m_Layer; }
+	inline const array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > >& GetLayerArray() const { return m_Layer; }
+	inline array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > >& GetLayerArray() { return m_Layer; }
 	
 	inline const CAsset_Material::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
@@ -857,12 +779,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CSprite, allocator_copy< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath) const
+	inline const array< CSprite, allocator_default< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		return m_Layer[SubPath.GetId()].GetSpriteArray();
 	}
-	inline array< CSprite, allocator_copy< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath)
+	inline array< CSprite, allocator_default< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		return m_Layer[SubPath.GetId()].GetSpriteArray();
@@ -994,7 +916,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Label.size())
 		{
-			m_Label[SubPath.GetId()].copy(Value);
+			m_Label[SubPath.GetId()] = Value;
 		}
 	}
 	
@@ -1022,7 +944,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Layer.size())
 		{
-			m_Layer[SubPath.GetId()].copy(Value);
+			m_Layer[SubPath.GetId()] = Value;
 		}
 	}
 	

@@ -23,7 +23,7 @@ template<typename IMG>
 void ImageProcessing_AddBorder(IMG& Image, int GridWidth, int GridHeight, int BorderSize)
 {
 	IMG TmpImage;
-	TmpImage.copy(Image);
+	TmpImage = Image;
 	
 	int CellWidth = Image.get_width()/GridWidth;
 	int CellHeight = Image.get_height()/GridHeight;

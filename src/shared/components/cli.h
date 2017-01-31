@@ -105,7 +105,7 @@ public:
 				return CLI_FAILURE_WRONG_PARAMETER;
 			}
 			
-			m_pValue->copy(Buffer);
+			*m_pValue = Buffer;
 			return CLI_SUCCESS;
 		}
 		

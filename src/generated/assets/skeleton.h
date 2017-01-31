@@ -186,28 +186,6 @@ public:
 	
 	public:
 		CBone();
-		void copy(const CAsset_Skeleton::CBone& Item)
-		{
-			m_Length = Item.m_Length;
-			m_Anchor = Item.m_Anchor;
-			m_Translation = Item.m_Translation;
-			m_Scale = Item.m_Scale;
-			m_Angle = Item.m_Angle;
-			m_Name = Item.m_Name;
-			m_Color = Item.m_Color;
-		}
-		
-		void transfert(CAsset_Skeleton::CBone& Item)
-		{
-			m_Length = std::move(Item.m_Length);
-			m_Anchor = std::move(Item.m_Anchor);
-			m_Translation = std::move(Item.m_Translation);
-			m_Scale = std::move(Item.m_Scale);
-			m_Angle = std::move(Item.m_Angle);
-			m_Name = std::move(Item.m_Name);
-			m_Color = std::move(Item.m_Color);
-		}
-		
 		inline float GetLength() const { return m_Length; }
 		
 		inline float GetAnchor() const { return m_Anchor; }
@@ -297,16 +275,6 @@ public:
 		_dynamic_string<128> m_Name;
 	
 	public:
-		void copy(const CAsset_Skeleton::CLayer& Item)
-		{
-			m_Name = Item.m_Name;
-		}
-		
-		void transfert(CAsset_Skeleton::CLayer& Item)
-		{
-			m_Name = std::move(Item.m_Name);
-		}
-		
 		inline const char* GetName() const { return m_Name.buffer(); }
 		
 		inline void SetName(const char* Value) { m_Name = Value; }
@@ -364,8 +332,8 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_DefaultSkinPath;
-	array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > > m_Bone;
-	array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > > m_Layer;
+	array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > > m_Bone;
+	array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > > m_Layer;
 
 public:
 	virtual ~CAsset_Skeleton() {}
@@ -390,24 +358,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_Skeleton& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_DefaultSkinPath = Item.m_DefaultSkinPath;
-		m_Bone.copy(Item.m_Bone);
-		m_Layer.copy(Item.m_Layer);
-	}
-	
-	void transfert(CAsset_Skeleton& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_DefaultSkinPath = std::move(Item.m_DefaultSkinPath);
-		m_Bone.transfert(Item.m_Bone);
-		m_Layer.transfert(Item.m_Layer);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetDefaultSkinPath() const { return m_DefaultSkinPath; }
@@ -416,8 +366,8 @@ public:
 	
 	inline const CAsset_Skeleton::CBone* GetBonePtr() const { return m_Bone.base_ptr(); }
 	
-	inline const array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > >& GetBoneArray() const { return m_Bone; }
-	inline array< CAsset_Skeleton::CBone, allocator_copy< CAsset_Skeleton::CBone > >& GetBoneArray() { return m_Bone; }
+	inline const array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > >& GetBoneArray() const { return m_Bone; }
+	inline array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > >& GetBoneArray() { return m_Bone; }
 	
 	inline const CAsset_Skeleton::CBone& GetBone(const CSubPath& SubPath) const
 	{
@@ -508,8 +458,8 @@ public:
 	
 	inline const CAsset_Skeleton::CLayer* GetLayerPtr() const { return m_Layer.base_ptr(); }
 	
-	inline const array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > >& GetLayerArray() const { return m_Layer; }
-	inline array< CAsset_Skeleton::CLayer, allocator_copy< CAsset_Skeleton::CLayer > >& GetLayerArray() { return m_Layer; }
+	inline const array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > >& GetLayerArray() const { return m_Layer; }
+	inline array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > >& GetLayerArray() { return m_Layer; }
 	
 	inline const CAsset_Skeleton::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
@@ -536,7 +486,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Bone.size())
 		{
-			m_Bone[SubPath.GetId()].copy(Value);
+			m_Bone[SubPath.GetId()] = Value;
 		}
 	}
 	
@@ -612,7 +562,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Layer.size())
 		{
-			m_Layer[SubPath.GetId()].copy(Value);
+			m_Layer[SubPath.GetId()] = Value;
 		}
 	}
 	

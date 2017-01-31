@@ -334,7 +334,7 @@ void CTextRenderer::CTextCache::SetText(const char* pText)
 	}
 	else if(m_Text.empty() || m_Text != pText)
 	{
-		m_Text.copy(pText);
+		m_Text = pText;
 		m_Rendered = false;
 	}
 }
@@ -422,7 +422,7 @@ bool CTextRenderer::LoadFont(const char* pFilename)
 	io_close(File);
 	
 	CFont* pFont = new CFont();
-	pFont->m_Filename.copy(FullPath);
+	pFont->m_Filename = FullPath;
 	
 	if(FT_New_Face(m_FTLibrary, pFont->m_Filename.buffer(), 0, &pFont->m_FtFace) != FT_Err_Ok)
 	{

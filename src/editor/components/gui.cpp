@@ -489,7 +489,7 @@ public:
 		m_pAssetsEditor(pPopup->m_pAssetsEditor),
 		m_ReadOnly(false)
 	{
-		m_Directory.copy(pDir);
+		m_Directory = pDir;
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
 	}
 	
@@ -499,7 +499,7 @@ public:
 		m_pAssetsEditor(pPopup->m_pAssetsEditor),
 		m_ReadOnly(ReadOnly)
 	{
-		m_Directory.copy(pDir);
+		m_Directory = pDir;
 		SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
 	}
 };
@@ -538,7 +538,7 @@ public:
 				SetIcon(pPopup->m_pAssetsEditor->m_Path_Sprite_IconAsset);
 				break;
 		}
-		m_Filename.copy(pFilename);
+		m_Filename = pFilename;
 	}
 	
 	virtual void Update(bool ParentEnabled)
@@ -831,8 +831,8 @@ void COpenSavePackageDialog::ListFiles()
 	if(!pIter)
 		return;
 	
-	sorted_array< dynamic_string, allocator_copy<dynamic_string> > Directories;
-	sorted_array< dynamic_string, allocator_copy<dynamic_string> > Files;
+	sorted_array<dynamic_string> Directories;
+	sorted_array<dynamic_string> Files;
 	bool ParentFolder = false;
 	
 	while(pIter->next())
@@ -840,9 +840,9 @@ void COpenSavePackageDialog::ListFiles()
 		const char* pFilename = pIter->get_filename();
 		
 		if(str_length(pFilename) > PathSize+1 && str_comp_num(pFilename, m_Directory.buffer(), PathSize) == 0)
-			Buffer.copy(pFilename + PathSize +1);
+			Buffer = (pFilename + PathSize +1);
 		else
-			Buffer.copy(pFilename);
+			Buffer = pFilename;
 		
 		int Length = Buffer.length();
 		if(Length > 0 && Buffer.buffer()[0] == '.')
@@ -857,7 +857,10 @@ void COpenSavePackageDialog::ListFiles()
 		}
 		
 		if(fs_is_dir(pFilename))
-			Directories.add_by_copy(pFilename);
+		{
+			dynamic_string& String = Directories.increment();
+			String = pFilename;
+		}
 		else
 		{
 			bool Found = false;
@@ -939,12 +942,12 @@ int COpenSavePackageDialog::GetFormat() const
 
 void COpenSavePackageDialog::SelectName(const char* pFilename)
 {
-	m_Filename.copy(pFilename);
+	m_Filename = pFilename;
 }
 
 void COpenSavePackageDialog::SelectDirectory(const char* pDirectory)
 {
-	m_Directory.copy(pDirectory);
+	m_Directory = pDirectory;
 	m_RefreshList = true;
 }
 
@@ -1431,7 +1434,7 @@ protected:
 				pMap->SetZoneLayer(SubPath, SubAssetPath);
 				
 				{
-					array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Data = pMapZoneTiles->GetTileArray();
+					array2d<CAsset_MapZoneTiles::CTile>& Data = pMapZoneTiles->GetTileArray();
 					Data.resize(64, 64);
 					
 					pMapZoneTiles->SetZoneTypePath(AssetsManager()->m_Path_ZoneType_TeeWorlds);

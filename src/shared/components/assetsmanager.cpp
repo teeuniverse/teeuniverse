@@ -940,7 +940,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 		if(!pNewAsset)\
 			return CAssetPath::Null();\
 		const CAsset_##Name* pOldAsset = GetAsset<CAsset_##Name>(Path);\
-		pNewAsset->copy(*pOldAsset);\
+		*pNewAsset = *pOldAsset;\
 		\
 		int DuplicateNum = ((PackageId == Path.GetPackageId()) ? 1 : 0);\
 		const char* pName = pOldAsset->GetName();\
@@ -1044,8 +1044,8 @@ void CAssetsManager::MapLayerTiles_HFlip(const CAssetPath& AssetPath, int Token)
 	if(!pLayer)
 		return;
 	
-	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > Tiles;
-	Tiles.copy(pLayer->GetTileArray());
+	array2d<CAsset_MapLayerTiles::CTile> Tiles;
+	Tiles = pLayer->GetTileArray();
 	
 	for(int j=0; j<Tiles.get_height(); j++)
 	{
@@ -1067,8 +1067,8 @@ void CAssetsManager::MapLayerTiles_VFlip(const CAssetPath& AssetPath, int Token)
 	if(!pLayer)
 		return;
 	
-	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > Tiles;
-	Tiles.copy(pLayer->GetTileArray());
+	array2d<CAsset_MapLayerTiles::CTile> Tiles;
+	Tiles = pLayer->GetTileArray();
 	
 	for(int j=0; j<Tiles.get_height(); j++)
 	{

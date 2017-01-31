@@ -117,22 +117,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_CharacterPart& Item)
-	{
-		CAsset::copy(Item);
-		m_CharacterPath = Item.m_CharacterPath;
-		m_CharacterPart = Item.m_CharacterPart;
-		m_SkeletonSkinPath = Item.m_SkeletonSkinPath;
-	}
-	
-	void transfert(CAsset_CharacterPart& Item)
-	{
-		CAsset::transfert(Item);
-		m_CharacterPath = std::move(Item.m_CharacterPath);
-		m_CharacterPart = std::move(Item.m_CharacterPart);
-		m_SkeletonSkinPath = std::move(Item.m_SkeletonSkinPath);
-	}
-	
 	inline CAssetPath GetCharacterPath() const { return m_CharacterPath; }
 	
 	inline CSubPath GetCharacterPart() const { return m_CharacterPart; }

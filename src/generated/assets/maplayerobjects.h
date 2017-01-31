@@ -181,26 +181,6 @@ public:
 	
 	public:
 		CVertex();
-		void copy(const CAsset_MapLayerObjects::CVertex& Item)
-		{
-			m_Position = Item.m_Position;
-			m_Weight = Item.m_Weight;
-			m_Color = Item.m_Color;
-			m_Smoothness = Item.m_Smoothness;
-			m_ControlPoint0 = Item.m_ControlPoint0;
-			m_ControlPoint1 = Item.m_ControlPoint1;
-		}
-		
-		void transfert(CAsset_MapLayerObjects::CVertex& Item)
-		{
-			m_Position = std::move(Item.m_Position);
-			m_Weight = std::move(Item.m_Weight);
-			m_Color = std::move(Item.m_Color);
-			m_Smoothness = std::move(Item.m_Smoothness);
-			m_ControlPoint0 = std::move(Item.m_ControlPoint0);
-			m_ControlPoint1 = std::move(Item.m_ControlPoint1);
-		}
-		
 		inline vec2 GetPosition() const { return m_Position; }
 		
 		inline float GetPositionX() const { return m_Position.x; }
@@ -318,7 +298,7 @@ public:
 		vec2 m_Size;
 		float m_Angle;
 		CAssetPath m_StylePath;
-		array< CVertex, allocator_copy< CVertex > > m_Vertex;
+		array< CVertex, allocator_default< CVertex > > m_Vertex;
 		int m_PathType;
 		int m_FillType;
 		int m_LineType;
@@ -328,32 +308,6 @@ public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
 		void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;
 		CObject();
-		void copy(const CAsset_MapLayerObjects::CObject& Item)
-		{
-			m_Position = Item.m_Position;
-			m_Size = Item.m_Size;
-			m_Angle = Item.m_Angle;
-			m_StylePath = Item.m_StylePath;
-			m_Vertex.copy(Item.m_Vertex);
-			m_PathType = Item.m_PathType;
-			m_FillType = Item.m_FillType;
-			m_LineType = Item.m_LineType;
-			m_OrthoTesselation = Item.m_OrthoTesselation;
-		}
-		
-		void transfert(CAsset_MapLayerObjects::CObject& Item)
-		{
-			m_Position = std::move(Item.m_Position);
-			m_Size = std::move(Item.m_Size);
-			m_Angle = std::move(Item.m_Angle);
-			m_StylePath = std::move(Item.m_StylePath);
-			m_Vertex.transfert(Item.m_Vertex);
-			m_PathType = std::move(Item.m_PathType);
-			m_FillType = std::move(Item.m_FillType);
-			m_LineType = std::move(Item.m_LineType);
-			m_OrthoTesselation = std::move(Item.m_OrthoTesselation);
-		}
-		
 		inline vec2 GetPosition() const { return m_Position; }
 		
 		inline float GetPositionX() const { return m_Position.x; }
@@ -374,8 +328,8 @@ public:
 		
 		inline const CAsset_MapLayerObjects::CVertex* GetVertexPtr() const { return m_Vertex.base_ptr(); }
 		
-		inline const array< CVertex, allocator_copy< CVertex > >& GetVertexArray() const { return m_Vertex; }
-		inline array< CVertex, allocator_copy< CVertex > >& GetVertexArray() { return m_Vertex; }
+		inline const array< CVertex, allocator_default< CVertex > >& GetVertexArray() const { return m_Vertex; }
+		inline array< CVertex, allocator_default< CVertex > >& GetVertexArray() { return m_Vertex; }
 		
 		inline const CAsset_MapLayerObjects::CVertex& GetVertex(const CSubPath& SubPath) const
 		{
@@ -499,7 +453,7 @@ public:
 		{
 			if(SubPath.GetId() < m_Vertex.size())
 			{
-				m_Vertex[SubPath.GetId()].copy(Value);
+				m_Vertex[SubPath.GetId()] = Value;
 			}
 		}
 		
@@ -648,7 +602,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > > m_Object;
+	array< CAsset_MapLayerObjects::CObject, allocator_default< CAsset_MapLayerObjects::CObject > > m_Object;
 	bool m_Visibility;
 
 public:
@@ -677,30 +631,14 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerObjects();
-	void copy(const CAsset_MapLayerObjects& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_Object.copy(Item.m_Object);
-		m_Visibility = Item.m_Visibility;
-	}
-	
-	void transfert(CAsset_MapLayerObjects& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_Object.transfert(Item.m_Object);
-		m_Visibility = std::move(Item.m_Visibility);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline int GetObjectArraySize() const { return m_Object.size(); }
 	
 	inline const CAsset_MapLayerObjects::CObject* GetObjectPtr() const { return m_Object.base_ptr(); }
 	
-	inline const array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > >& GetObjectArray() const { return m_Object; }
-	inline array< CAsset_MapLayerObjects::CObject, allocator_copy< CAsset_MapLayerObjects::CObject > >& GetObjectArray() { return m_Object; }
+	inline const array< CAsset_MapLayerObjects::CObject, allocator_default< CAsset_MapLayerObjects::CObject > >& GetObjectArray() const { return m_Object; }
+	inline array< CAsset_MapLayerObjects::CObject, allocator_default< CAsset_MapLayerObjects::CObject > >& GetObjectArray() { return m_Object; }
 	
 	inline const CAsset_MapLayerObjects::CObject& GetObject(const CSubPath& SubPath) const
 	{
@@ -780,12 +718,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CVertex, allocator_copy< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath) const
+	inline const array< CVertex, allocator_default< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();
 	}
-	inline array< CVertex, allocator_copy< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath)
+	inline array< CVertex, allocator_default< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();
@@ -919,7 +857,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Object.size())
 		{
-			m_Object[SubPath.GetId()].copy(Value);
+			m_Object[SubPath.GetId()] = Value;
 		}
 	}
 	

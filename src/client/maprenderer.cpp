@@ -98,7 +98,7 @@ vec2 CMapRenderer::TilePosToScreenPos(vec2 TilePos) const
 }
 
 template<class TILE>
-void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE, allocator_copy<TILE> >& Tiles, vec2 Pos, vec4 LayerColor, bool Repeat)
+void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, const array2d<TILE>& Tiles, vec2 Pos, vec4 LayerColor, bool Repeat)
 {
 	const CAsset_ZoneType* pZoneType = pMapRenderer->AssetsManager()->GetAsset<CAsset_ZoneType>(ZoneTypePath);
 	
@@ -426,12 +426,12 @@ void RenderTiles_Zone_Impl(CMapRenderer* pMapRenderer, CAssetPath ZoneTypePath, 
 	pMapRenderer->Graphics()->QuadsEnd();
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile>& Tiles, vec2 Pos, vec4 Color, bool Repeat)
 {
 	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, Repeat);
 }
 
-void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles, vec2 Pos, vec4 Color, bool Repeat)
+void CMapRenderer::RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile>& Tiles, vec2 Pos, vec4 Color, bool Repeat)
 {
 	RenderTiles_Zone_Impl(this, ZoneTypePath, Tiles, Pos, Color, Repeat);
 }
@@ -446,7 +446,7 @@ void CMapRenderer::RenderZoneIntData(CAssetPath ZonePath, CAssetPath ZoneTypePat
 	if(!pZoneType)
 		return;
 	
-	const array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> >& Tiles = pZoneLayer->GetTileArray();
+	const array2d< CAsset_MapZoneTiles::CTile>& Tiles = pZoneLayer->GetTileArray();
 	const array2d<int>& Data = pZoneLayer->GetDataIntArray();
 	if(Data.get_depth() <= 0)
 		return;
@@ -556,7 +556,7 @@ void CMapRenderer::RenderGrid(float Step, vec4 Color)
 	Graphics()->LinesEnd();
 }
 
-void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat)
+void CMapRenderer::RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile>& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat)
 {
 	AssetsRenderer()->TextureSet(ImagePath);
 	Graphics()->WrapMode(CGraphics::WRAP_CLAMP, CGraphics::WRAP_CLAMP);
@@ -931,7 +931,7 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 		RenderObject(pLayer->GetObject(*Iter), Pos, DrawMesh);
 }
 
-void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const array<CAsset_MapZoneObjects::CObject, allocator_copy<CAsset_MapZoneObjects::CObject> >& Objects, vec2 Pos, vec4 Color)
+void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const array<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color)
 {
 	array<CTexturedQuad> Quads;
 	

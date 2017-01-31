@@ -60,11 +60,11 @@ bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(float Time, CBoneAnimati
 		if(i == 0)
 			return false;
 		else
-			Frame.copy(m_KeyFrame[m_KeyFrame.size()-1]);
+			Frame = m_KeyFrame[m_KeyFrame.size()-1];
 	}
 	else if(i == 0)
 	{
-		Frame.copy(m_KeyFrame[0]);
+		Frame = m_KeyFrame[0];
 	}
 	else
 	{
@@ -133,11 +133,11 @@ bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(float Time, CLayerAnima
 		if(i == 0)
 			return false;
 		else
-			Frame.copy(m_KeyFrame[m_KeyFrame.size()-1]);
+			Frame = m_KeyFrame[m_KeyFrame.size()-1];
 	}
 	else if(i == 0)
 	{
-		Frame.copy(m_KeyFrame[0]);
+		Frame = m_KeyFrame[0];
 	}
 	else
 	{

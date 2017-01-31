@@ -438,7 +438,7 @@ void CAbstractLabel::SetText(const char* pText)
 	m_Localize = false;
 	
 	if(pText)
-		m_Text.copy(pText);
+		m_Text = pText;
 	else
 		m_Text.clear();
 	
@@ -448,7 +448,7 @@ void CAbstractLabel::SetText(const char* pText)
 void CAbstractLabel::SetText(const CLocalizableString& Text)
 {
 	m_Localize = true;
-	m_LString.copy(Text);
+	m_LString = Text;
 	
 	OnTextUpdated();
 }

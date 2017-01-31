@@ -46,7 +46,7 @@ protected:
 		for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
 		{
 			const typename ASSET::CObject& Object = pMapLayer->GetObject(*Iter);
-			const array< typename ASSET::CVertex, allocator_copy<typename ASSET::CVertex> >& Vertices = Object.GetVertexArray();
+			const array<typename ASSET::CVertex>& Vertices = Object.GetVertexArray();
 			vec2 Position;
 			matrix2x2 Transform;
 			Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);

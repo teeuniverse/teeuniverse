@@ -54,7 +54,7 @@ public:
 class CComboBoxPopup : public CPopup
 {
 public:
-	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array< CComboBox::CItem, allocator_copy<CComboBox::CItem> >& EnumDescriptions, CAssetPath ButtonStyle) :
+	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array<CComboBox::CItem>& EnumDescriptions, CAssetPath ButtonStyle) :
 		CPopup(pContext, CreatorRect, CreatorRect.w, -1, CPopup::ALIGNMENT_BOTTOM)
 	{
 		SetLevel(LEVEL_HIGHEST);
@@ -84,13 +84,13 @@ CComboBox::CComboBox(CGui *pContext) :
 void CComboBox::Add(const CLocalizableString& LString)
 {
 	CItem& Item = m_EnumDescriptions.increment();
-	Item.m_Description.copy(LString);
+	Item.m_Description = LString;
 }
 
 void CComboBox::Add(const CLocalizableString& LString, const CAssetPath& IconPath)
 {
 	CItem& Item = m_EnumDescriptions.increment();
-	Item.m_Description.copy(LString);
+	Item.m_Description = LString;
 	Item.m_IconPath = IconPath;
 }
 

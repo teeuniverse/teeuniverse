@@ -112,16 +112,6 @@ public:
 	
 	public:
 		CTile();
-		void copy(const CAsset_MapZoneTiles::CTile& Item)
-		{
-			m_Index = Item.m_Index;
-		}
-		
-		void transfert(CAsset_MapZoneTiles::CTile& Item)
-		{
-			m_Index = std::move(Item.m_Index);
-		}
-		
 		inline uint8 GetIndex() const { return m_Index; }
 		
 		inline void SetIndex(uint8 Value) { m_Index = Value; }
@@ -180,7 +170,7 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
-	array2d< CTile, allocator_copy< CTile > > m_Tile;
+	array2d< CTile, allocator_default< CTile > > m_Tile;
 	bool m_Visibility;
 	array2d< int, allocator_default< int > > m_DataInt;
 
@@ -208,26 +198,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapZoneTiles();
-	void copy(const CAsset_MapZoneTiles& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ZoneTypePath = Item.m_ZoneTypePath;
-		m_Tile.copy(Item.m_Tile);
-		m_Visibility = Item.m_Visibility;
-		m_DataInt.copy(Item.m_DataInt);
-	}
-	
-	void transfert(CAsset_MapZoneTiles& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_ZoneTypePath = std::move(Item.m_ZoneTypePath);
-		m_Tile.transfert(Item.m_Tile);
-		m_Visibility = std::move(Item.m_Visibility);
-		m_DataInt.transfert(Item.m_DataInt);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetZoneTypePath() const { return m_ZoneTypePath; }
@@ -240,8 +210,8 @@ public:
 	
 	inline const CAsset_MapZoneTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_copy< CTile > >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_copy< CTile > >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile, allocator_default< CTile > >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile, allocator_default< CTile > >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapZoneTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	

@@ -258,7 +258,7 @@ public:
 		{
 			ASSET* pOldAsset = m_pPackages[AssetPath.GetPackageId()]->GetAsset<ASSET>(AssetPath);
 			if(pOldAsset)
-				pOldAsset->copy(*pAsset);
+				*pOldAsset = *pAsset;
 		}
 	}
 	

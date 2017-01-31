@@ -62,7 +62,7 @@ bool CStorage::InitConfig(int argc, const char** argv)
 					if(fs_is_dir(argv[i+1]))
 					{
 						dynamic_string& DataDir = m_DataDirs.increment();
-						DataDir.copy(argv[i+1]);
+						DataDir = argv[i+1];
 						dbg_msg("Storage", "Data directory: %s", argv[i+1]);
 						i++;
 					}
@@ -84,7 +84,7 @@ bool CStorage::InitConfig(int argc, const char** argv)
 				{
 					if(fs_is_dir(argv[i+1]))
 					{
-						m_SaveDir.copy(argv[i+1]);
+						m_SaveDir = argv[i+1];
 						dbg_msg("Storage", "Save directory: %s", argv[i+1]);
 						i++;
 					}
@@ -124,7 +124,7 @@ bool CStorage::Init()
 	if(!m_SaveDir.empty())
 	{
 		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString.copy(m_SaveDir);
+		NewString = m_SaveDir;
 	}
 	else
 	{
@@ -137,7 +137,7 @@ bool CStorage::Init()
 		for(int i=0; i<m_DataDirs.size(); i++)
 		{
 			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString.copy(m_DataDirs[i]);
+			NewString = m_DataDirs[i];
 		}
 	}
 	else
@@ -207,7 +207,7 @@ void CStorage::AddPath(const char *pPath)
 	if(fs_is_dir(pPath))
 	{
 		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString.copy(pPath);
+		NewString = pPath;
 		dbg_msg("Storage", "added path '%s'", pPath);
 	}
 }
@@ -218,7 +218,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 	if(fs_is_dir("data/languages"))
 	{
 		dynamic_string& DataDir = m_DataDirs.increment();
-		DataDir.copy("data");
+		DataDir = "data";
 		return;
 	}
 
@@ -226,7 +226,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 	if(fs_is_dir(DATA_DIR"/languages"))
 	{
 		dynamic_string& DataDir = m_DataDirs.increment();
-		DataDir.copy(DATA_DIR);
+		DataDir = DATA_DIR;
 		return;
 	}
 
@@ -250,7 +250,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			if(fs_is_dir(TestPath.buffer()))
 			{
 				dynamic_string& DataDir = m_DataDirs.increment();
-				DataDir.copy(Path);
+				DataDir = Path;
 				return;
 			}
 		}
@@ -280,7 +280,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			if(fs_is_dir(TestPath.buffer()))
 			{
 				dynamic_string& DataDir = m_DataDirs.increment();
-				DataDir.copy(aDirs[i]);
+				DataDir = aDirs[i];
 				return;
 			}
 		}
@@ -295,12 +295,12 @@ const dynamic_string& CStorage::GetPath(int Type, const char *pDir, dynamic_stri
 {
 	if(Type >= 0 && Type < m_StoragePaths.size() && !m_StoragePaths[Type].empty())
 	{
-		Path.copy(m_StoragePaths[Type]);
+		Path = m_StoragePaths[Type];
 		Path.append("/");
 		Path.append(pDir);
 	}
 	else
-		Path.copy(pDir);
+		Path = pDir;
 	
 	return Path;
 }
@@ -349,7 +349,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 		else if(Type == TYPE_ABSOLUTE)
 		{
 			// check all available directories
-			FullPath.copy(pFilename);
+			FullPath = pFilename;
 			IOHANDLE Handle = io_open(pFilename, Flags);
 			if(Handle)
 				return Handle;
@@ -369,7 +369,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 void CStorage::GetCompletePath(int Type, const char *pDir, dynamic_string& Buffer)
 {
 	if(Type == TYPE_ABSOLUTE)
-		Buffer.copy(pDir);
+		Buffer = pDir;
 	else if(Type < 0 || Type >= m_StoragePaths.size())
 		Buffer.clear();
 	else

@@ -205,28 +205,6 @@ public:
 	
 	public:
 		CIndex();
-		void copy(const CAsset_ZoneType::CIndex& Item)
-		{
-			m_Used = Item.m_Used;
-			m_Description = Item.m_Description;
-			m_Color = Item.m_Color;
-			m_Title = Item.m_Title;
-			m_BorderIndex = Item.m_BorderIndex;
-			m_BorderColor = Item.m_BorderColor;
-			m_Group = Item.m_Group;
-		}
-		
-		void transfert(CAsset_ZoneType::CIndex& Item)
-		{
-			m_Used = std::move(Item.m_Used);
-			m_Description = std::move(Item.m_Description);
-			m_Color = std::move(Item.m_Color);
-			m_Title = std::move(Item.m_Title);
-			m_BorderIndex = std::move(Item.m_BorderIndex);
-			m_BorderColor = std::move(Item.m_BorderColor);
-			m_Group = std::move(Item.m_Group);
-		}
-		
 		inline bool GetUsed() const { return m_Used; }
 		
 		inline const char* GetDescription() const { return m_Description.buffer(); }
@@ -308,26 +286,6 @@ public:
 	
 	public:
 		CDataInt();
-		void copy(const CAsset_ZoneType::CDataInt& Item)
-		{
-			m_Title = Item.m_Title;
-			m_Description = Item.m_Description;
-			m_DefaultValue = Item.m_DefaultValue;
-			m_MinValue = Item.m_MinValue;
-			m_MaxValue = Item.m_MaxValue;
-			m_NullValue = Item.m_NullValue;
-		}
-		
-		void transfert(CAsset_ZoneType::CDataInt& Item)
-		{
-			m_Title = std::move(Item.m_Title);
-			m_Description = std::move(Item.m_Description);
-			m_DefaultValue = std::move(Item.m_DefaultValue);
-			m_MinValue = std::move(Item.m_MinValue);
-			m_MaxValue = std::move(Item.m_MaxValue);
-			m_NullValue = std::move(Item.m_NullValue);
-		}
-		
 		inline const char* GetTitle() const { return m_Title.buffer(); }
 		
 		inline const char* GetDescription() const { return m_Description.buffer(); }
@@ -396,9 +354,9 @@ public:
 	
 
 private:
-	array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > > m_Index;
+	array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > > m_Index;
 	CAssetPath m_ImagePath;
-	array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > > m_DataInt;
+	array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > > m_DataInt;
 	array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > > m_Group;
 
 public:
@@ -424,30 +382,12 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_ZoneType& Item)
-	{
-		CAsset::copy(Item);
-		m_Index.copy(Item.m_Index);
-		m_ImagePath = Item.m_ImagePath;
-		m_DataInt.copy(Item.m_DataInt);
-		m_Group.copy(Item.m_Group);
-	}
-	
-	void transfert(CAsset_ZoneType& Item)
-	{
-		CAsset::transfert(Item);
-		m_Index.transfert(Item.m_Index);
-		m_ImagePath = std::move(Item.m_ImagePath);
-		m_DataInt.transfert(Item.m_DataInt);
-		m_Group.transfert(Item.m_Group);
-	}
-	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
 	
 	inline const CAsset_ZoneType::CIndex* GetIndexPtr() const { return m_Index.base_ptr(); }
 	
-	inline const array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > >& GetIndexArray() const { return m_Index; }
-	inline array< CAsset_ZoneType::CIndex, allocator_copy< CAsset_ZoneType::CIndex > >& GetIndexArray() { return m_Index; }
+	inline const array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > >& GetIndexArray() const { return m_Index; }
+	inline array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > >& GetIndexArray() { return m_Index; }
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const
 	{
@@ -512,8 +452,8 @@ public:
 	
 	inline const CAsset_ZoneType::CDataInt* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
 	
-	inline const array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > >& GetDataIntArray() const { return m_DataInt; }
-	inline array< CAsset_ZoneType::CDataInt, allocator_copy< CAsset_ZoneType::CDataInt > >& GetDataIntArray() { return m_DataInt; }
+	inline const array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > >& GetDataIntArray() const { return m_DataInt; }
+	inline array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > >& GetDataIntArray() { return m_DataInt; }
 	
 	inline const CAsset_ZoneType::CDataInt& GetDataInt(const CSubPath& SubPath) const
 	{
@@ -586,7 +526,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Index.size())
 		{
-			m_Index[SubPath.GetId()].copy(Value);
+			m_Index[SubPath.GetId()] = Value;
 		}
 	}
 	
@@ -640,7 +580,7 @@ public:
 	{
 		if(SubPath.GetId() < m_DataInt.size())
 		{
-			m_DataInt[SubPath.GetId()].copy(Value);
+			m_DataInt[SubPath.GetId()] = Value;
 		}
 	}
 	

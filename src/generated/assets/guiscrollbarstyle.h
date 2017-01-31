@@ -136,28 +136,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiScrollbarStyle();
-	void copy(const CAsset_GuiScrollbarStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_RectPath = Item.m_RectPath;
-		m_DefaultRailPath = Item.m_DefaultRailPath;
-		m_DefaultSliderPath = Item.m_DefaultSliderPath;
-		m_MouseOverSliderPath = Item.m_MouseOverSliderPath;
-		m_Margin = Item.m_Margin;
-		m_Padding = Item.m_Padding;
-	}
-	
-	void transfert(CAsset_GuiScrollbarStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_RectPath = std::move(Item.m_RectPath);
-		m_DefaultRailPath = std::move(Item.m_DefaultRailPath);
-		m_DefaultSliderPath = std::move(Item.m_DefaultSliderPath);
-		m_MouseOverSliderPath = std::move(Item.m_MouseOverSliderPath);
-		m_Margin = std::move(Item.m_Margin);
-		m_Padding = std::move(Item.m_Padding);
-	}
-	
 	inline CAssetPath GetRectPath() const { return m_RectPath; }
 	
 	inline CAssetPath GetDefaultRailPath() const { return m_DefaultRailPath; }

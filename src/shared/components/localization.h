@@ -70,13 +70,25 @@ public:
 			m_Type = TYPE_NONE;
 		}
 		
+		CParameter(const CParameter& Param)
+		{
+			m_Type = TYPE_NONE;
+			*this = Param;
+		}
+		
+		CParameter(CParameter&& Param)
+		{
+			m_Type = TYPE_NONE;
+			*this = std::move(Param);
+		}
+		
 		~CParameter()
 		{
 			if(m_Type == TYPE_STRING && m_String.m_pValue)
 				delete[] m_String.m_pValue;
 		}
 		
-		inline void copy(const CParameter& Param)
+		inline void operator=(const CParameter& Param)
 		{			
 			m_Name = Param.m_Name;
 			
@@ -97,7 +109,7 @@ public:
 				m_String = Param.m_String;
 		}
 		
-		inline void transfert(CParameter& Param)
+		inline void operator=(CParameter&& Param)
 		{
 			m_String = Param.m_String;
 			m_Type = Param.m_Type;
@@ -110,7 +122,7 @@ public:
 	
 protected:
 	dynamic_string m_Text;
-	array< CParameter, allocator_copy<CParameter> > m_Parameters;
+	array< CParameter > m_Parameters;
 
 public:
 	CLocalizableString()
@@ -125,21 +137,9 @@ public:
 	{
 		
 	}
-		
-	inline void copy(const CLocalizableString& LString)
-	{
-		m_Text = LString.m_Text;
-		m_Parameters.copy(LString.m_Parameters);
-	}
-	
-	inline void transfert(CLocalizableString& LString)
-	{
-		m_Text = LString.m_Text;
-		m_Parameters.transfert(LString.m_Parameters);
-	}
 	
 	inline const char* GetText() const { return m_Text.buffer(); }
-	inline const array< CParameter, allocator_copy<CParameter> >& GetParameters() const { return m_Parameters; }
+	inline const array< CParameter >& GetParameters() const { return m_Parameters; }
 	
 	inline void AddInteger(const char* pName, int Value)
 	{

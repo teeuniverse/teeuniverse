@@ -111,20 +111,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_EntityType& Item)
-	{
-		CAsset::copy(Item);
-		m_GizmoPath = Item.m_GizmoPath;
-		m_CollisionRadius = Item.m_CollisionRadius;
-	}
-	
-	void transfert(CAsset_EntityType& Item)
-	{
-		CAsset::transfert(Item);
-		m_GizmoPath = std::move(Item.m_GizmoPath);
-		m_CollisionRadius = std::move(Item.m_CollisionRadius);
-	}
-	
 	inline CAssetPath GetGizmoPath() const { return m_GizmoPath; }
 	
 	inline float GetCollisionRadius() const { return m_CollisionRadius; }

@@ -28,7 +28,7 @@ public:
 
 	virtual void Print(const char* pText, int Type = CLI_LINETYPE_NORMAL)
 	{
-		m_String.copy(pText);
+		m_String = pText;
 	}
 };
 

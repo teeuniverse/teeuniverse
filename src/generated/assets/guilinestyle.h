@@ -137,26 +137,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiLineStyle();
-	void copy(const CAsset_GuiLineStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_Flags = Item.m_Flags;
-		m_BorderColor = Item.m_BorderColor;
-		m_ImageLPath = Item.m_ImageLPath;
-		m_ImageMPath = Item.m_ImageMPath;
-		m_ImageRPath = Item.m_ImageRPath;
-	}
-	
-	void transfert(CAsset_GuiLineStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_Flags = std::move(Item.m_Flags);
-		m_BorderColor = std::move(Item.m_BorderColor);
-		m_ImageLPath = std::move(Item.m_ImageLPath);
-		m_ImageMPath = std::move(Item.m_ImageMPath);
-		m_ImageRPath = std::move(Item.m_ImageRPath);
-	}
-	
 	inline int GetFlags() const { return m_Flags; }
 	
 	inline vec4 GetBorderColor() const { return m_BorderColor; }

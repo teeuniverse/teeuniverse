@@ -42,7 +42,7 @@ TEST(!str_check_pathname(".."))
 {
 	_dynamic_string<16> String;
 	
-	String.copy("test");
+	String = "test";
 	TEST_WITH_OUTPUT(String == "test", String.buffer())
 	
 	String.append(" hello universe");
@@ -52,12 +52,12 @@ TEST(!str_check_pathname(".."))
 	String.clear();
 	TEST_WITH_OUTPUT(String == "", String.buffer())
 	
-	String.copy("teeworlds");
+	String = "teeworlds";
 	String.insert_at(3, "universe is a fork of tee");
 	TEST_WITH_OUTPUT(String == "teeuniverse is a fork of teeworlds", String.buffer())
 	
 	String.clear();
-	String.copy("123456789");
+	String = "123456789";
 	String.insert_at(4, "a");
 	TEST_WITH_OUTPUT(String == "1234a56789", String.buffer())
 }

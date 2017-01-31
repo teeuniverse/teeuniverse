@@ -51,7 +51,7 @@ public:
 		m_pBoolean(pBoolean)
 	{
 		SetToggleStyle(pAssetsEditor->m_Path_Toggle_Toolbar);
-		m_LHint.copy(LHint);
+		m_LHint = LHint;
 	}
 
 	virtual void OnMouseMove()
@@ -151,7 +151,7 @@ void CViewMaterial::RenderView()
 	MapRenderer()->SetCamera(vec2(0.0f, 0.0f), 1.0f);
 	
 	CAsset_MapLayerObjects::CObject Object;
-	array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& Vertices = Object.GetVertexArray();
+	array<CAsset_MapLayerObjects::CVertex>& Vertices = Object.GetVertexArray();
 	
 	Object.SetPosition(0.0f);
 	Object.SetSize(1.0f);

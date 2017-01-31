@@ -104,7 +104,7 @@ void CAssetsHistory::AddOperation_EditAsset(CAssetPath AssetPath, int Token)
 				COperation& Operation = m_Entries[m_LastEntry].m_Operations.back();\
 				Operation.m_AssetPath = AssetPath;\
 				CAsset_##Name* pSavedAsset = new CAsset_##Name;\
-				pSavedAsset->copy(*pAsset);\
+				*pSavedAsset = *pAsset;\
 				Operation.m_pAsset.reset(pSavedAsset);\
 				Operation.m_Operation = OPERATION_EDITASSET;\
 			}\

@@ -76,6 +76,24 @@ public:
 		init();
 	}
 
+	/*
+		Function: array constructor
+	*/
+	array(const array& other)
+	{
+		init();
+		*this = other;
+	}
+
+	/*
+		Function: array constructor
+	*/
+	array(array&& other)
+	{
+		init();
+		*this = std::move(other);
+	}
+
 
 	/*
 		Function: array destructor
@@ -89,7 +107,7 @@ public:
 	/*
 		Function: array copy
 	*/
-	void copy(const array &other)
+	void operator=(const array& other)
 	{
 		if(m_pData)
 			ALLOCATOR::free_array(m_pData);
@@ -104,7 +122,7 @@ public:
 	/*
 		Function: array copy
 	*/
-	void transfert(array &other)
+	void operator=(array&& other)
 	{
 		if(m_pData)
 			ALLOCATOR::free_array(m_pData);

@@ -31,11 +31,6 @@ private:
 	int m_Depth;
 	T* m_pData;
 
-private:
-	 //throw a compilation error if the object is copied
-	array2d(const array2d&);
-	array2d& operator=(const array2d&);
-
 public:
 	array2d() :
 		m_Width(0),
@@ -46,13 +41,31 @@ public:
 		
 	}
 	
+	array2d(const array2d& Item) :
+		m_Width(0),
+		m_Height(0),
+		m_Depth(0),
+		m_pData(NULL)
+	{
+		*this = Item;
+	}
+	
+	array2d(array2d&& Item) :
+		m_Width(0),
+		m_Height(0),
+		m_Depth(0),
+		m_pData(NULL)
+	{
+		*this = std::move(Item);
+	}
+	
 	~array2d()
 	{
 		if(m_pData)
 			ALLOCATOR::free_array(m_pData);
 	}
 	
-	void copy(const array2d& Item)
+	array2d& operator=(const array2d& Item)
 	{
 		if(m_pData)
 			ALLOCATOR::free_array(m_pData);
@@ -65,9 +78,11 @@ public:
 		m_pData = ALLOCATOR::alloc_array(Size);
 		for(int i=0; i<Size; i++)
 			ALLOCATOR::copy(m_pData[i], Item.m_pData[i]);
+		
+		return *this;
 	}
 	
-	void transfert(array2d& Item)
+	array2d& operator=(array2d&& Item)
 	{
 		if(m_pData)
 			ALLOCATOR::free_array(m_pData);
@@ -77,6 +92,8 @@ public:
 		m_Depth = Item.m_Depth;
 		m_pData = Item.m_pData;
 		Item.m_pData = NULL;
+		
+		return *this;
 	}
 	
 	inline int get_width() const { return m_Width; }

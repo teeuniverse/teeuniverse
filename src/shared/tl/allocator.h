@@ -34,6 +34,8 @@
 #ifndef __SHARED_TL_ALLOCATOR__
 #define __SHARED_TL_ALLOCATOR__
 
+#include <utility>
+
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
 template <class T>
@@ -47,23 +49,9 @@ public:
 	static void free_array(T *p) { delete [] p; }
 	
 	static void copy(T& a, const T& b) { a = b; }
-	static void transfert(T& a, T& b) { a = b; }
+	static void transfert(T& a, T& b) { a = std::move(b); }
 };
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
-
-template <class T>
-class allocator_copy
-{
-public:
-	static T *alloc() { return new T; }
-	static void free(T *p) { delete p; }
-
-	static T *alloc_array(int size) { return new T [size]; }
-	static void free_array(T *p) { delete [] p; }
-	
-	static void copy(T& a, const T& b) { a.copy(b); }
-	static void transfert(T& a, T& b) { a.transfert(b); }
-};
 
 #endif

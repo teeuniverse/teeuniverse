@@ -177,32 +177,6 @@ public:
 	
 	public:
 		CBone();
-		void copy(const CAsset_SkeletonSkin::CBone& Item)
-		{
-			m_SpritePath = Item.m_SpritePath;
-			m_BonePath = Item.m_BonePath;
-			m_LayerPath = Item.m_LayerPath;
-			m_Anchor = Item.m_Anchor;
-			m_Translation = Item.m_Translation;
-			m_Scale = Item.m_Scale;
-			m_Angle = Item.m_Angle;
-			m_Color = Item.m_Color;
-			m_Alignment = Item.m_Alignment;
-		}
-		
-		void transfert(CAsset_SkeletonSkin::CBone& Item)
-		{
-			m_SpritePath = std::move(Item.m_SpritePath);
-			m_BonePath = std::move(Item.m_BonePath);
-			m_LayerPath = std::move(Item.m_LayerPath);
-			m_Anchor = std::move(Item.m_Anchor);
-			m_Translation = std::move(Item.m_Translation);
-			m_Scale = std::move(Item.m_Scale);
-			m_Angle = std::move(Item.m_Angle);
-			m_Color = std::move(Item.m_Color);
-			m_Alignment = std::move(Item.m_Alignment);
-		}
-		
 		inline CAssetPath GetSpritePath() const { return m_SpritePath; }
 		
 		inline CSubPath GetBonePath() const { return m_BonePath; }
@@ -300,7 +274,7 @@ public:
 
 private:
 	CAssetPath m_SkeletonPath;
-	array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > > m_Sprite;
+	array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > > m_Sprite;
 
 public:
 	virtual ~CAsset_SkeletonSkin() {}
@@ -325,28 +299,14 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_SkeletonSkin& Item)
-	{
-		CAsset::copy(Item);
-		m_SkeletonPath = Item.m_SkeletonPath;
-		m_Sprite.copy(Item.m_Sprite);
-	}
-	
-	void transfert(CAsset_SkeletonSkin& Item)
-	{
-		CAsset::transfert(Item);
-		m_SkeletonPath = std::move(Item.m_SkeletonPath);
-		m_Sprite.transfert(Item.m_Sprite);
-	}
-	
 	inline CAssetPath GetSkeletonPath() const { return m_SkeletonPath; }
 	
 	inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 	
 	inline const CAsset_SkeletonSkin::CBone* GetSpritePtr() const { return m_Sprite.base_ptr(); }
 	
-	inline const array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() const { return m_Sprite; }
-	inline array< CAsset_SkeletonSkin::CBone, allocator_copy< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() { return m_Sprite; }
+	inline const array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() const { return m_Sprite; }
+	inline array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() { return m_Sprite; }
 	
 	inline const CAsset_SkeletonSkin::CBone& GetSprite(const CSubPath& SubPath) const
 	{
@@ -455,7 +415,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Sprite.size())
 		{
-			m_Sprite[SubPath.GetId()].copy(Value);
+			m_Sprite[SubPath.GetId()] = Value;
 		}
 	}
 	

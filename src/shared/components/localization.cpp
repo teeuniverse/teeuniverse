@@ -298,7 +298,7 @@ CLocalization::~CLocalization()
 
 bool CLocalization::InitConfig(int argc, const char** argv)
 {
-	m_Cfg_MainLanguage.copy("en");
+	m_Cfg_MainLanguage = "en";
 	
 	CLI()->RegisterConfigString("language", "What language to use", &m_Cfg_MainLanguage);
 	
@@ -616,7 +616,7 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 		return;
 	}
 	
-	const array< CLocalizableString::CParameter, allocator_copy<CLocalizableString::CParameter> >& Parameters = LString.GetParameters();
+	const array<CLocalizableString::CParameter>& Parameters = LString.GetParameters();
 		
 	int Iter = 0;
 	int Start = Iter;

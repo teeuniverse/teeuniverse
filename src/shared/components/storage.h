@@ -101,8 +101,8 @@ public:
 	};
 
 protected:
-	array<dynamic_string, allocator_copy<dynamic_string> > m_StoragePaths;
-	array<dynamic_string, allocator_copy<dynamic_string> > m_DataDirs;
+	array<dynamic_string> m_StoragePaths;
+	array<dynamic_string> m_DataDirs;
 	dynamic_string m_SaveDir;
 	dynamic_string m_CurrentDir;
 	bool m_InitializeSaveDir;

@@ -122,24 +122,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_GuiButtonStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_IdleStylePath = Item.m_IdleStylePath;
-		m_MouseOverStylePath = Item.m_MouseOverStylePath;
-		m_ReadOnlyStylePath = Item.m_ReadOnlyStylePath;
-		m_FocusStylePath = Item.m_FocusStylePath;
-	}
-	
-	void transfert(CAsset_GuiButtonStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_IdleStylePath = std::move(Item.m_IdleStylePath);
-		m_MouseOverStylePath = std::move(Item.m_MouseOverStylePath);
-		m_ReadOnlyStylePath = std::move(Item.m_ReadOnlyStylePath);
-		m_FocusStylePath = std::move(Item.m_FocusStylePath);
-	}
-	
 	inline CAssetPath GetIdleStylePath() const { return m_IdleStylePath; }
 	
 	inline CAssetPath GetMouseOverStylePath() const { return m_MouseOverStylePath; }

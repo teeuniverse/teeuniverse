@@ -224,7 +224,7 @@ bool CInput::PreUpdate()
 					if(strlen(Event.edit.text))
 					{
 						m_Composing = true;
-						m_EditedText.copy((const char*) Event.edit.text);
+						m_EditedText = (const char*) Event.edit.text;
 					}
 					else
 					{

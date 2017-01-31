@@ -236,7 +236,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 				if(ShiftY != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
 				{
 					CAsset_MapLayerTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-					array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles = pEditableLayer->GetTileArray();
+					array2d<CAsset_MapLayerTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
 					Tiles.apply_shift(0, ShiftY);
 					
 					int ClipSizeY = pLayer->GetTileHeight() + ShiftY;
@@ -254,7 +254,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 				if((ShiftX != 0 || ShiftY != 0) && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
 				{
 					CAsset_MapLayerTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-					array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles = pEditableLayer->GetTileArray();
+					array2d<CAsset_MapLayerTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
 					Tiles.apply_shift(ShiftX, ShiftY);
 					
 					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;
@@ -273,7 +273,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 				if(ShiftY != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
 				{
 					CAsset_MapLayerTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-					array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles = pEditableLayer->GetTileArray();
+					array2d<CAsset_MapLayerTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
 					Tiles.apply_shift(0, ShiftY);
 					
 					int ClipSizeY = pLayer->GetTileHeight() + ShiftY;
@@ -292,7 +292,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 				if(ShiftX != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
 				{
 					CAsset_MapLayerTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-					array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles = pEditableLayer->GetTileArray();
+					array2d<CAsset_MapLayerTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
 					Tiles.apply_shift(ShiftX, 0);
 					
 					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;
@@ -318,7 +318,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 				if(ShiftX != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
 				{
 					CAsset_MapLayerTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-					array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> >& Tiles = pEditableLayer->GetTileArray();
+					array2d<CAsset_MapLayerTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
 					Tiles.apply_shift(ShiftX, 0);
 					
 					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;

@@ -300,7 +300,7 @@ void CBindsManager::Bind(int Key, int Modifier, const char* pCommand, int BindNu
 		m_CommandToKey.set(pCommand, Bind);
 	}
 	
-	m_aKeyToCommand[Modifier][Key].copy(pCommand);
+	m_aKeyToCommand[Modifier][Key] = pCommand;
 }
 
 bool CBindsManager::CommandToKey(const char* pCommand, CKey& Key, int BindNum) const

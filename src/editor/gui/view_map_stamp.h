@@ -30,9 +30,9 @@ protected:
 	bool m_DragEnabled;
 	bool m_SelectionEnabled;
 	array2d<int> m_IntDataSelection;
-	array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > m_TileSelection;
-	array< CAsset_MapLayerQuads::CQuad, allocator_copy<CAsset_MapLayerQuads::CQuad> > m_QuadSelection;
-	array< CAsset_MapEntities::CEntity, allocator_copy<CAsset_MapEntities::CEntity> > m_EntitySelection;
+	array2d<CAsset_MapLayerTiles::CTile> m_TileSelection;
+	array<CAsset_MapLayerQuads::CQuad> m_QuadSelection;
+	array<CAsset_MapEntities::CEntity> m_EntitySelection;
 	vec2 m_Pivot;
 	int m_Token;
 	gui::CHListLayout* m_pOptions;

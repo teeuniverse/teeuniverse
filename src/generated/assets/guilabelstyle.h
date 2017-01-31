@@ -170,36 +170,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiLabelStyle();
-	void copy(const CAsset_GuiLabelStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_MinWidth = Item.m_MinWidth;
-		m_MinHeight = Item.m_MinHeight;
-		m_Margin = Item.m_Margin;
-		m_Padding = Item.m_Padding;
-		m_Spacing = Item.m_Spacing;
-		m_FontSize = Item.m_FontSize;
-		m_TextColor = Item.m_TextColor;
-		m_TextAlignment = Item.m_TextAlignment;
-		m_RectPath = Item.m_RectPath;
-		m_IconPath = Item.m_IconPath;
-	}
-	
-	void transfert(CAsset_GuiLabelStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_MinWidth = std::move(Item.m_MinWidth);
-		m_MinHeight = std::move(Item.m_MinHeight);
-		m_Margin = std::move(Item.m_Margin);
-		m_Padding = std::move(Item.m_Padding);
-		m_Spacing = std::move(Item.m_Spacing);
-		m_FontSize = std::move(Item.m_FontSize);
-		m_TextColor = std::move(Item.m_TextColor);
-		m_TextAlignment = std::move(Item.m_TextAlignment);
-		m_RectPath = std::move(Item.m_RectPath);
-		m_IconPath = std::move(Item.m_IconPath);
-	}
-	
 	inline int GetMinWidth() const { return m_MinWidth; }
 	
 	inline int GetMinHeight() const { return m_MinHeight; }

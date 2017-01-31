@@ -230,48 +230,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiRectStyle();
-	void copy(const CAsset_GuiRectStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_Flags = Item.m_Flags;
-		m_BackgroundColor = Item.m_BackgroundColor;
-		m_BackgroundPadding = Item.m_BackgroundPadding;
-		m_BorderColor = Item.m_BorderColor;
-		m_BorderFlags = Item.m_BorderFlags;
-		m_CornerRadius = Item.m_CornerRadius;
-		m_CornerFlags = Item.m_CornerFlags;
-		m_ImagePadding = Item.m_ImagePadding;
-		m_ImageTPath = Item.m_ImageTPath;
-		m_ImageRPath = Item.m_ImageRPath;
-		m_ImageBPath = Item.m_ImageBPath;
-		m_ImageLPath = Item.m_ImageLPath;
-		m_ImageTRPath = Item.m_ImageTRPath;
-		m_ImageBRPath = Item.m_ImageBRPath;
-		m_ImageBLPath = Item.m_ImageBLPath;
-		m_ImageTLPath = Item.m_ImageTLPath;
-	}
-	
-	void transfert(CAsset_GuiRectStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_Flags = std::move(Item.m_Flags);
-		m_BackgroundColor = std::move(Item.m_BackgroundColor);
-		m_BackgroundPadding = std::move(Item.m_BackgroundPadding);
-		m_BorderColor = std::move(Item.m_BorderColor);
-		m_BorderFlags = std::move(Item.m_BorderFlags);
-		m_CornerRadius = std::move(Item.m_CornerRadius);
-		m_CornerFlags = std::move(Item.m_CornerFlags);
-		m_ImagePadding = std::move(Item.m_ImagePadding);
-		m_ImageTPath = std::move(Item.m_ImageTPath);
-		m_ImageRPath = std::move(Item.m_ImageRPath);
-		m_ImageBPath = std::move(Item.m_ImageBPath);
-		m_ImageLPath = std::move(Item.m_ImageLPath);
-		m_ImageTRPath = std::move(Item.m_ImageTRPath);
-		m_ImageBRPath = std::move(Item.m_ImageBRPath);
-		m_ImageBLPath = std::move(Item.m_ImageBLPath);
-		m_ImageTLPath = std::move(Item.m_ImageTLPath);
-	}
-	
 	inline int GetFlags() const { return m_Flags; }
 	
 	inline vec4 GetBackgroundColor() const { return m_BackgroundColor; }

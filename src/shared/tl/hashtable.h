@@ -79,7 +79,7 @@ public:
 		}
 		
 		entry& NewEntry = m_Table[Hash].increment();
-		NewEntry.m_Key.copy(pKey);
+		NewEntry.m_Key = pKey;
 		return &NewEntry.m_Data;
 	}
 

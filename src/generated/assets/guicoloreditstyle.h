@@ -135,28 +135,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_GuiColorEditStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_ButtonStylePath = Item.m_ButtonStylePath;
-		m_PopupStylePath = Item.m_PopupStylePath;
-		m_RGBIconPath = Item.m_RGBIconPath;
-		m_HSVIconPath = Item.m_HSVIconPath;
-		m_SquareIconPath = Item.m_SquareIconPath;
-		m_WheelIconPath = Item.m_WheelIconPath;
-	}
-	
-	void transfert(CAsset_GuiColorEditStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_ButtonStylePath = std::move(Item.m_ButtonStylePath);
-		m_PopupStylePath = std::move(Item.m_PopupStylePath);
-		m_RGBIconPath = std::move(Item.m_RGBIconPath);
-		m_HSVIconPath = std::move(Item.m_HSVIconPath);
-		m_SquareIconPath = std::move(Item.m_SquareIconPath);
-		m_WheelIconPath = std::move(Item.m_WheelIconPath);
-	}
-	
 	inline CAssetPath GetButtonStylePath() const { return m_ButtonStylePath; }
 	
 	inline CAssetPath GetPopupStylePath() const { return m_PopupStylePath; }

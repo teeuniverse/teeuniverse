@@ -242,22 +242,6 @@ public:
 		
 		public:
 			CFrame();
-			void copy(const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& Item)
-			{
-				m_Translation = Item.m_Translation;
-				m_Scale = Item.m_Scale;
-				m_Angle = Item.m_Angle;
-				m_Alignment = Item.m_Alignment;
-			}
-			
-			void transfert(CAsset_SkeletonAnimation::CBoneAnimation::CFrame& Item)
-			{
-				m_Translation = std::move(Item.m_Translation);
-				m_Scale = std::move(Item.m_Scale);
-				m_Angle = std::move(Item.m_Angle);
-				m_Alignment = std::move(Item.m_Alignment);
-			}
-			
 			inline vec2 GetTranslation() const { return m_Translation; }
 			
 			inline float GetTranslationX() const { return m_Translation.x; }
@@ -336,18 +320,6 @@ public:
 		
 		public:
 			CKeyFrame();
-			void copy(const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Item)
-			{
-				CAsset_SkeletonAnimation::CBoneAnimation::CFrame::copy(Item);
-				m_Time = Item.m_Time;
-			}
-			
-			void transfert(CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Item)
-			{
-				CAsset_SkeletonAnimation::CBoneAnimation::CFrame::transfert(Item);
-				m_Time = std::move(Item.m_Time);
-			}
-			
 			inline int GetTime() const { return m_Time; }
 			
 			inline void SetTime(int Value) { m_Time = Value; }
@@ -399,7 +371,7 @@ public:
 		
 	
 	private:
-		array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > > m_KeyFrame;
+		array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > > m_KeyFrame;
 		CSubPath m_BonePath;
 		int m_CycleType;
 	
@@ -409,26 +381,12 @@ public:
 		int TimeToKeyFrame(float Time) const;
 		bool GetFrame(float Time, CFrame& Frame) const;
 		CBoneAnimation();
-		void copy(const CAsset_SkeletonAnimation::CBoneAnimation& Item)
-		{
-			m_KeyFrame.copy(Item.m_KeyFrame);
-			m_BonePath = Item.m_BonePath;
-			m_CycleType = Item.m_CycleType;
-		}
-		
-		void transfert(CAsset_SkeletonAnimation::CBoneAnimation& Item)
-		{
-			m_KeyFrame.transfert(Item.m_KeyFrame);
-			m_BonePath = std::move(Item.m_BonePath);
-			m_CycleType = std::move(Item.m_CycleType);
-		}
-		
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
 		
 		inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame* GetKeyFramePtr() const { return m_KeyFrame.base_ptr(); }
 		
-		inline const array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetKeyFrameArray() const { return m_KeyFrame; }
-		inline array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetKeyFrameArray() { return m_KeyFrame; }
+		inline const array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetKeyFrameArray() const { return m_KeyFrame; }
+		inline array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetKeyFrameArray() { return m_KeyFrame; }
 		
 		inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetKeyFrame(const CSubPath& SubPath) const
 		{
@@ -455,7 +413,7 @@ public:
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 			{
-				m_KeyFrame[SubPath.GetId()].copy(Value);
+				m_KeyFrame[SubPath.GetId()] = Value;
 			}
 		}
 		
@@ -542,18 +500,6 @@ public:
 		
 		public:
 			CFrame();
-			void copy(const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& Item)
-			{
-				m_Color = Item.m_Color;
-				m_State = Item.m_State;
-			}
-			
-			void transfert(CAsset_SkeletonAnimation::CLayerAnimation::CFrame& Item)
-			{
-				m_Color = std::move(Item.m_Color);
-				m_State = std::move(Item.m_State);
-			}
-			
 			inline vec4 GetColor() const { return m_Color; }
 			
 			inline int GetState() const { return m_State; }
@@ -608,18 +554,6 @@ public:
 		
 		public:
 			CKeyFrame();
-			void copy(const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& Item)
-			{
-				CAsset_SkeletonAnimation::CLayerAnimation::CFrame::copy(Item);
-				m_Time = Item.m_Time;
-			}
-			
-			void transfert(CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& Item)
-			{
-				CAsset_SkeletonAnimation::CLayerAnimation::CFrame::transfert(Item);
-				m_Time = std::move(Item.m_Time);
-			}
-			
 			inline int GetTime() const { return m_Time; }
 			
 			inline void SetTime(int Value) { m_Time = Value; }
@@ -671,7 +605,7 @@ public:
 		
 	
 	private:
-		array< CLayerAnimation::CKeyFrame, allocator_copy< CLayerAnimation::CKeyFrame > > m_KeyFrame;
+		array< CLayerAnimation::CKeyFrame, allocator_default< CLayerAnimation::CKeyFrame > > m_KeyFrame;
 		CSubPath m_LayerPath;
 		int m_CycleType;
 	
@@ -681,26 +615,12 @@ public:
 		int TimeToKeyFrame(float Time) const;
 		bool GetFrame(float Time, CFrame& Frame) const;
 		CLayerAnimation();
-		void copy(const CAsset_SkeletonAnimation::CLayerAnimation& Item)
-		{
-			m_KeyFrame.copy(Item.m_KeyFrame);
-			m_LayerPath = Item.m_LayerPath;
-			m_CycleType = Item.m_CycleType;
-		}
-		
-		void transfert(CAsset_SkeletonAnimation::CLayerAnimation& Item)
-		{
-			m_KeyFrame.transfert(Item.m_KeyFrame);
-			m_LayerPath = std::move(Item.m_LayerPath);
-			m_CycleType = std::move(Item.m_CycleType);
-		}
-		
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
 		
 		inline const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame* GetKeyFramePtr() const { return m_KeyFrame.base_ptr(); }
 		
-		inline const array< CLayerAnimation::CKeyFrame, allocator_copy< CLayerAnimation::CKeyFrame > >& GetKeyFrameArray() const { return m_KeyFrame; }
-		inline array< CLayerAnimation::CKeyFrame, allocator_copy< CLayerAnimation::CKeyFrame > >& GetKeyFrameArray() { return m_KeyFrame; }
+		inline const array< CLayerAnimation::CKeyFrame, allocator_default< CLayerAnimation::CKeyFrame > >& GetKeyFrameArray() const { return m_KeyFrame; }
+		inline array< CLayerAnimation::CKeyFrame, allocator_default< CLayerAnimation::CKeyFrame > >& GetKeyFrameArray() { return m_KeyFrame; }
 		
 		inline const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& GetKeyFrame(const CSubPath& SubPath) const
 		{
@@ -727,7 +647,7 @@ public:
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 			{
-				m_KeyFrame[SubPath.GetId()].copy(Value);
+				m_KeyFrame[SubPath.GetId()] = Value;
 			}
 		}
 		
@@ -812,9 +732,9 @@ public:
 
 private:
 	CAssetPath m_SkeletonPath;
-	array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > > m_LocalBoneAnim;
-	array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > > m_ParentBoneAnim;
-	array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_copy< CAsset_SkeletonAnimation::CLayerAnimation > > m_LayerAnimation;
+	array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > > m_LocalBoneAnim;
+	array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > > m_ParentBoneAnim;
+	array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_default< CAsset_SkeletonAnimation::CLayerAnimation > > m_LayerAnimation;
 
 public:
 	bool GetLocalBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const;
@@ -842,32 +762,14 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_SkeletonAnimation& Item)
-	{
-		CAsset::copy(Item);
-		m_SkeletonPath = Item.m_SkeletonPath;
-		m_LocalBoneAnim.copy(Item.m_LocalBoneAnim);
-		m_ParentBoneAnim.copy(Item.m_ParentBoneAnim);
-		m_LayerAnimation.copy(Item.m_LayerAnimation);
-	}
-	
-	void transfert(CAsset_SkeletonAnimation& Item)
-	{
-		CAsset::transfert(Item);
-		m_SkeletonPath = std::move(Item.m_SkeletonPath);
-		m_LocalBoneAnim.transfert(Item.m_LocalBoneAnim);
-		m_ParentBoneAnim.transfert(Item.m_ParentBoneAnim);
-		m_LayerAnimation.transfert(Item.m_LayerAnimation);
-	}
-	
 	inline CAssetPath GetSkeletonPath() const { return m_SkeletonPath; }
 	
 	inline int GetLocalBoneAnimArraySize() const { return m_LocalBoneAnim.size(); }
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation* GetLocalBoneAnimPtr() const { return m_LocalBoneAnim.base_ptr(); }
 	
-	inline const array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > >& GetLocalBoneAnimArray() const { return m_LocalBoneAnim; }
-	inline array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > >& GetLocalBoneAnimArray() { return m_LocalBoneAnim; }
+	inline const array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > >& GetLocalBoneAnimArray() const { return m_LocalBoneAnim; }
+	inline array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > >& GetLocalBoneAnimArray() { return m_LocalBoneAnim; }
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation& GetLocalBoneAnim(const CSubPath& SubPath) const
 	{
@@ -891,12 +793,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath) const
+	inline const array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_LocalBoneAnim.size());
 		return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
 	}
-	inline array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath)
+	inline array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_LocalBoneAnim.size());
 		return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
@@ -933,8 +835,8 @@ public:
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation* GetParentBoneAnimPtr() const { return m_ParentBoneAnim.base_ptr(); }
 	
-	inline const array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > >& GetParentBoneAnimArray() const { return m_ParentBoneAnim; }
-	inline array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_copy< CAsset_SkeletonAnimation::CBoneAnimation > >& GetParentBoneAnimArray() { return m_ParentBoneAnim; }
+	inline const array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > >& GetParentBoneAnimArray() const { return m_ParentBoneAnim; }
+	inline array< CAsset_SkeletonAnimation::CBoneAnimation, allocator_default< CAsset_SkeletonAnimation::CBoneAnimation > >& GetParentBoneAnimArray() { return m_ParentBoneAnim; }
 	
 	inline const CAsset_SkeletonAnimation::CBoneAnimation& GetParentBoneAnim(const CSubPath& SubPath) const
 	{
@@ -958,12 +860,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath) const
+	inline const array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_ParentBoneAnim.size());
 		return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
 	}
-	inline array< CBoneAnimation::CKeyFrame, allocator_copy< CBoneAnimation::CKeyFrame > >& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath)
+	inline array< CBoneAnimation::CKeyFrame, allocator_default< CBoneAnimation::CKeyFrame > >& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_ParentBoneAnim.size());
 		return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
@@ -1000,8 +902,8 @@ public:
 	
 	inline const CAsset_SkeletonAnimation::CLayerAnimation* GetLayerAnimationPtr() const { return m_LayerAnimation.base_ptr(); }
 	
-	inline const array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_copy< CAsset_SkeletonAnimation::CLayerAnimation > >& GetLayerAnimationArray() const { return m_LayerAnimation; }
-	inline array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_copy< CAsset_SkeletonAnimation::CLayerAnimation > >& GetLayerAnimationArray() { return m_LayerAnimation; }
+	inline const array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_default< CAsset_SkeletonAnimation::CLayerAnimation > >& GetLayerAnimationArray() const { return m_LayerAnimation; }
+	inline array< CAsset_SkeletonAnimation::CLayerAnimation, allocator_default< CAsset_SkeletonAnimation::CLayerAnimation > >& GetLayerAnimationArray() { return m_LayerAnimation; }
 	
 	inline const CAsset_SkeletonAnimation::CLayerAnimation& GetLayerAnimation(const CSubPath& SubPath) const
 	{
@@ -1025,12 +927,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CLayerAnimation::CKeyFrame, allocator_copy< CLayerAnimation::CKeyFrame > >& GetLayerAnimationKeyFrameArray(const CSubPath& SubPath) const
+	inline const array< CLayerAnimation::CKeyFrame, allocator_default< CLayerAnimation::CKeyFrame > >& GetLayerAnimationKeyFrameArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_LayerAnimation.size());
 		return m_LayerAnimation[SubPath.GetId()].GetKeyFrameArray();
 	}
-	inline array< CLayerAnimation::CKeyFrame, allocator_copy< CLayerAnimation::CKeyFrame > >& GetLayerAnimationKeyFrameArray(const CSubPath& SubPath)
+	inline array< CLayerAnimation::CKeyFrame, allocator_default< CLayerAnimation::CKeyFrame > >& GetLayerAnimationKeyFrameArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_LayerAnimation.size());
 		return m_LayerAnimation[SubPath.GetId()].GetKeyFrameArray();
@@ -1071,7 +973,7 @@ public:
 	{
 		if(SubPath.GetId() < m_LocalBoneAnim.size())
 		{
-			m_LocalBoneAnim[SubPath.GetId()].copy(Value);
+			m_LocalBoneAnim[SubPath.GetId()] = Value;
 		}
 	}
 	
@@ -1111,7 +1013,7 @@ public:
 	{
 		if(SubPath.GetId() < m_ParentBoneAnim.size())
 		{
-			m_ParentBoneAnim[SubPath.GetId()].copy(Value);
+			m_ParentBoneAnim[SubPath.GetId()] = Value;
 		}
 	}
 	
@@ -1151,7 +1053,7 @@ public:
 	{
 		if(SubPath.GetId() < m_LayerAnimation.size())
 		{
-			m_LayerAnimation[SubPath.GetId()].copy(Value);
+			m_LayerAnimation[SubPath.GetId()] = Value;
 		}
 	}
 	

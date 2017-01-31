@@ -419,7 +419,9 @@ public:
 	inline void clear() { m_pBuffer[0] = 0; }
 	inline bool empty() const { return (m_pBuffer[0] == 0); }
 	
+	inline void append(const _dynamic_string& String) { append_at(length(), String.buffer()); }
 	inline void append(const char* pBuffer) { append_at(length(), pBuffer); }
+	inline void append_num(const _dynamic_string& String, int num) { append_at_num(length(), String.buffer(), num); }
 	inline void append_num(const char* pBuffer, int num) { append_at_num(length(), pBuffer, num); }
 	bool operator<(const char* buffer) const
 	{

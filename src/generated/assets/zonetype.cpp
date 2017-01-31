@@ -54,7 +54,7 @@ CAsset_ZoneType::CDataInt::CDataInt()
 void CAsset_ZoneType::CIndex::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
-	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 }
 
@@ -111,9 +111,9 @@ void CAsset_ZoneType::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCont
 void CAsset_ZoneType::CIndex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
-	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
-	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
 	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
 	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
 }
@@ -176,9 +176,9 @@ void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 void CAsset_ZoneType::CIndex::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
-	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
-	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
 	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
 	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
 }
@@ -241,9 +241,9 @@ void CAsset_ZoneType::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 void CAsset_ZoneType::CIndex::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CIndex& SysType)
 {
 	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
-	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
-	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
 	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
 	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
 	SysType.m_Group = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Group);
@@ -252,8 +252,8 @@ void CAsset_ZoneType::CIndex::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoad
 
 void CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CDataInt& SysType)
 {
-	SysType.m_Title.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title));
-	SysType.m_Description.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description));
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
 	SysType.m_DefaultValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_DefaultValue);
 	SysType.m_MinValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinValue);
 	SysType.m_MaxValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MaxValue);
@@ -292,7 +292,7 @@ void CAsset_ZoneType::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingConte
 		SysType.m_Group.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			SysType.m_Group[i].copy(pLoadingContext->ArchiveFile()->GetString(pData[i]));
+			SysType.m_Group[i] = pLoadingContext->ArchiveFile()->GetString(pData[i]);
 		}
 	}
 	

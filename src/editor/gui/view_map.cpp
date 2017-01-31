@@ -145,7 +145,7 @@ public:
 		m_pBoolean(pBoolean)
 	{
 		SetToggleStyle(pAssetsEditor->m_Path_Toggle_Toolbar);
-		m_LHint.copy(LHint);
+		m_LHint = LHint;
 	}
 
 	virtual void OnMouseMove()

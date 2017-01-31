@@ -136,28 +136,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiBoxStyle();
-	void copy(const CAsset_GuiBoxStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_MinWidth = Item.m_MinWidth;
-		m_MinHeight = Item.m_MinHeight;
-		m_Margin = Item.m_Margin;
-		m_Padding = Item.m_Padding;
-		m_Spacing = Item.m_Spacing;
-		m_RectPath = Item.m_RectPath;
-	}
-	
-	void transfert(CAsset_GuiBoxStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_MinWidth = std::move(Item.m_MinWidth);
-		m_MinHeight = std::move(Item.m_MinHeight);
-		m_Margin = std::move(Item.m_Margin);
-		m_Padding = std::move(Item.m_Padding);
-		m_Spacing = std::move(Item.m_Spacing);
-		m_RectPath = std::move(Item.m_RectPath);
-	}
-	
 	inline int GetMinWidth() const { return m_MinWidth; }
 	
 	inline int GetMinHeight() const { return m_MinHeight; }

@@ -246,48 +246,6 @@ public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
 		void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;
 		CQuad();
-		void copy(const CAsset_MapLayerQuads::CQuad& Item)
-		{
-			m_Pivot = Item.m_Pivot;
-			m_Size = Item.m_Size;
-			m_Angle = Item.m_Angle;
-			m_Vertex0 = Item.m_Vertex0;
-			m_Vertex1 = Item.m_Vertex1;
-			m_Vertex2 = Item.m_Vertex2;
-			m_Vertex3 = Item.m_Vertex3;
-			m_UV0 = Item.m_UV0;
-			m_UV1 = Item.m_UV1;
-			m_UV2 = Item.m_UV2;
-			m_UV3 = Item.m_UV3;
-			m_Color0 = Item.m_Color0;
-			m_Color1 = Item.m_Color1;
-			m_Color2 = Item.m_Color2;
-			m_Color3 = Item.m_Color3;
-			m_AnimationPath = Item.m_AnimationPath;
-			m_Color = Item.m_Color;
-		}
-		
-		void transfert(CAsset_MapLayerQuads::CQuad& Item)
-		{
-			m_Pivot = std::move(Item.m_Pivot);
-			m_Size = std::move(Item.m_Size);
-			m_Angle = std::move(Item.m_Angle);
-			m_Vertex0 = std::move(Item.m_Vertex0);
-			m_Vertex1 = std::move(Item.m_Vertex1);
-			m_Vertex2 = std::move(Item.m_Vertex2);
-			m_Vertex3 = std::move(Item.m_Vertex3);
-			m_UV0 = std::move(Item.m_UV0);
-			m_UV1 = std::move(Item.m_UV1);
-			m_UV2 = std::move(Item.m_UV2);
-			m_UV3 = std::move(Item.m_UV3);
-			m_Color0 = std::move(Item.m_Color0);
-			m_Color1 = std::move(Item.m_Color1);
-			m_Color2 = std::move(Item.m_Color2);
-			m_Color3 = std::move(Item.m_Color3);
-			m_AnimationPath = std::move(Item.m_AnimationPath);
-			m_Color = std::move(Item.m_Color);
-		}
-		
 		inline vec2 GetPivot() const { return m_Pivot; }
 		
 		inline float GetPivotX() const { return m_Pivot.x; }
@@ -490,7 +448,7 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
-	array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > > m_Quad;
+	array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > > m_Quad;
 	bool m_Visibility;
 
 public:
@@ -519,24 +477,6 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerQuads();
-	void copy(const CAsset_MapLayerQuads& Item)
-	{
-		CAsset::copy(Item);
-		m_ParentPath = Item.m_ParentPath;
-		m_ImagePath = Item.m_ImagePath;
-		m_Quad.copy(Item.m_Quad);
-		m_Visibility = Item.m_Visibility;
-	}
-	
-	void transfert(CAsset_MapLayerQuads& Item)
-	{
-		CAsset::transfert(Item);
-		m_ParentPath = std::move(Item.m_ParentPath);
-		m_ImagePath = std::move(Item.m_ImagePath);
-		m_Quad.transfert(Item.m_Quad);
-		m_Visibility = std::move(Item.m_Visibility);
-	}
-	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
@@ -545,8 +485,8 @@ public:
 	
 	inline const CAsset_MapLayerQuads::CQuad* GetQuadPtr() const { return m_Quad.base_ptr(); }
 	
-	inline const array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() const { return m_Quad; }
-	inline array< CAsset_MapLayerQuads::CQuad, allocator_copy< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() { return m_Quad; }
+	inline const array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() const { return m_Quad; }
+	inline array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() { return m_Quad; }
 	
 	inline const CAsset_MapLayerQuads::CQuad& GetQuad(const CSubPath& SubPath) const
 	{
@@ -827,7 +767,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Quad.size())
 		{
-			m_Quad[SubPath.GetId()].copy(Value);
+			m_Quad[SubPath.GetId()] = Value;
 		}
 	}
 	

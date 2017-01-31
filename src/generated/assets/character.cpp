@@ -36,7 +36,7 @@
 
 void CAsset_Character::CPart::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Character::CPart& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
 }
 
@@ -90,7 +90,7 @@ void CAsset_Character::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCon
 
 void CAsset_Character::CPart::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Character::CPart& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
 }
 
@@ -144,7 +144,7 @@ void CAsset_Character::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCon
 
 void CAsset_Character::CPart::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Character::CPart& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
 }
 
@@ -198,7 +198,7 @@ void CAsset_Character::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCon
 
 void CAsset_Character::CPart::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Character::CPart& SysType)
 {
-	SysType.m_Name.copy(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
+	SysType.m_Name = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name);
 	pLoadingContext->ReadAssetPath(TuaType.m_DefaultPath, SysType.m_DefaultPath);
 }
 

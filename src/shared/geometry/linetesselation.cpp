@@ -574,7 +574,7 @@ struct CLineTile
 	bool m_FillingEnabled;
 };
 
-int FindSprite(const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites, int Type, const array<int>& AcceptedLabels0, const array<int>& AcceptedLabels1)
+int FindSprite(const array<CAsset_Material::CSprite>& Sprites, int Type, const array<int>& AcceptedLabels0, const array<int>& AcceptedLabels1)
 {
 	//Try to get a start tile
 	for(int t=0; t<3; t++)
@@ -660,7 +660,7 @@ void GenerateMaterialQuads_Line(
 	int OrthoTesselation
 )
 {
-	const array< CAsset_Material::CSprite, allocator_copy<CAsset_Material::CSprite> >& Sprites = pLayer->GetSpriteArray();
+	const array<CAsset_Material::CSprite>& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
 		return;
 	
@@ -1122,7 +1122,7 @@ void GenerateMaterialQuads(
 
 void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object)
 {
-	const array< CAsset_MapLayerObjects::CVertex, allocator_copy<CAsset_MapLayerObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
+	const array<CAsset_MapLayerObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
 	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
 	
 	vec2 ObjPosition;
@@ -1170,7 +1170,7 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 
 void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object)
 {
-	const array< CAsset_MapZoneObjects::CVertex, allocator_copy<CAsset_MapZoneObjects::CVertex> >& ObjectVertices = Object.GetVertexArray();
+	const array<CAsset_MapZoneObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
 	bool Closed = (Object.GetPathType() == CAsset_MapZoneObjects::PATHTYPE_CLOSED);
 	
 	vec2 ObjPosition;

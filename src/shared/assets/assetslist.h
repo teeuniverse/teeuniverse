@@ -57,22 +57,10 @@ public:
 	{
 		ASSET m_Asset;
 		STATE m_State;
-		
-		void copy(const CEntry& Entry)
-		{
-			m_Asset.copy(Entry.m_Asset);
-			m_State = Entry.m_State;
-		}
-		
-		void transfert(CEntry& Entry)
-		{
-			m_Asset.transfert(Entry.m_Asset);
-			m_State = Entry.m_State;
-		}
 	};
 	
 public:
-	array< CEntry, allocator_copy<CEntry> > m_Assets;
+	array<CEntry> m_Assets;
 
 public:
 	inline int GetNumAssets() const { return m_Assets.size(); }
@@ -123,7 +111,7 @@ public:
 		int Id = m_Assets.size();
 		CEntry& Entry = m_Assets.increment();
 		
-		Entry.m_Asset.copy(ASSET());
+		Entry.m_Asset = ASSET();
 		Entry.m_Asset.SetAssetsManager(pAssetsManager);
 		
 		pPath->SetType(ASSET::TypeId);

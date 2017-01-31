@@ -114,22 +114,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_GuiComboBoxStyle& Item)
-	{
-		CAsset::copy(Item);
-		m_ButtonPath = Item.m_ButtonPath;
-		m_PopupPath = Item.m_PopupPath;
-		m_EnumPath = Item.m_EnumPath;
-	}
-	
-	void transfert(CAsset_GuiComboBoxStyle& Item)
-	{
-		CAsset::transfert(Item);
-		m_ButtonPath = std::move(Item.m_ButtonPath);
-		m_PopupPath = std::move(Item.m_PopupPath);
-		m_EnumPath = std::move(Item.m_EnumPath);
-	}
-	
 	inline CAssetPath GetButtonPath() const { return m_ButtonPath; }
 	
 	inline CAssetPath GetPopupPath() const { return m_PopupPath; }

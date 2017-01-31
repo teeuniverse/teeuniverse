@@ -39,7 +39,7 @@ protected:
 	protected:
 		CGuiEditor* m_pAssetsEditor;
 		CAssetPath m_EntityTypePath;
-		array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> > m_Tiles;
+		array2d<CAsset_MapZoneTiles::CTile> m_Tiles;
 		int m_Number;
 		
 	public:
@@ -145,7 +145,7 @@ protected:
 		CGuiEditor* m_pAssetsEditor;
 		CAssetPath m_ZoneTypePath;
 		CSubPath m_IndexSubPath;
-		array2d< CAsset_MapZoneTiles::CTile, allocator_copy<CAsset_MapZoneTiles::CTile> > m_Tiles;
+		array2d<CAsset_MapZoneTiles::CTile> m_Tiles;
 		int m_Number;
 		
 	public:
@@ -896,7 +896,7 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
 						{
 							CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
-							Quad.copy(pLayer->GetQuad(*Iter));
+							Quad = pLayer->GetQuad(*Iter);
 							Quad.SetPivot(Quad.GetPivot() - vec2(X0 + X1, Y0 + Y1)/2.0f);
 							QuadsFound = true;
 						}
@@ -932,7 +932,7 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
 						{
 							CAsset_MapEntities::CEntity& Entity = m_EntitySelection.increment();
-							Entity.copy(pLayer->GetEntity(*Iter));
+							Entity = pLayer->GetEntity(*Iter);
 							Entity.SetPosition(Entity.GetPosition() - vec2(X0 + X1, Y0 + Y1)/2.0f);
 							EntitiesFound = true;
 						}
@@ -1404,9 +1404,7 @@ void CCursorTool_MapStamp::VFlipSelection()
 					
 					if(i != Width-i-1)
 					{
-						TmpTile.copy(Tile0);
-						Tile0.copy(Tile1);
-						Tile1.copy(TmpTile);
+						std::swap(Tile0, Tile1);
 						
 						Flags = Tile0.GetFlags();
 						if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
@@ -1473,9 +1471,7 @@ void CCursorTool_MapStamp::HFlipSelection()
 					
 					if(j != Height-j-1)
 					{
-						TmpTile.copy(Tile0);
-						Tile0.copy(Tile1);
-						Tile1.copy(TmpTile);
+						std::swap(Tile0, Tile1);
 						
 						Flags = Tile0.GetFlags();
 						if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
@@ -1524,7 +1520,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 		{
-			array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > TmpSelection;
+			array2d<CAsset_MapLayerTiles::CTile> TmpSelection;
 			TmpSelection.resize(m_TileSelection.get_height(), m_TileSelection.get_width());
 			
 			for(int j=0; j<m_TileSelection.get_height(); j++)
@@ -1535,7 +1531,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 					int J = m_TileSelection.get_width()-i-1;
 					
 					CAsset_MapLayerTiles::CTile& Tile = TmpSelection.get_clamp(I, J);
-					Tile.copy(m_TileSelection.get_clamp(i, j));
+					Tile = m_TileSelection.get_clamp(i, j);
 					
 					int Flags = Tile.GetFlags();
 					if(!(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE))
@@ -1546,7 +1542,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 				}
 			}
 			
-			m_TileSelection.transfert(TmpSelection);
+			m_TileSelection = std::move(TmpSelection);
 			
 			break;
 		}
@@ -1582,7 +1578,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 		case CAsset_MapLayerTiles::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 		{
-			array2d< CAsset_MapLayerTiles::CTile, allocator_copy<CAsset_MapLayerTiles::CTile> > TmpSelection;
+			array2d<CAsset_MapLayerTiles::CTile> TmpSelection;
 			TmpSelection.resize(m_TileSelection.get_height(), m_TileSelection.get_width());
 			
 			for(int j=0; j<m_TileSelection.get_height(); j++)
@@ -1593,7 +1589,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 					int J = i;
 					
 					CAsset_MapLayerTiles::CTile& Tile = TmpSelection.get_clamp(I, J);
-					Tile.copy(m_TileSelection.get_clamp(i, j));
+					Tile = m_TileSelection.get_clamp(i, j);
 					
 					int Flags = Tile.GetFlags();
 					if(Flags&CAsset_MapLayerTiles::TILEFLAG_ROTATE)
@@ -1604,7 +1600,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 				}
 			}
 			
-			m_TileSelection.transfert(TmpSelection);
+			m_TileSelection = std::move(TmpSelection);
 			
 			break;
 		}

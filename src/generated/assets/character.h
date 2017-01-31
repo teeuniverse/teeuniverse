@@ -127,18 +127,6 @@ public:
 		CAssetPath m_DefaultPath;
 	
 	public:
-		void copy(const CAsset_Character::CPart& Item)
-		{
-			m_Name = Item.m_Name;
-			m_DefaultPath = Item.m_DefaultPath;
-		}
-		
-		void transfert(CAsset_Character::CPart& Item)
-		{
-			m_Name = std::move(Item.m_Name);
-			m_DefaultPath = std::move(Item.m_DefaultPath);
-		}
-		
 		inline const char* GetName() const { return m_Name.buffer(); }
 		
 		inline CAssetPath GetDefaultPath() const { return m_DefaultPath; }
@@ -207,7 +195,7 @@ private:
 	CAssetPath m_WalkPath;
 	CAssetPath m_ControlledJumpPath;
 	CAssetPath m_UncontrolledJumpPath;
-	array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > > m_Part;
+	array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > > m_Part;
 
 public:
 	virtual ~CAsset_Character() {}
@@ -232,26 +220,6 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	void copy(const CAsset_Character& Item)
-	{
-		CAsset::copy(Item);
-		m_IdlePath = Item.m_IdlePath;
-		m_WalkPath = Item.m_WalkPath;
-		m_ControlledJumpPath = Item.m_ControlledJumpPath;
-		m_UncontrolledJumpPath = Item.m_UncontrolledJumpPath;
-		m_Part.copy(Item.m_Part);
-	}
-	
-	void transfert(CAsset_Character& Item)
-	{
-		CAsset::transfert(Item);
-		m_IdlePath = std::move(Item.m_IdlePath);
-		m_WalkPath = std::move(Item.m_WalkPath);
-		m_ControlledJumpPath = std::move(Item.m_ControlledJumpPath);
-		m_UncontrolledJumpPath = std::move(Item.m_UncontrolledJumpPath);
-		m_Part.transfert(Item.m_Part);
-	}
-	
 	inline CAssetPath GetIdlePath() const { return m_IdlePath; }
 	
 	inline CAssetPath GetWalkPath() const { return m_WalkPath; }
@@ -264,8 +232,8 @@ public:
 	
 	inline const CAsset_Character::CPart* GetPartPtr() const { return m_Part.base_ptr(); }
 	
-	inline const array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > >& GetPartArray() const { return m_Part; }
-	inline array< CAsset_Character::CPart, allocator_copy< CAsset_Character::CPart > >& GetPartArray() { return m_Part; }
+	inline const array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > >& GetPartArray() const { return m_Part; }
+	inline array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > >& GetPartArray() { return m_Part; }
 	
 	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const
 	{
@@ -303,7 +271,7 @@ public:
 	{
 		if(SubPath.GetId() < m_Part.size())
 		{
-			m_Part[SubPath.GetId()].copy(Value);
+			m_Part[SubPath.GetId()] = Value;
 		}
 	}
 	

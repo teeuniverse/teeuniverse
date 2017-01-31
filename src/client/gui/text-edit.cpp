@@ -471,7 +471,7 @@ CExternalTextEdit_DynamicString::CExternalTextEdit_DynamicString(CGui* pContext,
 
 void CExternalTextEdit_DynamicString::SaveFromTextBuffer()
 {
-	m_pBuffer->copy(GetText());
+	*m_pBuffer = GetText();
 }
 
 void CExternalTextEdit_DynamicString::CopyToTextBuffer()
