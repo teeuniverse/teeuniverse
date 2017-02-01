@@ -170,9 +170,9 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
-	array2d< CTile, allocator_default< CTile > > m_Tile;
+	array2d< CTile > m_Tile;
 	bool m_Visibility;
-	array2d< int, allocator_default< int > > m_DataInt;
+	array2d< int > m_DataInt;
 
 public:
 	virtual ~CAsset_MapZoneTiles() {}
@@ -210,8 +210,8 @@ public:
 	
 	inline const CAsset_MapZoneTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_default< CTile > >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_default< CTile > >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapZoneTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
@@ -227,8 +227,8 @@ public:
 	
 	inline const int* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
 	
-	inline const array2d< int, allocator_default< int > >& GetDataIntArray() const { return m_DataInt; }
-	inline array2d< int, allocator_default< int > >& GetDataIntArray() { return m_DataInt; }
+	inline const array2d< int >& GetDataIntArray() const { return m_DataInt; }
+	inline array2d< int >& GetDataIntArray() { return m_DataInt; }
 	
 	inline int GetDataInt(const CSubPath& SubPath) const { return m_DataInt.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	

@@ -50,7 +50,7 @@ protected:
 	int m_ShowEntities;
 	bool m_ZoomLockedToUnit;
 	
-	class CMapRenderer* m_pMapRenderer;
+	std::unique_ptr<class CMapRenderer> m_pMapRenderer;
 	
 	CView::CCursorTool* m_pCursorTool_MapStamp;
 	CView::CCursorTool* m_pCursorTool_MapTransform;
@@ -63,14 +63,13 @@ protected:
 
 public:
 	CViewMap(CGuiEditor* pAssetsEditor);
-	~CViewMap();
 	virtual void Update(bool ParentEnabled);
 	virtual void RenderView();
 	virtual void OnMouseMove();
 	virtual void OnButtonClick(int Button);
 	virtual void OnButtonRelease(int Button);
 	
-	inline class CMapRenderer* MapRenderer() { return m_pMapRenderer; }
+	inline class CMapRenderer* MapRenderer() { return m_pMapRenderer.get(); }
 	
 	CAssetPath GetMapPath();
 	CAssetPath GetMapGroupPath();

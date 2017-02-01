@@ -46,12 +46,12 @@ protected:
 		for(Iter = pMapLayer->BeginObject(); Iter != pMapLayer->EndObject(); ++Iter)
 		{
 			const typename ASSET::CObject& Object = pMapLayer->GetObject(*Iter);
-			const array<typename ASSET::CVertex>& Vertices = Object.GetVertexArray();
+			const std::vector<typename ASSET::CVertex>& Vertices = Object.GetVertexArray();
 			vec2 Position;
 			matrix2x2 Transform;
 			Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 			
-			for(int i=Vertices.size()-1; i>=0; i--)
+			for(int i=static_cast<int>(Vertices.size())-1; i>=0; i--)
 			{
 				vec2 VertexPosition = Transform*Vertices[i].GetPosition()+Position;
 				vec2 VertexScreenPosition = ViewMap()->MapRenderer()->MapPosToScreenPos(VertexPosition);

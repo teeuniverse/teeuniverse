@@ -113,6 +113,19 @@ class GetSetInterface_Func(GetSetInterface):
 	def generateGet(self, var, defaultValue):
 		return [ "return " + var + "." + self.getFunc + "();" ]
 
+class GetSetInterface_GetArray(GetSetInterface):
+	def __init__(self, suffix, returnType, defaultValue):
+		GetSetInterface.__init__(self, suffix)
+		self.getSetType = returnType
+		self.returnType = returnType
+		self.paramType = returnType
+		self.defaultValue = defaultValue
+		self.noset = 1
+	def generateSet(self, var, value):
+		return []
+	def generateGet(self, var, defaultValue):
+		return [ "return &(" + var + ".front());" ]
+
 class GetSetInterface_GetFunc(GetSetInterface):
 	def __init__(self, suffix, returnType, getFunc, defaultValue):
 		GetSetInterface.__init__(self, suffix)
@@ -136,8 +149,6 @@ class Type:
 		return []
 	def addInterfaces(self):
 		return []
-	def allocator(self):
-		return "default"
 	def generateCopy(self, var, value):
 		return [var + " = " + value + ";"]
 	def generateTransfert(self, var, value):
@@ -389,22 +400,25 @@ class GetSetInterface_ArrayChild(GetSetInterface):
 		return res
 			
 class AddInterface_Array(GetSetInterface):
-	def __init__(self):
+	def __init__(self, constructor):
 		self.name = ""
 		self.subpath = 0
 		self.enum = ""
+		self.constructor = constructor
 	def generateAdd(self, var):
 		return [ 
 			"int Id = "+var+".size();",
-			var + ".increment();",
+			var + ".emplace_back();",
 			"return Id;"
 		]
 	def generateAddAt(self, var):
-		return [ var + ".insertat_and_init(Index);" ]
+		return [ var + ".insert("+var+".begin() + Index, "+self.constructor+"());" ]
 	def generateDelete(self, var):
-		return [ var + ".remove_index(SubPath.GetId());" ]
+		return [ var + ".erase("+var+".begin() + SubPath.GetId());" ]
 	def generateRelMove(self, var):
-		return [ var + ".relative_move(SubPath.GetId(), RelMove);" ]
+		return [
+			"relative_move(" + var + ", SubPath.GetId(), RelMove);"
+		]
 	def generateValid(self, var):
 		return [ 
 			"return (SubPath.IsNotNull() && SubPath.GetId() < "+var+".size());"
@@ -429,23 +443,23 @@ class AddInterface_ArrayChild(GetSetInterface):
 	
 class TypeArray(Type):
 	def __init__(self, t):
-		Type.__init__(self, "array< "+t.fullType()+", allocator_"+t.allocator()+"< "+t.fullType()+" > >")
+		Type.__init__(self, "std::vector<"+t.fullType()+">")
 		self.t = t
 	def numSubPathId(self):
 		return 1
 	def headers(self):
-		return ["shared/tl/array.h"]
+		return ["vector", "shared/tl/algorithm.h", "cassert"]
 	def getSetInterfaces(self):
 		res = [
 			GetSetInterface_Func("ArraySize", "int", "int", "size", "resize", "0"),
-			GetSetInterface_GetFunc("Ptr", "const "+self.t.fullType()+"*", "base_ptr", "NULL"),
+			GetSetInterface_GetArray("Ptr", "const "+self.t.fullType()+"*", "NULL"),
 			GetSetInterface_SimpleRef("Array", self.tname, self.tname)
 		]
 		for inter in self.t.getSetInterfaces():
 			res.append(GetSetInterface_ArrayChild("", inter, self.t))
 		return res
 	def addInterfaces(self):
-		res = [ AddInterface_Array() ]
+		res = [ AddInterface_Array(self.t.fullType()) ]
 		for inter in self.t.addInterfaces():
 			res.append(AddInterface_ArrayChild(inter))
 		return res
@@ -465,7 +479,7 @@ class TypeArray(Type):
 		res.append("{")
 		res.append("	" + varTua + ".m_Size = "+varSys+".size();")
 		res.append("	" + self.t.tuaType(version) + "* pData = new " + self.t.tuaType(version) + "["+varSys+".size()];")
-		res.append("	for(int i=0; i<"+varSys+".size(); i++)")
+		res.append("	for(unsigned int i=0; i<"+varSys+".size(); i++)")
 		res.append("	{")
 		for l in self.t.generateWrite(varSys+"[i]", "pData[i]", version):
 			res.append("		"+l)
@@ -495,7 +509,7 @@ class TypeArray(Type):
 			if self.t.fullType() == "CAssetPath":
 				res.append("{")
 				res.append("	int Shift = 0;")
-				res.append("	for(int i=0; i<"+var+".size(); i++)")
+				res.append("	for(unsigned int i=0; i<"+var+".size(); i++)")
 				res.append("	{")
 				res.append("		if("+operation+".MustBeDeleted("+var+"[i]))")
 				res.append("			Shift++;")
@@ -505,7 +519,7 @@ class TypeArray(Type):
 				res.append("	"+var+".resize("+var+".size()-Shift);")
 				res.append("}")
 			
-			res.append("for(int i=0; i<"+var+".size(); i++)")
+			res.append("for(unsigned int i=0; i<"+var+".size(); i++)")
 			res.append("{")
 			for l in self.t.generateAssetPathOp(var+"[i]", operation):
 				res.append("	"+l)
@@ -592,7 +606,7 @@ class GetSetInterface_Array2dDim(GetSetInterface_Func):
 		
 class TypeArray2d(Type):
 	def __init__(self, t):
-		Type.__init__(self, "array2d< "+t.tname+", allocator_"+t.allocator()+"< "+t.tname+" > >")
+		Type.__init__(self, "array2d< "+t.tname+" >")
 		self.t = t
 	def numSubPathId(self):
 		return 2
@@ -727,8 +741,6 @@ class Member:
 		return self.t.generateDeclaration(self.memberName())
 	def generateTuaDeclaration(self, version):
 		return self.t.generateTuaDeclaration(self.memberName(), version)
-	def allocator(self):
-		return self.t.allocator()
 	def generateCopy(self, value):
 		return self.t.generateCopy(self.memberName(), value)
 	def generateTransfert(self, value):

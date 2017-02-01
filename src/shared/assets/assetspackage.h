@@ -76,7 +76,7 @@ private:
 	dynamic_string m_Name;
 	uint32 m_Crc;
 	int m_State;
-	array<int> Dependencies;
+	std::vector<int> Dependencies;
 	bool m_ReadOnly;
 	bool m_Edited;
 	

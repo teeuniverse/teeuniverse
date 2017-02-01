@@ -54,7 +54,7 @@ public:
 class CComboBoxPopup : public CPopup
 {
 public:
-	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const array<CComboBox::CItem>& EnumDescriptions, CAssetPath ButtonStyle) :
+	CComboBoxPopup(CGui *pContext, CComboBox* pComboBox, const CRect& CreatorRect, const std::vector<CComboBox::CItem>& EnumDescriptions, CAssetPath ButtonStyle) :
 		CPopup(pContext, CreatorRect, CreatorRect.w, -1, CPopup::ALIGNMENT_BOTTOM)
 	{
 		SetLevel(LEVEL_HIGHEST);
@@ -62,7 +62,7 @@ public:
 		CVListLayout* pLayout = new CVListLayout(Context());
 		Add(pLayout);
 		
-		for(int i=0; i<EnumDescriptions.size(); i++)
+		for(unsigned int i=0; i<EnumDescriptions.size(); i++)
 		{
 			CEnumButton* pButton = new CEnumButton(Context(), pComboBox, this, EnumDescriptions[i], i);
 			pButton->SetButtonStyle(ButtonStyle);
@@ -83,13 +83,15 @@ CComboBox::CComboBox(CGui *pContext) :
 
 void CComboBox::Add(const CLocalizableString& LString)
 {
-	CItem& Item = m_EnumDescriptions.increment();
+	m_EnumDescriptions.emplace_back();
+	CItem& Item = m_EnumDescriptions.back();
 	Item.m_Description = LString;
 }
 
 void CComboBox::Add(const CLocalizableString& LString, const CAssetPath& IconPath)
 {
-	CItem& Item = m_EnumDescriptions.increment();
+	m_EnumDescriptions.emplace_back();
+	CItem& Item = m_EnumDescriptions.back();
 	Item.m_Description = LString;
 	Item.m_IconPath = IconPath;
 }
@@ -106,7 +108,7 @@ void CComboBox::Update(bool ParentEnabled)
 	RefreshComboBoxStyle();
 	
 	int Value = GetValue();
-	if(Value >= 0 && Value < m_EnumDescriptions.size())
+	if(Value >= 0 && Value < static_cast<int>(m_EnumDescriptions.size()))
 	{
 		SetText(m_EnumDescriptions[Value].m_Description);
 		SetIcon(m_EnumDescriptions[Value].m_IconPath);

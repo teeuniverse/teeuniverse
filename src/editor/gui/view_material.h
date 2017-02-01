@@ -28,14 +28,13 @@ protected:
 	bool m_ShowMeshes;
 	int m_ObjectShape;
 	
-	class CMapRenderer* m_pMapRenderer;
+	std::unique_ptr<class CMapRenderer> m_pMapRenderer;
 	
 public:
 	CViewMaterial(CGuiEditor* pAssetsEditor);
-	virtual ~CViewMaterial();
 	virtual void RenderView();
 	
-	inline class CMapRenderer* MapRenderer() { return m_pMapRenderer; }
+	inline class CMapRenderer* MapRenderer() { return m_pMapRenderer.get(); }
 };
 
 #endif

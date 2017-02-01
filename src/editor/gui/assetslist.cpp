@@ -412,10 +412,10 @@ protected:
 	protected:
 		virtual void MouseClickAction()
 		{
-			array<CAssetPath> AssetsToDelete;
+			std::vector<CAssetPath> AssetsToDelete;
 			CAssetPath NextSelectedAsset = CAssetPath::Null();
 			
-			AssetsToDelete.increment() = m_AssetPath;
+			AssetsToDelete.push_back(m_AssetPath);
 			
 			if(m_AssetPath.GetType() == CAsset_Map::TypeId)
 			{
@@ -425,18 +425,18 @@ protected:
 					{
 						CAsset_Map::CIteratorZoneLayer Iter;
 						for(Iter = pMap->BeginZoneLayer(); Iter != pMap->EndZoneLayer(); ++Iter)
-							AssetsToDelete.increment() = pMap->GetZoneLayer(*Iter);
+							AssetsToDelete.push_back(pMap->GetZoneLayer(*Iter));
 					}
 					{
 						CAsset_Map::CIteratorEntityLayer Iter;
 						for(Iter = pMap->BeginEntityLayer(); Iter != pMap->EndEntityLayer(); ++Iter)
-							AssetsToDelete.increment() = pMap->GetEntityLayer(*Iter);
+							AssetsToDelete.push_back(pMap->GetEntityLayer(*Iter));
 					}
 					{
 						CAsset_Map::CIteratorBgGroup Iter;
 						for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
 						{
-							AssetsToDelete.increment() = pMap->GetBgGroup(*Iter);
+							AssetsToDelete.push_back(pMap->GetBgGroup(*Iter));
 							
 							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetBgGroup(*Iter));
 							if(pGroup)
@@ -444,7 +444,7 @@ protected:
 								CAsset_MapGroup::CIteratorLayer GroupIter;
 								for(GroupIter = pGroup->BeginLayer(); GroupIter != pGroup->EndLayer(); ++GroupIter)
 								{
-									AssetsToDelete.increment() = pGroup->GetLayer(*GroupIter);
+									AssetsToDelete.push_back(pGroup->GetLayer(*GroupIter));
 								}
 							}
 						}
@@ -453,7 +453,7 @@ protected:
 						CAsset_Map::CIteratorFgGroup Iter;
 						for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
 						{
-							AssetsToDelete.increment() = pMap->GetFgGroup(*Iter);
+							AssetsToDelete.push_back(pMap->GetFgGroup(*Iter));
 							
 							const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(pMap->GetFgGroup(*Iter));
 							if(pGroup)
@@ -461,7 +461,7 @@ protected:
 								CAsset_MapGroup::CIteratorLayer GroupIter;
 								for(GroupIter = pGroup->BeginLayer(); GroupIter != pGroup->EndLayer(); ++GroupIter)
 								{
-									AssetsToDelete.increment() = pGroup->GetLayer(*GroupIter);
+									AssetsToDelete.push_back(pGroup->GetLayer(*GroupIter));
 								}
 							}
 						}
@@ -477,7 +477,7 @@ protected:
 					
 					CAsset_MapGroup::CIteratorLayer Iter;
 					for(Iter = pAssets->BeginLayer(); Iter != pAssets->EndLayer(); ++Iter)
-						AssetsToDelete.increment() = pAssets->GetLayer(*Iter);
+						AssetsToDelete.push_back(pAssets->GetLayer(*Iter));
 				}
 			}
 			else if(m_AssetPath.GetType() == CAsset_MapLayerTiles::TypeId)

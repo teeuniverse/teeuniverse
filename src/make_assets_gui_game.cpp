@@ -627,28 +627,29 @@ void Make_GuiTabsStyle(CSharedKernel* pKernel)
 
 int main(int argc, char* argv[])
 {
-	CSharedKernel* pKernel = new CSharedKernel();
-	if(!pKernel->Init(argc, (const char**) argv))
 	{
-		dbg_msg("Kernel", "unable to initialize shared kernel");
-		exit(EXIT_FAILURE);
+		std::unique_ptr<CSharedKernel> pKernel = new CSharedKernel();
+		if(!pKernel->Init(argc, (const char**) argv))
+		{
+			dbg_msg("Kernel", "unable to initialize shared kernel");
+			exit(EXIT_FAILURE);
+		}
+		
+		Make_Images(pKernel.get());
+		Make_Sprites(pKernel.get());
+		Make_GuiRectStyle(pKernel.get());
+		Make_GuiLineStyle(pKernel.get());
+		Make_GuiBoxStyle(pKernel.get());
+		Make_GuiLabelStyle(pKernel.get());
+		Make_GuiButtonStyle(pKernel.get());
+		Make_GuiToggleStyle(pKernel.get());
+		Make_GuiSliderStyle(pKernel.get());
+		Make_GuiTabsStyle(pKernel.get());
+		
+		pKernel->AssetsManager()->Save_AssetsFile("gui/game", CAssetPath::SRC_GUI);
+		
+		pKernel->Shutdown();
 	}
 	
-	Make_Images(pKernel);
-	Make_Sprites(pKernel);
-	Make_GuiRectStyle(pKernel);
-	Make_GuiLineStyle(pKernel);
-	Make_GuiBoxStyle(pKernel);
-	Make_GuiLabelStyle(pKernel);
-	Make_GuiButtonStyle(pKernel);
-	Make_GuiToggleStyle(pKernel);
-	Make_GuiSliderStyle(pKernel);
-	Make_GuiTabsStyle(pKernel);
-	
-	pKernel->AssetsManager()->Save_AssetsFile("gui/game", CAssetPath::SRC_GUI);
-	
-	pKernel->Shutdown();
-	delete pKernel;
-
 	exit(EXIT_SUCCESS);
 }

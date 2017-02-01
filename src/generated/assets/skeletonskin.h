@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_SKELETONSKIN__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_SkeletonSkin : public CAsset
 {
@@ -274,7 +276,7 @@ public:
 
 private:
 	CAssetPath m_SkeletonPath;
-	array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > > m_Sprite;
+	std::vector<CAsset_SkeletonSkin::CBone> m_Sprite;
 
 public:
 	virtual ~CAsset_SkeletonSkin() {}
@@ -303,10 +305,10 @@ public:
 	
 	inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 	
-	inline const CAsset_SkeletonSkin::CBone* GetSpritePtr() const { return m_Sprite.base_ptr(); }
+	inline const CAsset_SkeletonSkin::CBone* GetSpritePtr() const { return &(m_Sprite.front()); }
 	
-	inline const array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() const { return m_Sprite; }
-	inline array< CAsset_SkeletonSkin::CBone, allocator_default< CAsset_SkeletonSkin::CBone > >& GetSpriteArray() { return m_Sprite; }
+	inline const std::vector<CAsset_SkeletonSkin::CBone>& GetSpriteArray() const { return m_Sprite; }
+	inline std::vector<CAsset_SkeletonSkin::CBone>& GetSpriteArray() { return m_Sprite; }
 	
 	inline const CAsset_SkeletonSkin::CBone& GetSprite(const CSubPath& SubPath) const
 	{
@@ -500,22 +502,22 @@ public:
 	inline int AddSprite()
 	{
 		int Id = m_Sprite.size();
-		m_Sprite.increment();
+		m_Sprite.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtSprite(int Index) { m_Sprite.insertat_and_init(Index); }
+	inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_SkeletonSkin::CBone()); }
 	
-	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
+	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { relative_move(m_Sprite, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_SkeletonPath);
-		for(int i=0; i<m_Sprite.size(); i++)
+		for(unsigned int i=0; i<m_Sprite.size(); i++)
 		{
 			m_Sprite[i].AssetPathOperation(Operation);
 		}

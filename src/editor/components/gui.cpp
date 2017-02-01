@@ -37,7 +37,8 @@
 #include <editor/gui/timeline.h>
 #include <editor/gui/assetsinspector.h>
 #include <editor/gui/preferences.h>
-#include <shared/tl/sorted_array.h>
+
+#include <algorithm>
 
 /* COMMANDS ***********************************************************/
 
@@ -831,8 +832,8 @@ void COpenSavePackageDialog::ListFiles()
 	if(!pIter)
 		return;
 	
-	sorted_array<dynamic_string> Directories;
-	sorted_array<dynamic_string> Files;
+	std::vector<dynamic_string> Directories;
+	std::vector<dynamic_string> Files;
 	bool ParentFolder = false;
 	
 	while(pIter->next())
@@ -858,8 +859,8 @@ void COpenSavePackageDialog::ListFiles()
 		
 		if(fs_is_dir(pFilename))
 		{
-			dynamic_string& String = Directories.increment();
-			String = pFilename;
+			Directories.emplace_back();
+			Directories.back() = pFilename;
 		}
 		else
 		{
@@ -897,7 +898,9 @@ void COpenSavePackageDialog::ListFiles()
 			}
 			
 			if(Found)
-				Files.add_by_copy(Buffer);
+			{
+				Files.push_back(Buffer);
+			}
 		}
 	}
 	
@@ -921,7 +924,11 @@ void COpenSavePackageDialog::ListFiles()
 			m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Parent Directory"), Buffer.buffer(), false), false);
 		}
 	}
-	for(int i=0; i<Directories.size(); i++)
+	
+	std::sort(Directories.begin(), Directories.end());
+	std::sort(Files.begin(), Files.end());
+	
+	for(unsigned int i=0; i<Directories.size(); i++)
 	{
 		const char* pName = Directories[i].buffer();
 		if(Directories[i].length() > PathSize+1 && Directories[i].comp_num(m_Directory, PathSize) == 0)
@@ -929,7 +936,7 @@ void COpenSavePackageDialog::ListFiles()
 		
 		m_pFilelist->Add(new COpenSavePackageDialog_Item_Directory(this, pName, Directories[i].buffer()), false);
 	}
-	for(int i=0; i<Files.size(); i++)
+	for(unsigned int i=0; i<Files.size(); i++)
 		m_pFilelist->Add(new COpenSavePackageDialog_Item_Load(this, Files[i].buffer()), false);
 	
 	delete pIter;

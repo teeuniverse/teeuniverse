@@ -39,6 +39,6 @@ public:
 };
 
 void RotateQuadTexture(CTexturedQuad& Quad);
-void TesselateQuad(const CTexturedQuad& Quad, array<CTexturedQuad>& Output, int TesselationX, int TesselationY);
+void TesselateQuad(const CTexturedQuad& Quad, std::vector<CTexturedQuad>& Output, int TesselationX, int TesselationY);
 
 #endif

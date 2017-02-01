@@ -37,7 +37,7 @@ CBoxLayout::CBoxLayout(CGui *pContext) :
 
 void CBoxLayout::Destroy()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i].m_pWidget->Destroy();
 	}
@@ -50,7 +50,7 @@ void CBoxLayout::Destroy()
 
 void CBoxLayout::Clear()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i].m_pWidget->Destroy();
 	}
@@ -59,14 +59,15 @@ void CBoxLayout::Clear()
 
 void CBoxLayout::Add(CWidget* pWidget, bool Filling)
 {
-	CChild& Child = m_Childs.increment();
+	m_Childs.emplace_back();
+	CChild& Child = m_Childs.back();
 	Child.m_pWidget = pWidget;
 	Child.m_Filling = Filling;
 }
 
 void CBoxLayout::Update(bool ParentEnabled)
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 		m_Childs[i].m_pWidget->Update(ParentEnabled && IsEnabled());
 	
 	if(m_pScrollBar && m_ShowScrollBar)
@@ -77,7 +78,7 @@ void CBoxLayout::UpdateBoundingSize()
 {
 	m_BoundingSizeRect.BSNoConstraint();
 	
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i].m_pWidget->UpdateBoundingSize();
 	}
@@ -118,7 +119,7 @@ void CBoxLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visibili
 	int LineWidth = 0;
 	int LineHeight = 0;
 	m_ContentHeight = 0;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -168,7 +169,7 @@ void CBoxLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visibili
 	LineWidth = 0;
 	LineHeight = 0;
 	m_ContentHeight = 0;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -255,7 +256,7 @@ void CBoxLayout::Render()
 	
 	//Childs
 	Graphics()->ClipPush(m_ClipRect.x, m_ClipRect.y, m_ClipRect.w, m_ClipRect.h);
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -273,7 +274,7 @@ void CBoxLayout::OnMouseMove()
 	if(m_pScrollBar && m_ShowScrollBar)
 		m_pScrollBar->OnMouseMove();
 		
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -303,7 +304,7 @@ void CBoxLayout::OnButtonClick(int Button)
 	
 	if(m_ClipRect.IsInside(Context()->GetMousePos()))
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			if(m_Childs[i].m_pWidget->IsDisabled())
 				continue;
@@ -318,7 +319,7 @@ void CBoxLayout::OnButtonRelease(int Button)
 	if(m_pScrollBar && m_ShowScrollBar)
 		m_pScrollBar->OnButtonRelease(Button);
 		
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -332,7 +333,7 @@ void CBoxLayout::OnInputEvent(const CInput::CEvent& Event)
 	if(m_pScrollBar && m_ShowScrollBar)
 		m_pScrollBar->OnInputEvent(Event);
 		
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;

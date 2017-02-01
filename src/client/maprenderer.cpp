@@ -832,11 +832,11 @@ enum
 
 void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh)
 {
-	array<CTexturedQuad> Quads;
+	std::vector<CTexturedQuad> Quads;
 	GenerateMaterialQuads_Object(AssetsManager(), GetTime(), Quads, Object);
 	
 	CAssetPath CurrentImagePath;
-	for(int i=0; i<Quads.size(); i++)
+	for(unsigned int i=0; i<Quads.size(); i++)
 	{
 		if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
 			Graphics()->QuadsEnd();
@@ -879,7 +879,7 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 		Graphics()->TextureClear();
 		Graphics()->LinesBegin();
 		Graphics()->SetColor(vec4(1.0f, 1.0f, 1.0f, 0.25f), true);
-		for(int i=0; i<Quads.size(); i++)
+		for(unsigned int i=0; i<Quads.size(); i++)
 		{
 			vec2 P00 = MapPosToScreenPos(Quads[i].m_Position[0]);
 			vec2 P10 = MapPosToScreenPos(Quads[i].m_Position[1]);
@@ -901,12 +901,12 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 
 void CMapRenderer::RenderObjectCurve(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos)
 {
-	array<CLineVertex> Lines;
+	std::vector<CLineVertex> Lines;
 	GenerateMaterialCurve_Object(AssetsManager(), GetTime(), Lines, Object);
 	
 	Graphics()->TextureClear();
 	Graphics()->LinesBegin();
-	for(int i=1; i<Lines.size(); i++)
+	for(unsigned int i=1; i<Lines.size(); i++)
 	{
 		float Alpha0 = (i-1)/static_cast<float>(Lines.size());
 		float Alpha1 = i/static_cast<float>(Lines.size());
@@ -931,17 +931,17 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 		RenderObject(pLayer->GetObject(*Iter), Pos, DrawMesh);
 }
 
-void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const array<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color)
+void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color)
 {
-	array<CTexturedQuad> Quads;
+	std::vector<CTexturedQuad> Quads;
 	
-	for(int i=0; i<Objects.size(); i++)
+	for(unsigned int i=0; i<Objects.size(); i++)
 	{
 		GenerateZoneQuads_Object(AssetsManager(), GetTime(), Quads, Objects[i], ZoneTypePath);
 	}
 	
 	CAssetPath CurrentImagePath;
-	for(int i=0; i<Quads.size(); i++)
+	for(unsigned int i=0; i<Quads.size(); i++)
 	{
 		if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
 			Graphics()->QuadsEnd();

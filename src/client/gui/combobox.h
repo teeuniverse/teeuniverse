@@ -37,7 +37,7 @@ public:
 	
 protected:
 	CAssetPath m_ComboBoxStylePath;
-	array<CItem> m_EnumDescriptions;
+	std::vector<CItem> m_EnumDescriptions;
 
 protected:
 	virtual void MouseClickAction();

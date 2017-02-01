@@ -22,14 +22,13 @@
 #include <generated/assets/image.h>
 #include <generated/assets/material.h>
 
-void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth)
+void TesselateBezierCurve(std::vector<CBezierVertex>& BezierVertices, std::vector<CLineVertex>& OutputVertices, float MinWidth)
 {
 	if(BezierVertices.size() <= 0)
 		return;
 	
 	{
-		CLineVertex& Vertex = OutputVertices.increment();
-		Vertex = BezierVertices[0];
+		OutputVertices.push_back(BezierVertices[0]);
 	}
 	
 	int NumVertices = BezierVertices.size();
@@ -71,26 +70,26 @@ void TesselateBezierCurve(array<CBezierVertex>& BezierVertices, array<CLineVerte
 				vec2 Tmp4 = Tmp1 + (Tmp2 - Tmp1)*Alpha;
 				vec2 Point = Tmp3 + (Tmp4 - Tmp3)*Alpha;
 				
-				CLineVertex& Vertex = OutputVertices.increment();
+				OutputVertices.emplace_back();
+				CLineVertex& Vertex = OutputVertices.back();
 				Vertex.m_Position = Point;
 				Vertex.m_Color = Color0 * (1.0f - Alpha) + Color1 * Alpha;
 				Vertex.m_Weight = Weight0 * (1.0f - Alpha) + Weight1 * Alpha;
 			}
 		}
 		{
-			CLineVertex& Vertex = OutputVertices.increment();
-			Vertex = BezierVertices[i];
+			OutputVertices.push_back(BezierVertices[i]);
 		}
 	}
 }
 
-void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& OutputQuads)
+void PolygonQuadrangulation(const std::vector<CLineVertex>& Vertices, std::vector<CQuad>& OutputQuads)
 {
 	if(Vertices.size() < 3)
 		return;
 	
 	vec2 Barycenter = vec2(0.0f, 0.0f);
-	for(int i=0; i<Vertices.size(); i++)
+	for(unsigned int i=0; i<Vertices.size(); i++)
 		Barycenter += Vertices[i].m_Position;
 	Barycenter = Barycenter / Vertices.size();
 	
@@ -99,9 +98,10 @@ void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& Ou
 	{
 		int V0 = i;
 		int V1 = i+1;
-		int V2 = min(i+2, Vertices.size()-1);
+		int V2 = min(i+2, static_cast<int>(Vertices.size())-1);
 		
-		CQuad& Quad = OutputQuads.increment();
+		OutputQuads.emplace_back();
+		CQuad& Quad = OutputQuads.back();
 		
 		Quad.m_Position[0] = Vertices[V0].m_Position;
 		Quad.m_Position[1] = Vertices[V1].m_Position;
@@ -110,7 +110,7 @@ void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& Ou
 		
 		i += 2;
 	}
-	while(i < Vertices.size()-1);
+	while(i < static_cast<int>(Vertices.size())-1);
 }
 
 void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo)
@@ -191,15 +191,15 @@ public:
 	};
 	
 protected:
-	const array<CLineVertex>& m_Vertices;
-	array<CSegment> m_Segments;
+	const std::vector<CLineVertex>& m_Vertices;
+	std::vector<CSegment> m_Segments;
 	bool m_Closed;
 	int m_CurrSegment;
 	int m_CurrVert;
 	float m_VertexAlpha;
 	
 public:
-	CLineIterator(const array<CLineVertex>& Vertices, bool Closed) :
+	CLineIterator(const std::vector<CLineVertex>& Vertices, bool Closed) :
 		m_Vertices(Vertices),
 		m_Closed(Closed),
 		m_CurrSegment(-1),
@@ -228,7 +228,8 @@ public:
 			{
 				ContinueSegementGeneration = false;
 				
-				CSegment& Segment = m_Segments.increment();
+				m_Segments.emplace_back();
+				CSegment& Segment = m_Segments.back();
 				Segment.m_StartVert = CurrVert;
 				Segment.m_EndVert = CurrVert;
 				Segment.m_StartAngle = 0.0f;
@@ -310,14 +311,14 @@ public:
 	{
 		if(m_Closed)
 		{
-			if(CurrId >= m_Vertices.size()-2)
+			if(CurrId >= static_cast<int>(m_Vertices.size())-2)
 				CurrId = 0;
 			else
 				CurrId++;
 		}
 		else
 		{
-			if(CurrId >= m_Vertices.size()-1)
+			if(CurrId >= static_cast<int>(m_Vertices.size())-1)
 				return false;
 			else
 				CurrId++;
@@ -343,7 +344,7 @@ public:
 	inline bool NextSegment()
 	{
 		m_CurrSegment++;
-		if(m_CurrSegment >= m_Segments.size())
+		if(m_CurrSegment >= static_cast<int>(m_Segments.size()))
 			return false;
 		
 		m_CurrVert = m_Segments[m_CurrSegment].m_StartVert;
@@ -364,7 +365,7 @@ public:
 		
 		if(m_Closed)
 			return &m_Segments[(m_CurrSegment+1)%m_Segments.size()];
-		else if(m_CurrSegment+1 < m_Segments.size())
+		else if(m_CurrSegment+1 < static_cast<int>(m_Segments.size()))
 			return &m_Segments[m_CurrSegment+1];
 		else
 			return NULL;
@@ -574,12 +575,12 @@ struct CLineTile
 	bool m_FillingEnabled;
 };
 
-int FindSprite(const array<CAsset_Material::CSprite>& Sprites, int Type, const array<int>& AcceptedLabels0, const array<int>& AcceptedLabels1)
+int FindSprite(const std::vector<CAsset_Material::CSprite>& Sprites, int Type, const std::vector<int>& AcceptedLabels0, const std::vector<int>& AcceptedLabels1)
 {
 	//Try to get a start tile
 	for(int t=0; t<3; t++)
 	{
-		for(int i=0; i<Sprites.size(); i++)
+		for(unsigned int i=0; i<Sprites.size(); i++)
 		{
 			if(Sprites[i].GetTileType() != Type)
 				continue;
@@ -587,7 +588,7 @@ int FindSprite(const array<CAsset_Material::CSprite>& Sprites, int Type, const a
 			if(t <= 0)
 			{
 				bool Found = false;
-				for(int l=0; l<AcceptedLabels1.size(); l++)
+				for(unsigned int l=0; l<AcceptedLabels1.size(); l++)
 				{
 					if(Sprites[i].GetTileLabel1() == AcceptedLabels1[l])
 					{
@@ -602,7 +603,7 @@ int FindSprite(const array<CAsset_Material::CSprite>& Sprites, int Type, const a
 			if(t == 1)
 			{
 				bool Found = false;
-				for(int l=0; l<AcceptedLabels0.size(); l++)
+				for(unsigned int l=0; l<AcceptedLabels0.size(); l++)
 				{
 					if(Sprites[i].GetTileLabel0() == AcceptedLabels0[l])
 					{
@@ -621,7 +622,7 @@ int FindSprite(const array<CAsset_Material::CSprite>& Sprites, int Type, const a
 	return -1;
 }
 
-void GetAcceptableLabels(const CAsset_Material* pMaterial, float MeanAngle, array<int>& AcceptedLabels)
+void GetAcceptableLabels(const CAsset_Material* pMaterial, float MeanAngle, std::vector<int>& AcceptedLabels)
 {
 	CAsset_Material::CIteratorLabel LabelIter;
 	for(LabelIter = pMaterial->BeginLabel(); LabelIter != pMaterial->EndLabel(); ++LabelIter)
@@ -640,7 +641,7 @@ void GetAcceptableLabels(const CAsset_Material* pMaterial, float MeanAngle, arra
 		{
 			if(AngleTest >= AngleRange0)
 			{
-				AcceptedLabels.add_by_copy((*LabelIter).GetId());
+				AcceptedLabels.push_back((*LabelIter).GetId());
 				break;
 			}
 			AngleTest += 2.0f*Pi;
@@ -650,8 +651,8 @@ void GetAcceptableLabels(const CAsset_Material* pMaterial, float MeanAngle, arra
 
 void GenerateMaterialQuads_Line(
 	const CAssetsManager* pAssetsManager,
-	array<CTexturedQuad>& OutputQuads,
-	const array<CLineVertex>& Vertices,
+	std::vector<CTexturedQuad>& OutputQuads,
+	const std::vector<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
 	const CAsset_Material* pMaterial,
@@ -660,7 +661,7 @@ void GenerateMaterialQuads_Line(
 	int OrthoTesselation
 )
 {
-	const array<CAsset_Material::CSprite>& Sprites = pLayer->GetSpriteArray();
+	const std::vector<CAsset_Material::CSprite>& Sprites = pLayer->GetSpriteArray();
 	if(Sprites.size() <= 0)
 		return;
 	
@@ -668,17 +669,17 @@ void GenerateMaterialQuads_Line(
 	
 	int FirstTileFromLastSegment = -1;
 	float TiledLengthFromLastSegment = 0.0f;
-	array<int> PreviousLabel;
+	std::vector<int> PreviousLabel;
 	while(LineIterator.NextSegment())
 	{
 		CSpriteInfo SpriteInfo;
-		array<CLineTile> Tiling;
+		std::vector<CLineTile> Tiling;
 		float SegmentLength = LineIterator.GetSegmentLength();
 		float TiledLength = TiledLengthFromLastSegment;
 		
 		//Step 1: Tiling generation
 		{
-			array<int> AcceptedLabels;
+			std::vector<int> AcceptedLabels;
 			GetAcceptableLabels(pMaterial, LineIterator.GetSegment()->m_MeanAngle, AcceptedLabels);
 			
 			//Find tiles with the appropriate label
@@ -698,7 +699,7 @@ void GenerateMaterialQuads_Line(
 				//There is a segment after the current one. Try to get a corner tile
 				if(pNextSegment)
 				{
-					array<int> NextAcceptedLabels;
+					std::vector<int> NextAcceptedLabels;
 					GetAcceptableLabels(pMaterial, pNextSegment->m_MeanAngle, NextAcceptedLabels);
 					
 					int TileType = CAsset_Material::SPRITETILE_CORNER_CONVEX;
@@ -722,13 +723,14 @@ void GenerateMaterialQuads_Line(
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, &Sprites[FirstTile], SpriteInfo);
 				TiledLength += SpriteInfo.m_Width;
 				
-				CLineTile& LineTile = Tiling.increment();
+				Tiling.emplace_back();
+				CLineTile& LineTile = Tiling.back();
 				LineTile.m_Id = FirstTile;
 				LineTile.m_Width = SpriteInfo.m_Width;
 				LineTile.m_FillingEnabled = false;
 				
 				PreviousLabel.clear();
-				PreviousLabel.add_by_copy(Sprites[FirstTile].GetTileLabel1());
+				PreviousLabel.push_back(Sprites[FirstTile].GetTileLabel1());
 			}
 			
 			CLineTile LastLineTile;
@@ -771,7 +773,8 @@ void GenerateMaterialQuads_Line(
 					{
 						TiledLength += SpriteInfo.m_Width;
 						
-						CLineTile& LineTile = Tiling.increment();
+						Tiling.emplace_back();
+						CLineTile& LineTile = Tiling.back();
 						LineTile.m_Id = Tile;
 						LineTile.m_Width = SpriteInfo.m_Width;
 						LineTile.m_FillingEnabled = false;
@@ -779,7 +782,7 @@ void GenerateMaterialQuads_Line(
 							LineTile.m_FillingEnabled = true;
 						
 						PreviousLabel.clear();
-						PreviousLabel.add_by_copy(Sprites[Tile].GetTileLabel1());
+						PreviousLabel.push_back(Sprites[Tile].GetTileLabel1());
 					}
 					else
 						break;
@@ -790,9 +793,9 @@ void GenerateMaterialQuads_Line(
 			
 			if(LastTile >= 0)
 			{
-				Tiling.add_by_copy(LastLineTile);
+				Tiling.push_back(LastLineTile);
 				PreviousLabel.clear();
-				PreviousLabel.add_by_copy(Sprites[LastTile].GetTileLabel1());
+				PreviousLabel.push_back(Sprites[LastTile].GetTileLabel1());
 			}
 		}
 		
@@ -815,7 +818,7 @@ void GenerateMaterialQuads_Line(
 			float GlobalSpacing = 0.0f;
 			int NumResizableTiles = 0;
 			
-			for(int i=0; i<Tiling.size(); i++)
+			for(unsigned int i=0; i<Tiling.size(); i++)
 			{
 				if(Tiling[i].m_FillingEnabled)
 					NumResizableTiles++;
@@ -824,7 +827,7 @@ void GenerateMaterialQuads_Line(
 			if(NumResizableTiles)
 				GlobalSpacing = ((SegmentLength - TiledLength)/NumResizableTiles)/2.0f;
 			
-			for(int i=0; i<Tiling.size(); i++)
+			for(unsigned int i=0; i<Tiling.size(); i++)
 			{
 				const CAsset_Material::CSprite* pSprite = &Sprites[Tiling[i].m_Id];
 				GenerateMaterialQuads_GetSpriteInfo(pAssetsManager, pSprite, SpriteInfo);
@@ -989,7 +992,8 @@ void GenerateMaterialQuads_Line(
 						//Sprites along the line
 						else if(Stop == CLineIterator::LINECURSORSTATE_END)
 						{
-							CTexturedQuad& Quad = OutputQuads.increment();
+							OutputQuads.emplace_back();
+							CTexturedQuad& Quad = OutputQuads.back();
 							
 							//Add position shift
 							vec2 DirX = vec2(-1.0f, 0.0f);
@@ -1044,8 +1048,8 @@ void GenerateMaterialQuads_Line(
 
 void GenerateMaterialQuads(
 	const CAssetsManager* pAssetsManager,
-	array<CTexturedQuad>& OutputQuads,
-	const array<CLineVertex>& Vertices,
+	std::vector<CTexturedQuad>& OutputQuads,
+	const std::vector<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
 	CAssetPath MaterialPath,
@@ -1064,7 +1068,7 @@ void GenerateMaterialQuads(
 		if(Vertices.size() >= 3)
 		{
 			vec2 Barycenter = vec2(0.0f, 0.0f);
-			for(int i=0; i<Vertices.size(); i++)
+			for(unsigned int i=0; i<Vertices.size(); i++)
 				Barycenter += Vertices[i].m_Position;
 			Barycenter = ObjPosition + Transform*(Barycenter / Vertices.size());
 			
@@ -1074,14 +1078,15 @@ void GenerateMaterialQuads(
 			if(pImage)
 				TextureSize = pImage->GetDataWidth() * pImage->GetTexelSize() / 1024.0f;
 			
-			int i=0;
+			unsigned int i=0;
 			do
 			{
 				int V0 = i;
 				int V1 = i+1;
-				int V2 = min(i+2, Vertices.size()-1);
+				int V2 = min(i+2, static_cast<unsigned int>(Vertices.size()-1));
 				
-				CTexturedQuad& Quad = OutputQuads.increment();
+				OutputQuads.emplace_back();
+				CTexturedQuad& Quad = OutputQuads.back();
 				
 				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position + normalize(Vertices[V0].m_Thickness) * pMaterial->GetTextureSpacing());
 				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position + normalize(Vertices[V1].m_Thickness) * pMaterial->GetTextureSpacing());
@@ -1120,20 +1125,21 @@ void GenerateMaterialQuads(
 	}
 }
 
-void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object)
+void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object)
 {
-	const array<CAsset_MapLayerObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
+	const std::vector<CAsset_MapLayerObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
 	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
 	
 	vec2 ObjPosition;
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
 	
-	array<CBezierVertex> BezierVertices;
+	std::vector<CBezierVertex> BezierVertices;
 	
-	for(int i=0; i<ObjectVertices.size(); i++)
+	for(unsigned int i=0; i<ObjectVertices.size(); i++)
 	{
-		CBezierVertex& Vertex = BezierVertices.increment();
+		BezierVertices.emplace_back();
+		CBezierVertex& Vertex = BezierVertices.back();
 		Vertex.m_Position = ObjectVertices[i].GetPosition();
 		Vertex.m_Weight = ObjectVertices[i].GetWeight();
 		Vertex.m_Color = ObjectVertices[i].GetColor();
@@ -1145,8 +1151,7 @@ void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Ti
 	}
 	if(Closed && BezierVertices.size() > 0)
 	{
-		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex = BezierVertices[0];
+		BezierVertices.push_back(BezierVertices[0]);
 	}
 	
 	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
@@ -1154,7 +1159,7 @@ void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Ti
 	ComputeLineNormals<CLineVertex>(OutputLines, Closed);
 }
 
-void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
+void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object)
 {
 	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
 	bool ShowLine = (Object.GetLineType() == CAsset_MapLayerObjects::LINETYPE_SHOW);
@@ -1162,26 +1167,27 @@ void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Ti
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
 	
-	array<CLineVertex> LineVertices;
+	std::vector<CLineVertex> LineVertices;
 	GenerateMaterialCurve_Object(pAssetsManager, Time, LineVertices, Object);
 	
 	GenerateMaterialQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, Object.GetStylePath(), Closed, ShowLine, Object.GetOrthoTesselation());
 }
 
-void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object)
+void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object)
 {
-	const array<CAsset_MapZoneObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
+	const std::vector<CAsset_MapZoneObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
 	bool Closed = (Object.GetPathType() == CAsset_MapZoneObjects::PATHTYPE_CLOSED);
 	
 	vec2 ObjPosition;
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
 	
-	array<CBezierVertex> BezierVertices;
+	std::vector<CBezierVertex> BezierVertices;
 	
-	for(int i=0; i<ObjectVertices.size(); i++)
+	for(unsigned int i=0; i<ObjectVertices.size(); i++)
 	{
-		CBezierVertex& Vertex = BezierVertices.increment();
+		BezierVertices.emplace_back();
+		CBezierVertex& Vertex = BezierVertices.back();
 		Vertex.m_Position = ObjectVertices[i].GetPosition();
 		Vertex.m_Weight = ObjectVertices[i].GetWeight();
 		Vertex.m_Type = ObjectVertices[i].GetSmoothness();
@@ -1192,8 +1198,7 @@ void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, 
 	}
 	if(Closed && BezierVertices.size() > 0)
 	{
-		CBezierVertex& Vertex = BezierVertices.increment();
-		Vertex = BezierVertices[0];
+		BezierVertices.push_back(BezierVertices[0]);
 	}
 	
 	ComputeLineNormals<CBezierVertex>(BezierVertices, Closed);
@@ -1203,8 +1208,8 @@ void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, 
 
 void GenerateZoneQuads(
 	const CAssetsManager* pAssetsManager,
-	array<CTexturedQuad>& OutputQuads,
-	const array<CLineVertex>& Vertices,
+	std::vector<CTexturedQuad>& OutputQuads,
+	const std::vector<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
 	CAssetPath ZoneTypePath,
@@ -1242,20 +1247,21 @@ void GenerateZoneQuads(
 		if(Vertices.size() >= 3)
 		{
 			vec2 Barycenter = vec2(0.0f, 0.0f);
-			for(int i=0; i<Vertices.size(); i++)
+			for(unsigned int i=0; i<Vertices.size(); i++)
 				Barycenter += Vertices[i].m_Position;
 			Barycenter = ObjPosition + Transform*(Barycenter / Vertices.size());
 			
 			float TextureSize = 1.0f/32.0f;
 			
-			int i=0;
+			unsigned int i=0;
 			do
 			{
 				int V0 = i;
 				int V1 = i+1;
-				int V2 = min(i+2, Vertices.size()-1);
+				int V2 = min(i+2, static_cast<unsigned int>(Vertices.size()-1));
 				
-				CTexturedQuad& Quad = OutputQuads.increment();
+				OutputQuads.emplace_back();
+				CTexturedQuad& Quad = OutputQuads.back();
 				
 				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position);
 				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position);
@@ -1282,12 +1288,13 @@ void GenerateZoneQuads(
 		
 		if(Vertices.size() >= 2)
 		{
-			for(int i=0; i<Vertices.size()-1; i++)
+			for(unsigned int i=0; i<Vertices.size()-1; i++)
 			{
 				int V0 = i;
 				int V1 = (i+1);
 				
-				CTexturedQuad& Quad = OutputQuads.increment();
+				OutputQuads.emplace_back();
+				CTexturedQuad& Quad = OutputQuads.back();
 				
 				Quad.m_Position[0] = ObjPosition + Transform*(Vertices[V0].m_Position);
 				Quad.m_Position[1] = ObjPosition + Transform*(Vertices[V1].m_Position);
@@ -1310,14 +1317,14 @@ void GenerateZoneQuads(
 	}
 }
 
-void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath)
+void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath)
 {
 	bool Closed = (Object.GetPathType() == CAsset_MapZoneObjects::PATHTYPE_CLOSED);
 	vec2 ObjPosition;
 	matrix2x2 Transform;
 	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
 	
-	array<CLineVertex> LineVertices;
+	std::vector<CLineVertex> LineVertices;
 	GenerateZoneCurve_Object(pAssetsManager, Time, LineVertices, Object);
 	
 	GenerateZoneQuads(pAssetsManager, OutputQuads, LineVertices, Transform, ObjPosition, ZoneTypePath, Object.GetZoneIndex(), Closed);

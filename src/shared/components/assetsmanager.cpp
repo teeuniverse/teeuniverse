@@ -26,7 +26,6 @@
 	
 CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
-	m_pHistory(NULL),
 	m_PackageId_UnivTeeWorlds(-1),
 	m_PackageId_UnivDDNet(-1),
 	m_PackageId_UnivOpenFNG(-1),
@@ -49,30 +48,18 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	SetName("AssetsManager");
 }
 
-CAssetsManager::~CAssetsManager()
-{
-	for(int i=0; i<m_pPackages.size(); i++)
-	{
-		if(m_pPackages[i])
-			delete m_pPackages[i];
-	}
-	m_pPackages.clear();
-	
-	if(m_pHistory)
-		delete m_pHistory;
-}
-
 void CAssetsManager::RequestUpdate(const CAssetPath& AssetPath)
 {
 	if(AssetPath.GetType() == CAsset_Image::TypeId)
 	{
-		for(int i=0; i<m_ImagesToUpdate.size(); i++)
+		for(unsigned int i=0; i<m_ImagesToUpdate.size(); i++)
 		{
 			if(m_ImagesToUpdate[i].m_Path == AssetPath)
 				return;
 		}
 		
-		CAssetUpdateDesc& Desc = m_ImagesToUpdate.increment();
+		m_ImagesToUpdate.emplace_back();
+		CAssetUpdateDesc& Desc = m_ImagesToUpdate.back();
 		Desc.m_Path = AssetPath;
 		Desc.m_Updated = false;
 	}
@@ -83,7 +70,7 @@ bool CAssetsManager::PostUpdate()
 	for(int i=m_ImagesToUpdate.size()-1; i>=0; i--)
 	{
 		if(m_ImagesToUpdate[i].m_Updated)
-			m_ImagesToUpdate.remove_index(i);
+			m_ImagesToUpdate.erase(m_ImagesToUpdate.begin() + i);
 	}
 	
 	return true;
@@ -93,22 +80,20 @@ int CAssetsManager::NewPackage(const char* pName)
 {
 	//Search for an empty place
 	int PackageId = -1;
-	CAssetsPackage* pPackage = NULL;
-	for(int i=0; i<m_pPackages.size(); i++)
+	for(unsigned int i=0; i<m_pPackages.size(); i++)
 	{
 		if(!m_pPackages[i])
 		{
 			PackageId = i;
-			pPackage = new CAssetsPackage();
-			m_pPackages[i] = pPackage;
+			m_pPackages[PackageId].reset(new CAssetsPackage());
 		}
 	}
 	
 	if(PackageId < 0)
 	{
 		PackageId = m_pPackages.size();
-		pPackage = new CAssetsPackage();
-		m_pPackages.increment() = pPackage;
+		m_pPackages.emplace_back();
+		m_pPackages[PackageId].reset(new CAssetsPackage());
 	}
 	
 	if(pName)
@@ -150,7 +135,7 @@ void CAssetsManager::SetPackageName_Hard(int PackageId, const char* pName)
 	while(DuplicateFound)
 	{
 		DuplicateFound = false;
-		for(int i=0; i<m_pPackages.size(); i++)
+		for(int i=0; i<static_cast<int>(m_pPackages.size()); i++)
 		{
 			if(m_pPackages[i] && i != PackageId)
 			{
@@ -280,7 +265,7 @@ int CAssetsManager::GetNumPackages() const
 
 bool CAssetsManager::IsValidPackage(int PackageId) const
 {
-	return (PackageId >= 0 && PackageId < m_pPackages.size() && m_pPackages[PackageId]);
+	return (PackageId >= 0 && PackageId < static_cast<int>(m_pPackages.size()) && m_pPackages[PackageId]);
 }
 
 bool CAssetsManager::IsReadOnlyPackage(int PackageId) const
@@ -310,8 +295,7 @@ void CAssetsManager::ClosePackage(int PackageId)
 	if(!IsValidPackage(PackageId))
 		return;
 	
-	delete m_pPackages[PackageId];
-	m_pPackages[PackageId] = NULL;
+	m_pPackages[PackageId].reset();
 	
 	if(m_pHistory)
 		m_pHistory->Flush();
@@ -319,16 +303,13 @@ void CAssetsManager::ClosePackage(int PackageId)
 
 int CAssetsManager::AddNameToResolve(const char* pName)
 {
-	for(int i=0; i<m_pNamesToResolved.size(); i++)
+	for(unsigned int i=0; i<m_pNamesToResolved.size(); i++)
 	{
-		if(str_comp(pName, m_pNamesToResolved[i]) == 0)
-			return i;
+		if(m_pNamesToResolved[i] == pName)
+			return static_cast<int>(i);
 	}
 	
-	char*& pStoredName = m_pNamesToResolved.increment();
-	int MemorySize = str_length(pName)+1;
-	pStoredName = new char[MemorySize];
-	str_copy(pStoredName, pName, MemorySize);
+	m_pNamesToResolved.push_back(pName);
 	
 	return m_pNamesToResolved.size()-1;
 }
@@ -462,11 +443,11 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		return PackageId;
 	}
 	
-	for(int i=0; i<m_pPackages.size(); i++)
+	for(unsigned int i=0; i<m_pPackages.size(); i++)
 	{
 		if(m_pPackages[i] && m_pPackages[i]->Identify(PackageName.buffer(), Crc))
 		{
-			pPackage = m_pPackages[i];
+			pPackage = m_pPackages[i].get();
 			PackageId = i;
 			
 			if(pPackage->IsJustLoaded())
@@ -477,7 +458,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	if(!pPackage)
 	{
 		PackageId = NewPackage(NULL);
-		pPackage = m_pPackages[PackageId];
+		pPackage = m_pPackages[PackageId].get();
 		pPackage->SetIdentity(PackageName.buffer(), ArchiveFile.Crc());
 	}
 	
@@ -515,7 +496,7 @@ int CAssetsManager::Load_AssetsFile(const char* pFileName, int StorageType, unsi
 	int PackageId = Load_AssetsFile_Core(pFileName, StorageType, Crc, pErrorStack);
 	
 	//Then resolve assets name and finalize
-	for(int i=0; i<m_pPackages.size(); i++)
+	for(unsigned int i=0; i<m_pPackages.size(); i++)
 	{
 		if(m_pPackages[i] && m_pPackages[i]->IsJustLoaded())
 		{
@@ -524,11 +505,6 @@ int CAssetsManager::Load_AssetsFile(const char* pFileName, int StorageType, unsi
 		}
 	}
 	
-	for(int i=0; i<m_pNamesToResolved.size(); i++)
-	{
-		if(m_pNamesToResolved[i])
-			delete[] m_pNamesToResolved[i];
-	}
 	m_pNamesToResolved.clear();
 	
 	return PackageId;
@@ -999,7 +975,7 @@ void CAssetsManager::DeleteAsset_Hard(const CAssetPath& Path)
 
 		CAssetPath::COperation Operation = CAssetPath::COperation::DeleteAsset(Path);
 		
-		for(int i=0; i<m_pPackages.size(); i++)
+		for(unsigned int i=0; i<m_pPackages.size(); i++)
 		{
 			if(m_pPackages[i])
 				m_pPackages[i]->AssetPathOperation(Operation);
@@ -1014,9 +990,9 @@ void CAssetsManager::DeleteAsset(const CAssetPath& Path, int Token)
 		m_pHistory->Flush();
 }
 
-void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
+void CAssetsManager::DeleteAssets(std::vector<CAssetPath>& Pathes, int Token)
 {
-	for(int a=0; a<Pathes.size(); a++)
+	for(unsigned int a=0; a<Pathes.size(); a++)
 	{
 		if(IsValidPackage(Pathes[a].GetPackageId()))
 		{
@@ -1024,13 +1000,13 @@ void CAssetsManager::DeleteAssets(array<CAssetPath>& Pathes, int Token)
 
 			CAssetPath::COperation Operation = CAssetPath::COperation::DeleteAsset(Pathes[a]);
 				
-			for(int i=0; i<m_pPackages.size(); i++)
+			for(unsigned int i=0; i<m_pPackages.size(); i++)
 			{
 				if(m_pPackages[i])
 					m_pPackages[i]->AssetPathOperation(Operation);
 			}
 			
-			for(int b=a+1; b<Pathes.size(); b++)
+			for(unsigned int b=a+1; b<Pathes.size(); b++)
 				Operation.Apply(Pathes[b]);
 		}
 	}
@@ -1103,7 +1079,7 @@ CAssetState* CAssetsManager::GetAssetState(CAssetPath Path)
 
 void CAssetsManager::InitAssetState(int PackageId, const CAssetState& State)
 {
-	if(PackageId >= 0 && PackageId < m_pPackages.size() && m_pPackages[PackageId])
+	if(PackageId >= 0 && PackageId < static_cast<int>(m_pPackages.size()) && m_pPackages[PackageId])
 		m_pPackages[PackageId]->InitAssetState(State);
 }
 
@@ -1122,10 +1098,7 @@ bool CAssetsManager::SaveAssetInHistory(CAssetPath AssetPath, int Token)
 
 void CAssetsManager::EnableAssetsHistory()
 {
-	if(m_pHistory)
-		delete m_pHistory;
-	
-	m_pHistory = new CAssetsHistory(this);
+	m_pHistory.reset(new CAssetsHistory(this));
 }
 
 void CAssetsManager::Undo()

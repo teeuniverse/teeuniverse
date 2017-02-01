@@ -19,6 +19,7 @@
 #include <client/components/textrenderer.h>
 #include <shared/components/localization.h>
 #include <shared/components/storage.h>
+#include <shared/system/debug.h>
 
 #include <unicode/schriter.h> //Character iterator to iterate over utf16 string
 #include <unicode/ubidi.h> //To apply BiDi algorithm
@@ -43,7 +44,6 @@ CTextRenderer::CFont::~CFont()
 
 CTextRenderer::CGlyphCache::CGlyphCache(CClientKernel* pKernel) :
 	CClientKernel::CGuest(pKernel),
-	m_pData(NULL),
 	m_Version(0)
 {
 	
@@ -51,9 +51,6 @@ CTextRenderer::CGlyphCache::CGlyphCache(CClientKernel* pKernel) :
 
 CTextRenderer::CGlyphCache::~CGlyphCache()
 {
-	if(m_pData)
-		delete[] m_pData;
-	
 	if(m_Texture.IsValid())
 		Graphics()->UnloadTexture(&m_Texture);
 }
@@ -72,7 +69,7 @@ void CTextRenderer::CGlyphCache::UpdateGlyph(CTextRenderer::CGlyph& Glyph)
 	
 	int DataX = (Glyph.m_Block % NumBlockX)*m_PPB + (BlockPosX * Glyph.m_Granularity.x)*m_PPG;
 	int DataY = (Glyph.m_Block / NumBlockX)*m_PPB + (BlockPosY * Glyph.m_Granularity.y)*m_PPG;
-	Glyph.m_pData = m_pData + DataY * m_Width + DataX;
+	Glyph.m_pData = m_pData.get() + DataY * m_Width + DataX;
 	
 	float UScale = 1.0f/m_Width;
 	float VScale = 1.0f/m_Height;
@@ -94,8 +91,7 @@ void CTextRenderer::CGlyphCache::Init(int FontSize)
 	m_PPB = m_GPB * m_PPG;
 	
 	//Remove old data
-	if(m_pData)
-		delete[] m_pData;
+	m_pData.reset();
 	
 	if(m_Texture.IsValid())
 		Graphics()->UnloadTexture(&m_Texture);
@@ -116,10 +112,10 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 	{
 		m_Width = m_PPB;
 		m_Height = m_PPB;
-		m_pData = new unsigned char[m_Width*m_Height];
+		m_pData.reset(new unsigned char[m_Width*m_Height]);
 
-		mem_zero(m_pData, m_Width*m_Height);
-		m_Texture = Graphics()->LoadTextureRaw(m_Width, m_Height, 1, 1, CImageInfo::FORMAT_ALPHA, m_pData, CImageInfo::FORMAT_ALPHA, CGraphics::TEXLOAD_NOMIPMAPS);
+		mem_zero(m_pData.get(), m_Width*m_Height);
+		m_Texture = Graphics()->LoadTextureRaw(m_Width, m_Height, 1, 1, CImageInfo::FORMAT_ALPHA, m_pData.get(), CImageInfo::FORMAT_ALPHA, CGraphics::TEXLOAD_NOMIPMAPS);
 		
 		m_MemoryUsage = m_Width*m_Height;
 	}
@@ -156,19 +152,17 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 						int OldX = (b % OldNumBlockX)*m_PPB + i;
 						int NewX = (b % NewNumBlockX)*m_PPB + i;
 						
-						pNewData[NewY*NewWidth+NewX] = m_pData[OldY*m_Width+OldX];
+						pNewData[NewY*NewWidth+NewX] = m_pData.get()[OldY*m_Width+OldX];
 					}
 				}
 			}
-			
-			delete[] m_pData;
 			
 			m_MemoryUsage -= m_Width*m_Height;
 			
 			if(m_Texture.IsValid())
 				Graphics()->UnloadTexture(&m_Texture);
 		}
-		m_pData = pNewData;
+		m_pData.reset(pNewData);
 		m_Width = NewWidth;
 		m_Height = NewHeight;
 		
@@ -180,7 +174,7 @@ void CTextRenderer::CGlyphCache::IncreaseCache()
 		
 		//Update texture
 		
-		m_Texture = Graphics()->LoadTextureRaw(m_Width, m_Height, 1, 1, CImageInfo::FORMAT_ALPHA, m_pData, CImageInfo::FORMAT_ALPHA, CGraphics::TEXLOAD_NOMIPMAPS);
+		m_Texture = Graphics()->LoadTextureRaw(m_Width, m_Height, 1, 1, CImageInfo::FORMAT_ALPHA, m_pData.get(), CImageInfo::FORMAT_ALPHA, CGraphics::TEXLOAD_NOMIPMAPS);
 		m_MemoryUsage += m_Width*m_Height;
 	}
 	
@@ -303,8 +297,8 @@ CTextRenderer::CGlyph* CTextRenderer::CGlyphCache::FindGlyph(CGlyphId GlyphId)
 
 void CTextRenderer::CGlyphCache::UpdateTexture(CTextRenderer::CGlyph* pGlyph, const char* pData)
 {
-	int DataX = (pGlyph->m_pData - m_pData) % m_Width;
-	int DataY = (pGlyph->m_pData - m_pData) / m_Width;
+	int DataX = (pGlyph->m_pData - m_pData.get()) % m_Width;
+	int DataY = (pGlyph->m_pData - m_pData.get()) / m_Width;
 	
 	Graphics()->LoadTextureRawSub(
 		m_Texture,
@@ -909,4 +903,10 @@ bool CTextRenderer::PreUpdate()
 		m_GlyphCaches[i]->m_RenderTick = m_RenderTick;
 	
 	return true;
+}
+
+void CTextRenderer::Shutdown()
+{
+	m_GlyphCaches.clear();
+	m_Fonts.clear();
 }

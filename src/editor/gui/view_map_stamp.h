@@ -31,8 +31,8 @@ protected:
 	bool m_SelectionEnabled;
 	array2d<int> m_IntDataSelection;
 	array2d<CAsset_MapLayerTiles::CTile> m_TileSelection;
-	array<CAsset_MapLayerQuads::CQuad> m_QuadSelection;
-	array<CAsset_MapEntities::CEntity> m_EntitySelection;
+	std::vector<CAsset_MapLayerQuads::CQuad> m_QuadSelection;
+	std::vector<CAsset_MapEntities::CEntity> m_EntitySelection;
 	vec2 m_Pivot;
 	int m_Token;
 	gui::CHListLayout* m_pOptions;
@@ -47,7 +47,7 @@ public:
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
-	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const array<int>& DataInt);
+	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const std::vector<int>& DataInt);
 	void PaletteCallback_SelectEntityType(CAssetPath ZoneTypePath);
 	void VFlipSelection();
 	void HFlipSelection();

@@ -33,7 +33,7 @@ inline int CAsset_SkeletonAnimation::CBoneAnimation::IntTimeToKeyFrame(int IntTi
 		return 0;
 	
 	int i;
-	for(i=0; i<m_KeyFrame.size(); i++)
+	for(i=0; i<static_cast<int>(m_KeyFrame.size()); i++)
 	{
 		if(m_KeyFrame[i].GetTime() > IntTime)
 			break;
@@ -55,7 +55,7 @@ bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(float Time, CBoneAnimati
 	
 	int i = TimeToKeyFrame(CycleTime);
 	
-	if(i == m_KeyFrame.size())
+	if(i == static_cast<int>(m_KeyFrame.size()))
 	{
 		if(i == 0)
 			return false;
@@ -80,7 +80,7 @@ bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(float Time, CBoneAnimati
 
 bool CAsset_SkeletonAnimation::GetLocalBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const
 {
-	if(Id < 0 || Id >= m_LocalBoneAnim.size())
+	if(Id < 0 || Id >= static_cast<int>(m_LocalBoneAnim.size()))
 	{
 		Frame.SetTranslation(vec2(0.0f, 0.0f));
 		Frame.SetScale(vec2(1.0f, 1.0f));
@@ -106,7 +106,7 @@ int CAsset_SkeletonAnimation::CLayerAnimation::IntTimeToKeyFrame(int IntTime) co
 		return 0;
 	
 	int i;
-	for(i=0; i<m_KeyFrame.size(); i++)
+	for(i=0; i<static_cast<int>(m_KeyFrame.size()); i++)
 	{
 		if(m_KeyFrame[i].GetTime() > IntTime)
 			break;
@@ -128,7 +128,7 @@ bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(float Time, CLayerAnima
 	
 	int i = TimeToKeyFrame(CycleTime);
 	
-	if(i == m_KeyFrame.size())
+	if(i == static_cast<int>(m_KeyFrame.size()))
 	{
 		if(i == 0)
 			return false;
@@ -151,7 +151,7 @@ bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(float Time, CLayerAnima
 
 bool CAsset_SkeletonAnimation::GetLayerAnimFrame(int Id, float Time, CLayerAnimation::CFrame& Frame) const
 {
-	if(Id < 0 || Id >= m_LayerAnimation.size())
+	if(Id < 0 || Id >= static_cast<int>(m_LayerAnimation.size()))
 	{
 		Frame.SetColor(1.0f);
 		Frame.SetState(LAYERSTATE_VISIBLE);

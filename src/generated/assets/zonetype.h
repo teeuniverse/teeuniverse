@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_ZONETYPE__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_ZoneType : public CAsset
 {
@@ -354,10 +356,10 @@ public:
 	
 
 private:
-	array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > > m_Index;
+	std::vector<CAsset_ZoneType::CIndex> m_Index;
 	CAssetPath m_ImagePath;
-	array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > > m_DataInt;
-	array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > > m_Group;
+	std::vector<CAsset_ZoneType::CDataInt> m_DataInt;
+	std::vector<_dynamic_string<128>> m_Group;
 
 public:
 	virtual ~CAsset_ZoneType() {}
@@ -384,10 +386,10 @@ public:
 	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
 	
-	inline const CAsset_ZoneType::CIndex* GetIndexPtr() const { return m_Index.base_ptr(); }
+	inline const CAsset_ZoneType::CIndex* GetIndexPtr() const { return &(m_Index.front()); }
 	
-	inline const array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > >& GetIndexArray() const { return m_Index; }
-	inline array< CAsset_ZoneType::CIndex, allocator_default< CAsset_ZoneType::CIndex > >& GetIndexArray() { return m_Index; }
+	inline const std::vector<CAsset_ZoneType::CIndex>& GetIndexArray() const { return m_Index; }
+	inline std::vector<CAsset_ZoneType::CIndex>& GetIndexArray() { return m_Index; }
 	
 	inline const CAsset_ZoneType::CIndex& GetIndex(const CSubPath& SubPath) const
 	{
@@ -450,10 +452,10 @@ public:
 	
 	inline int GetDataIntArraySize() const { return m_DataInt.size(); }
 	
-	inline const CAsset_ZoneType::CDataInt* GetDataIntPtr() const { return m_DataInt.base_ptr(); }
+	inline const CAsset_ZoneType::CDataInt* GetDataIntPtr() const { return &(m_DataInt.front()); }
 	
-	inline const array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > >& GetDataIntArray() const { return m_DataInt; }
-	inline array< CAsset_ZoneType::CDataInt, allocator_default< CAsset_ZoneType::CDataInt > >& GetDataIntArray() { return m_DataInt; }
+	inline const std::vector<CAsset_ZoneType::CDataInt>& GetDataIntArray() const { return m_DataInt; }
+	inline std::vector<CAsset_ZoneType::CDataInt>& GetDataIntArray() { return m_DataInt; }
 	
 	inline const CAsset_ZoneType::CDataInt& GetDataInt(const CSubPath& SubPath) const
 	{
@@ -507,10 +509,10 @@ public:
 	
 	inline int GetGroupArraySize() const { return m_Group.size(); }
 	
-	inline const _dynamic_string<128>* GetGroupPtr() const { return m_Group.base_ptr(); }
+	inline const _dynamic_string<128>* GetGroupPtr() const { return &(m_Group.front()); }
 	
-	inline const array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > >& GetGroupArray() const { return m_Group; }
-	inline array< _dynamic_string<128>, allocator_default< _dynamic_string<128> > >& GetGroupArray() { return m_Group; }
+	inline const std::vector<_dynamic_string<128>>& GetGroupArray() const { return m_Group; }
+	inline std::vector<_dynamic_string<128>>& GetGroupArray() { return m_Group; }
 	
 	inline const char* GetGroup(const CSubPath& SubPath) const
 	{
@@ -633,41 +635,41 @@ public:
 	inline int AddIndex()
 	{
 		int Id = m_Index.size();
-		m_Index.increment();
+		m_Index.emplace_back();
 		return Id;
 	}
 	
 	inline int AddDataInt()
 	{
 		int Id = m_DataInt.size();
-		m_DataInt.increment();
+		m_DataInt.emplace_back();
 		return Id;
 	}
 	
 	inline int AddGroup()
 	{
 		int Id = m_Group.size();
-		m_Group.increment();
+		m_Group.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtIndex(int Index) { m_Index.insertat_and_init(Index); }
+	inline void AddAtIndex(int Index) { m_Index.insert(m_Index.begin() + Index, CAsset_ZoneType::CIndex()); }
 	
-	inline void AddAtDataInt(int Index) { m_DataInt.insertat_and_init(Index); }
+	inline void AddAtDataInt(int Index) { m_DataInt.insert(m_DataInt.begin() + Index, CAsset_ZoneType::CDataInt()); }
 	
-	inline void AddAtGroup(int Index) { m_Group.insertat_and_init(Index); }
+	inline void AddAtGroup(int Index) { m_Group.insert(m_Group.begin() + Index, _dynamic_string<128>()); }
 	
-	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.remove_index(SubPath.GetId()); }
+	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.erase(m_Index.begin() + SubPath.GetId()); }
 	
-	inline void DeleteDataInt(const CSubPath& SubPath) { m_DataInt.remove_index(SubPath.GetId()); }
+	inline void DeleteDataInt(const CSubPath& SubPath) { m_DataInt.erase(m_DataInt.begin() + SubPath.GetId()); }
 	
-	inline void DeleteGroup(const CSubPath& SubPath) { m_Group.remove_index(SubPath.GetId()); }
+	inline void DeleteGroup(const CSubPath& SubPath) { m_Group.erase(m_Group.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { m_Index.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveDataInt(const CSubPath& SubPath, int RelMove) { m_DataInt.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveDataInt(const CSubPath& SubPath, int RelMove) { relative_move(m_DataInt, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveGroup(const CSubPath& SubPath, int RelMove) { m_Group.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_Group, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
 	
@@ -677,12 +679,12 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
-		for(int i=0; i<m_Index.size(); i++)
+		for(unsigned int i=0; i<m_Index.size(); i++)
 		{
 			m_Index[i].AssetPathOperation(Operation);
 		}
 		Operation.Apply(m_ImagePath);
-		for(int i=0; i<m_DataInt.size(); i++)
+		for(unsigned int i=0; i<m_DataInt.size(); i++)
 		{
 			m_DataInt[i].AssetPathOperation(Operation);
 		}

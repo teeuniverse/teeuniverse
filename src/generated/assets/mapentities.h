@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_MAPENTITIES__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_MapEntities : public CAsset
 {
@@ -193,7 +195,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > > m_Entity;
+	std::vector<CAsset_MapEntities::CEntity> m_Entity;
 	bool m_Visibility;
 
 public:
@@ -224,10 +226,10 @@ public:
 	
 	inline int GetEntityArraySize() const { return m_Entity.size(); }
 	
-	inline const CAsset_MapEntities::CEntity* GetEntityPtr() const { return m_Entity.base_ptr(); }
+	inline const CAsset_MapEntities::CEntity* GetEntityPtr() const { return &(m_Entity.front()); }
 	
-	inline const array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > >& GetEntityArray() const { return m_Entity; }
-	inline array< CAsset_MapEntities::CEntity, allocator_default< CAsset_MapEntities::CEntity > >& GetEntityArray() { return m_Entity; }
+	inline const std::vector<CAsset_MapEntities::CEntity>& GetEntityArray() const { return m_Entity; }
+	inline std::vector<CAsset_MapEntities::CEntity>& GetEntityArray() { return m_Entity; }
 	
 	inline const CAsset_MapEntities::CEntity& GetEntity(const CSubPath& SubPath) const
 	{
@@ -308,22 +310,22 @@ public:
 	inline int AddEntity()
 	{
 		int Id = m_Entity.size();
-		m_Entity.increment();
+		m_Entity.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtEntity(int Index) { m_Entity.insertat_and_init(Index); }
+	inline void AddAtEntity(int Index) { m_Entity.insert(m_Entity.begin() + Index, CAsset_MapEntities::CEntity()); }
 	
-	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.remove_index(SubPath.GetId()); }
+	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.erase(m_Entity.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveEntity(const CSubPath& SubPath, int RelMove) { m_Entity.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveEntity(const CSubPath& SubPath, int RelMove) { relative_move(m_Entity, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Entity.size()); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_ParentPath);
-		for(int i=0; i<m_Entity.size(); i++)
+		for(unsigned int i=0; i<m_Entity.size(); i++)
 		{
 			m_Entity[i].AssetPathOperation(Operation);
 		}

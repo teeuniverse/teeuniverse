@@ -35,7 +35,6 @@
 #define __CLIENT_GRAPHICS__
 
 #include <shared/system/time.h>
-#include <shared/tl/array.h>
 #include <shared/math/vector.h>
 #include <shared/graphics.h>
 #include <client/kernel.h>
@@ -433,7 +432,7 @@ protected:
 
 //TAG_DEBUG
 public:
-	array<CCommandBuffer::SClip> m_ClipStack;
+	std::vector<CCommandBuffer::SClip> m_ClipStack;
 
 protected:
 	CTextureHandle m_InvalidTexture;

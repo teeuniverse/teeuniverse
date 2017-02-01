@@ -62,7 +62,7 @@ void CAbstractTabs::Destroy()
 	if(m_pButtonList)
 		m_pButtonList->Destroy();
 	
-	for(int i=0; i<m_Tabs.size(); i++)
+	for(unsigned int i=0; i<m_Tabs.size(); i++)
 		m_Tabs[i].m_pWidget->Destroy();
 	
 	CWidget::Destroy();
@@ -70,7 +70,7 @@ void CAbstractTabs::Destroy()
 
 void CAbstractTabs::OpenTab(int TabId)
 {
-	if(TabId >= 0 && TabId < m_Tabs.size())
+	if(TabId >= 0 && TabId < static_cast<int>(m_Tabs.size()))
 		SetSelectedTab(TabId);
 	else
 		SetSelectedTab(-1);
@@ -84,8 +84,10 @@ void CAbstractTabs::AddTab(CWidget* pWidget, const char* pName, const CLocalizab
 	{
 		Fill = pTabsStyle->GetButtonListFill();
 	}
-	int TabId = m_Tabs.size();
-	CTab& Tab = m_Tabs.increment();
+	int TabId = static_cast<int>(m_Tabs.size());
+	
+	m_Tabs.emplace_back();
+	CTab& Tab = m_Tabs.back();
 	
 	Tab.m_pWidget = pWidget;
 	Tab.m_pTabButton = 0;
@@ -115,7 +117,7 @@ void CAbstractTabs::AddTab(CWidget* pWidget, const CLocalizableString& Localizab
 void CAbstractTabs::Clear()
 {
 	SetSelectedTab(-1);
-	for(int i=0; i<m_Tabs.size(); i++)
+	for(unsigned int i=0; i<m_Tabs.size(); i++)
 	{
 		m_Tabs[i].m_pWidget->Destroy();
 	}
@@ -144,7 +146,7 @@ void CAbstractTabs::UpdateBoundingSize()
 	
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->UpdateBoundingSize();
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->UpdateBoundingSize();
 		
 		CRect BSSelectedTab = m_Tabs[GetSelectedTab()].m_pWidget->GetBS();
 		
@@ -210,7 +212,7 @@ void CAbstractTabs::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->UpdatePosition(ChildRect, ChildRect);
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->UpdatePosition(ChildRect, ChildRect);
 	}
 }
 
@@ -220,11 +222,11 @@ void CAbstractTabs::Update(bool ParentEnabled)
 	if(pTabsStyle)
 		m_pButtonList->SetBoxStyle(pTabsStyle->GetButtonListPath());
 		
-	for(int i=0; i<m_Tabs.size(); i++)
-		m_Tabs[i].m_pWidget->Update(ParentEnabled && IsEnabled() && (i == GetSelectedTab()));
+	for(unsigned int i=0; i<m_Tabs.size(); i++)
+		m_Tabs[i].m_pWidget->Update(ParentEnabled && IsEnabled() && (static_cast<int>(i) == GetSelectedTab()));
 	
 	int FirstEnabledTab = -1;
-	for(int i=0; i<m_Tabs.size(); i++)
+	for(unsigned int i=0; i<m_Tabs.size(); i++)
 	{
 		if(m_Tabs[i].m_pWidget->IsDisabled())
 			m_Tabs[i].m_pTabButton->Disable();
@@ -236,16 +238,16 @@ void CAbstractTabs::Update(bool ParentEnabled)
 		}
 	}
 	
-	if(GetSelectedTab() >= 0 && GetSelectedTab() < m_Tabs.size() && m_Tabs[GetSelectedTab()].m_pWidget->IsDisabled())
+	if(GetSelectedTab() >= 0 && GetSelectedTab() < static_cast<int>(m_Tabs.size()) && m_Tabs[GetSelectedTab()].m_pWidget->IsDisabled())
 		SetSelectedTab(FirstEnabledTab);
 	
 	if(pTabsStyle)
 	{
-		for(int i=0; i<m_Tabs.size(); i++)
+		for(unsigned int i=0; i<m_Tabs.size(); i++)
 		{
 			if(m_Tabs[i].m_pTabButton)
 			{
-				if(i == GetSelectedTab())
+				if(static_cast<int>(i) == GetSelectedTab())
 					m_Tabs[i].m_pTabButton->SetButtonStyle(pTabsStyle->GetActiveButtonPath());
 				else
 					m_Tabs[i].m_pTabButton->SetButtonStyle(pTabsStyle->GetInactiveButtonPath());
@@ -291,7 +293,7 @@ void CAbstractTabs::Render()
 	
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->Render();
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->Render();
 	}
 }
 
@@ -301,7 +303,7 @@ void CAbstractTabs::OnMouseMove()
 		
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->OnMouseMove();
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->OnMouseMove();
 	}
 }
 
@@ -311,7 +313,7 @@ void CAbstractTabs::OnButtonClick(int Button)
 		
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->OnButtonClick(Button);
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->OnButtonClick(Button);
 	}
 }
 
@@ -321,7 +323,7 @@ void CAbstractTabs::OnButtonRelease(int Button)
 		
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->OnButtonRelease(Button);
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->OnButtonRelease(Button);
 	}
 }
 
@@ -331,7 +333,7 @@ void CAbstractTabs::OnInputEvent(const CInput::CEvent& Event)
 		
 	if(GetSelectedTab() >= 0)
 	{
-		m_Tabs[GetSelectedTab()].m_pWidget->OnInputEvent(Event);
+		m_Tabs[static_cast<int>(GetSelectedTab())].m_pWidget->OnInputEvent(Event);
 	}
 }
 

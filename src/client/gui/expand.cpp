@@ -34,7 +34,7 @@ CExpand::CExpand(CGui* pContext) :
 
 void CExpand::Destroy()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 		m_Childs[i]->Destroy();
 	
 	if(m_pTitle)
@@ -45,7 +45,7 @@ void CExpand::Destroy()
 
 void CExpand::Clear()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i]->Destroy();
 	}
@@ -69,7 +69,7 @@ void CExpand::UpdateBoundingSize()
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			m_Childs[i]->UpdateBoundingSize();
 			
@@ -116,7 +116,7 @@ void CExpand::UpdatePosition(const CRect& BoundingRect, const CRect& VisibilityR
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			if(m_pTitle || i>0)
 				PosY += Spacing;
@@ -144,7 +144,7 @@ void CExpand::Update(bool ParentEnabled)
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 			m_Childs[i]->Update(ParentEnabled && IsEnabled());
 	}
 }
@@ -169,7 +169,7 @@ void CExpand::Render()
 	//Childs
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			m_Childs[i]->Render();
 		}
@@ -186,7 +186,7 @@ void CExpand::SetTitle(CWidget* pWidget)
 
 void CExpand::Add(CWidget* pWidget)
 {
-	m_Childs.add_by_copy(pWidget);
+	m_Childs.push_back(pWidget);
 }
 
 void CExpand::OnMouseMove()
@@ -196,7 +196,7 @@ void CExpand::OnMouseMove()
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 			m_Childs[i]->OnMouseMove();
 	}
 }
@@ -208,7 +208,7 @@ void CExpand::OnButtonClick(int Button)
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			m_Childs[i]->OnButtonClick(Button);
 		}
@@ -222,7 +222,7 @@ void CExpand::OnButtonRelease(int Button)
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			m_Childs[i]->OnButtonRelease(Button);
 		}
@@ -236,7 +236,7 @@ void CExpand::OnInputEvent(const CInput::CEvent& Event)
 	
 	if(m_Expanded)
 	{
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			m_Childs[i]->OnInputEvent(Event);
 		}

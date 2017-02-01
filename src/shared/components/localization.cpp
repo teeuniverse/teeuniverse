@@ -21,6 +21,7 @@
 #include <json-parser/json.h>
 #include <shared/components/storage.h>
 #include <shared/components/cli.h>
+#include <shared/system/debug.h>
 
 /* LANGUAGE ***********************************************************/
 
@@ -289,9 +290,6 @@ CLocalization::CLocalization(CSharedKernel* pKernel) :
 
 CLocalization::~CLocalization()
 {
-	for(int i=0; i<m_pLanguages.size(); i++)
-		delete m_pLanguages[i];
-	
 	if(m_pUtf8Converter)
 		ucnv_close(m_pUtf8Converter);
 }
@@ -356,9 +354,9 @@ bool CLocalization::Init()
 	{
 		for(unsigned i = 0; i < rStart.u.array.length; ++i)
 		{
-			CLanguage*& pLanguage = m_pLanguages.increment();
-			pLanguage = new CLanguage((const char *)rStart[i]["name"], (const char *)rStart[i]["file"], (const char *)rStart[i]["parent"]);
-				
+			m_pLanguages.emplace_back(new CLanguage((const char *)rStart[i]["name"], (const char *)rStart[i]["file"], (const char *)rStart[i]["parent"]));
+			CLanguage* pLanguage = m_pLanguages.back().get();
+			
 			if((const char *)rStart[i]["direction"] && str_comp((const char *)rStart[i]["direction"], "rtl") == 0)
 				pLanguage->SetWritingDirection(DIRECTION_RTL);
 				
@@ -380,15 +378,15 @@ bool CLocalization::Init()
 	
 void CLocalization::AddListener(IListener* pListener)
 {
-	m_pListeners.increment() = pListener;
+	m_pListeners.push_back(pListener);
 }
 
 void CLocalization::RemoveListener(IListener* pListener)
 {
-	for(int i=0; i<m_pListeners.size(); i++)
+	for(unsigned int i=0; i<m_pListeners.size(); i++)
 	{
 		if(m_pListeners[i] == pListener)
-			m_pListeners.remove_index(i);
+			m_pListeners.erase(m_pListeners.begin() + i);
 	}
 }
 
@@ -398,11 +396,11 @@ bool CLocalization::PreUpdate()
 	{
 		CLanguage* pLanguage = 0;
 		
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(m_Cfg_MainLanguage == m_pLanguages[i]->GetFilename())
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -411,7 +409,7 @@ bool CLocalization::PreUpdate()
 		{
 			m_pMainLanguage = pLanguage;
 			
-			for(int i=0; i<m_pListeners.size(); i++)
+			for(unsigned int i=0; i<m_pListeners.size(); i++)
 				m_pListeners[i]->OnLocalizationModified();
 		}
 	}
@@ -424,11 +422,11 @@ const char* CLocalization::LocalizeWithDepth(const char* pLanguageCode, const ch
 	CLanguage* pLanguage = m_pMainLanguage;
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -459,11 +457,11 @@ const char* CLocalization::LocalizeWithDepth_P(const char* pLanguageCode, int Nu
 	CLanguage* pLanguage = m_pMainLanguage;
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -601,11 +599,11 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -616,7 +614,7 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 		return;
 	}
 	
-	const array<CLocalizableString::CParameter>& Parameters = LString.GetParameters();
+	const std::vector<CLocalizableString::CParameter>& Parameters = LString.GetParameters();
 		
 	int Iter = 0;
 	int Start = Iter;
@@ -634,7 +632,7 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 			if(pText[Iter] == '}') //End of the macro, try to apply it
 			{
 				//Try to find an argument with this name
-				for(int PIter=0; PIter<Parameters.size(); PIter++)
+				for(unsigned int PIter=0; PIter<Parameters.size(); PIter++)
 				{
 					const char* pVarArgName = Parameters[PIter].m_Name.buffer();
 					
@@ -729,11 +727,11 @@ void CLocalization::FormatInteger(dynamic_string& Buffer, const char* pLanguageC
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -750,11 +748,11 @@ int CLocalization::ParseInteger(const char* pLanguageCode, const char* pText)
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -776,11 +774,11 @@ float CLocalization::ParseFloat(const char* pLanguageCode, const char* pText)
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}
@@ -802,11 +800,11 @@ float CLocalization::ParsePercent(const char* pLanguageCode, const char* pText)
 	CLanguage* pLanguage = m_pMainLanguage;	
 	if(pLanguageCode)
 	{
-		for(int i=0; i<m_pLanguages.size(); i++)
+		for(unsigned int i=0; i<m_pLanguages.size(); i++)
 		{
 			if(str_comp(m_pLanguages[i]->GetFilename(), pLanguageCode) == 0)
 			{
-				pLanguage = m_pLanguages[i];
+				pLanguage = m_pLanguages[i].get();
 				break;
 			}
 		}

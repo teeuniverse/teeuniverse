@@ -192,7 +192,7 @@ private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
 	vec4 m_Color;
-	array2d< CTile, allocator_default< CTile > > m_Tile;
+	array2d< CTile > m_Tile;
 	bool m_Visibility;
 	int m_PositionX;
 	int m_PositionY;
@@ -235,8 +235,8 @@ public:
 	
 	inline const CAsset_MapLayerTiles::CTile* GetTilePtr() const { return m_Tile.base_ptr(); }
 	
-	inline const array2d< CTile, allocator_default< CTile > >& GetTileArray() const { return m_Tile; }
-	inline array2d< CTile, allocator_default< CTile > >& GetTileArray() { return m_Tile; }
+	inline const array2d< CTile >& GetTileArray() const { return m_Tile; }
+	inline array2d< CTile >& GetTileArray() { return m_Tile; }
 	
 	inline const CAsset_MapLayerTiles::CTile& GetTile(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	

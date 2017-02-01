@@ -36,7 +36,7 @@ CAbstractPanelLayout::CAbstractPanelLayout(CGui *pContext) :
 
 void CAbstractPanelLayout::Destroy()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i].m_pWidget->Destroy();
 	}
@@ -46,7 +46,7 @@ void CAbstractPanelLayout::Destroy()
 
 void CAbstractPanelLayout::Clear()
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		m_Childs[i].m_pWidget->Destroy();
 	}
@@ -55,7 +55,8 @@ void CAbstractPanelLayout::Clear()
 
 void CAbstractPanelLayout::Add(CWidget* pWidget, int Size)
 {
-	CChild& Child = m_Childs.increment();
+	m_Childs.emplace_back();
+	CChild& Child = m_Childs.back();
 	Child.m_pWidget = pWidget;
 	Child.m_Size = Size;
 	Child.m_Fill = (Size < 0);
@@ -64,7 +65,7 @@ void CAbstractPanelLayout::Add(CWidget* pWidget, int Size)
 
 void CAbstractPanelLayout::Update(bool ParentEnabled)
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 		m_Childs[i].m_pWidget->Update(ParentEnabled && IsEnabled());
 }
 	
@@ -83,7 +84,7 @@ void CAbstractPanelLayout::Render()
 	}
 	
 	//Childs
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -94,7 +95,7 @@ void CAbstractPanelLayout::Render()
 
 void CAbstractPanelLayout::OnButtonClick(int Button)
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -108,7 +109,7 @@ void CAbstractPanelLayout::OnButtonClick(int Button)
 
 void CAbstractPanelLayout::OnButtonRelease(int Button)
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -120,7 +121,7 @@ void CAbstractPanelLayout::OnButtonRelease(int Button)
 
 void CAbstractPanelLayout::OnInputEvent(const CInput::CEvent& Event)
 {
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -156,7 +157,7 @@ void CHPanelLayout::UpdateBoundingSize()
 	m_BoundingSizeRect.BSNoConstraint();
 	
 	bool FirstChild = true;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -195,7 +196,7 @@ void CHPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	int AvailableSpace = m_ClipRect.w;
 	int NumFill = 0;
 	int NumChilds = 0;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -217,7 +218,7 @@ void CHPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	if(Localization()->GetWritingDirection() == CLocalization::DIRECTION_RTL)
 	{
 		int PosX = m_ClipRect.x + m_ClipRect.w;
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			if(m_Childs[i].m_pWidget->IsDisabled())
 				continue;
@@ -247,7 +248,7 @@ void CHPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	else
 	{
 		int PosX = m_ClipRect.x;
-		for(int i=0; i<m_Childs.size(); i++)
+		for(unsigned int i=0; i<m_Childs.size(); i++)
 		{
 			if(m_Childs[i].m_pWidget->IsDisabled())
 				continue;
@@ -280,7 +281,7 @@ void CHPanelLayout::OnMouseMove()
 {
 	m_MouseOver = false;
 	
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -346,7 +347,7 @@ void CVPanelLayout::UpdateBoundingSize()
 	m_BoundingSizeRect.BSNoConstraint();
 	
 	bool FirstChild = true;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -385,7 +386,7 @@ void CVPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 	int AvailableSpace = m_ClipRect.h;
 	int NumFill = 0;
 	int NumChilds = 0;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -405,7 +406,7 @@ void CVPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 		FillSize = AvailableSpace/NumFill;
 	
 	int PosY = m_ClipRect.y;
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_pWidget->IsDisabled())
 			continue;
@@ -437,7 +438,7 @@ void CVPanelLayout::OnMouseMove()
 {
 	m_MouseOver = false;
 	
-	for(int i=0; i<m_Childs.size(); i++)
+	for(unsigned int i=0; i<m_Childs.size(); i++)
 	{
 		if(m_Childs[i].m_SliderClicked && (i+1)<m_Childs.size())
 		{

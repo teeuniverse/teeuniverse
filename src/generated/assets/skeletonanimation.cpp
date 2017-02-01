@@ -196,7 +196,7 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(CAssetsSave
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -225,7 +225,7 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Write(CAssetsSav
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -244,7 +244,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0[SysType.m_LocalBoneAnim.size()];
-		for(int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
 		}
@@ -254,7 +254,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0[SysType.m_ParentBoneAnim.size()];
-		for(int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
 		}
@@ -264,7 +264,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0[SysType.m_LayerAnimation.size()];
-		for(int i=0; i<SysType.m_LayerAnimation.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
 		}
@@ -401,7 +401,7 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(CAssetsSave
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_0[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -430,7 +430,7 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_0::Write(CAssetsSav
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_0[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -449,7 +449,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0[SysType.m_LocalBoneAnim.size()];
-		for(int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
 		}
@@ -459,7 +459,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0[SysType.m_ParentBoneAnim.size()];
-		for(int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
 		}
@@ -469,7 +469,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_0[SysType.m_LayerAnimation.size()];
-		for(int i=0; i<SysType.m_LayerAnimation.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
 		}
@@ -606,7 +606,7 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(CAssetsSave
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_1[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -635,7 +635,7 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_1::Write(CAssetsSav
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_1[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -654,7 +654,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1[SysType.m_LocalBoneAnim.size()];
-		for(int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
 		}
@@ -664,7 +664,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1[SysType.m_ParentBoneAnim.size()];
-		for(int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
 		}
@@ -674,7 +674,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_1[SysType.m_LayerAnimation.size()];
-		for(int i=0; i<SysType.m_LayerAnimation.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
 		}
@@ -811,7 +811,7 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(CAssetsSave
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_2[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -840,7 +840,7 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_2::Write(CAssetsSav
 	{
 		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_2[SysType.m_KeyFrame.size()];
-		for(int i=0; i<SysType.m_KeyFrame.size(); i++)
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
 		}
@@ -859,7 +859,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2[SysType.m_LocalBoneAnim.size()];
-		for(int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
 		}
@@ -869,7 +869,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
 		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2[SysType.m_ParentBoneAnim.size()];
-		for(int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
 		}
@@ -879,7 +879,7 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLo
 	{
 		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
 		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_2[SysType.m_LayerAnimation.size()];
-		for(int i=0; i<SysType.m_LayerAnimation.size(); i++)
+		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
 		{
 			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
 		}

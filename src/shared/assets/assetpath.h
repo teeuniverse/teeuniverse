@@ -23,6 +23,9 @@
 #include <shared/system/types.h>
 #include <shared/math/math.h>
 
+#include <vector>
+#include <string>
+
 class CAssetPath
 {
 public:
@@ -89,7 +92,7 @@ public:
 			struct
 			{
 				class CAssetsManager* m_pAssetsManager;
-				array<char*>* m_pNames;
+				std::vector<std::string>* m_pNames;
 			} m_OpResolveName;
 		};
 	
@@ -104,7 +107,7 @@ public:
 			return Operation;
 		}
 		
-		static inline COperation ResolveName(class CAssetsManager* pAssetsManager, array<char*>* pNames)
+		static inline COperation ResolveName(class CAssetsManager* pAssetsManager, std::vector<std::string>* pNames)
 		{
 			COperation Operation;
 			Operation.m_OperationId = OPERATION_RESOLVE_NAME;

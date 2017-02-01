@@ -19,8 +19,6 @@
 #ifndef __CLIENT_GUI_POPUP__
 #define __CLIENT_GUI_POPUP__
 
-#include <shared/tl/array.h>
-
 #include "widget.h"
 #include "listlayout.h"
 #include "button.h"

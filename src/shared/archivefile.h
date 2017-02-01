@@ -22,8 +22,9 @@
 #include <shared/system/types.h>
 #include <shared/system/memory.h>
 #include <shared/system/fs.h>
-#include <shared/tl/array.h>
 #include <shared/math/vector.h>
+
+#include <vector>
 
 /*
  * An ArchiveFile can contains 3 categories of elements:
@@ -169,8 +170,8 @@ private:
 	
 	uint32 m_Crc;
 	CItemType m_ItemTypes[256];	
-	array<CRawData> m_RawDatas;
-	array<CString> m_Strings;
+	std::vector<CRawData> m_RawDatas;
+	std::vector<CString> m_Strings;
 	
 public:	
 	CArchiveFile();

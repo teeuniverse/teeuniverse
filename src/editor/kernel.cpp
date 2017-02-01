@@ -26,5 +26,5 @@ CEditorKernel::CEditorKernel()
 	SetType(KERNEL_EDITOR);
 	
 	//TAG_NEW_EDITOR_COMPONENT
-	m_pComponents.add_by_copy(m_pGui = new CGuiEditor(this));
+	m_pComponents.emplace_back(m_pGui = new CGuiEditor(this));
 }

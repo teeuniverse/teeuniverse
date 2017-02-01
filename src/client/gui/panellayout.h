@@ -19,8 +19,6 @@
 #ifndef __CLIENT_GUI_PANELLAYOUT__
 #define __CLIENT_GUI_PANELLAYOUT__
 
-#include <shared/tl/array.h>
-
 #include "widget.h"
 	
 namespace gui
@@ -41,7 +39,7 @@ protected:
 	
 protected:
 	CAssetPath m_BoxStylePath;
-	array<CChild> m_Childs;
+	std::vector<CChild> m_Childs;
 	CRect m_ClipRect;
 	bool m_MouseOver;
 	

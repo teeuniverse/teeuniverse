@@ -79,7 +79,7 @@ void CAsset_MapGroup::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_Layer[i], pData[i]);
 		}
@@ -134,7 +134,7 @@ void CAsset_MapGroup::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_Layer[i], pData[i]);
 		}
@@ -189,7 +189,7 @@ void CAsset_MapGroup::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_Layer[i], pData[i]);
 		}
@@ -244,7 +244,7 @@ void CAsset_MapGroup::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_Layer[i], pData[i]);
 		}

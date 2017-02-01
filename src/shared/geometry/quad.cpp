@@ -27,7 +27,7 @@ void RotateQuadTexture(CTexturedQuad& Quad)
 	Quad.m_Texture[2] = Tmp;
 }
 
-void TesselateQuad(const CTexturedQuad& Input, array<CTexturedQuad>& Output, int TesselationX, int TesselationY)
+void TesselateQuad(const CTexturedQuad& Input, std::vector<CTexturedQuad>& Output, int TesselationX, int TesselationY)
 {
 	for(int j=0; j<TesselationY; j++)
 	{
@@ -39,7 +39,8 @@ void TesselateQuad(const CTexturedQuad& Input, array<CTexturedQuad>& Output, int
 			float x0 = static_cast<float>(i)/TesselationX;
 			float x1 = static_cast<float>(i+1)/TesselationX;
 			
-			CTexturedQuad& Quad = Output.increment();
+			Output.emplace_back();
+			CTexturedQuad& Quad = Output.back();
 			Quad.m_ImagePath = Input.m_ImagePath;
 			Quad.m_TextureIndex = -1;
 			

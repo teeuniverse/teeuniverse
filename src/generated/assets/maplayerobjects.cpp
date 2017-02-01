@@ -172,7 +172,7 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Write(CAssetsSaveLoadConte
 	{
 		TuaType.m_Vertex.m_Size = SysType.m_Vertex.size();
 		CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0* pData = new CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0[SysType.m_Vertex.size()];
-		for(int i=0; i<SysType.m_Vertex.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Vertex.size(); i++)
 		{
 			CAsset_MapLayerObjects::CVertex::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Vertex[i], pData[i]);
 		}
@@ -193,7 +193,7 @@ void CAsset_MapLayerObjects::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoad
 	{
 		TuaType.m_Object.m_Size = SysType.m_Object.size();
 		CAsset_MapLayerObjects::CObject::CTuaType_0_2_0* pData = new CAsset_MapLayerObjects::CObject::CTuaType_0_2_0[SysType.m_Object.size()];
-		for(int i=0; i<SysType.m_Object.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Object.size(); i++)
 		{
 			CAsset_MapLayerObjects::CObject::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
 		}
@@ -285,7 +285,7 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_1::Write(CAssetsSaveLoadConte
 	{
 		TuaType.m_Vertex.m_Size = SysType.m_Vertex.size();
 		CAsset_MapLayerObjects::CVertex::CTuaType_0_2_1* pData = new CAsset_MapLayerObjects::CVertex::CTuaType_0_2_1[SysType.m_Vertex.size()];
-		for(int i=0; i<SysType.m_Vertex.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Vertex.size(); i++)
 		{
 			CAsset_MapLayerObjects::CVertex::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Vertex[i], pData[i]);
 		}
@@ -306,7 +306,7 @@ void CAsset_MapLayerObjects::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoad
 	{
 		TuaType.m_Object.m_Size = SysType.m_Object.size();
 		CAsset_MapLayerObjects::CObject::CTuaType_0_2_1* pData = new CAsset_MapLayerObjects::CObject::CTuaType_0_2_1[SysType.m_Object.size()];
-		for(int i=0; i<SysType.m_Object.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Object.size(); i++)
 		{
 			CAsset_MapLayerObjects::CObject::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
 		}
@@ -398,7 +398,7 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_2_2::Write(CAssetsSaveLoadConte
 	{
 		TuaType.m_Vertex.m_Size = SysType.m_Vertex.size();
 		CAsset_MapLayerObjects::CVertex::CTuaType_0_2_2* pData = new CAsset_MapLayerObjects::CVertex::CTuaType_0_2_2[SysType.m_Vertex.size()];
-		for(int i=0; i<SysType.m_Vertex.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Vertex.size(); i++)
 		{
 			CAsset_MapLayerObjects::CVertex::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Vertex[i], pData[i]);
 		}
@@ -419,7 +419,7 @@ void CAsset_MapLayerObjects::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoad
 	{
 		TuaType.m_Object.m_Size = SysType.m_Object.size();
 		CAsset_MapLayerObjects::CObject::CTuaType_0_2_2* pData = new CAsset_MapLayerObjects::CObject::CTuaType_0_2_2[SysType.m_Object.size()];
-		for(int i=0; i<SysType.m_Object.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Object.size(); i++)
 		{
 			CAsset_MapLayerObjects::CObject::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
 		}

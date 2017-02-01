@@ -34,6 +34,7 @@
 #include "graphics_backend_sdl.h"
 
 #include <shared/system/memory.h>
+#include <shared/system/debug.h>
 #include <shared/tl/threading.h>
 
 PFNGLTEXIMAGE3DPROC glTexImage3D_Dyn;

@@ -148,7 +148,7 @@ void CAsset_MapLayerQuads::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0[SysType.m_Quad.size()];
-		for(int i=0; i<SysType.m_Quad.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
 		}
@@ -248,7 +248,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0[SysType.m_Quad.size()];
-		for(int i=0; i<SysType.m_Quad.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
 		}
@@ -348,7 +348,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1[SysType.m_Quad.size()];
-		for(int i=0; i<SysType.m_Quad.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
 		}
@@ -450,7 +450,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2[SysType.m_Quad.size()];
-		for(int i=0; i<SysType.m_Quad.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
 		}

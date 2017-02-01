@@ -21,7 +21,6 @@
 
 #include <client/kernel.h>
 #include <client/keys.h>
-#include <shared/tl/array.h>
 #include <shared/tl/hashtable.h>
 
 class CBindsManager : public CClientKernel::CComponent

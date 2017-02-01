@@ -36,9 +36,10 @@
 
 #include <client/kernel.h>
 #include <shared/system/time.h>
-#include <shared/tl/array.h>
 
 #include <SDL.h>
+
+#include <list>
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
@@ -102,7 +103,7 @@ private:
 	bool m_TextEdited;
 	bool m_Composing;
 	dynamic_string m_EditedText;
-	array<SDL_Rect> m_TextEditingQueue;
+	std::list<SDL_Rect> m_TextEditingQueue;
 	SDL_Cursor* m_Cursors[NUM_CURSORS];
 	int m_WantedCursor;
 	int m_CurrentCursor;

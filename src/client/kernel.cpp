@@ -32,9 +32,9 @@ CClientKernel::CClientKernel()
 	SetType(KERNEL_CLIENT);
 	
 	//TAG_NEW_CLIENT_COMPONENT
-	m_pComponents.add_by_copy(m_pGraphics = new CGraphics(this));
-	m_pComponents.add_by_copy(m_pTextRenderer = new CTextRenderer(this));
-	m_pComponents.add_by_copy(m_pAssetsRenderer = new CAssetsRenderer(this));
-	m_pComponents.add_by_copy(m_pInput = new CInput(this));
-	m_pComponents.add_by_copy(m_pBindsManager = new CBindsManager(this));
+	m_pComponents.emplace_back(m_pGraphics = new CGraphics(this));
+	m_pComponents.emplace_back(m_pTextRenderer = new CTextRenderer(this));
+	m_pComponents.emplace_back(m_pAssetsRenderer = new CAssetsRenderer(this));
+	m_pComponents.emplace_back(m_pInput = new CInput(this));
+	m_pComponents.emplace_back(m_pBindsManager = new CBindsManager(this));
 }

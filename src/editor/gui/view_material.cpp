@@ -105,10 +105,9 @@ enum
 CViewMaterial::CViewMaterial(CGuiEditor* pAssetsEditor) :
 	CViewManager::CView(pAssetsEditor),
 	m_ShowMeshes(false),
-	m_ObjectShape(0),
-	m_pMapRenderer(NULL)
+	m_ObjectShape(0)
 {	
-	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
+	m_pMapRenderer.reset(new CMapRenderer(AssetsEditor()->EditorKernel()));
 	
 	m_pToolbar->Add(new gui::CFiller(Context()), true);
 	
@@ -131,12 +130,6 @@ CViewMaterial::CViewMaterial(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowMeshes, AssetsEditor()->m_Path_Sprite_IconBigMesh, _LSTRING("Show/hide meshes")), false);
 }
 
-CViewMaterial::~CViewMaterial()
-{
-	if(m_pMapRenderer)
-		delete m_pMapRenderer;
-}
-
 enum
 {
 	VIEWSHAPE_CIRCLE=0,
@@ -151,7 +144,7 @@ void CViewMaterial::RenderView()
 	MapRenderer()->SetCamera(vec2(0.0f, 0.0f), 1.0f);
 	
 	CAsset_MapLayerObjects::CObject Object;
-	array<CAsset_MapLayerObjects::CVertex>& Vertices = Object.GetVertexArray();
+	std::vector<CAsset_MapLayerObjects::CVertex>& Vertices = Object.GetVertexArray();
 	
 	Object.SetPosition(0.0f);
 	Object.SetSize(1.0f);
@@ -170,7 +163,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<NumSegments; i++)
 			{
 				float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -185,7 +179,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<NumSegments; i++)
 			{
 				float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -200,7 +195,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<NumSegments; i++)
 			{
 				float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -215,7 +211,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<NumSegments; i++)
 			{
 				float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -230,7 +227,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<NumSegments; i++)
 			{
 				float Angle = 2.0f*Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(cos(Angle), sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -245,7 +243,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<=NumSegments; i++)
 			{
 				float Angle = Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(-cos(Angle), 0.5f-sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -260,7 +259,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<=NumSegments; i++)
 			{
 				float Angle = Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(-cos(Angle), 0.5f-sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(1.0f);
@@ -275,7 +275,8 @@ void CViewMaterial::RenderView()
 			for(int i=0; i<=NumSegments; i++)
 			{
 				float Angle = Pi*i/static_cast<float>(NumSegments);
-				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.increment();
+				Vertices.emplace_back();
+				CAsset_MapLayerObjects::CVertex& Vertex = Vertices.back();
 				Vertex.SetPosition(vec2(-cos(Angle), 0.5f-sin(Angle))*Radius);
 				Vertex.SetColor(1.0f);
 				Vertex.SetWeight(0.1f + 1.9f*(i/static_cast<float>(NumSegments)));

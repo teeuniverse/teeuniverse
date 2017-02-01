@@ -343,7 +343,8 @@ void CInput::StartTextEditing(int x, int y, int w, int h)
 {
 	if(m_TextEdited)
 	{
-		SDL_Rect& InputRect = m_TextEditingQueue.increment();
+		m_TextEditingQueue.emplace_back();
+		SDL_Rect& InputRect = m_TextEditingQueue.back();
 		InputRect.x = x;
 		InputRect.y = y;
 		InputRect.w = w;
@@ -373,13 +374,13 @@ void CInput::StopTextEditing()
 	{
 		SDL_StartTextInput();
 		SDL_Rect InputRect;
-		InputRect.x = m_TextEditingQueue[0].x;
-		InputRect.y = m_TextEditingQueue[0].y;
-		InputRect.w = m_TextEditingQueue[0].w;
-		InputRect.h = m_TextEditingQueue[0].h;
+		InputRect.x = m_TextEditingQueue.front().x;
+		InputRect.y = m_TextEditingQueue.front().y;
+		InputRect.w = m_TextEditingQueue.front().w;
+		InputRect.h = m_TextEditingQueue.front().h;
 		SDL_SetTextInputRect(&InputRect);
 		
-		m_TextEditingQueue.remove_index(0);
+		m_TextEditingQueue.pop_front();
 	}
 	else
 		m_TextEdited = false;

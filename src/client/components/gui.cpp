@@ -41,7 +41,7 @@ CGui::~CGui()
 {
 	Localization()->RemoveListener(this);
 	
-	for(int i=0; i<m_pPopups.size(); i++)
+	for(unsigned int i=0; i<m_pPopups.size(); i++)
 		delete m_pPopups[i];
 	if(m_pMainWidget)
 		delete m_pMainWidget;
@@ -80,7 +80,7 @@ void CGui::DestroyWidget(gui::CWidget* pWidget)
 {
 	if(pWidget == m_pFocusedWidget)
 	{
-		m_DestructionList.add_by_copy(pWidget);
+		m_DestructionList.push_back(pWidget);
 	}
 	else
 		delete pWidget;
@@ -94,15 +94,15 @@ bool CGui::PreUpdate()
 	m_DrawRect.h = Graphics()->ScreenHeight();
 	
 	//Remove unused widgets
-	for(int i=0; i<m_pPopups.size(); i++)
+	for(unsigned int i=0; i<m_pPopups.size(); i++)
 	{
 		if(m_pPopups[i]->IsClosed())
 		{
 			delete m_pPopups[i];
-			m_pPopups.remove_index(i);
+			m_pPopups.erase(m_pPopups.begin()+i);
 		}
 	}
-	for(int i=0; i<m_DestructionList.size(); i++)
+	for(unsigned int i=0; i<m_DestructionList.size(); i++)
 	{
 		delete m_DestructionList[i];
 		
@@ -166,7 +166,7 @@ bool CGui::PreUpdate()
 							bool Blocked = false;
 							for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST && !Blocked; l--)
 							{
-								for(int i=0; i<m_pPopups.size() && !Blocked; i++)
+								for(unsigned int i=0; i<m_pPopups.size() && !Blocked; i++)
 								{
 									if(m_pPopups[i]->GetLevel() == l)
 									{
@@ -193,7 +193,7 @@ bool CGui::PreUpdate()
 							bool Blocked = false;
 							for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST && !Blocked; l--)
 							{
-								for(int i=0; i<m_pPopups.size() && !Blocked; i++)
+								for(unsigned int i=0; i<m_pPopups.size() && !Blocked; i++)
 								{
 									if(m_pPopups[i]->GetLevel() == l)
 									{
@@ -228,7 +228,7 @@ bool CGui::PreUpdate()
 						bool Blocked = false;
 						for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST && !Blocked; l--)
 						{
-							for(int i=0; i<m_pPopups.size() && !Blocked; i++)
+							for(unsigned int i=0; i<m_pPopups.size() && !Blocked; i++)
 							{
 								if(m_pPopups[i]->GetLevel() == l)
 								{
@@ -255,7 +255,7 @@ bool CGui::PreUpdate()
 				bool Blocked = false;
 				for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST && !Blocked; l--)
 				{
-					for(int i=0; i<m_pPopups.size() && !Blocked; i++)
+					for(unsigned int i=0; i<m_pPopups.size() && !Blocked; i++)
 					{
 						if(m_pPopups[i]->GetLevel() == l)
 						{
@@ -282,7 +282,7 @@ bool CGui::PreUpdate()
 			bool Blocked = false;
 			for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST && !Blocked; l--)
 			{
-				for(int i=0; i<m_pPopups.size() && !Blocked; i++)
+				for(unsigned int i=0; i<m_pPopups.size() && !Blocked; i++)
 				{
 					if(m_pPopups[i]->GetLevel() == l)
 					{
@@ -308,7 +308,7 @@ bool CGui::PreUpdate()
 	
 	for(int l=gui::CPopup::LEVEL_HIGHEST; l>=gui::CPopup::LEVEL_LOWEST; l--)
 	{
-		for(int i=0; i<m_pPopups.size(); i++)
+		for(unsigned int i=0; i<m_pPopups.size(); i++)
 		{
 			if(m_pPopups[i]->GetLevel() == l)
 			{
@@ -348,7 +348,7 @@ void CGui::Render()
 	
 	for(int l=gui::CPopup::LEVEL_LOWEST; l<=gui::CPopup::LEVEL_HIGHEST; l++)
 	{
-		for(int i=0; i<m_pPopups.size(); i++)
+		for(unsigned int i=0; i<m_pPopups.size(); i++)
 		{
 			if(m_pPopups[i]->GetLevel() == l)
 			{
@@ -376,7 +376,7 @@ void CGui::ShowLoadingCursor()
 
 void CGui::DisplayPopup(gui::CPopup* pPopup)
 {
-	m_pPopups.add_by_copy(pPopup);
+	m_pPopups.push_back(pPopup);
 }
 	
 void CGui::OnLocalizationModified()

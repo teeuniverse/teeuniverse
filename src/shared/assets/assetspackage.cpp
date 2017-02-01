@@ -94,7 +94,7 @@ void CAssetsPackage::Save_AssetsFile(class CAssetsSaveLoadContext* pLoadingConte
 	#undef MACRO_ASSETTYPE
 	
 	pLoadingContext->ArchiveFile()->SetItemType(1, sizeof(CAssetsPackage::CTuaType_Dependency), pLoadingContext->Dependencies().size());
-	for(int i = 0; i < pLoadingContext->Dependencies().size(); i++)
+	for(unsigned int i = 0; i < pLoadingContext->Dependencies().size(); i++)
 	{
 		const char* pPackageName = pLoadingContext->AssetsManager()->GetPackageName(pLoadingContext->Dependencies()[i]);
 		CAssetsPackage::CTuaType_Dependency* pItem = reinterpret_cast<CAssetsPackage::CTuaType_Dependency*>(pLoadingContext->ArchiveFile()->GetItem(1, i));

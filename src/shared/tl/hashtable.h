@@ -19,11 +19,12 @@
 #ifndef SHARED_TL_HASHTABLE_H
 #define SHARED_TL_HASHTABLE_H
 
-#include <shared/tl/array.h>
 #include <shared/system/string.h>
 
-template <typename T, int TABLESIZE, typename ALLOCATOR = allocator_default<T> >
-class hashtable : private ALLOCATOR
+#include <vector>
+
+template <typename T, int TABLESIZE>
+class hashtable
 {
 protected:
 	typedef unsigned int HASH;
@@ -37,13 +38,13 @@ protected:
 		entry& operator=(const entry& old)
 		{
 			m_Key = old.m_Key;
-			ALLOCATOR::copy(m_Data, old.m_Data);
+			m_Data = old.m_Data;
 			return *this;
 		}
 	};
 	
 protected:
-	array<entry> m_Table[TABLESIZE];
+	std::vector<entry> m_Table[TABLESIZE];
 
 protected:
 	HASH hash(const char* pKey) const
@@ -78,7 +79,8 @@ public:
 				return &m_Table[Hash][i].m_Data;
 		}
 		
-		entry& NewEntry = m_Table[Hash].increment();
+		m_Table[Hash].emplace_back();
+		entry& NewEntry = m_Table[Hash].back();
 		NewEntry.m_Key = pKey;
 		return &NewEntry.m_Data;
 	}
@@ -94,14 +96,15 @@ public:
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 			{
-				ALLOCATOR::copy(m_Table[Hash][i].m_Data, Data);
+				m_Table[Hash][i].m_Data = Data;
 				return &m_Table[Hash][i].m_Data;
 			}
 		}
 		
-		entry& NewEntry = m_Table[Hash].increment();
+		m_Table[Hash].emplace_back();
+		entry& NewEntry = m_Table[Hash].back();
 		NewEntry.m_Key = pKey;
-		ALLOCATOR::copy(NewEntry.m_Data, Data);
+		NewEntry.m_Data = Data;
 		return &NewEntry.m_Data;
 	}
 
@@ -116,7 +119,7 @@ public:
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 			{
-				m_Table[Hash].remove_index(i);
+				m_Table[Hash].erase(m_Table[Hash].begin() + i);
 				break;
 			}
 		}

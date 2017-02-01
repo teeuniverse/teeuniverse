@@ -61,8 +61,7 @@ bool CStorage::InitConfig(int argc, const char** argv)
 				{
 					if(fs_is_dir(argv[i+1]))
 					{
-						dynamic_string& DataDir = m_DataDirs.increment();
-						DataDir = argv[i+1];
+						m_DataDirs.emplace_back(argv[i+1]);
 						dbg_msg("Storage", "Data directory: %s", argv[i+1]);
 						i++;
 					}
@@ -122,10 +121,7 @@ bool CStorage::Init()
 	m_StoragePaths.clear();
 	
 	if(!m_SaveDir.empty())
-	{
-		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString = m_SaveDir;
-	}
+		m_StoragePaths.emplace_back(m_SaveDir);
 	else
 	{
 		dbg_msg("Storage", "no save directory specified");
@@ -134,11 +130,8 @@ bool CStorage::Init()
 	
 	if(m_DataDirs.size())
 	{
-		for(int i=0; i<m_DataDirs.size(); i++)
-		{
-			dynamic_string& NewString = m_StoragePaths.increment();
-			NewString = m_DataDirs[i];
-		}
+		for(unsigned int i=0; i<m_DataDirs.size(); i++)
+			m_StoragePaths.emplace_back(m_DataDirs[i]);
 	}
 	else
 	{
@@ -162,6 +155,11 @@ bool CStorage::Init()
 	{
 		dbg_msg("Storage", "unable to create save directory (%s)", m_StoragePaths[TYPE_SAVE].buffer());
 		return false;
+	}
+	
+	for(auto iter = m_StoragePaths.begin(); iter != m_StoragePaths.end(); ++iter)
+	{
+		dbg_msg("Storage", "Directory found: %s", iter->buffer());
 	}
 
 	return true;
@@ -205,11 +203,7 @@ void CStorage::AddPath(const char *pPath)
 		return;
 	
 	if(fs_is_dir(pPath))
-	{
-		dynamic_string& NewString = m_StoragePaths.increment();
-		NewString = pPath;
-		dbg_msg("Storage", "added path '%s'", pPath);
-	}
+		m_StoragePaths.emplace_back(pPath);
 }
 
 void CStorage::FindDatadir(const char *pArgv0)
@@ -217,16 +211,14 @@ void CStorage::FindDatadir(const char *pArgv0)
 	// 1) use data-dir in PWD if present
 	if(fs_is_dir("data/languages"))
 	{
-		dynamic_string& DataDir = m_DataDirs.increment();
-		DataDir = "data";
+		m_DataDirs.emplace_back("data");
 		return;
 	}
 
 	// 2) use compiled-in data-dir if present
 	if(fs_is_dir(DATA_DIR"/languages"))
 	{
-		dynamic_string& DataDir = m_DataDirs.increment();
-		DataDir = DATA_DIR;
+		m_DataDirs.emplace_back(DATA_DIR);
 		return;
 	}
 
@@ -249,8 +241,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				dynamic_string& DataDir = m_DataDirs.increment();
-				DataDir = Path;
+				m_DataDirs.emplace_back(Path);
 				return;
 			}
 		}
@@ -279,8 +270,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 			
 			if(fs_is_dir(TestPath.buffer()))
 			{
-				dynamic_string& DataDir = m_DataDirs.increment();
-				DataDir = aDirs[i];
+				m_DataDirs.emplace_back(aDirs[i]);
 				return;
 			}
 		}
@@ -293,7 +283,7 @@ void CStorage::FindDatadir(const char *pArgv0)
 
 const dynamic_string& CStorage::GetPath(int Type, const char *pDir, dynamic_string& Path) const
 {
-	if(Type >= 0 && Type < m_StoragePaths.size() && !m_StoragePaths[Type].empty())
+	if(Type >= 0 && Type < static_cast<int>(m_StoragePaths.size()) && !m_StoragePaths[Type].empty())
 	{
 		Path = m_StoragePaths[Type];
 		Path.append("/");
@@ -339,7 +329,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 		if(Type == TYPE_ALL)
 		{
 			// check all available directories
-			for(int i = 0; i < m_StoragePaths.size(); ++i)
+			for(unsigned int i = 0; i < m_StoragePaths.size(); ++i)
 			{
 				IOHANDLE Handle = io_open(GetPath(i, pFilename, FullPath).buffer(), Flags);
 				if(Handle)
@@ -354,7 +344,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 			if(Handle)
 				return Handle;
 		}
-		else if(Type >= 0 && Type < m_StoragePaths.size())
+		else if(Type >= 0 && Type < static_cast<int>(m_StoragePaths.size()))
 		{
 			// check wanted directory
 			IOHANDLE Handle = io_open(GetPath(Type, pFilename, FullPath).buffer(), Flags);
@@ -370,7 +360,7 @@ void CStorage::GetCompletePath(int Type, const char *pDir, dynamic_string& Buffe
 {
 	if(Type == TYPE_ABSOLUTE)
 		Buffer = pDir;
-	else if(Type < 0 || Type >= m_StoragePaths.size())
+	else if(Type < 0 || Type >= static_cast<int>(m_StoragePaths.size()))
 		Buffer.clear();
 	else
 		GetPath(Type, pDir, Buffer);

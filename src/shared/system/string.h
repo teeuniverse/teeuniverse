@@ -299,7 +299,7 @@ public:
 		copy(pText);
 	}
 	
-	explicit _dynamic_string(const _dynamic_string& s) :
+	_dynamic_string(const _dynamic_string& s) :
 		m_pBuffer(NULL),
 		m_MaxSize(0)
 	{

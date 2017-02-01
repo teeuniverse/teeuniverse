@@ -203,7 +203,7 @@ void CAsset_Material::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoa
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_Material::CSprite::CTuaType_0_2_0* pData = new CAsset_Material::CSprite::CTuaType_0_2_0[SysType.m_Sprite.size()];
-		for(int i=0; i<SysType.m_Sprite.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_Material::CSprite::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
 		}
@@ -219,7 +219,7 @@ void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_Material::CLabel::CTuaType_0_2_0* pData = new CAsset_Material::CLabel::CTuaType_0_2_0[SysType.m_Label.size()];
-		for(int i=0; i<SysType.m_Label.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_Material::CLabel::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
 		}
@@ -229,7 +229,7 @@ void CAsset_Material::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Material::CLayer::CTuaType_0_2_0* pData = new CAsset_Material::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Material::CLayer::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
@@ -347,7 +347,7 @@ void CAsset_Material::CLayer::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoa
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_Material::CSprite::CTuaType_0_2_1* pData = new CAsset_Material::CSprite::CTuaType_0_2_1[SysType.m_Sprite.size()];
-		for(int i=0; i<SysType.m_Sprite.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_Material::CSprite::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
 		}
@@ -363,7 +363,7 @@ void CAsset_Material::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_Material::CLabel::CTuaType_0_2_1* pData = new CAsset_Material::CLabel::CTuaType_0_2_1[SysType.m_Label.size()];
-		for(int i=0; i<SysType.m_Label.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_Material::CLabel::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
 		}
@@ -373,7 +373,7 @@ void CAsset_Material::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Material::CLayer::CTuaType_0_2_1* pData = new CAsset_Material::CLayer::CTuaType_0_2_1[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Material::CLayer::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
@@ -491,7 +491,7 @@ void CAsset_Material::CLayer::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoa
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_Material::CSprite::CTuaType_0_2_2* pData = new CAsset_Material::CSprite::CTuaType_0_2_2[SysType.m_Sprite.size()];
-		for(int i=0; i<SysType.m_Sprite.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_Material::CSprite::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
 		}
@@ -507,7 +507,7 @@ void CAsset_Material::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_Material::CLabel::CTuaType_0_2_2* pData = new CAsset_Material::CLabel::CTuaType_0_2_2[SysType.m_Label.size()];
-		for(int i=0; i<SysType.m_Label.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_Material::CLabel::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
 		}
@@ -517,7 +517,7 @@ void CAsset_Material::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Material::CLayer::CTuaType_0_2_2* pData = new CAsset_Material::CLayer::CTuaType_0_2_2[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Material::CLayer::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}

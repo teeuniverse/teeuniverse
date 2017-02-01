@@ -17,6 +17,7 @@
  */
 
 #include <shared/kernel.h>
+#include <shared/system/debug.h>
 #include <shared/components/cli.h>
 #include <shared/components/storage.h>
 #include <iostream>

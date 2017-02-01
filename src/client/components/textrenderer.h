@@ -116,7 +116,7 @@ protected:
 		int m_RenderTick;
 		int m_Width;
 		int m_Height;
-		unsigned char* m_pData;
+		std::unique_ptr<unsigned char[]> m_pData;
 		CTextureHandle m_Texture;
 		int m_MemoryUsage;
 		int m_Version;
@@ -202,6 +202,7 @@ public:
 	
 	virtual bool Init();
 	virtual bool PreUpdate();
+	virtual void Shutdown();
 	
 	bool LoadFont(const char* pFilename);
 	

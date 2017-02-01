@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_MAPLAYERQUADS__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_MapLayerQuads : public CAsset
 {
@@ -448,7 +450,7 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ImagePath;
-	array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > > m_Quad;
+	std::vector<CAsset_MapLayerQuads::CQuad> m_Quad;
 	bool m_Visibility;
 
 public:
@@ -483,10 +485,10 @@ public:
 	
 	inline int GetQuadArraySize() const { return m_Quad.size(); }
 	
-	inline const CAsset_MapLayerQuads::CQuad* GetQuadPtr() const { return m_Quad.base_ptr(); }
+	inline const CAsset_MapLayerQuads::CQuad* GetQuadPtr() const { return &(m_Quad.front()); }
 	
-	inline const array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() const { return m_Quad; }
-	inline array< CAsset_MapLayerQuads::CQuad, allocator_default< CAsset_MapLayerQuads::CQuad > >& GetQuadArray() { return m_Quad; }
+	inline const std::vector<CAsset_MapLayerQuads::CQuad>& GetQuadArray() const { return m_Quad; }
+	inline std::vector<CAsset_MapLayerQuads::CQuad>& GetQuadArray() { return m_Quad; }
 	
 	inline const CAsset_MapLayerQuads::CQuad& GetQuad(const CSubPath& SubPath) const
 	{
@@ -998,15 +1000,15 @@ public:
 	inline int AddQuad()
 	{
 		int Id = m_Quad.size();
-		m_Quad.increment();
+		m_Quad.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtQuad(int Index) { m_Quad.insertat_and_init(Index); }
+	inline void AddAtQuad(int Index) { m_Quad.insert(m_Quad.begin() + Index, CAsset_MapLayerQuads::CQuad()); }
 	
-	inline void DeleteQuad(const CSubPath& SubPath) { m_Quad.remove_index(SubPath.GetId()); }
+	inline void DeleteQuad(const CSubPath& SubPath) { m_Quad.erase(m_Quad.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveQuad(const CSubPath& SubPath, int RelMove) { m_Quad.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveQuad(const CSubPath& SubPath, int RelMove) { relative_move(m_Quad, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Quad.size()); }
 	
@@ -1014,7 +1016,7 @@ public:
 	{
 		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_ImagePath);
-		for(int i=0; i<m_Quad.size(); i++)
+		for(unsigned int i=0; i<m_Quad.size(); i++)
 		{
 			m_Quad[i].AssetPathOperation(Operation);
 		}

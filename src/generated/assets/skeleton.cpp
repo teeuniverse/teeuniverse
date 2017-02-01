@@ -120,7 +120,7 @@ void CAsset_Skeleton::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
 		CAsset_Skeleton::CBone::CTuaType_0_1_0* pData = new CAsset_Skeleton::CBone::CTuaType_0_1_0[SysType.m_Bone.size()];
-		for(int i=0; i<SysType.m_Bone.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Bone.size(); i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
 		}
@@ -130,7 +130,7 @@ void CAsset_Skeleton::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Skeleton::CLayer::CTuaType_0_1_0* pData = new CAsset_Skeleton::CLayer::CTuaType_0_1_0[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
@@ -215,7 +215,7 @@ void CAsset_Skeleton::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
 		CAsset_Skeleton::CBone::CTuaType_0_2_0* pData = new CAsset_Skeleton::CBone::CTuaType_0_2_0[SysType.m_Bone.size()];
-		for(int i=0; i<SysType.m_Bone.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Bone.size(); i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
 		}
@@ -225,7 +225,7 @@ void CAsset_Skeleton::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Skeleton::CLayer::CTuaType_0_2_0* pData = new CAsset_Skeleton::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
@@ -310,7 +310,7 @@ void CAsset_Skeleton::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
 		CAsset_Skeleton::CBone::CTuaType_0_2_1* pData = new CAsset_Skeleton::CBone::CTuaType_0_2_1[SysType.m_Bone.size()];
-		for(int i=0; i<SysType.m_Bone.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Bone.size(); i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
 		}
@@ -320,7 +320,7 @@ void CAsset_Skeleton::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Skeleton::CLayer::CTuaType_0_2_1* pData = new CAsset_Skeleton::CLayer::CTuaType_0_2_1[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}
@@ -405,7 +405,7 @@ void CAsset_Skeleton::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Bone.m_Size = SysType.m_Bone.size();
 		CAsset_Skeleton::CBone::CTuaType_0_2_2* pData = new CAsset_Skeleton::CBone::CTuaType_0_2_2[SysType.m_Bone.size()];
-		for(int i=0; i<SysType.m_Bone.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Bone.size(); i++)
 		{
 			CAsset_Skeleton::CBone::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Bone[i], pData[i]);
 		}
@@ -415,7 +415,7 @@ void CAsset_Skeleton::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_Skeleton::CLayer::CTuaType_0_2_2* pData = new CAsset_Skeleton::CLayer::CTuaType_0_2_2[SysType.m_Layer.size()];
-		for(int i=0; i<SysType.m_Layer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_Skeleton::CLayer::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
 		}

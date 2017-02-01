@@ -277,7 +277,7 @@ protected:
 	
 protected:
 	CAssetPath m_ZoneTypePath;
-	array<int> m_DataInt;
+	std::vector<int> m_DataInt;
 	gui::CLabel* m_pZoneTitle;
 	gui::CLabel* m_pZoneDesc;
 	
@@ -618,7 +618,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					
 					m_Token = AssetsManager()->GenerateToken();
 					
-					for(int i=0; i<m_QuadSelection.size(); i++)
+					for(unsigned int i=0; i<m_QuadSelection.size(); i++)
 					{
 						CSubPath QuadPath = CAsset_MapLayerQuads::SubPath_Quad(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapLayerQuads::TYPE_QUAD, m_Token));
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_PIVOT, m_QuadSelection[i].GetPivot() + CursorMapPos, m_Token);
@@ -670,7 +670,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					
 					m_Token = AssetsManager()->GenerateToken();
 					
-					for(int i=0; i<m_EntitySelection.size(); i++)
+					for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 					{
 						CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapEntities::TYPE_ENTITY, m_Token));
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), EntityPath, CAsset_MapEntities::ENTITY_POSITION, m_EntitySelection[i].GetPosition() + CursorMapPos, m_Token);
@@ -737,7 +737,8 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 					{
 						m_QuadSelection.clear();
 						
-						CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
+						m_QuadSelection.emplace_back();
+						CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
 						Quad.SetPivot(0.0f);
 						
 						Quad.SetVertex0(vec2(-128.0f, -128.0f));
@@ -895,7 +896,8 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						
 						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
 						{
-							CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
+							m_QuadSelection.emplace_back();
+							CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
 							Quad = pLayer->GetQuad(*Iter);
 							Quad.SetPivot(Quad.GetPivot() - vec2(X0 + X1, Y0 + Y1)/2.0f);
 							QuadsFound = true;
@@ -931,7 +933,8 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						vec2 Position = pLayer->GetEntityPosition(*Iter);					
 						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
 						{
-							CAsset_MapEntities::CEntity& Entity = m_EntitySelection.increment();
+							m_EntitySelection.emplace_back();
+							CAsset_MapEntities::CEntity& Entity = m_EntitySelection.back();
 							Entity = pLayer->GetEntity(*Iter);
 							Entity.SetPosition(Entity.GetPosition() - vec2(X0 + X1, Y0 + Y1)/2.0f);
 							EntitiesFound = true;
@@ -1159,7 +1162,7 @@ void CCursorTool_MapStamp::RenderView()
 			if(m_EntitySelection.size())
 			{
 				CAsset_MapEntities::CIteratorEntity IterEntity;
-				for(int i=0; i<m_EntitySelection.size(); i++)
+				for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 				{
 					vec2 Pos = ViewMap()->MapRenderer()->MapPosToScreenPos(RenderPos + m_EntitySelection[i].GetPosition());
 					CAssetPath TypePath = m_EntitySelection[i].GetTypePath();
@@ -1328,7 +1331,8 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 		vec2 UVMin = vec2(static_cast<float>(MinX)/GridWidth, static_cast<float>(MinY)/GridHeight);
 		vec2 UVMax = vec2(static_cast<float>(MaxX)/GridWidth, static_cast<float>(MaxY)/GridHeight);
 		
-		CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.increment();
+		m_QuadSelection.emplace_back();
+		CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
 		Quad.SetPivot(0.0f);
 		
 		Quad.SetVertex0(vec2(-Size.x/2.0f, -Size.y/2.0f));
@@ -1345,7 +1349,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 	}
 }
 	
-void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const array<int>& DataInt)
+void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const std::vector<int>& DataInt)
 {
 	int Number = 0;
 	
@@ -1360,7 +1364,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePat
 	if(pZoneType && pZoneType->GetDataIntArraySize())
 	{
 		m_IntDataSelection.resize(1, 1, pZoneType->GetDataIntArraySize());
-		for(int d=0; d<DataInt.size(); d++)
+		for(unsigned int d=0; d<DataInt.size(); d++)
 			m_IntDataSelection.set_clamp(1, 1, d, DataInt[d]);
 	}
 		
@@ -1371,7 +1375,8 @@ void CCursorTool_MapStamp::PaletteCallback_SelectEntityType(CAssetPath EntityTyp
 {
 	m_EntitySelection.clear();
 	
-	CAsset_MapEntities::CEntity& Entity = m_EntitySelection.increment();
+	m_EntitySelection.emplace_back();
+	CAsset_MapEntities::CEntity& Entity = m_EntitySelection.back();
 	Entity.SetTypePath(EntityTypePath);
 	Entity.SetPosition(0.0f);
 	
@@ -1426,7 +1431,7 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			for(int i=0; i<m_QuadSelection.size(); i++)
+			for(unsigned int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotX(-m_QuadSelection[i].GetPivotX());
 				m_QuadSelection[i].SetSizeX(-m_QuadSelection[i].GetSizeX());
@@ -1436,7 +1441,7 @@ void CCursorTool_MapStamp::VFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			for(int i=0; i<m_EntitySelection.size(); i++)
+			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPositionX(-m_EntitySelection[i].GetPositionX());
 			}
@@ -1493,7 +1498,7 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapLayerQuads::TypeId:
 		{
-			for(int i=0; i<m_QuadSelection.size(); i++)
+			for(unsigned int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivotY(-m_QuadSelection[i].GetPivotY());
 				m_QuadSelection[i].SetSizeY(-m_QuadSelection[i].GetSizeY());
@@ -1503,7 +1508,7 @@ void CCursorTool_MapStamp::HFlipSelection()
 		}
 		case CAsset_MapEntities::TypeId:
 		{
-			for(int i=0; i<m_EntitySelection.size(); i++)
+			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 				m_EntitySelection[i].SetPositionY(-m_EntitySelection[i].GetPositionY());
 			break;
 		}
@@ -1549,7 +1554,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 		case CAsset_MapLayerQuads::TypeId:
 		{
 			float Angle = -Pi/4.0f;
-			for(int i=0; i<m_QuadSelection.size(); i++)
+			for(unsigned int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
 				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
@@ -1559,7 +1564,7 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 		case CAsset_MapEntities::TypeId:
 		{
 			float Angle = -Pi/4.0f;
-			for(int i=0; i<m_EntitySelection.size(); i++)
+			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));
 			}
@@ -1607,7 +1612,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 		case CAsset_MapLayerQuads::TypeId:
 		{
 			float Angle = Pi/4.0f;
-			for(int i=0; i<m_QuadSelection.size(); i++)
+			for(unsigned int i=0; i<m_QuadSelection.size(); i++)
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
 				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
@@ -1617,7 +1622,7 @@ void CCursorTool_MapStamp::RotateCWSelection()
 		case CAsset_MapEntities::TypeId:
 		{
 			float Angle = Pi/4.0f;
-			for(int i=0; i<m_EntitySelection.size(); i++)
+			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
 			{
 				m_EntitySelection[i].SetPosition(rotate(m_EntitySelection[i].GetPosition(), Angle));
 			}

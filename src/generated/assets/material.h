@@ -33,9 +33,11 @@
 #define __CLIENT_ASSETS_MATERIAL__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/math/vector.h>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_Material : public CAsset
 {
@@ -393,15 +395,15 @@ public:
 		
 	
 	private:
-		array< CSprite, allocator_default< CSprite > > m_Sprite;
+		std::vector<CSprite> m_Sprite;
 	
 	public:
 		inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 		
-		inline const CAsset_Material::CSprite* GetSpritePtr() const { return m_Sprite.base_ptr(); }
+		inline const CAsset_Material::CSprite* GetSpritePtr() const { return &(m_Sprite.front()); }
 		
-		inline const array< CSprite, allocator_default< CSprite > >& GetSpriteArray() const { return m_Sprite; }
-		inline array< CSprite, allocator_default< CSprite > >& GetSpriteArray() { return m_Sprite; }
+		inline const std::vector<CSprite>& GetSpriteArray() const { return m_Sprite; }
+		inline std::vector<CSprite>& GetSpriteArray() { return m_Sprite; }
 		
 		inline const CAsset_Material::CSprite& GetSprite(const CSubPath& SubPath) const
 		{
@@ -606,21 +608,21 @@ public:
 		inline int AddSprite()
 		{
 			int Id = m_Sprite.size();
-			m_Sprite.increment();
+			m_Sprite.emplace_back();
 			return Id;
 		}
 		
-		inline void AddAtSprite(int Index) { m_Sprite.insertat_and_init(Index); }
+		inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_Material::CSprite()); }
 		
-		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.remove_index(SubPath.GetId()); }
+		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { m_Sprite.relative_move(SubPath.GetId(), RelMove); }
+		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { relative_move(m_Sprite, SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
-			for(int i=0; i<m_Sprite.size(); i++)
+			for(unsigned int i=0; i<m_Sprite.size(); i++)
 			{
 				m_Sprite[i].AssetPathOperation(Operation);
 			}
@@ -681,8 +683,8 @@ public:
 	
 
 private:
-	array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > > m_Label;
-	array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > > m_Layer;
+	std::vector<CAsset_Material::CLabel> m_Label;
+	std::vector<CAsset_Material::CLayer> m_Layer;
 	CAssetPath m_TexturePath;
 	vec4 m_TextureColor;
 	vec2 m_TextureSize;
@@ -716,10 +718,10 @@ public:
 	CAsset_Material();
 	inline int GetLabelArraySize() const { return m_Label.size(); }
 	
-	inline const CAsset_Material::CLabel* GetLabelPtr() const { return m_Label.base_ptr(); }
+	inline const CAsset_Material::CLabel* GetLabelPtr() const { return &(m_Label.front()); }
 	
-	inline const array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > >& GetLabelArray() const { return m_Label; }
-	inline array< CAsset_Material::CLabel, allocator_default< CAsset_Material::CLabel > >& GetLabelArray() { return m_Label; }
+	inline const std::vector<CAsset_Material::CLabel>& GetLabelArray() const { return m_Label; }
+	inline std::vector<CAsset_Material::CLabel>& GetLabelArray() { return m_Label; }
 	
 	inline const CAsset_Material::CLabel& GetLabel(const CSubPath& SubPath) const
 	{
@@ -752,10 +754,10 @@ public:
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
-	inline const CAsset_Material::CLayer* GetLayerPtr() const { return m_Layer.base_ptr(); }
+	inline const CAsset_Material::CLayer* GetLayerPtr() const { return &(m_Layer.front()); }
 	
-	inline const array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > >& GetLayerArray() const { return m_Layer; }
-	inline array< CAsset_Material::CLayer, allocator_default< CAsset_Material::CLayer > >& GetLayerArray() { return m_Layer; }
+	inline const std::vector<CAsset_Material::CLayer>& GetLayerArray() const { return m_Layer; }
+	inline std::vector<CAsset_Material::CLayer>& GetLayerArray() { return m_Layer; }
 	
 	inline const CAsset_Material::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
@@ -779,12 +781,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CSprite, allocator_default< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath) const
+	inline const std::vector<CSprite>& GetLayerSpriteArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		return m_Layer[SubPath.GetId()].GetSpriteArray();
 	}
-	inline array< CSprite, allocator_default< CSprite > >& GetLayerSpriteArray(const CSubPath& SubPath)
+	inline std::vector<CSprite>& GetLayerSpriteArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		return m_Layer[SubPath.GetId()].GetSpriteArray();
@@ -1063,34 +1065,34 @@ public:
 	inline int AddLabel()
 	{
 		int Id = m_Label.size();
-		m_Label.increment();
+		m_Label.emplace_back();
 		return Id;
 	}
 	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
-		m_Layer.increment();
+		m_Layer.emplace_back();
 		return Id;
 	}
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
 	
-	inline void AddAtLabel(int Index) { m_Label.insertat_and_init(Index); }
+	inline void AddAtLabel(int Index) { m_Label.insert(m_Label.begin() + Index, CAsset_Material::CLabel()); }
 	
-	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
+	inline void AddAtLayer(int Index) { m_Layer.insert(m_Layer.begin() + Index, CAsset_Material::CLayer()); }
 	
 	inline void AddAtLayerSprite(const CSubPath& SubPath, int Index) { m_Layer[SubPath.GetId()].AddAtSprite(Index); }
 	
-	inline void DeleteLabel(const CSubPath& SubPath) { m_Label.remove_index(SubPath.GetId()); }
+	inline void DeleteLabel(const CSubPath& SubPath) { m_Label.erase(m_Label.begin() + SubPath.GetId()); }
 	
-	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.erase(m_Layer.begin() + SubPath.GetId()); }
 	
 	inline void DeleteLayerSprite(const CSubPath& SubPath) { m_Layer[SubPath.GetId()].DeleteSprite(SubPath.PopId()); }
 	
-	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { m_Label.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { relative_move(m_Label, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_Layer, SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
 	
@@ -1102,11 +1104,11 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
-		for(int i=0; i<m_Label.size(); i++)
+		for(unsigned int i=0; i<m_Label.size(); i++)
 		{
 			m_Label[i].AssetPathOperation(Operation);
 		}
-		for(int i=0; i<m_Layer.size(); i++)
+		for(unsigned int i=0; i<m_Layer.size(); i++)
 		{
 			m_Layer[i].AssetPathOperation(Operation);
 		}

@@ -94,8 +94,8 @@ protected:
 	bool m_LocalizationUpdated;
 	
 	//Widget
-	array<gui::CPopup*> m_pPopups;
-	array<gui::CWidget*> m_DestructionList;
+	std::vector<gui::CPopup*> m_pPopups;
+	std::vector<gui::CWidget*> m_DestructionList;
 	gui::CWidget* m_pMainWidget;
 	gui::CWidget* m_pFocusedWidget;
 	gui::CWidget* m_pFocusCandidate;

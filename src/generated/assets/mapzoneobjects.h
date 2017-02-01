@@ -33,9 +33,11 @@
 #define __CLIENT_ASSETS_MAPZONEOBJECTS__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
 #include <shared/geometry/bezier.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_MapZoneObjects : public CAsset
 {
@@ -255,7 +257,7 @@ public:
 		vec2 m_Position;
 		vec2 m_Size;
 		float m_Angle;
-		array< CVertex, allocator_default< CVertex > > m_Vertex;
+		std::vector<CVertex> m_Vertex;
 		int m_PathType;
 		int m_FillType;
 		uint8 m_ZoneIndex;
@@ -280,10 +282,10 @@ public:
 		
 		inline int GetVertexArraySize() const { return m_Vertex.size(); }
 		
-		inline const CAsset_MapZoneObjects::CVertex* GetVertexPtr() const { return m_Vertex.base_ptr(); }
+		inline const CAsset_MapZoneObjects::CVertex* GetVertexPtr() const { return &(m_Vertex.front()); }
 		
-		inline const array< CVertex, allocator_default< CVertex > >& GetVertexArray() const { return m_Vertex; }
-		inline array< CVertex, allocator_default< CVertex > >& GetVertexArray() { return m_Vertex; }
+		inline const std::vector<CVertex>& GetVertexArray() const { return m_Vertex; }
+		inline std::vector<CVertex>& GetVertexArray() { return m_Vertex; }
 		
 		inline const CAsset_MapZoneObjects::CVertex& GetVertex(const CSubPath& SubPath) const
 		{
@@ -475,21 +477,21 @@ public:
 		inline int AddVertex()
 		{
 			int Id = m_Vertex.size();
-			m_Vertex.increment();
+			m_Vertex.emplace_back();
 			return Id;
 		}
 		
-		inline void AddAtVertex(int Index) { m_Vertex.insertat_and_init(Index); }
+		inline void AddAtVertex(int Index) { m_Vertex.insert(m_Vertex.begin() + Index, CAsset_MapZoneObjects::CVertex()); }
 		
-		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.remove_index(SubPath.GetId()); }
+		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.erase(m_Vertex.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { m_Vertex.relative_move(SubPath.GetId(), RelMove); }
+		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { relative_move(m_Vertex, SubPath.GetId(), RelMove); }
 		
 		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Vertex.size()); }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
-			for(int i=0; i<m_Vertex.size(); i++)
+			for(unsigned int i=0; i<m_Vertex.size(); i++)
 			{
 				m_Vertex[i].AssetPathOperation(Operation);
 			}
@@ -532,7 +534,7 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_ZoneTypePath;
-	array< CAsset_MapZoneObjects::CObject, allocator_default< CAsset_MapZoneObjects::CObject > > m_Object;
+	std::vector<CAsset_MapZoneObjects::CObject> m_Object;
 	bool m_Visibility;
 
 public:
@@ -567,10 +569,10 @@ public:
 	
 	inline int GetObjectArraySize() const { return m_Object.size(); }
 	
-	inline const CAsset_MapZoneObjects::CObject* GetObjectPtr() const { return m_Object.base_ptr(); }
+	inline const CAsset_MapZoneObjects::CObject* GetObjectPtr() const { return &(m_Object.front()); }
 	
-	inline const array< CAsset_MapZoneObjects::CObject, allocator_default< CAsset_MapZoneObjects::CObject > >& GetObjectArray() const { return m_Object; }
-	inline array< CAsset_MapZoneObjects::CObject, allocator_default< CAsset_MapZoneObjects::CObject > >& GetObjectArray() { return m_Object; }
+	inline const std::vector<CAsset_MapZoneObjects::CObject>& GetObjectArray() const { return m_Object; }
+	inline std::vector<CAsset_MapZoneObjects::CObject>& GetObjectArray() { return m_Object; }
 	
 	inline const CAsset_MapZoneObjects::CObject& GetObject(const CSubPath& SubPath) const
 	{
@@ -643,12 +645,12 @@ public:
 		else return NULL;
 	}
 	
-	inline const array< CVertex, allocator_default< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath) const
+	inline const std::vector<CVertex>& GetObjectVertexArray(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();
 	}
-	inline array< CVertex, allocator_default< CVertex > >& GetObjectVertexArray(const CSubPath& SubPath)
+	inline std::vector<CVertex>& GetObjectVertexArray(const CSubPath& SubPath)
 	{
 		assert(SubPath.GetId() < m_Object.size());
 		return m_Object[SubPath.GetId()].GetVertexArray();
@@ -917,21 +919,21 @@ public:
 	inline int AddObject()
 	{
 		int Id = m_Object.size();
-		m_Object.increment();
+		m_Object.emplace_back();
 		return Id;
 	}
 	
 	inline int AddObjectVertex(const CSubPath& SubPath) { return m_Object[SubPath.GetId()].AddVertex(); }
 	
-	inline void AddAtObject(int Index) { m_Object.insertat_and_init(Index); }
+	inline void AddAtObject(int Index) { m_Object.insert(m_Object.begin() + Index, CAsset_MapZoneObjects::CObject()); }
 	
 	inline void AddAtObjectVertex(const CSubPath& SubPath, int Index) { m_Object[SubPath.GetId()].AddAtVertex(Index); }
 	
-	inline void DeleteObject(const CSubPath& SubPath) { m_Object.remove_index(SubPath.GetId()); }
+	inline void DeleteObject(const CSubPath& SubPath) { m_Object.erase(m_Object.begin() + SubPath.GetId()); }
 	
 	inline void DeleteObjectVertex(const CSubPath& SubPath) { m_Object[SubPath.GetId()].DeleteVertex(SubPath.PopId()); }
 	
-	inline void RelMoveObject(const CSubPath& SubPath, int RelMove) { m_Object.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveObject(const CSubPath& SubPath, int RelMove) { relative_move(m_Object, SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveObjectVertex(const CSubPath& SubPath, int RelMove) { m_Object[SubPath.GetId()].RelMoveVertex(SubPath.PopId(), RelMove); }
 	
@@ -943,7 +945,7 @@ public:
 	{
 		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_ZoneTypePath);
-		for(int i=0; i<m_Object.size(); i++)
+		for(unsigned int i=0; i<m_Object.size(); i++)
 		{
 			m_Object[i].AssetPathOperation(Operation);
 		}

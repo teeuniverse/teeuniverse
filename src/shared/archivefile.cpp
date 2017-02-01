@@ -19,6 +19,7 @@
 #include "archivefile.h"
 
 #include <shared/system/types.h>
+#include <shared/system/debug.h>
 #include <shared/math/math.h>
 #include <shared/components/storage.h>
 
@@ -111,21 +112,21 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 		CArchiveFile_RawData StoredRawData;
 		io_read(File, &StoredRawData, sizeof(StoredRawData));
 		
-		CRawData& RawData = m_RawDatas.increment();
-		RawData.m_CompressedSize = ReadUInt32(StoredRawData.m_CompressedSize);
-		RawData.m_UncompressedSize = ReadUInt32(StoredRawData.m_UncompressedSize);
+		m_RawDatas.emplace_back();
+		m_RawDatas.back().m_CompressedSize = ReadUInt32(StoredRawData.m_CompressedSize);
+		m_RawDatas.back().m_UncompressedSize = ReadUInt32(StoredRawData.m_UncompressedSize);
 		
-		if(RawData.m_CompressedSize > 0)
+		if(m_RawDatas.back().m_CompressedSize > 0)
 		{
-			RawData.m_pCompressedData = new uint8[RawData.m_CompressedSize];
-			io_read(File, RawData.m_pCompressedData, RawData.m_CompressedSize * sizeof(uint8));
-			RawData.m_pUncompressedData = NULL;
+			m_RawDatas.back().m_pCompressedData = new uint8[m_RawDatas.back().m_CompressedSize];
+			io_read(File, m_RawDatas.back().m_pCompressedData, m_RawDatas.back().m_CompressedSize * sizeof(uint8));
+			m_RawDatas.back().m_pUncompressedData = NULL;
 		}
 		else
 		{
-			RawData.m_pUncompressedData = new uint8[RawData.m_UncompressedSize];
-			io_read(File, RawData.m_pUncompressedData, RawData.m_UncompressedSize * sizeof(uint8));
-			RawData.m_pCompressedData = NULL;
+			m_RawDatas.back().m_pUncompressedData = new uint8[m_RawDatas.back().m_UncompressedSize];
+			io_read(File, m_RawDatas.back().m_pUncompressedData, m_RawDatas.back().m_UncompressedSize * sizeof(uint8));
+			m_RawDatas.back().m_pCompressedData = NULL;
 		}
 	}
 	
@@ -137,9 +138,9 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 		io_read(File, &StoredLength, sizeof(StoredLength));
 		uint32 Length = ReadUInt32(StoredLength);
 		
-		CString& String = m_Strings.increment();
-		String.m_pText = new char[Length+1];
-		io_read(File, String.m_pText, sizeof(char)*(Length+1));
+		m_Strings.emplace_back();
+		m_Strings.back().m_pText = new char[Length+1];
+		io_read(File, m_Strings.back().m_pText, sizeof(char)*(Length+1));
 	}
 	
 	io_close(File);
@@ -251,7 +252,7 @@ void CArchiveFile::Close()
 		}
 	}
 	
-	for(int i=0; i<m_RawDatas.size(); i++)
+	for(unsigned int i=0; i<m_RawDatas.size(); i++)
 	{
 		if(m_RawDatas[i].m_pCompressedData)
 			delete[] m_RawDatas[i].m_pCompressedData;
@@ -260,7 +261,7 @@ void CArchiveFile::Close()
 	}
 	m_RawDatas.clear();
 	
-	for(int i=0; i<m_Strings.size(); i++)
+	for(unsigned int i=0; i<m_Strings.size(); i++)
 	{
 		if(m_Strings[i].m_pText)
 			delete[] m_Strings[i].m_pText;
@@ -314,28 +315,28 @@ uint8* CArchiveFile::GetData(tua_dataid StoredDataId)
 tua_dataid CArchiveFile::AddData(uint8* pData, uint32 Size)
 {
 	unsigned long CompressedSize = compressBound(Size);
-	CRawData& RawData = m_RawDatas.increment();
-	RawData.m_UncompressedSize = Size;
-	RawData.m_pUncompressedData = NULL;
+	m_RawDatas.emplace_back();
+	m_RawDatas.back().m_UncompressedSize = Size;
+	m_RawDatas.back().m_pUncompressedData = NULL;
 	
-	RawData.m_pCompressedData = new uint8[CompressedSize];
+	m_RawDatas.back().m_pCompressedData = new uint8[CompressedSize];
 	
-	int Result = compress((Bytef*)RawData.m_pCompressedData, &CompressedSize, (Bytef*)pData, Size);
+	int Result = compress((Bytef*)m_RawDatas.back().m_pCompressedData, &CompressedSize, (Bytef*)pData, Size);
 	if(Result != Z_OK)
 		dbg_msg("ArchiveFile", "compression error: %s", zError(Result));
 	
 	if(CompressedSize >= Size)
 	{
-		RawData.m_CompressedSize = 0;
-		delete[] RawData.m_pCompressedData;
-		RawData.m_pCompressedData = NULL;
+		m_RawDatas.back().m_CompressedSize = 0;
+		delete[] m_RawDatas.back().m_pCompressedData;
+		m_RawDatas.back().m_pCompressedData = NULL;
 		
-		RawData.m_pUncompressedData = new uint8[Size];
-		mem_copy(RawData.m_pUncompressedData, pData, Size);
+		m_RawDatas.back().m_pUncompressedData = new uint8[Size];
+		mem_copy(m_RawDatas.back().m_pUncompressedData, pData, Size);
 	}
 	else
 	{
-		RawData.m_CompressedSize = CompressedSize;
+		m_RawDatas.back().m_CompressedSize = CompressedSize;
 	}
 	
 	return WriteDataId((uint32) m_RawDatas.size()-1);
@@ -359,16 +360,16 @@ tua_stringid CArchiveFile::AddString(const char* pText)
 		return -1;
 	
 	//Search if the string already exists
-	for(int i=0; i<m_Strings.size(); i++)
+	for(unsigned int i=0; i<m_Strings.size(); i++)
 	{
 		if(str_comp(pText, m_Strings[i].m_pText) == 0)
 			return WriteStringId((uint32) i);
 	}
 	
 	int Length = str_length(pText);
-	CString& String = m_Strings.increment();
-	String.m_pText = new char[Length+1];
-	str_copy(String.m_pText, pText, sizeof(char)*(Length+1));
+	m_Strings.emplace_back();
+	m_Strings.back().m_pText = new char[Length+1];
+	str_copy(m_Strings.back().m_pText, pText, sizeof(char)*(Length+1));
 	
 	return WriteStringId((uint32) m_Strings.size()-1);
 }

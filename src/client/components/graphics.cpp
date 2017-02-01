@@ -917,8 +917,8 @@ bool CGraphics::Init()
 bool CGraphics::PreUpdate()
 {
 	//Update images
-	const array<CAssetsManager::CAssetUpdateDesc>& ImagesToUpdate = AssetsManager()->GetImagesToUpdate();
-	for(int i=0; i<ImagesToUpdate.size(); i++)
+	const std::vector<CAssetsManager::CAssetUpdateDesc>& ImagesToUpdate = AssetsManager()->GetImagesToUpdate();
+	for(unsigned int i=0; i<ImagesToUpdate.size(); i++)
 	{
 		if(ImagesToUpdate[i].m_Updated)
 			continue;
@@ -1178,7 +1178,8 @@ int CGraphics::GetVideoModes(CVideoMode *pModes, int MaxModes, int Screen)
 
 void CGraphics::ClipPush(int x, int y, int w, int h)
 {
-	CCommandBuffer::SClip& ClipRect = m_ClipStack.increment();
+	m_ClipStack.emplace_back();
+	CCommandBuffer::SClip& ClipRect = m_ClipStack.back();
 	if(m_ClipStack.size() > 1)
 		ClipRect = m_ClipStack[m_ClipStack.size()-2];
 	else
@@ -1209,7 +1210,7 @@ void CGraphics::ClipPush(int x, int y, int w, int h)
 void CGraphics::ClipPop()
 {
 	if(m_ClipStack.size())
-		m_ClipStack.remove_index(m_ClipStack.size()-1);
+		m_ClipStack.pop_back();
 	
 	if(m_ClipStack.size())
 	{

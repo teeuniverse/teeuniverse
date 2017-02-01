@@ -19,7 +19,6 @@
 #ifndef __CLIENT_ASSETSRENDERER__
 #define __CLIENT_ASSETSRENDERER__
 
-#include <shared/tl/array.h>
 #include <shared/components/assetsmanager.h>
 #include <client/kernel.h>
 #include <client/gui/rect.h>

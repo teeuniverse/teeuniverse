@@ -40,9 +40,9 @@ void CAssetPath::COperation::Apply(CAssetPath& Path) const
 	else if(m_OperationId == OPERATION_RESOLVE_NAME)
 	{
 		int StringId = Path.GetRawId();
-		if(StringId >= 0 && StringId < m_OpResolveName.m_pNames->size())
+		if(StringId >= 0 && StringId < static_cast<int>(m_OpResolveName.m_pNames->size()))
 		{
-			const char* pName = (*m_OpResolveName.m_pNames)[StringId];
+			const char* pName = (*m_OpResolveName.m_pNames)[StringId].c_str();
 			
 			#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 				Path = m_OpResolveName.m_pAssetsManager->FindAsset<CAsset_##Name>(Path.GetPackageId(), pName);\

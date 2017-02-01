@@ -56,7 +56,7 @@ void CAssetsSaveLoadContext::WriteAssetPath(const CAssetPath& SysType, CAssetPat
 		TuaType.m_PackageId = m_pArchiveFile->WriteUInt16(0);
 	else
 	{
-		for(int i=0; i<m_Dependencies.size(); i++)
+		for(unsigned int i=0; i<m_Dependencies.size(); i++)
 		{
 			if(m_Dependencies[i] == AssetPkgId)
 			{
@@ -67,7 +67,7 @@ void CAssetsSaveLoadContext::WriteAssetPath(const CAssetPath& SysType, CAssetPat
 		
 		if(DependencyId == 0)
 		{
-			m_Dependencies.increment() = AssetPkgId;
+			m_Dependencies.push_back(AssetPkgId);
 			DependencyId = m_Dependencies.size(); //The new ID + 1
 		}
 		
@@ -94,7 +94,7 @@ void CAssetsSaveLoadContext::ReadAssetPath(const CAssetPath::CTuaType& TuaType, 
 	
 	if(AssetPkgId == 0)
 		SysType.SetPackageId(m_PackageId);
-	else if(DependencyIndex >= 0 && DependencyIndex < m_Dependencies.size())
+	else if(DependencyIndex >= 0 && DependencyIndex < static_cast<int>(m_Dependencies.size()))
 		SysType.SetPackageId(m_Dependencies[DependencyIndex]);
 	else
 		SysType = CAssetPath::Null();

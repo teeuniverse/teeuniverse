@@ -19,8 +19,6 @@
 #ifndef __CLIENT_GUI_TABS__
 #define __CLIENT_GUI_TABS__
 
-#include <shared/tl/array.h>
-
 #include "listlayout.h"
 #include "button.h"
 	
@@ -51,7 +49,7 @@ private:
 protected:
 	CAssetPath m_TabsStylePath;
 	CRect m_ClipRect;
-	array<CTab> m_Tabs;
+	std::vector<CTab> m_Tabs;
 	CHListLayout* m_pButtonList;
 	
 protected:

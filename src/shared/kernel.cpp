@@ -29,30 +29,22 @@ CSharedKernel::CSharedKernel()
 {
 	SetType(KERNEL_SHARED);
 	
-	m_pComponents.add_by_copy(m_pStorage = new CStorage(this));
-	m_pComponents.add_by_copy(m_pLocalization = new CLocalization(this));
-	m_pComponents.add_by_copy(m_pCLI = new CCommandLineInterpreter(this));
-	m_pComponents.add_by_copy(m_pAssetsManager = new CAssetsManager(this));
-}
-	
-CSharedKernel::~CSharedKernel()
-{
-	for(int i=m_pComponents.size()-1; i>=0; i--)
-		delete m_pComponents[i];
-		
-	m_pComponents.clear();
+	m_pComponents.emplace_back(m_pStorage = new CStorage(this));
+	m_pComponents.emplace_back(m_pLocalization = new CLocalization(this));
+	m_pComponents.emplace_back(m_pCLI = new CCommandLineInterpreter(this));
+	m_pComponents.emplace_back(m_pAssetsManager = new CAssetsManager(this));
 }
 	
 bool CSharedKernel::Init(int argc, const char** argv)
 {	
-	for(int i=0; i<m_pComponents.size(); i++)
+	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->InitConfig(argc, argv))
 		{
 			dbg_msg("Kernel", "Config Initialization of %s failed", m_pComponents[i]->GetName());
 			return false;
 		}
 		
-	for(int i=0; i<m_pComponents.size(); i++)
+	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->Init())
 		{
 			dbg_msg("Kernel", "Initialization of %s failed", m_pComponents[i]->GetName());
@@ -64,7 +56,7 @@ bool CSharedKernel::Init(int argc, const char** argv)
 	
 bool CSharedKernel::PreUpdate()
 {
-	for(int i=0; i<m_pComponents.size(); i++)
+	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->PreUpdate())
 			return false;
 	
@@ -88,6 +80,6 @@ void CSharedKernel::Shutdown()
 
 void CSharedKernel::Save(CCLI_Output* pOutput)
 {
-	for(int i=0; i<m_pComponents.size(); i++)
+	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		m_pComponents[i]->SaveConfig(pOutput);
 }

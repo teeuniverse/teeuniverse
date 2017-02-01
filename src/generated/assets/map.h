@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_MAP__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/math/vector.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_Map : public CAsset
 {
@@ -215,10 +217,10 @@ public:
 	
 
 private:
-	array< CAssetPath, allocator_default< CAssetPath > > m_BgGroup;
-	array< CAssetPath, allocator_default< CAssetPath > > m_FgGroup;
-	array< CAssetPath, allocator_default< CAssetPath > > m_ZoneLayer;
-	array< CAssetPath, allocator_default< CAssetPath > > m_EntityLayer;
+	std::vector<CAssetPath> m_BgGroup;
+	std::vector<CAssetPath> m_FgGroup;
+	std::vector<CAssetPath> m_ZoneLayer;
+	std::vector<CAssetPath> m_EntityLayer;
 	vec2 m_CameraPosition;
 	float m_CameraZoom;
 	bool m_ShowEntities;
@@ -250,10 +252,10 @@ public:
 	CAsset_Map();
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
 	
-	inline const CAssetPath* GetBgGroupPtr() const { return m_BgGroup.base_ptr(); }
+	inline const CAssetPath* GetBgGroupPtr() const { return &(m_BgGroup.front()); }
 	
-	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetBgGroupArray() const { return m_BgGroup; }
-	inline array< CAssetPath, allocator_default< CAssetPath > >& GetBgGroupArray() { return m_BgGroup; }
+	inline const std::vector<CAssetPath>& GetBgGroupArray() const { return m_BgGroup; }
+	inline std::vector<CAssetPath>& GetBgGroupArray() { return m_BgGroup; }
 	
 	inline CAssetPath GetBgGroup(const CSubPath& SubPath) const
 	{
@@ -265,10 +267,10 @@ public:
 	
 	inline int GetFgGroupArraySize() const { return m_FgGroup.size(); }
 	
-	inline const CAssetPath* GetFgGroupPtr() const { return m_FgGroup.base_ptr(); }
+	inline const CAssetPath* GetFgGroupPtr() const { return &(m_FgGroup.front()); }
 	
-	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetFgGroupArray() const { return m_FgGroup; }
-	inline array< CAssetPath, allocator_default< CAssetPath > >& GetFgGroupArray() { return m_FgGroup; }
+	inline const std::vector<CAssetPath>& GetFgGroupArray() const { return m_FgGroup; }
+	inline std::vector<CAssetPath>& GetFgGroupArray() { return m_FgGroup; }
 	
 	inline CAssetPath GetFgGroup(const CSubPath& SubPath) const
 	{
@@ -280,10 +282,10 @@ public:
 	
 	inline int GetZoneLayerArraySize() const { return m_ZoneLayer.size(); }
 	
-	inline const CAssetPath* GetZoneLayerPtr() const { return m_ZoneLayer.base_ptr(); }
+	inline const CAssetPath* GetZoneLayerPtr() const { return &(m_ZoneLayer.front()); }
 	
-	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetZoneLayerArray() const { return m_ZoneLayer; }
-	inline array< CAssetPath, allocator_default< CAssetPath > >& GetZoneLayerArray() { return m_ZoneLayer; }
+	inline const std::vector<CAssetPath>& GetZoneLayerArray() const { return m_ZoneLayer; }
+	inline std::vector<CAssetPath>& GetZoneLayerArray() { return m_ZoneLayer; }
 	
 	inline CAssetPath GetZoneLayer(const CSubPath& SubPath) const
 	{
@@ -295,10 +297,10 @@ public:
 	
 	inline int GetEntityLayerArraySize() const { return m_EntityLayer.size(); }
 	
-	inline const CAssetPath* GetEntityLayerPtr() const { return m_EntityLayer.base_ptr(); }
+	inline const CAssetPath* GetEntityLayerPtr() const { return &(m_EntityLayer.front()); }
 	
-	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetEntityLayerArray() const { return m_EntityLayer; }
-	inline array< CAssetPath, allocator_default< CAssetPath > >& GetEntityLayerArray() { return m_EntityLayer; }
+	inline const std::vector<CAssetPath>& GetEntityLayerArray() const { return m_EntityLayer; }
+	inline std::vector<CAssetPath>& GetEntityLayerArray() { return m_EntityLayer; }
 	
 	inline CAssetPath GetEntityLayer(const CSubPath& SubPath) const
 	{
@@ -375,54 +377,54 @@ public:
 	inline int AddBgGroup()
 	{
 		int Id = m_BgGroup.size();
-		m_BgGroup.increment();
+		m_BgGroup.emplace_back();
 		return Id;
 	}
 	
 	inline int AddFgGroup()
 	{
 		int Id = m_FgGroup.size();
-		m_FgGroup.increment();
+		m_FgGroup.emplace_back();
 		return Id;
 	}
 	
 	inline int AddZoneLayer()
 	{
 		int Id = m_ZoneLayer.size();
-		m_ZoneLayer.increment();
+		m_ZoneLayer.emplace_back();
 		return Id;
 	}
 	
 	inline int AddEntityLayer()
 	{
 		int Id = m_EntityLayer.size();
-		m_EntityLayer.increment();
+		m_EntityLayer.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtBgGroup(int Index) { m_BgGroup.insertat_and_init(Index); }
+	inline void AddAtBgGroup(int Index) { m_BgGroup.insert(m_BgGroup.begin() + Index, CAssetPath()); }
 	
-	inline void AddAtFgGroup(int Index) { m_FgGroup.insertat_and_init(Index); }
+	inline void AddAtFgGroup(int Index) { m_FgGroup.insert(m_FgGroup.begin() + Index, CAssetPath()); }
 	
-	inline void AddAtZoneLayer(int Index) { m_ZoneLayer.insertat_and_init(Index); }
+	inline void AddAtZoneLayer(int Index) { m_ZoneLayer.insert(m_ZoneLayer.begin() + Index, CAssetPath()); }
 	
-	inline void AddAtEntityLayer(int Index) { m_EntityLayer.insertat_and_init(Index); }
+	inline void AddAtEntityLayer(int Index) { m_EntityLayer.insert(m_EntityLayer.begin() + Index, CAssetPath()); }
 	
-	inline void DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.remove_index(SubPath.GetId()); }
+	inline void DeleteBgGroup(const CSubPath& SubPath) { m_BgGroup.erase(m_BgGroup.begin() + SubPath.GetId()); }
 	
-	inline void DeleteFgGroup(const CSubPath& SubPath) { m_FgGroup.remove_index(SubPath.GetId()); }
+	inline void DeleteFgGroup(const CSubPath& SubPath) { m_FgGroup.erase(m_FgGroup.begin() + SubPath.GetId()); }
 	
-	inline void DeleteZoneLayer(const CSubPath& SubPath) { m_ZoneLayer.remove_index(SubPath.GetId()); }
+	inline void DeleteZoneLayer(const CSubPath& SubPath) { m_ZoneLayer.erase(m_ZoneLayer.begin() + SubPath.GetId()); }
 	
-	inline void DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.remove_index(SubPath.GetId()); }
+	inline void DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.erase(m_EntityLayer.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveBgGroup(const CSubPath& SubPath, int RelMove) { m_BgGroup.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveBgGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_BgGroup, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveFgGroup(const CSubPath& SubPath, int RelMove) { m_FgGroup.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveFgGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_FgGroup, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveZoneLayer(const CSubPath& SubPath, int RelMove) { m_ZoneLayer.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveZoneLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_ZoneLayer, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { m_EntityLayer.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_EntityLayer, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_BgGroup.size()); }
 	
@@ -436,7 +438,7 @@ public:
 	{
 		{
 			int Shift = 0;
-			for(int i=0; i<m_BgGroup.size(); i++)
+			for(unsigned int i=0; i<m_BgGroup.size(); i++)
 			{
 				if(Operation.MustBeDeleted(m_BgGroup[i]))
 					Shift++;
@@ -445,13 +447,13 @@ public:
 			}
 			m_BgGroup.resize(m_BgGroup.size()-Shift);
 		}
-		for(int i=0; i<m_BgGroup.size(); i++)
+		for(unsigned int i=0; i<m_BgGroup.size(); i++)
 		{
 			Operation.Apply(m_BgGroup[i]);
 		}
 		{
 			int Shift = 0;
-			for(int i=0; i<m_FgGroup.size(); i++)
+			for(unsigned int i=0; i<m_FgGroup.size(); i++)
 			{
 				if(Operation.MustBeDeleted(m_FgGroup[i]))
 					Shift++;
@@ -460,13 +462,13 @@ public:
 			}
 			m_FgGroup.resize(m_FgGroup.size()-Shift);
 		}
-		for(int i=0; i<m_FgGroup.size(); i++)
+		for(unsigned int i=0; i<m_FgGroup.size(); i++)
 		{
 			Operation.Apply(m_FgGroup[i]);
 		}
 		{
 			int Shift = 0;
-			for(int i=0; i<m_ZoneLayer.size(); i++)
+			for(unsigned int i=0; i<m_ZoneLayer.size(); i++)
 			{
 				if(Operation.MustBeDeleted(m_ZoneLayer[i]))
 					Shift++;
@@ -475,13 +477,13 @@ public:
 			}
 			m_ZoneLayer.resize(m_ZoneLayer.size()-Shift);
 		}
-		for(int i=0; i<m_ZoneLayer.size(); i++)
+		for(unsigned int i=0; i<m_ZoneLayer.size(); i++)
 		{
 			Operation.Apply(m_ZoneLayer[i]);
 		}
 		{
 			int Shift = 0;
-			for(int i=0; i<m_EntityLayer.size(); i++)
+			for(unsigned int i=0; i<m_EntityLayer.size(); i++)
 			{
 				if(Operation.MustBeDeleted(m_EntityLayer[i]))
 					Shift++;
@@ -490,7 +492,7 @@ public:
 			}
 			m_EntityLayer.resize(m_EntityLayer.size()-Shift);
 		}
-		for(int i=0; i<m_EntityLayer.size(); i++)
+		for(unsigned int i=0; i<m_EntityLayer.size(); i++)
 		{
 			Operation.Apply(m_EntityLayer[i]);
 		}

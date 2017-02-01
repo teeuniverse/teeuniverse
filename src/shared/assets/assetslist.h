@@ -60,7 +60,7 @@ public:
 	};
 	
 public:
-	array<CEntry> m_Assets;
+	std::vector<CEntry> m_Assets;
 
 public:
 	inline int GetNumAssets() const { return m_Assets.size(); }
@@ -109,8 +109,8 @@ public:
 	ASSET* NewAsset(class CAssetsManager* pAssetsManager, CAssetPath* pPath)
 	{
 		int Id = m_Assets.size();
-		CEntry& Entry = m_Assets.increment();
-		
+		m_Assets.emplace_back();
+		CEntry& Entry = m_Assets.back();
 		Entry.m_Asset = ASSET();
 		Entry.m_Asset.SetAssetsManager(pAssetsManager);
 		
@@ -137,7 +137,7 @@ public:
 	{
 		if(!Path.IsNull() && Path.GetType() == ASSET::TypeId)
 		{
-			m_Assets.remove_index(Path.GetId());
+			m_Assets.erase(m_Assets.begin() + Path.GetId());
 		}
 	}
 	

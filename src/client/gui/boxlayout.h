@@ -19,8 +19,6 @@
 #ifndef __CLIENT_GUI_BOXLAYOUT__
 #define __CLIENT_GUI_BOXLAYOUT__
 
-#include <shared/tl/array.h>
-
 #include "widget.h"
 #include "scrollbar.h"
 	
@@ -39,7 +37,7 @@ protected:
 	
 protected:
 	CAssetPath m_BoxStylePath;
-	array<CChild> m_Childs;
+	std::vector<CChild> m_Childs;
 	CRect m_ClipRect;
 	bool m_ShowScrollBar;
 	CVScrollBar* m_pScrollBar;

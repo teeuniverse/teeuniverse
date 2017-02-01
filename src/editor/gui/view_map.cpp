@@ -289,7 +289,6 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_ShowMeshes(false),
 	m_ShowEntities(3),
 	m_ZoomLockedToUnit(false),
-	m_pMapRenderer(NULL),
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
@@ -341,13 +340,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(new CSimpleToggle(AssetsEditor(), &m_ShowGrid, AssetsEditor()->m_Path_Sprite_IconGrid, _LSTRING("Show/hide grid")), false);
 	m_pToolbar->Add(new CDisplaySettingsButton(this), false);
 	
-	m_pMapRenderer = new CMapRenderer(AssetsEditor()->EditorKernel());
-}
-
-CViewMap::~CViewMap()
-{
-	if(m_pMapRenderer)
-		delete m_pMapRenderer;
+	m_pMapRenderer.reset(new CMapRenderer(AssetsEditor()->EditorKernel()));
 }
 
 CAssetPath CViewMap::GetMapGroupPath()

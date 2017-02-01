@@ -20,7 +20,9 @@
 #define __SHARED_KERNEL__
 
 #include <shared/system/string.h>
-#include <shared/tl/array.h>
+
+#include <memory>
+#include <vector>
 
 //TAG_NEW_SHARED_COMPONENT
 class CStorage;
@@ -83,11 +85,11 @@ public:
 	{
 	public:
 		CComponent(CSharedKernel* pSharedKernel) : CGuest(pSharedKernel) { }
-		virtual ~CComponent() {}
+		virtual ~CComponent() = default;
 	};
 
 protected:
-	array<IComponent*> m_pComponents;
+	std::vector< std::unique_ptr<IComponent> > m_pComponents;
 	CStorage* m_pStorage;
 	CLocalization* m_pLocalization;
 	CCommandLineInterpreter* m_pCLI;
@@ -97,7 +99,7 @@ protected:
 
 public:	
 	CSharedKernel();
-	virtual ~CSharedKernel();
+	virtual ~CSharedKernel() {};
 	
 	bool Init(int argc, const char** argv);
 	bool PreUpdate();

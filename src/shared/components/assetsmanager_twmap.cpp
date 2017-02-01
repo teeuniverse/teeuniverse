@@ -1328,7 +1328,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	return PackageId;
 }
 
-void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId)
+void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId)
 {
 	const CAsset_MapGroup* pGroup = GetAsset<CAsset_MapGroup>(GroupPath);
 	if(!pGroup)
@@ -1389,11 +1389,11 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
 				if(pImage)
 				{
-					for(int i=0; i<Images.size(); i++)
+					for(unsigned int i=0; i<Images.size(); i++)
 					{
 						if(Images[i] == pLayer->GetImagePath())
 						{
-							LItem.m_Image = i;
+							LItem.m_Image = static_cast<int>(i);
 							break;
 						}
 					}
@@ -1401,7 +1401,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 					if(LItem.m_Image == -1)
 					{
 						LItem.m_Image = Images.size();
-						Images.increment() = pLayer->GetImagePath();
+						Images.push_back(pLayer->GetImagePath());
 					}
 				}
 				
@@ -1485,11 +1485,11 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 			const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetImagePath());
 			if(pImage)
 			{
-				for(int i=0; i<Images.size(); i++)
+				for(unsigned int i=0; i<Images.size(); i++)
 				{
 					if(Images[i] == pLayer->GetImagePath())
 					{
-						LItem.m_Image = i;
+						LItem.m_Image = static_cast<int>(i);
 						break;
 					}
 				}
@@ -1497,7 +1497,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				if(LItem.m_Image == -1)
 				{
 					LItem.m_Image = Images.size();
-					Images.increment() = pLayer->GetImagePath();
+					Images.push_back(pLayer->GetImagePath());
 				}
 			}
 
@@ -1511,7 +1511,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 			if(!pLayer)
 				return;
 			
-			array<CTexturedQuad> Quads;
+			std::vector<CTexturedQuad> Quads;
 			
 			CAsset_MapLayerObjects::CIteratorObject Iter;
 			for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
@@ -1519,10 +1519,10 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 			
 			if(Quads.size())
 			{
-				array<ddnet::CQuad> ExportedQuads;
+				std::vector<ddnet::CQuad> ExportedQuads;
 				
 				CAssetPath CurrentImagePath;
-				for(int i=0; i<Quads.size(); i++)
+				for(unsigned int i=0; i<Quads.size(); i++)
 				{
 					if(i>0 && CurrentImagePath != Quads[i].m_ImagePath)
 					{
@@ -1539,11 +1539,11 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 						const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
 						if(pImage)
 						{
-							for(int i=0; i<Images.size(); i++)
+							for(unsigned int i=0; i<Images.size(); i++)
 							{
 								if(Images[i] == CurrentImagePath)
 								{
-									LItem.m_Image = i;
+									LItem.m_Image = static_cast<int>(i);
 									break;
 								}
 							}
@@ -1551,7 +1551,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 							if(LItem.m_Image == -1)
 							{
 								LItem.m_Image = Images.size();
-								Images.increment() = CurrentImagePath;
+								Images.push_back(CurrentImagePath);
 							}
 						}
 
@@ -1562,7 +1562,8 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 					if(i==0 || CurrentImagePath != Quads[i].m_ImagePath)
 						CurrentImagePath = Quads[i].m_ImagePath;
 					
-					ddnet::CQuad& Quad = ExportedQuads.increment();
+					ExportedQuads.emplace_back();
+					ddnet::CQuad& Quad = ExportedQuads.back();
 					
 					vec2 Barycenter = 0.0f;
 					for(int j=0; j<4; j++)
@@ -1600,11 +1601,11 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				const CAsset_Image* pImage = GetAsset<CAsset_Image>(CurrentImagePath);
 				if(pImage)
 				{
-					for(int i=0; i<Images.size(); i++)
+					for(unsigned int i=0; i<Images.size(); i++)
 					{
 						if(Images[i] == CurrentImagePath)
 						{
-							LItem.m_Image = i;
+							LItem.m_Image = static_cast<int>(i);
 							break;
 						}
 					}
@@ -1612,7 +1613,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 					if(LItem.m_Image == -1)
 					{
 						LItem.m_Image = Images.size();
-						Images.increment() = CurrentImagePath;
+						Images.push_back(CurrentImagePath);
 					}
 				}
 
@@ -1671,10 +1672,10 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	else if(Format == MAPFORMAT_DUMMYCAPTURE)
 		Load_UnivSport();
 	
-	array<CAssetPath> Images;
+	std::vector<CAssetPath> Images;
 	bool EntityGroupNeeded = false;
-	array<CAsset_MapEntities::CEntity> PTUMTeeWorldsEntities;
-	array<CAssetPath> ZoneLayers;
+	std::vector<CAsset_MapEntities::CEntity> PTUMTeeWorldsEntities;
+	std::vector<CAssetPath> ZoneLayers;
 	
 	//Map version
 	ddnet::CMapItemVersion VerItem;
@@ -1877,7 +1878,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						}
 					}
 					else
-						ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
+						ZoneLayers.push_back(pMap->GetZoneLayer(*ZoneIter));
 				}
 				else
 				{
@@ -1991,12 +1992,12 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						}
 					}
 					else
-						ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
+						ZoneLayers.push_back(pMap->GetZoneLayer(*ZoneIter));
 				}
 			}
 			else if(pMap->GetZoneLayer(*ZoneIter).GetType() == CAsset_MapZoneObjects::TypeId)
 			{
-				ZoneLayers.add_by_copy(pMap->GetZoneLayer(*ZoneIter));
+				ZoneLayers.push_back(pMap->GetZoneLayer(*ZoneIter));
 			}
 		}
 	
@@ -2018,19 +2019,19 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				if(X < 0 || X >= GameWidth || Y < 0 || Y >= GameHeight)
 				{
 					EntityGroupNeeded = true;
-					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
+					PTUMTeeWorldsEntities.push_back(pEntities->GetEntity(SubPath));
 					continue;
 				}
 				if(pGameTiles[Y*GameWidth+X].m_Index == ddnet::TILE_SOLID || pGameTiles[Y*GameWidth+X].m_Index == ddnet::TILE_NOHOOK)
 				{
 					EntityGroupNeeded = true;
-					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
+					PTUMTeeWorldsEntities.push_back(pEntities->GetEntity(SubPath));
 					continue;
 				}
 				if(distance(pEntities->GetEntityPosition(SubPath), vec2(X*32.0f+16.0f, Y*32.0f+16.0f)) > 0.01f)
 				{
 					EntityGroupNeeded = true;
-					PTUMTeeWorldsEntities.add_by_copy(pEntities->GetEntity(SubPath));
+					PTUMTeeWorldsEntities.push_back(pEntities->GetEntity(SubPath));
 					continue;
 				}
 				
@@ -2231,7 +2232,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		int StartLayer = LayerId;
 		
 		CAsset_Map::CIteratorZoneLayer ZoneIter;
-		for(int i=0; i<ZoneLayers.size(); i++)
+		for(unsigned int i=0; i<ZoneLayers.size(); i++)
 		{
 			if(ZoneLayers[i].GetType() == CAsset_MapZoneTiles::TypeId)
 			{
@@ -2299,7 +2300,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				if(!pZone)
 					continue;
 				
-				array<ddnet::CQuad> Quads;
+				std::vector<ddnet::CQuad> Quads;
 				
 				CAsset_MapZoneObjects::CIteratorObject Iter;
 				for(Iter = pZone->BeginObject(); Iter != pZone->EndObject(); ++Iter)
@@ -2310,15 +2311,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					matrix2x2 Transform;
 					Object.GetTransform(this, 0.0f, &Transform, &ObjPosition);
 					
-					array<CLineVertex> LineVertices;
-					array<CQuad> ObjectQuads;
+					std::vector<CLineVertex> LineVertices;
+					std::vector<CQuad> ObjectQuads;
 					
 					GenerateZoneCurve_Object(this, 0.0f, LineVertices, Object);
 					PolygonQuadrangulation(LineVertices, ObjectQuads);
 					
-					for(int i=0; i<ObjectQuads.size(); i++)
+					for(unsigned int i=0; i<ObjectQuads.size(); i++)
 					{
-						ddnet::CQuad& Quad = Quads.increment();
+						Quads.emplace_back();
+						ddnet::CQuad& Quad = Quads.back();
 						
 						Quad.m_aPoints[4].x = f2fx(ObjPosition.x);
 						Quad.m_aPoints[4].y = f2fx(ObjPosition.y);
@@ -2385,16 +2387,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	{
 		int StartLayer = LayerId;
 		
-		array<CAssetPath> EntityTypeList;
-		array< array<ddnet::CQuad> > EntityQuads;
+		std::vector<CAssetPath> EntityTypeList;
+		std::vector< std::vector<ddnet::CQuad> > EntityQuads;
 		
-		for(int i=0; i<PTUMTeeWorldsEntities.size(); i++)
+		for(unsigned int i=0; i<PTUMTeeWorldsEntities.size(); i++)
 		{
 			CAsset_MapEntities::CEntity& Entity = PTUMTeeWorldsEntities[i];
 			CAssetPath EntityTypePath = Entity.GetTypePath();
 			
 			//Search in previous layers
-			int eId;
+			unsigned int eId;
 			for(eId=0; eId<EntityTypeList.size(); eId++)
 			{
 				if(EntityTypeList[eId] == EntityTypePath)
@@ -2402,11 +2404,12 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			}
 			if(eId == EntityTypeList.size())
 			{
-				EntityTypeList.add_by_copy(EntityTypePath);
-				EntityQuads.increment();
+				EntityTypeList.push_back(EntityTypePath);
+				EntityQuads.emplace_back();
 			}
 			
-			ddnet::CQuad& Quad = EntityQuads[eId].increment();
+			EntityQuads[eId].emplace_back();
+			ddnet::CQuad& Quad = EntityQuads[eId].back();
 			
 			Quad.m_aPoints[0].x = f2fx(Entity.GetPositionX()-16.0f);
 			Quad.m_aPoints[0].y = f2fx(Entity.GetPositionY()-16.0f);
@@ -2471,7 +2474,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					continue;
 				
 				//Search in previous layers
-				int eId;
+				unsigned int eId;
 				for(eId=0; eId<EntityTypeList.size(); eId++)
 				{
 					if(EntityTypeList[eId] == EntityTypePath)
@@ -2479,11 +2482,12 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				}
 				if(eId == EntityTypeList.size())
 				{
-					EntityTypeList.add_by_copy(EntityTypePath);
-					EntityQuads.increment();
+					EntityTypeList.push_back(EntityTypePath);
+					EntityQuads.emplace_back();
 				}
 				
-				ddnet::CQuad& Quad = EntityQuads[eId].increment();
+				EntityQuads[eId].emplace_back();
+				ddnet::CQuad& Quad = EntityQuads[eId].back();
 				
 				Quad.m_aPoints[0].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f);
 				Quad.m_aPoints[0].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f);
@@ -2513,7 +2517,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			}
 		}
 		
-		for(int	eId=0; eId<EntityTypeList.size(); eId++)
+		for(unsigned int eId=0; eId<EntityTypeList.size(); eId++)
 		{
 			ddnet::CMapItemLayerQuads LItem;
 			LItem.m_Version = 2;
@@ -2551,7 +2555,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	
 	//Step6: Save images
 	{
-		for(int i=0; i<Images.size(); i++)
+		for(unsigned int i=0; i<Images.size(); i++)
 		{
 			ddnet::CMapItemImage IItem;
 			IItem.m_Version = 1;

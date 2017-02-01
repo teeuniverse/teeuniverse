@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_CHARACTER__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_Character : public CAsset
 {
@@ -195,7 +197,7 @@ private:
 	CAssetPath m_WalkPath;
 	CAssetPath m_ControlledJumpPath;
 	CAssetPath m_UncontrolledJumpPath;
-	array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > > m_Part;
+	std::vector<CAsset_Character::CPart> m_Part;
 
 public:
 	virtual ~CAsset_Character() {}
@@ -230,10 +232,10 @@ public:
 	
 	inline int GetPartArraySize() const { return m_Part.size(); }
 	
-	inline const CAsset_Character::CPart* GetPartPtr() const { return m_Part.base_ptr(); }
+	inline const CAsset_Character::CPart* GetPartPtr() const { return &(m_Part.front()); }
 	
-	inline const array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > >& GetPartArray() const { return m_Part; }
-	inline array< CAsset_Character::CPart, allocator_default< CAsset_Character::CPart > >& GetPartArray() { return m_Part; }
+	inline const std::vector<CAsset_Character::CPart>& GetPartArray() const { return m_Part; }
+	inline std::vector<CAsset_Character::CPart>& GetPartArray() { return m_Part; }
 	
 	inline const CAsset_Character::CPart& GetPart(const CSubPath& SubPath) const
 	{
@@ -290,15 +292,15 @@ public:
 	inline int AddPart()
 	{
 		int Id = m_Part.size();
-		m_Part.increment();
+		m_Part.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtPart(int Index) { m_Part.insertat_and_init(Index); }
+	inline void AddAtPart(int Index) { m_Part.insert(m_Part.begin() + Index, CAsset_Character::CPart()); }
 	
-	inline void DeletePart(const CSubPath& SubPath) { m_Part.remove_index(SubPath.GetId()); }
+	inline void DeletePart(const CSubPath& SubPath) { m_Part.erase(m_Part.begin() + SubPath.GetId()); }
 	
-	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { m_Part.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { relative_move(m_Part, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Part.size()); }
 	
@@ -308,7 +310,7 @@ public:
 		Operation.Apply(m_WalkPath);
 		Operation.Apply(m_ControlledJumpPath);
 		Operation.Apply(m_UncontrolledJumpPath);
-		for(int i=0; i<m_Part.size(); i++)
+		for(unsigned int i=0; i<m_Part.size(); i++)
 		{
 			m_Part[i].AssetPathOperation(Operation);
 		}

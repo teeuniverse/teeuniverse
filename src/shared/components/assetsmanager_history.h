@@ -21,7 +21,6 @@
 
 #include <shared/assets/assetpath.h>
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
 
 #include <memory>
 #include <vector>

@@ -125,7 +125,7 @@ private:
 	int m_GridSpacing;
 	int m_TexelSize;
 	bool m_TilingEnabled;
-	array2d< uint8, allocator_default< uint8 > > m_Data;
+	array2d< uint8 > m_Data;
 	CTextureHandle m_Texture;
 
 public:
@@ -171,8 +171,8 @@ public:
 	
 	inline const uint8* GetDataPtr() const { return m_Data.base_ptr(); }
 	
-	inline const array2d< uint8, allocator_default< uint8 > >& GetDataArray() const { return m_Data; }
-	inline array2d< uint8, allocator_default< uint8 > >& GetDataArray() { return m_Data; }
+	inline const array2d< uint8 >& GetDataArray() const { return m_Data; }
+	inline array2d< uint8 >& GetDataArray() { return m_Data; }
 	
 	inline uint8 GetData(const CSubPath& SubPath) const { return m_Data.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	

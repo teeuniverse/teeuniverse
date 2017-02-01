@@ -37,8 +37,9 @@
 #include <shared/system/string.h>
 #include <shared/system/fs.h>
 #include <shared/kernel.h>
-#include <shared/tl/array.h>
 #include <shared/math/vector.h>
+
+#include <vector>
 
 /* FOREIGN CODE BEGIN: TeeWorlds **************************************/
 
@@ -101,8 +102,8 @@ public:
 	};
 
 protected:
-	array<dynamic_string> m_StoragePaths;
-	array<dynamic_string> m_DataDirs;
+	std::vector<dynamic_string> m_StoragePaths;
+	std::vector<dynamic_string> m_DataDirs;
 	dynamic_string m_SaveDir;
 	dynamic_string m_CurrentDir;
 	bool m_InitializeSaveDir;

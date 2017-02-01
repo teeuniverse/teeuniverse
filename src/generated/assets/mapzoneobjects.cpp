@@ -228,7 +228,7 @@ void CAsset_MapZoneObjects::CObject::CTuaType_0_2_2::Write(CAssetsSaveLoadContex
 	{
 		TuaType.m_Vertex.m_Size = SysType.m_Vertex.size();
 		CAsset_MapZoneObjects::CVertex::CTuaType_0_2_2* pData = new CAsset_MapZoneObjects::CVertex::CTuaType_0_2_2[SysType.m_Vertex.size()];
-		for(int i=0; i<SysType.m_Vertex.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Vertex.size(); i++)
 		{
 			CAsset_MapZoneObjects::CVertex::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Vertex[i], pData[i]);
 		}
@@ -249,7 +249,7 @@ void CAsset_MapZoneObjects::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadi
 	{
 		TuaType.m_Object.m_Size = SysType.m_Object.size();
 		CAsset_MapZoneObjects::CObject::CTuaType_0_2_2* pData = new CAsset_MapZoneObjects::CObject::CTuaType_0_2_2[SysType.m_Object.size()];
-		for(int i=0; i<SysType.m_Object.size(); i++)
+		for(unsigned int i=0; i<SysType.m_Object.size(); i++)
 		{
 			CAsset_MapZoneObjects::CObject::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
 		}

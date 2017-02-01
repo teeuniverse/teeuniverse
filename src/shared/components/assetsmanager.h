@@ -20,12 +20,16 @@
 #define __SHARED_ASSETSMANAGER__
 
 #include <shared/kernel.h>
+#include <shared/system/debug.h>
 #include <shared/tl/hashtable.h>
 #include <shared/assets/assetpath.h>
 #include <shared/assets/assetspackage.h>
 #include <shared/components/assetsmanager_history.h>
 #include <shared/errorstack.h>
 #include <external/ddnet/datafile.h>
+
+#include <vector>
+#include <string>
 
 class CAssetsManager : public CSharedKernel::CComponent
 {
@@ -47,9 +51,9 @@ public:
 	};
 	
 private:
-	CAssetsHistory* m_pHistory;
-	array<CAssetUpdateDesc> m_ImagesToUpdate;
-	array<char*> m_pNamesToResolved;
+	std::unique_ptr<CAssetsHistory> m_pHistory;
+	std::vector<CAssetUpdateDesc> m_ImagesToUpdate;
+	std::vector<std::string> m_pNamesToResolved;
 
 public:
 	int m_PackageId_UnivTeeWorlds;
@@ -154,15 +158,15 @@ public:
 	CAssetPath m_Path_Image_FactoryBackground;
 	
 private:	
-	array<CAssetsPackage*> m_pPackages;
+	std::vector< std::unique_ptr<CAssetsPackage> > m_pPackages;
 	
 public:
 	CAssetsManager(CSharedKernel* pKernel);
-	virtual ~CAssetsManager();
+	virtual ~CAssetsManager() = default;
 	virtual bool PostUpdate();
 	
 	void RequestUpdate(const CAssetPath& AssetPath);
-	const array<CAssetUpdateDesc>& GetImagesToUpdate() const { return m_ImagesToUpdate; }
+	const std::vector<CAssetUpdateDesc>& GetImagesToUpdate() const { return m_ImagesToUpdate; }
 	void MarkUpdated(int i) { m_ImagesToUpdate[i].m_Updated = true; }
 	
 	int NewPackage(const char* pName);
@@ -200,7 +204,7 @@ public:
 	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
 	int Load_AssetsFile(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
 	
-	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, array<CAssetPath>& Images, int& GroupId, int& LayerId);
+	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId);
 	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	
@@ -309,7 +313,7 @@ public:
 	}
 
 	void DeleteAsset(const CAssetPath& Path, int Token = -1);
-	void DeleteAssets(array<CAssetPath>& Pathes, int Token = -1);
+	void DeleteAssets(std::vector<CAssetPath>& Pathes, int Token = -1);
 	void DeleteAsset_Hard(const CAssetPath& Path);
 
 	template<typename T>

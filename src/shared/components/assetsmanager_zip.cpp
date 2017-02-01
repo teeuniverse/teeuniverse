@@ -28,14 +28,14 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 	if(!IsValidPackage(PackageId))
 		return false;
 	
-	array<int> PackageToSave;
-	array<int> PackageSaved;
+	std::vector<int> PackageToSave;
+	std::vector<int> PackageSaved;
 	
 	dynamic_string Buffer;
 	Storage()->GetCompletePath(StorageType, pFilename, Buffer);
 	fs_zipstream_wb ZipStream(Buffer.buffer());
 	
-	PackageToSave.add_by_copy(PackageId);
+	PackageToSave.push_back(PackageId);
 	while(PackageToSave.size())
 	{
 		if(!ZipStream.is_valid())
@@ -68,7 +68,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 			if(pPackageName != NULL)
 			{
 				int PackageFound = -1;
-				for(int p=0; p<m_pPackages.size(); p++)
+				for(int p=0; p<static_cast<int>(m_pPackages.size()); p++)
 				{
 					if(m_pPackages[p] && m_pPackages[p]->Identify(pPackageName, 0))
 					{
@@ -78,7 +78,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 				}
 				if(PackageFound >= 0)
 				{
-					for(int p=0; p<PackageSaved.size(); p++)
+					for(int p=0; p<static_cast<int>(PackageSaved.size()); p++)
 					{
 						if(PackageSaved[p] == PackageFound)
 						{
@@ -89,7 +89,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 				}
 				if(PackageFound >= 0)
 				{
-					for(int p=0; p<PackageToSave.size(); p++)
+					for(int p=0; p<static_cast<int>(PackageToSave.size()); p++)
 					{
 						if(PackageToSave[p] == PackageFound)
 						{
@@ -99,12 +99,12 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 					}
 				}
 				if(PackageFound >= 0)
-					PackageToSave.add_by_copy(PackageFound);
+					PackageToSave.push_back(PackageFound);
 			}
 		}
 		
-		PackageSaved.add_by_copy(PackageToSave[0]);
-		PackageToSave.remove_index(0);
+		PackageSaved.push_back(PackageToSave[0]);
+		PackageToSave.erase(PackageToSave.begin());
 		
 		ZipStream.close_file();
 	}

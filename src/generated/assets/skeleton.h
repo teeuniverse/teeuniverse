@@ -33,8 +33,10 @@
 #define __CLIENT_ASSETS_SKELETON__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_Skeleton : public CAsset
 {
@@ -332,8 +334,8 @@ public:
 private:
 	CAssetPath m_ParentPath;
 	CAssetPath m_DefaultSkinPath;
-	array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > > m_Bone;
-	array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > > m_Layer;
+	std::vector<CAsset_Skeleton::CBone> m_Bone;
+	std::vector<CAsset_Skeleton::CLayer> m_Layer;
 
 public:
 	virtual ~CAsset_Skeleton() {}
@@ -364,10 +366,10 @@ public:
 	
 	inline int GetBoneArraySize() const { return m_Bone.size(); }
 	
-	inline const CAsset_Skeleton::CBone* GetBonePtr() const { return m_Bone.base_ptr(); }
+	inline const CAsset_Skeleton::CBone* GetBonePtr() const { return &(m_Bone.front()); }
 	
-	inline const array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > >& GetBoneArray() const { return m_Bone; }
-	inline array< CAsset_Skeleton::CBone, allocator_default< CAsset_Skeleton::CBone > >& GetBoneArray() { return m_Bone; }
+	inline const std::vector<CAsset_Skeleton::CBone>& GetBoneArray() const { return m_Bone; }
+	inline std::vector<CAsset_Skeleton::CBone>& GetBoneArray() { return m_Bone; }
 	
 	inline const CAsset_Skeleton::CBone& GetBone(const CSubPath& SubPath) const
 	{
@@ -456,10 +458,10 @@ public:
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
-	inline const CAsset_Skeleton::CLayer* GetLayerPtr() const { return m_Layer.base_ptr(); }
+	inline const CAsset_Skeleton::CLayer* GetLayerPtr() const { return &(m_Layer.front()); }
 	
-	inline const array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > >& GetLayerArray() const { return m_Layer; }
-	inline array< CAsset_Skeleton::CLayer, allocator_default< CAsset_Skeleton::CLayer > >& GetLayerArray() { return m_Layer; }
+	inline const std::vector<CAsset_Skeleton::CLayer>& GetLayerArray() const { return m_Layer; }
+	inline std::vector<CAsset_Skeleton::CLayer>& GetLayerArray() { return m_Layer; }
 	
 	inline const CAsset_Skeleton::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
@@ -575,28 +577,28 @@ public:
 	inline int AddBone()
 	{
 		int Id = m_Bone.size();
-		m_Bone.increment();
+		m_Bone.emplace_back();
 		return Id;
 	}
 	
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
-		m_Layer.increment();
+		m_Layer.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtBone(int Index) { m_Bone.insertat_and_init(Index); }
+	inline void AddAtBone(int Index) { m_Bone.insert(m_Bone.begin() + Index, CAsset_Skeleton::CBone()); }
 	
-	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
+	inline void AddAtLayer(int Index) { m_Layer.insert(m_Layer.begin() + Index, CAsset_Skeleton::CLayer()); }
 	
-	inline void DeleteBone(const CSubPath& SubPath) { m_Bone.remove_index(SubPath.GetId()); }
+	inline void DeleteBone(const CSubPath& SubPath) { m_Bone.erase(m_Bone.begin() + SubPath.GetId()); }
 	
-	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.erase(m_Layer.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveBone(const CSubPath& SubPath, int RelMove) { m_Bone.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveBone(const CSubPath& SubPath, int RelMove) { relative_move(m_Bone, SubPath.GetId(), RelMove); }
 	
-	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_Layer, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Bone.size()); }
 	
@@ -606,11 +608,11 @@ public:
 	{
 		Operation.Apply(m_ParentPath);
 		Operation.Apply(m_DefaultSkinPath);
-		for(int i=0; i<m_Bone.size(); i++)
+		for(unsigned int i=0; i<m_Bone.size(); i++)
 		{
 			m_Bone[i].AssetPathOperation(Operation);
 		}
-		for(int i=0; i<m_Layer.size(); i++)
+		for(unsigned int i=0; i<m_Layer.size(); i++)
 		{
 			m_Layer[i].AssetPathOperation(Operation);
 		}

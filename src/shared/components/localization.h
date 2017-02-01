@@ -122,7 +122,7 @@ public:
 	
 protected:
 	dynamic_string m_Text;
-	array< CParameter > m_Parameters;
+	std::vector< CParameter > m_Parameters;
 
 public:
 	CLocalizableString()
@@ -139,32 +139,32 @@ public:
 	}
 	
 	inline const char* GetText() const { return m_Text.buffer(); }
-	inline const array< CParameter >& GetParameters() const { return m_Parameters; }
+	inline const std::vector< CParameter >& GetParameters() const { return m_Parameters; }
 	
 	inline void AddInteger(const char* pName, int Value)
 	{
-		CParameter& Param = m_Parameters.increment();
-		Param.m_Name = pName;
-		Param.m_Integer.m_Value = Value;
-		Param.m_Type = TYPE_INTEGER;
+		m_Parameters.emplace_back();
+		m_Parameters.back().m_Name = pName;
+		m_Parameters.back().m_Integer.m_Value = Value;
+		m_Parameters.back().m_Type = TYPE_INTEGER;
 	}
 	
 	inline void AddFloat(const char* pName, float Value)
 	{
-		CParameter& Param = m_Parameters.increment();
-		Param.m_Name = pName;
-		Param.m_Float.m_Value = Value;
-		Param.m_Type = TYPE_FLOAT;
+		m_Parameters.emplace_back();
+		m_Parameters.back().m_Name = pName;
+		m_Parameters.back().m_Float.m_Value = Value;
+		m_Parameters.back().m_Type = TYPE_FLOAT;
 	}
 	
 	inline void AddString(const char* pName, const char* pValue)
 	{
-		CParameter& Param = m_Parameters.increment();
-		Param.m_Name = pName;
+		m_Parameters.emplace_back();
+		m_Parameters.back().m_Name = pName;
 		int Length = str_length(pValue);
-		Param.m_String.m_pValue = new char[Length+1];
-		str_copy(Param.m_String.m_pValue, pValue, Length+1);
-		Param.m_Type = TYPE_STRING;
+		m_Parameters.back().m_String.m_pValue = new char[Length+1];
+		str_copy(m_Parameters.back().m_String.m_pValue, pValue, Length+1);
+		m_Parameters.back().m_Type = TYPE_STRING;
 	}
 	
 	inline void ClearParameters()
@@ -259,13 +259,13 @@ public:
 
 protected:
 	CLanguage* m_pMainLanguage;
-	array<IListener*> m_pListeners;
+	std::vector<IListener*> m_pListeners;
 	bool m_UpdateListeners;
 	
 	UConverter* m_pUtf8Converter;
 
 public:
-	array<CLanguage*> m_pLanguages;
+	std::vector< std::unique_ptr<CLanguage> > m_pLanguages;
 	dynamic_string m_Cfg_MainLanguage;
 
 protected:

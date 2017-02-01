@@ -22,13 +22,15 @@
 #include <shared/assets/assetpath.h>
 #include <shared/archivefile.h>
 
+#include <vector>
+
 class CAssetsSaveLoadContext
 {
 private:
 	class CAssetsManager* m_pAssetsManager;
 	CArchiveFile* m_pArchiveFile;
 	int m_PackageId;
-	array<int> m_Dependencies;
+	std::vector<int> m_Dependencies;
 	
 public:
 	CAssetsSaveLoadContext(CAssetsManager* pAssetsManager, CArchiveFile* pArchiveFile, int PackageId);
@@ -40,8 +42,8 @@ public:
 	inline CArchiveFile* ArchiveFile() { return m_pArchiveFile; }
 	
 	inline void SetPackageId(int PackageId) { m_PackageId = PackageId; }
-	inline void AddDependency(int PackageId) { m_Dependencies.add_by_copy(PackageId); }
-	inline const array<int>& Dependencies() const { return m_Dependencies; }
+	inline void AddDependency(int PackageId) { m_Dependencies.push_back(PackageId); }
+	inline const std::vector<int>& Dependencies() const { return m_Dependencies; }
 };
 
 #endif

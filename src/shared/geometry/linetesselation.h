@@ -20,16 +20,15 @@
 #define __SHARED_GEOMETRY_LINETESSELATION__
 
 #include <shared/math/vector.h>
-#include <shared/tl/array.h>
 #include <shared/geometry/quad.h>
 #include <generated/assets/maplayerobjects.h>
 #include <generated/assets/mapzoneobjects.h>
 #include <generated/assets/material.h>
 #include <generated/assets/zonetype.h>
 
-void TesselateBezierCurve(const array<CBezierVertex>& BezierVertices, array<CLineVertex>& OutputVertices, float MinWidth);
+void TesselateBezierCurve(const std::vector<CBezierVertex>& BezierVertices, std::vector<CLineVertex>& OutputVertices, float MinWidth);
 
-void PolygonQuadrangulation(const array<CLineVertex>& Vertices, array<CQuad>& OutputQuads);
+void PolygonQuadrangulation(const std::vector<CLineVertex>& Vertices, std::vector<CQuad>& OutputQuads);
 
 class CSpriteInfo
 {
@@ -46,8 +45,8 @@ public:
 void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo);
 void GenerateMaterialQuads(
 	const class CAssetsManager* pAssetsManager,
-	array<CTexturedQuad>& OutputQuads,
-	const array<CLineVertex>& Vertices,
+	std::vector<CTexturedQuad>& OutputQuads,
+	const std::vector<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
 	CAssetPath MaterialPath,
@@ -58,8 +57,8 @@ void GenerateMaterialQuads(
 
 void GenerateZoneQuads(
 	const class CAssetsManager* pAssetsManager,
-	array<CTexturedQuad>& OutputQuads,
-	const array<CLineVertex>& Vertices,
+	std::vector<CTexturedQuad>& OutputQuads,
+	const std::vector<CLineVertex>& Vertices,
 	const matrix2x2& Transform,
 	vec2 ObjPosition,
 	CAssetPath ZoneTypePath,
@@ -67,15 +66,15 @@ void GenerateZoneQuads(
 	bool Closed
 );
 
-void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
-void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
+void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CLineVertex>& OutputLines, const CAsset_MapLayerObjects::CObject& Object);
+void GenerateMaterialQuads_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CTexturedQuad>& OutputQuads, const CAsset_MapLayerObjects::CObject& Object);
 
-void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, array<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object);
-void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, array<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath);
+void GenerateZoneCurve_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CLineVertex>& OutputLines, const CAsset_MapZoneObjects::CObject& Object);
+void GenerateZoneQuads_Object(class CAssetsManager* pAssetsManager, float Time, std::vector<CTexturedQuad>& OutputQuads, const CAsset_MapZoneObjects::CObject& Object, CAssetPath ZoneTypePath);
 
 //If the parameter "Closed" is true, the first and last vertices must be equals
 template<typename VERTEX>
-void ComputeLineNormals(array<VERTEX>& Vertices, bool Closed)
+void ComputeLineNormals(std::vector<VERTEX>& Vertices, bool Closed)
 {
 	int NumVertices = Vertices.size();
 	for(int i=0; i<NumVertices; i++)

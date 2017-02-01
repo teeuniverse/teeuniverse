@@ -94,7 +94,7 @@ void CAsset_Map::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
-		for(int i=0; i<SysType.m_BgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
 		}
@@ -104,7 +104,7 @@ void CAsset_Map::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
-		for(int i=0; i<SysType.m_FgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
 		}
@@ -114,7 +114,7 @@ void CAsset_Map::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
-		for(int i=0; i<SysType.m_ZoneLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
 		}
@@ -124,7 +124,7 @@ void CAsset_Map::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
-		for(int i=0; i<SysType.m_EntityLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
 		}
@@ -192,7 +192,7 @@ void CAsset_Map::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
-		for(int i=0; i<SysType.m_BgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
 		}
@@ -202,7 +202,7 @@ void CAsset_Map::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
-		for(int i=0; i<SysType.m_FgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
 		}
@@ -212,7 +212,7 @@ void CAsset_Map::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
-		for(int i=0; i<SysType.m_ZoneLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
 		}
@@ -222,7 +222,7 @@ void CAsset_Map::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
-		for(int i=0; i<SysType.m_EntityLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
 		}
@@ -295,7 +295,7 @@ void CAsset_Map::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
-		for(int i=0; i<SysType.m_BgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
 		}
@@ -305,7 +305,7 @@ void CAsset_Map::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
-		for(int i=0; i<SysType.m_FgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
 		}
@@ -315,7 +315,7 @@ void CAsset_Map::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
-		for(int i=0; i<SysType.m_ZoneLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
 		}
@@ -325,7 +325,7 @@ void CAsset_Map::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
-		for(int i=0; i<SysType.m_EntityLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
 		}
@@ -398,7 +398,7 @@ void CAsset_Map::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
-		for(int i=0; i<SysType.m_BgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
 		}
@@ -408,7 +408,7 @@ void CAsset_Map::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
-		for(int i=0; i<SysType.m_FgGroup.size(); i++)
+		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
 		}
@@ -418,7 +418,7 @@ void CAsset_Map::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
-		for(int i=0; i<SysType.m_ZoneLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
 		}
@@ -428,7 +428,7 @@ void CAsset_Map::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, 
 	{
 		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
 		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
-		for(int i=0; i<SysType.m_EntityLayer.size(); i++)
+		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
 		{
 			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
 		}

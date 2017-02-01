@@ -33,9 +33,11 @@
 #define __CLIENT_ASSETS_MAPGROUP__
 
 #include <shared/assets/asset.h>
-#include <shared/tl/array.h>
+#include <cassert>
+#include <vector>
 #include <shared/math/vector.h>
 #include <shared/assets/assetpath.h>
+#include <shared/tl/algorithm.h>
 
 class CAsset_MapGroup : public CAsset
 {
@@ -155,7 +157,7 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	array< CAssetPath, allocator_default< CAssetPath > > m_Layer;
+	std::vector<CAssetPath> m_Layer;
 	vec2 m_Position;
 	vec2 m_HardParallax;
 	bool m_Clipping;
@@ -191,10 +193,10 @@ public:
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
-	inline const CAssetPath* GetLayerPtr() const { return m_Layer.base_ptr(); }
+	inline const CAssetPath* GetLayerPtr() const { return &(m_Layer.front()); }
 	
-	inline const array< CAssetPath, allocator_default< CAssetPath > >& GetLayerArray() const { return m_Layer; }
-	inline array< CAssetPath, allocator_default< CAssetPath > >& GetLayerArray() { return m_Layer; }
+	inline const std::vector<CAssetPath>& GetLayerArray() const { return m_Layer; }
+	inline std::vector<CAssetPath>& GetLayerArray() { return m_Layer; }
 	
 	inline CAssetPath GetLayer(const CSubPath& SubPath) const
 	{
@@ -275,15 +277,15 @@ public:
 	inline int AddLayer()
 	{
 		int Id = m_Layer.size();
-		m_Layer.increment();
+		m_Layer.emplace_back();
 		return Id;
 	}
 	
-	inline void AddAtLayer(int Index) { m_Layer.insertat_and_init(Index); }
+	inline void AddAtLayer(int Index) { m_Layer.insert(m_Layer.begin() + Index, CAssetPath()); }
 	
-	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.remove_index(SubPath.GetId()); }
+	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.erase(m_Layer.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { m_Layer.relative_move(SubPath.GetId(), RelMove); }
+	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_Layer, SubPath.GetId(), RelMove); }
 	
 	inline bool IsValidLayer(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Layer.size()); }
 	
@@ -292,7 +294,7 @@ public:
 		Operation.Apply(m_ParentPath);
 		{
 			int Shift = 0;
-			for(int i=0; i<m_Layer.size(); i++)
+			for(unsigned int i=0; i<m_Layer.size(); i++)
 			{
 				if(Operation.MustBeDeleted(m_Layer[i]))
 					Shift++;
@@ -301,7 +303,7 @@ public:
 			}
 			m_Layer.resize(m_Layer.size()-Shift);
 		}
-		for(int i=0; i<m_Layer.size(); i++)
+		for(unsigned int i=0; i<m_Layer.size(); i++)
 		{
 			Operation.Apply(m_Layer[i]);
 		}

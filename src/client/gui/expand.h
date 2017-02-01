@@ -19,8 +19,6 @@
 #ifndef __CLIENT_GUI_EXPAND__
 #define __CLIENT_GUI_EXPAND__
 
-#include <shared/tl/array.h>
-
 #include "widget.h"
 	
 namespace gui
@@ -31,7 +29,7 @@ class CExpand : public CWidget
 protected:
 	CAssetPath m_BoxStylePath;
 	CWidget* m_pTitle;
-	array<CWidget*> m_Childs;
+	std::vector<CWidget*> m_Childs;
 	bool m_Expanded;
 
 	inline int GetShift() { return Context()->ApplyGuiScale(20); }
