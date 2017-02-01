@@ -40,7 +40,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 	{
 		if(!ZipStream.is_valid())
 		{
-			dbg_msg("AssetsManager", "can't write the file %s", Buffer.buffer());
+			debug::ErrorStream("AssetsSaveLoadContext") << "can't write the file " << Buffer.buffer() << std::endl;
 			return false;
 		}
 		
@@ -56,7 +56,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 		ZipStream.open_file(PackageFilename.buffer());
 		if(!ArchiveFile.Write(Storage(), &ZipStream))
 		{
-			dbg_msg("AssetsManager", "can't write the file %s", Buffer.buffer());
+			debug::ErrorStream("AssetsSaveLoadContext") << "can't write the file " << Buffer.buffer() << std::endl;
 			return false;
 		}
 		

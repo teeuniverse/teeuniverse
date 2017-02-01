@@ -62,18 +62,17 @@ bool CStorage::InitConfig(int argc, const char** argv)
 					if(fs_is_dir(argv[i+1]))
 					{
 						m_DataDirs.emplace_back(argv[i+1]);
-						dbg_msg("Storage", "Data directory: %s", argv[i+1]);
 						i++;
 					}
 					else
 					{
-						dbg_msg("Storage", "Value specified with the --data-dir parameter is not a valid directory: %s", argv[i+1]);
+						debug::ErrorStream("Storage") << "Value specified with the --data-dir parameter is not a valid directory: " << argv[i+1] << std::endl;
 						return false;
 					}
 				}
 				else
 				{
-					dbg_msg("Storage", "Missing value for --save-dir parameter");
+					debug::ErrorStream("Storage") << "Missing value for --data-dir parameter" << std::endl;
 					return false;
 				}
 			}
@@ -84,18 +83,17 @@ bool CStorage::InitConfig(int argc, const char** argv)
 					if(fs_is_dir(argv[i+1]))
 					{
 						m_SaveDir = argv[i+1];
-						dbg_msg("Storage", "Save directory: %s", argv[i+1]);
 						i++;
 					}
 					else
 					{
-						dbg_msg("Storage", "Value specified with the --save-dir parameter is not a valid directory: %s", argv[i+1]);
+						debug::ErrorStream("Storage") << "Value specified with the --save-dir parameter is not a valid directory: " << argv[i+1] << std::endl;
 						return false;
 					}
 				}
 				else
 				{
-					dbg_msg("Storage", "Missing value for --save-dir parameter");
+					debug::ErrorStream("Storage") << "Missing value for --save-dir parameter" << std::endl;
 					return false;
 				}
 			}
@@ -124,7 +122,7 @@ bool CStorage::Init()
 		m_StoragePaths.emplace_back(m_SaveDir);
 	else
 	{
-		dbg_msg("Storage", "no save directory specified");
+		debug::ErrorStream("Storage") << "no save directory specified" << std::endl;
 		return false;
 	}
 	
@@ -135,7 +133,7 @@ bool CStorage::Init()
 	}
 	else
 	{
-		dbg_msg("Storage", "no data directory specified");
+		debug::ErrorStream("Storage") << "no data directory specified" << std::endl;
 		return false;
 	}
 	
@@ -153,14 +151,12 @@ bool CStorage::Init()
 	}
 	else
 	{
-		dbg_msg("Storage", "unable to create save directory (%s)", m_StoragePaths[TYPE_SAVE].buffer());
+		debug::ErrorStream("Storage") << "unable to create save directory" << m_StoragePaths[TYPE_SAVE].buffer() << std::endl;
 		return false;
 	}
 	
 	for(auto iter = m_StoragePaths.begin(); iter != m_StoragePaths.end(); ++iter)
-	{
-		dbg_msg("Storage", "Directory found: %s", iter->buffer());
-	}
+		debug::InfoStream("Storage") << "Data Directory found: " << iter->buffer() << std::endl;
 
 	return true;
 }
@@ -177,7 +173,7 @@ void CStorage::LoadPaths(const char *pArgv0)
 
 		if(!File)
 		{
-			dbg_msg("Storage", "couldn't open config/storage.cfg");
+			debug::WarningStream("Storage") << "couldn't open config/storage.cfg" << std::endl;
 			return;
 		}
 	}
@@ -194,7 +190,7 @@ void CStorage::LoadPaths(const char *pArgv0)
 	io_close(File);
 
 	if(m_StoragePaths.size() == 0)
-		dbg_msg("Storage", "no paths found in storage.cfg");
+		debug::WarningStream("Storage") << "no paths found in storage.cfg" << std::endl;
 }
 
 void CStorage::AddPath(const char *pPath)
@@ -276,9 +272,6 @@ void CStorage::FindDatadir(const char *pArgv0)
 		}
 	}
 #endif
-
-	// no data-dir found
-	dbg_msg("Storage", "warning no data directory found");
 }
 
 const dynamic_string& CStorage::GetPath(int Type, const char *pDir, dynamic_string& Path) const
@@ -315,7 +308,7 @@ IOHANDLE CStorage::OpenFile(const char *pFilename, int Flags, int Type, dynamic_
 	// is safe.
 	if(!str_check_pathname(pFilename))
 	{
-		dbg_msg("Storage", "OpenFile: check failed with %s", pFilename);
+		debug::WarningStream("Storage") << "OpenFile, check failed with " << pFilename << std::endl;
 		return 0;
 	}
 

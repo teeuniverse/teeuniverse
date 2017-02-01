@@ -39,7 +39,7 @@ bool CAssetsManager::Save_Image(const char* pFilename, int StorageType, const CA
 	Error = png_open_file_write(&Png, Buffer.buffer());
 	if(Error != PNG_NO_ERROR)
 	{
-		dbg_msg("CAssetsManager::Save_Image", "failed to open image for saving. filename='%s', error=%s", Buffer.buffer(), png_error_string(Error));
+		debug::WarningStream("AssetsManager") << "failed to open image for saving. filename='" << Buffer.buffer() << "', " << png_error_string(Error) << std::endl;
 		if(Error != PNG_FILE_ERROR)
 			png_close_file(&Png);
 		return false;
@@ -60,7 +60,7 @@ bool CAssetsManager::Save_Image(const char* pFilename, int StorageType, const CA
 			ColorType = PNG_TRUECOLOR_ALPHA;
 			break;
 		default:
-			dbg_msg("CAssetsManager::Save_Image", "image depth incompatible with png (depth=%d)", ImageData.get_depth());
+			debug::WarningStream("AssetsManager") << "image depth '" << ImageData.get_depth() << "' incompatible with png" << std::endl;
 			png_close_file(&Png);
 			return false;
 	}
@@ -68,7 +68,7 @@ bool CAssetsManager::Save_Image(const char* pFilename, int StorageType, const CA
 	Error = png_set_data(&Png, ImageData.get_width(), ImageData.get_height(), 8, ColorType, (unsigned char *)ImageData.base_ptr());
 	if(Error != PNG_NO_ERROR)
 	{
-		dbg_msg("CAssetsManager::Save_Image", "failed to save image. filename='%s', error=%s", pFilename, png_error_string(Error));
+		debug::WarningStream("AssetsManager") << "failed to save image. filename='" << Buffer.buffer() << "', " << png_error_string(Error) << std::endl;
 		if(Error != PNG_FILE_ERROR)
 			png_close_file(&Png);
 		return false;

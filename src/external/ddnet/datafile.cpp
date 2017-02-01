@@ -105,12 +105,10 @@ struct CDatafile
 
 bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int StorageType)
 {
-	dbg_msg("datafile", "loading. filename='%s'", pFilename);
-
 	IOHANDLE File = pStorage->OpenFile(pFilename, IOFLAG_READ, StorageType);
 	if(!File)
 	{
-		dbg_msg("datafile", "could not open '%s'", pFilename);
+		debug::WarningStream("ddnet::CDataFileReader") << "could not open '" << pFilename << "'" << std::endl;
 		return false;
 	}
 
@@ -141,14 +139,14 @@ bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int 
 	CDatafileHeader Header;
 	if (sizeof(Header) != io_read(File, &Header, sizeof(Header)))
 	{
-		dbg_msg("datafile", "couldn't load header");
+		debug::WarningStream("ddnet::CDataFileReader") << "couldn't load header" << std::endl;
 		return 0;
 	}
 	if(Header.m_aID[0] != 'A' || Header.m_aID[1] != 'T' || Header.m_aID[2] != 'A' || Header.m_aID[3] != 'D')
 	{
 		if(Header.m_aID[0] != 'D' || Header.m_aID[1] != 'A' || Header.m_aID[2] != 'T' || Header.m_aID[3] != 'A')
 		{
-			dbg_msg("datafile", "wrong signature. %x %x %x %x", Header.m_aID[0], Header.m_aID[1], Header.m_aID[2], Header.m_aID[3]);
+			debug::WarningStream("ddnet::CDataFileReader") << "wrong signature. " << Header.m_aID[0] << " " << Header.m_aID[1] << " " << Header.m_aID[2] << " " << Header.m_aID[3] << " " << std::endl;
 			return 0;
 		}
 	}
@@ -158,7 +156,7 @@ bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int 
 #endif
 	if(Header.m_Version != 3 && Header.m_Version != 4)
 	{
-		dbg_msg("datafile", "wrong version. version=%x", Header.m_Version);
+		debug::WarningStream("ddnet::CDataFileReader") << "wrong version. version=" << Header.m_Version << std::endl;
 		return 0;
 	}
 
@@ -192,7 +190,7 @@ bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int 
 		io_close(pTmpDataFile->m_File);
 		delete[] (char*) pTmpDataFile;
 		pTmpDataFile = 0;
-		dbg_msg("datafile", "couldn't load the whole thing, wanted=%d got=%d", Size, ReadSize);
+		debug::WarningStream("ddnet::CDataFileReader") << "couldn't load the whole thing, wanted=" << Size << " got=" << ReadSize << std::endl;
 		return false;
 	}
 
@@ -202,14 +200,6 @@ bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int 
 #if defined(CONF_ARCH_ENDIAN_BIG)
 	swap_endian(m_pDataFile->m_pData, sizeof(int), min(static_cast<unsigned>(Header.m_Swaplen), Size) / sizeof(int));
 #endif
-
-	//if(DEBUG)
-	{
-		dbg_msg("datafile", "allocsize=%d", AllocSize);
-		dbg_msg("datafile", "readsize=%d", ReadSize);
-		dbg_msg("datafile", "swaplen=%d", Header.m_Swaplen);
-		dbg_msg("datafile", "item_size=%d", m_pDataFile->m_Header.m_ItemSize);
-	}
 
 	m_pDataFile->m_Info.m_pItemTypes = (CDatafileItemType *)m_pDataFile->m_pData;
 	m_pDataFile->m_Info.m_pItemOffsets = (int *)&m_pDataFile->m_Info.m_pItemTypes[m_pDataFile->m_Header.m_NumItemTypes];
@@ -221,8 +211,6 @@ bool CDataFileReader::Open(class CStorage *pStorage, const char *pFilename, int 
 	else
 		m_pDataFile->m_Info.m_pItemStart = (char *)&m_pDataFile->m_Info.m_pDataOffsets[m_pDataFile->m_Header.m_NumRawData];
 	m_pDataFile->m_Info.m_pDataStart = m_pDataFile->m_Info.m_pItemStart + m_pDataFile->m_Header.m_ItemSize;
-
-	dbg_msg("datafile", "loading done. datafile='%s'", pFilename);
 
 	return true;
 }
@@ -300,7 +288,6 @@ void *CDataFileReader::GetDataImpl(int Index, int Swap)
 			unsigned long UncompressedSize = m_pDataFile->m_Info.m_pDataSizes[Index];
 			unsigned long s;
 
-			dbg_msg("datafile", "loading data index=%d size=%d uncompressed=%d", Index, DataSize, UncompressedSize);
 			m_pDataFile->m_ppDataPtrs[Index] = new char[UncompressedSize];
 
 			// read the compressed data
@@ -320,7 +307,6 @@ void *CDataFileReader::GetDataImpl(int Index, int Swap)
 		else
 		{
 			// load the data
-			dbg_msg("datafile", "loading data index=%d size=%d", Index, DataSize);
 			m_pDataFile->m_ppDataPtrs[Index] = new char[DataSize];
 			io_seek(m_pDataFile->m_File, m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], IOSEEK_START);
 			io_read(m_pDataFile->m_File, m_pDataFile->m_ppDataPtrs[Index], DataSize);
@@ -530,7 +516,7 @@ int CDataFileWriter::AddData(int Size, void *pData)
 	int Result = compress((Bytef*)pCompData, &s, (Bytef*)pData, Size); // ignore_convention
 	if(Result != Z_OK)
 	{
-		dbg_msg("datafile", "compression error %d", Result);
+		debug::ErrorStream("ddnet::CDataFileWriter") << "compression error " << Result << std::endl;
 		assert(Result == Z_OK);
 	}
 

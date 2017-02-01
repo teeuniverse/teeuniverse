@@ -409,7 +409,7 @@ bool CTextRenderer::LoadFont(const char* pFilename)
 	IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_READ, CStorage::TYPE_ALL, FullPath);
 	if(!File)
 	{
-		dbg_msg("TextRenderer", "Can't open %s", pFilename);
+		debug::ErrorStream("TextRenderer") << "Can't open " << pFilename << std::endl;
 		return false;
 	}
 	
@@ -420,7 +420,7 @@ bool CTextRenderer::LoadFont(const char* pFilename)
 	
 	if(FT_New_Face(m_FTLibrary, pFont->m_Filename.buffer(), 0, &pFont->m_FtFace) != FT_Err_Ok)
 	{
-		dbg_msg("TextRenderer", "Can't create a regular font from %s", pFilename);
+		debug::ErrorStream("TextRenderer") << "Can't create a regular font from " << pFilename << std::endl;
 		delete pFont;
 		return false;
 	}
@@ -440,19 +440,19 @@ CTextRenderer::CGlyph* CTextRenderer::LoadGlyph(CGlyphCache* pCache, CGlyphId Gl
 {
 	if(m_Fonts.size() == 0)
 	{
-		dbg_msg("TextRenderer", "No font loaded");
+		debug::ErrorStream("TextRenderer") << "No font loaded" << std::endl;
 		return 0;
 	}
 	
 	const CFont* pFont = m_Fonts[GlyphId.m_FontId].get();
 	if(FT_Set_Pixel_Sizes(pFont->m_FtFace, 0, pCache->m_FontSize) != FT_Err_Ok)
 	{
-		dbg_msg("TextRenderer", "Can't set pixel size %d", pCache->m_FontSize);
+		debug::WarningStream("TextRenderer") << "Can't set pixel size " << pCache->m_FontSize << std::endl;
 		return 0;
 	}
 	if(FT_Load_Glyph(pFont->m_FtFace, GlyphId.m_GlyphCode, FT_LOAD_RENDER|FT_LOAD_NO_BITMAP) != FT_Err_Ok)
 	{
-		dbg_msg("TextRenderer", "Can't load glyph %d", GlyphId.m_GlyphCode);
+		debug::WarningStream("TextRenderer") << "Can't load glyph " << GlyphId.m_GlyphCode << std::endl;
 		return 0;
 	}
 	
@@ -679,14 +679,14 @@ void CTextRenderer::UpdateTextCache_BiDi(std::vector<CShaperGlyph>* pGlyphChain,
 			}
 			else
 			{
-				dbg_msg("TextRenderer", "BiDi algorithm failed (ubidi_countRuns): %s", u_errorName(ICUError));
+				debug::WarningStream("TextRenderer") << "BiDi algorithm failed (ubidi_countRuns): " << u_errorName(ICUError) << std::endl;
 				return;
 			}
 		}
     }
     else
     {
-		dbg_msg("TextRenderer", "BiDi algorithm failed: %s", u_errorName(ICUError));
+		debug::WarningStream("TextRenderer") << "BiDi algorithm failed: " << u_errorName(ICUError) << std::endl;
 		return;
 	}
 }

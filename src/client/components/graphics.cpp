@@ -90,7 +90,7 @@ void CGraphics::FlushVertices()
 		Cmd.m_pVertices = (CCommandBuffer::SVertex *)m_pCommandBuffer->AllocData(sizeof(CCommandBuffer::SVertex)*NumVerts);
 		if(Cmd.m_pVertices == 0x0)
 		{
-			dbg_msg("graphics", "failed to allocate data for vertices");
+			debug::ErrorStream("Graphics") << "failed to allocate data for vertices" << std::endl;
 			return;
 		}
 	}
@@ -104,13 +104,13 @@ void CGraphics::FlushVertices()
 		Cmd.m_pVertices = (CCommandBuffer::SVertex *)m_pCommandBuffer->AllocData(sizeof(CCommandBuffer::SVertex)*NumVerts);
 		if(Cmd.m_pVertices == 0x0)
 		{
-			dbg_msg("graphics", "failed to allocate data for vertices");
+			debug::ErrorStream("Graphics") << "failed to allocate data for vertices" << std::endl;
 			return;
 		}
 
 		if(!m_pCommandBuffer->AddCommand(Cmd))
 		{
-			dbg_msg("graphics", "failed to allocate memory for render command");
+			debug::ErrorStream("Graphics") << "failed to allocate memory for render command" << std::endl;
 			return;
 		}
 	}
@@ -437,7 +437,7 @@ void CGraphics::ScreenshotDirect(const char *pFilename)
 			io_close(File);
 
 		// save png
-		dbg_msg("Graphics", "saved screenshot to '%s'", FullPath.buffer());
+		debug::InfoStream("Graphics") << "saved screenshot to '" << FullPath.buffer() << "'" << std::endl;
 		
 		png_open_file_write(&Png, FullPath.buffer()); // ignore_convention
 		png_set_data(&Png, Image.m_Width, Image.m_Height, 8, PNG_TRUECOLOR, (unsigned char *)Image.m_pData); // ignore_convention
@@ -758,9 +758,9 @@ int CGraphics::InitWindow()
 		m_Cfg_FsaaSamples--;
 
 		if(m_Cfg_FsaaSamples)
-			dbg_msg("gfx", "lowering FSAA to %d and trying again", m_Cfg_FsaaSamples);
+			debug::InfoStream("Graphics") << "lowering FSAA to " << m_Cfg_FsaaSamples << " and trying again" << std::endl;
 		else
-			dbg_msg("gfx", "disabling FSAA and trying again");
+			debug::InfoStream("Graphics") << "disabling FSAA and trying again" << std::endl;
 
 		if(IssueInit() == 0)
 			return 0;
@@ -769,7 +769,7 @@ int CGraphics::InitWindow()
 	// try lowering the resolution
 	if(m_Cfg_ScreenWidth != 640 || m_Cfg_ScreenHeight != 480)
 	{
-		dbg_msg("gfx", "setting resolution to 640x480 and trying again");
+		debug::InfoStream("Graphics") << "setting resolution to 640x480 and trying again" << std::endl;
 		m_Cfg_ScreenWidth = 640;
 		m_Cfg_ScreenHeight = 480;
 
@@ -777,7 +777,7 @@ int CGraphics::InitWindow()
 			return 0;
 	}
 
-	dbg_msg("gfx", "out of ideas. failed to init graphics");
+	debug::ErrorStream("Graphics") << "out of ideas. failed to init graphics" << std::endl;
 
 	return -1;
 }

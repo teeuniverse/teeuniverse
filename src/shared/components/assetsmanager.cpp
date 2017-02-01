@@ -342,7 +342,7 @@ bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int
 	
 	if(!ArchiveFile.Write(Storage(), FullPath.buffer()))
 	{
-		dbg_msg("AssetsManager", "can't write the file %s", FullPath.buffer());
+		debug::WarningStream("AssetsManager") << "can't write the file " << FullPath.buffer() << std::endl;
 		return false;
 	}
 	
@@ -433,13 +433,13 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 			LString.AddString("Filename", FullPath.buffer());
 			pErrorStack->AddError(LString);
 		}
-		dbg_msg("AssetsManager", "can't open the file %s (storage type:%d)", FullPath.buffer(), StorageType);
+		debug::WarningStream("AssetsManager") << "can't open the file " << FullPath.buffer() << std::endl;
 		return PackageId;
 	}
 	
 	if(Crc != 0 && ArchiveFile.Crc() != Crc)
 	{
-		dbg_msg("AssetsManager", "wrong crc for the file %s (%d != %d)", FullPath.buffer(), Crc, ArchiveFile.Crc());
+		debug::WarningStream("AssetsManager") << "wrong crc for the file " << FullPath.buffer() << ", " << Crc << "!=" << ArchiveFile.Crc() << std::endl;
 		return PackageId;
 	}
 	

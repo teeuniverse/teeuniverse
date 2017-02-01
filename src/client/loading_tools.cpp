@@ -32,14 +32,14 @@ void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& 
 		io_close(File);
 	else
 	{
-		dbg_msg("CreateNewImage", "failed to open file. filename='%s'", pFilename);
+		debug::WarningStream("CreateNewImage") << "failed to open file. filename='" << pFilename << "'" << std::endl;
 		return;
 	}
 
 	int Error = png_open_file(&Png, Buffer.buffer());
 	if(Error != PNG_NO_ERROR)
 	{
-		dbg_msg("CreateNewImage", "failed to open file. filename='%s', error=%s", pFilename, png_error_string(Error));
+		debug::WarningStream("CreateNewImage") << "failed to open file. filename='" << pFilename << "', error " << png_error_string(Error) << std::endl;
 		if(Error != PNG_FILE_ERROR)
 			png_close_file(&Png);
 		return;
@@ -47,19 +47,19 @@ void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& 
 
 	if(Png.depth != 8)
 	{
-		dbg_msg("CreateNewImage", "invalid depth. filename='%s', depth='%d'", Png.depth);
+		debug::WarningStream("CreateNewImage") << "invalid depth. filename='" << pFilename << "', depth " << Png.depth << std::endl;
 		png_close_file(&Png);
 		return;
 	}
 	else if(Png.color_type != PNG_TRUECOLOR && Png.color_type != PNG_TRUECOLOR_ALPHA)
 	{
-		dbg_msg("CreateNewImage", "invalid color type. filename='%s', color_type='%d'", Png.color_type);
+		debug::WarningStream("CreateNewImage") << "invalid color type. filename='" << pFilename << "', color_type " << Png.color_type << std::endl;
 		png_close_file(&Png);
 		return;
 	}
 	else if(Png.width > (2<<12) || Png.height > (2<<12))
 	{
-		dbg_msg("CreateNewImage", "invalid size. filename='%s', width='%d', height='%d'", Png.width, Png.height);
+		debug::WarningStream("CreateNewImage") << "invalid size. filename='" << pFilename << "', width " << Png.width << ", height " << Png.height << std::endl;
 		png_close_file(&Png);
 		return;
 	}
@@ -68,7 +68,7 @@ void CreateNewImage_LoadPng(CSharedKernel* pKernel, png_t& Png, unsigned char*& 
 	Error = png_get_data(&Png, pBuffer);
 	if(Error != PNG_NO_ERROR)
 	{
-		dbg_msg("CreateNewImage", "failed to get data from '%s', error=%s", Buffer.buffer(), png_error_string(Error));
+		debug::WarningStream("CreateNewImage") << "failed to get data from '" << Buffer.buffer() << "', error " << png_error_string(Error) << std::endl;
 		png_close_file(&Png);
 		delete[] pBuffer;
 		pBuffer = 0;

@@ -418,7 +418,7 @@ public:
 			}
 		}
 		
-		dbg_msg("AssetsManager", "Can't find the asset %s in the package #%d", pAssetName, PackageId);
+		debug::WarningStream("AssetsManager") << "Can't find the asset " << pAssetName << " in the package #" << PackageId << std::endl;
 		
 		return CAssetPath::Null();
 	}

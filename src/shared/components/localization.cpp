@@ -60,7 +60,7 @@ CLocalization::CLanguage::CLanguage(const char* pName, const char* pFilename, co
 			unum_close(m_pNumberFormater);
 			m_pNumberFormater = NULL;
 		}
-		dbg_msg("Localization", "Can't create number formater for %s (error #%d)", m_aFilename, Status);
+		debug::ErrorStream("Localization") << "Can't create number formater for " << m_aFilename << " (error #" << Status << ")" << std::endl;
 	}
 	
 	Status = U_ZERO_ERROR;
@@ -72,7 +72,7 @@ CLocalization::CLanguage::CLanguage(const char* pName, const char* pFilename, co
 			unum_close(m_pPercentFormater);
 			m_pPercentFormater = NULL;
 		}
-		dbg_msg("Localization", "Can't create percent formater for %s (error #%d)", m_aFilename, Status);
+		debug::ErrorStream("Localization") << "Can't create percent formater for " << m_aFilename << " (error #" << Status << ")" << std::endl;
 	}
 	
 	Status = U_ZERO_ERROR;
@@ -84,7 +84,7 @@ CLocalization::CLanguage::CLanguage(const char* pName, const char* pFilename, co
 			uplrules_close(m_pPluralRules);
 			m_pPluralRules = NULL;
 		}
-		dbg_msg("Localization", "Can't create plural rules for %s (error #%d)", m_aFilename, Status);
+		debug::ErrorStream("Localization") << "Can't create plural rules for " << m_aFilename << " (error #" << Status << ")" << std::endl;
 	}
 	
 	//Time unit for second formater
@@ -92,7 +92,7 @@ CLocalization::CLanguage::CLanguage(const char* pName, const char* pFilename, co
 	m_pTimeUnitFormater = new icu::TimeUnitFormat(m_aFilename,  UTMUTFMT_ABBREVIATED_STYLE, Status);
 	if(U_FAILURE(Status))
 	{
-		dbg_msg("Localization", "Can't create timeunit formater %s (error #%d)", pFilename, Status);
+		debug::ErrorStream("Localization") << "Can't create timeunit formater for " << m_aFilename << " (error #" << Status << ")" << std::endl;
 		delete m_pTimeUnitFormater;
 		m_pTimeUnitFormater = NULL;
 	}
@@ -146,7 +146,7 @@ bool CLocalization::CLanguage::Load(CStorage* pStorage)
 	json_value *pJsonData = json_parse_ex(&JsonSettings, pFileData, FileSize, aError);
 	if(pJsonData == 0)
 	{
-		dbg_msg("Localization", "Can't load the localization file %s : %s", aBuf, aError);
+		debug::ErrorStream("Localization") << "Can't load the localization file " << aBuf << " (" << aError << ")" << std::endl;
 		delete[] pFileData;
 		return false;
 	}
@@ -316,7 +316,7 @@ bool CLocalization::Init()
 	m_pUtf8Converter = ucnv_open("utf8", &Status);
 	if(U_FAILURE(Status))
 	{
-		dbg_msg("Localization", "Can't create UTF8/UTF16 convertert");
+		debug::ErrorStream("Localization") << "Can't create UTF8/UTF16 converter" << std::endl;
 		return false;
 	}
 	
@@ -325,7 +325,7 @@ bool CLocalization::Init()
 	IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_READ, CStorage::TYPE_ALL);
 	if(!File)
 	{
-		dbg_msg("Localization", "can't open languages/index.json");
+		debug::ErrorStream("Localization") << "can't open languages/index.json" << std::endl;
 		return true; //return true because it's not a critical error
 	}
 	

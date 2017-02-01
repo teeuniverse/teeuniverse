@@ -40,14 +40,14 @@ bool CSharedKernel::Init(int argc, const char** argv)
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->InitConfig(argc, argv))
 		{
-			dbg_msg("Kernel", "Config Initialization of %s failed", m_pComponents[i]->GetName());
+			debug::ErrorStream("ErrorManager") << "Config initialization of " << m_pComponents[i]->GetName() << " failed" << std::endl;
 			return false;
 		}
 		
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->Init())
 		{
-			dbg_msg("Kernel", "Initialization of %s failed", m_pComponents[i]->GetName());
+			debug::ErrorStream("ErrorManager") << "Initialization of " << m_pComponents[i]->GetName() << " failed" << std::endl;
 			return false;
 		}
 	

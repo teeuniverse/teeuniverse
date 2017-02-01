@@ -159,13 +159,13 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	ddnet::CDataFileReader ArchiveFile;
 	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), StorageType))
 	{
-		dbg_msg("AssetsManager", "can't open the file %s (storage type:%d)", FullPath.buffer(), StorageType);
+		debug::WarningStream("AssetsManager") << "can't open the file " << FullPath.buffer() << std::endl;
 		return -1;
 	}
 	
 	if(Crc != 0 && ArchiveFile.Crc() != Crc)
 	{
-		dbg_msg("AssetsManager", "wrong crc for the file %s (%d != %d)", FullPath.buffer(), Crc, ArchiveFile.Crc());
+		debug::WarningStream("AssetsManager") << "wrong crc for the file " << FullPath.buffer() << ", " << Crc << " != " << ArchiveFile.Crc() << std::endl;
 		return -1;
 	}
 	
@@ -1648,7 +1648,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	const CAsset_Map* pMap = GetAsset<CAsset_Map>(MapPath);
 	if(!pMap)
 	{
-		dbg_msg("AssetsManager", "No map to export", pFileName);
+		debug::WarningStream("AssetsManager") << "No map to export" << std::endl;
 		return false;
 	}
 	
@@ -1656,7 +1656,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	
 	if(!ArchiveFile.Open(Storage(), StorageType, pFileName))
 	{
-		dbg_msg("AssetsManager", "Can't export the map at this location: %s", pFileName);
+		debug::WarningStream("AssetsManager") << "Can't export the map at this location: " << pFileName << std::endl;
 		return false;
 	}
 	

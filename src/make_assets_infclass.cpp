@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 		
 		if(!pKernel->Init(argc, (const char**) argv))
 		{
-			dbg_msg("Kernel", "unable to initialize shared kernel");
+			debug::ErrorStream("Kernel") << "unable to initialize shared kernel" << std::endl;
 			exit(EXIT_FAILURE);
 		}
 		

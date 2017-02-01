@@ -38,7 +38,9 @@ void CAssetsSaveLoadContext::WriteAssetPath(const CAssetPath& SysType, CAssetPat
 	if(!pAssetName)
 	{
 		if(SysType.IsNotNull())
-			dbg_msg("Error", "can't store asset name %d %d %d", SysType.GetPackageId(), SysType.GetType(), SysType.GetId());
+		{
+			debug::ErrorStream("AssetsSaveLoadContext") << "can't store asset name " << SysType.GetPackageId() << ", " << SysType.GetType() << ", "  << SysType.GetId() << ", "  << std::endl;
+		}
 		
 		TuaType.m_PackageId = m_pArchiveFile->WriteUInt16(0);
 		TuaType.m_Type = m_pArchiveFile->WriteUInt16(CAssetPath::Null().GetRawType());

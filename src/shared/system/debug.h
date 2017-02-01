@@ -16,45 +16,37 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * Some parts of this file comes from other projects.
- * These parts are itendified in this file by the following block:
- * 
- * FOREIGN CODE BEGIN: ProjectName *************************************
- * 
- * FOREIGN CODE END: ProjectName ***************************************
- * 
- * If ProjectName is "TeeWorlds", then this part of the code follows the
- * TeeWorlds licence:
- *      (c) Magnus Auvinen. See LICENSE_TEEWORLDS in the root of the
- *      distribution for more information. If you are missing that file,
- *      acquire a complete release at teeworlds.com.
- */
-
 #ifndef __SHARED_SYSTEM_DEBUG__
 #define __SHARED_SYSTEM_DEBUG__
 
+#include <iostream>
 #include <cassert>
 
-/* FOREIGN CODE BEGIN: TeeWorlds **************************************/
+#if defined(CONF_FAMILY_UNIX)
+	#define STREAMCOLOR_RED (TerminalColorSupported() ? "\033[41m" : "")
+	#define STREAMCOLOR_YELLOW (TerminalColorSupported() ? "\033[33m" : "")
+	#define STREAMCOLOR_DEFAULT (TerminalColorSupported() ? "\033[0m" : "")
+#else
+	#define STREAMCOLOR_RED ""
+	#define STREAMCOLOR_YELLOW ""
+	#define STREAMCOLOR_DEFAULT ""
+#endif
 
-/*
-	Function: dbg_msg
+namespace debug
+{
+	
+#if defined(CONF_FAMILY_UNIX)
+bool TerminalColorSupported();
+#endif
 
-	Prints a debug message.
+inline std::ostream& InfoStream() { return (std::cout << " * "); }
+inline std::ostream& WarningStream() { return (std::cerr << STREAMCOLOR_YELLOW << " * Warning: " << STREAMCOLOR_DEFAULT); }
+inline std::ostream& ErrorStream() { return (std::cerr << STREAMCOLOR_RED << " * Error: " << STREAMCOLOR_DEFAULT); }
 
-	Parameters:
-		sys - A string that describes what system the message belongs to
-		fmt - A printf styled format string.
+inline std::ostream& InfoStream(const char* pSource) { return (std::cout << " * [" << pSource << "]: "); }
+inline std::ostream& WarningStream(const char* pSource) { return (std::cerr << STREAMCOLOR_YELLOW << " * Warning from " << pSource << ": " << STREAMCOLOR_DEFAULT); }
+inline std::ostream& ErrorStream(const char* pSource) { return (std::cerr << STREAMCOLOR_RED << " * Error from " << pSource << ": " << STREAMCOLOR_DEFAULT); }
 
-	Remarks:
-		Does nothing in release version of the library.
-
-	See Also:
-		<dbg_assert>
-*/
-void dbg_msg(const char *sys, const char *fmt, ...);
-
-/* FOREIGN CODE END: TeeWorlds ****************************************/
+}
 
 #endif

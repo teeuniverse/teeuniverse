@@ -48,7 +48,7 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 	IOHANDLE File = pStorage->OpenFile(pFilename, IOFLAG_READ, StorageType);
 	if(!File)
 	{
-		dbg_msg("ArchiveFile", "could not open '%s'", pFilename);
+		debug::WarningStream("ArchiveFile") << "could not open '" << pFilename << "'" << std::endl;
 		return false;
 	}
 
@@ -78,7 +78,7 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 	io_read(File, &aSignature, sizeof(aSignature));
 	if(str_comp_num(aSignature, "TUA1", 4) != 0)
 	{
-		dbg_msg("datafile", "wrong signature. %s", aSignature[0], aSignature[1], aSignature[2], aSignature[3]);
+		debug::WarningStream("ArchiveFile") << "wrong signature. " << aSignature[0] << " " << aSignature[1] << " " << aSignature[2] << " " << aSignature[3] << " " << std::endl;
 		io_close(File);
 		return false;
 	}
@@ -144,7 +144,6 @@ bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageTy
 	}
 	
 	io_close(File);
-	dbg_msg("ArchiveFile", "'%s' loaded", pFilename);
 	
 	return true;
 }
@@ -230,7 +229,7 @@ bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
 	fs_filestream_wb FileStream(Buffer.buffer());
 	if(!FileStream.is_valid())
 	{
-		dbg_msg("ArchiveFile", "could not open '%s'", pFilename);
+		debug::WarningStream("ArchiveFile") << "could not open '" << pFilename << "'" << std::endl;
 		return false;
 	}
 	
@@ -285,7 +284,7 @@ uint8* CArchiveFile::GetData(tua_dataid StoredDataId)
 	
 	if(DataId >= (uint32)m_RawDatas.size())
 	{
-		dbg_msg("ArchiveFile", "can't read the data #%d", DataId);
+		debug::ErrorStream("ArchiveFile") << "can't read the data #" << DataId << std::endl;
 		return NULL;
 	}
 	
@@ -306,7 +305,10 @@ uint8* CArchiveFile::GetData(tua_dataid StoredDataId)
 		);
 		
 		if(Result != Z_OK)
-			dbg_msg("ArchiveFile", "compression error: %s", zError(Result));
+		{
+			debug::ErrorStream("ArchiveFile") << "compression error: " << zError(Result) << std::endl;
+			return nullptr;
+		}
 			
 		return m_RawDatas[DataId].m_pUncompressedData;
 	}
@@ -323,7 +325,7 @@ tua_dataid CArchiveFile::AddData(uint8* pData, uint32 Size)
 	
 	int Result = compress((Bytef*)m_RawDatas.back().m_pCompressedData, &CompressedSize, (Bytef*)pData, Size);
 	if(Result != Z_OK)
-		dbg_msg("ArchiveFile", "compression error: %s", zError(Result));
+		debug::ErrorStream("ArchiveFile") << "compression error: " << zError(Result) << std::endl;
 	
 	if(CompressedSize >= Size)
 	{

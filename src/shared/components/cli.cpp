@@ -513,7 +513,7 @@ bool CCommandLineInterpreter::ExecuteFile(const char* pFilename, CCLI_Output* pO
 
 	if(File)
 	{
-		dbg_msg("CLI", "Execute file %s", pFilename);
+		debug::InfoStream("CLI") << "Execute file " << pFilename << std::endl;
 	
 		char *pLine;
 		linereader lr(File);
@@ -527,7 +527,7 @@ bool CCommandLineInterpreter::ExecuteFile(const char* pFilename, CCLI_Output* pO
 	}
 	else
 	{
-		dbg_msg("CLI", "Can't execute file %s", pFilename);
+		debug::WarningStream("CLI") << "Can't execute file " << pFilename << std::endl;
 		return false;
 	}
 }

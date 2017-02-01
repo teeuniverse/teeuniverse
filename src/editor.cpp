@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	{
 		if(SDL_Init(0) < 0)
 		{
-			dbg_msg("SDL", "unable to init SDL base: %s", SDL_GetError());
+			debug::ErrorStream("Main") << "unable to init SDL base: " << SDL_GetError() << std::endl;
 			return 0;
 		}
 
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	CEditorKernel* pKernel = new CEditorKernel();
 	if(!pKernel->Init(argc, (const char**) argv))
 	{
-		dbg_msg("Kernel", "unable to initialize client kernel");
+		debug::ErrorStream("Main") << "unable to initialize editor kernel" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	

@@ -198,7 +198,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 			glBindTexture(GL_TEXTURE_3D, m_aTextures[State.m_Texture].m_Tex3D);
 		}
 		else
-			dbg_msg("render", "invalid texture %d %d %d\n", State.m_Texture, State.m_Dimension, m_aTextures[State.m_Texture].m_State);
+			debug::ErrorStream("Graphics") << "invalid texture " << State.m_Texture << ", " << State.m_Dimension << ", " << m_aTextures[State.m_Texture].m_State << std::endl;
 
 		if(m_aTextures[State.m_Texture].m_Format == CCommandBuffer::TEXFORMAT_RGBA)
 			SrcBlendMode = GL_ONE;
@@ -221,7 +221,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 		glBlendFunc(SrcBlendMode, GL_ONE);
 		break;
 	default:
-		dbg_msg("render", "unknown blendmode %d\n", State.m_BlendMode);
+		debug::WarningStream("Graphics") << "unknown blendmode " << State.m_BlendMode << std::endl;
 	};
 
 	// wrap mode
@@ -234,7 +234,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		break;
 	default:
-		dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeU);
+		debug::WarningStream("Graphics") << "unknown wrapmode " << State.m_WrapModeU << std::endl;
 	};
 
 	switch(State.m_WrapModeV)
@@ -246,7 +246,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		break;
 	default:
-		dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeV);
+		debug::WarningStream("Graphics") << "unknown wrapmode " << State.m_WrapModeV << std::endl;
 	};
 
 	if(State.m_Texture >= 0 && State.m_Texture < CCommandBuffer::MAX_TEXTURES && State.m_Dimension == 3)
@@ -263,7 +263,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			break;
 		default:
-			dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeU);
+			debug::WarningStream("Graphics") << "unknown wrapmode " << State.m_WrapModeU << std::endl;
 		};
 
 		switch(State.m_WrapModeV)
@@ -275,7 +275,7 @@ void CCommandProcessorFragment_OpenGL::SetState(const CCommandBuffer::SState &St
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			break;
 		default:
-			dbg_msg("render", "unknown wrapmode %d\n", State.m_WrapModeV);
+			debug::WarningStream("Graphics") << "unknown wrapmode " << State.m_WrapModeV << std::endl;
 		};
 		
 		glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
@@ -496,7 +496,7 @@ void CCommandProcessorFragment_OpenGL::Cmd_Render(const CCommandBuffer::SCommand
 		glDrawArrays(GL_LINES, 0, pCommand->m_PrimCount*2);
 		break;
 	default:
-		dbg_msg("render", "unknown primtype %d\n", pCommand->m_Cmd);
+		debug::WarningStream("Graphics") << "unknown primtype " << pCommand->m_Cmd << std::endl;
 	};
 }
 
@@ -610,7 +610,7 @@ void CCommandProcessorFragment_SDL::Cmd_VideoModes(const CCommandBuffer::SComman
 	{
 		if(SDL_GetDisplayMode(pCommand->m_Screen, i, &mode) < 0)
 		{
-			dbg_msg("gfx", "unable to get display mode: %s", SDL_GetError());
+			debug::WarningStream("Graphics") << "unable to get display mode: " << SDL_GetError() << std::endl;
 			continue;
 		}
 
@@ -675,7 +675,7 @@ void CCommandProcessor_SDL_OpenGL::RunBuffer(CCommandBuffer *pBuffer)
 		if(m_General.RunCommand(pBaseCommand))
 			continue;
 		
-		dbg_msg("graphics", "unknown command %d", pBaseCommand->m_Cmd);
+		debug::ErrorStream("Graphics") << "unknown command " << pBaseCommand->m_Cmd << std::endl;
 	}
 }
 
@@ -687,7 +687,7 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	{
 		if(SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
 		{
-			dbg_msg("gfx", "unable to init SDL video: %s", SDL_GetError());
+			debug::ErrorStream("Graphics") << "unable to init SDL video: " << SDL_GetError() << std::endl;
 			return -1;
 		}
 	}
@@ -700,14 +700,14 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 		clamp(*Screen, 0, m_NumScreens-1);
 		if(SDL_GetDisplayBounds(*Screen, &ScreenPos) != 0)
 		{
-			dbg_msg("gfx", "unable to retrieve screen information: %s", SDL_GetError());
+			debug::ErrorStream("Graphics") << "unable to retrieve screen information: " << SDL_GetError() << std::endl;
 			return -1;
 		}
 
 	}
 	else
 	{
-		dbg_msg("gfx", "unable to retrieve number of screens: %s", SDL_GetError());
+		debug::ErrorStream("Graphics") << "unable to retrieve number of screens: " << SDL_GetError() << std::endl;
 		return -1;
 	}
 
@@ -715,7 +715,7 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	SDL_DisplayMode DisplayMode;
 	if(SDL_GetDesktopDisplayMode(*Screen, &DisplayMode))
 	{
-		dbg_msg("gfx", "unable to get desktop resolution: %s", SDL_GetError());
+		debug::ErrorStream("Graphics") << "unable to get desktop resolution: " << SDL_GetError() << std::endl;
 		return -1;
 	}
 	*pDesktopWidth = DisplayMode.w;
@@ -769,7 +769,7 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	m_pWindow = SDL_CreateWindow(pName, ScreenPos.x+OffsetX, ScreenPos.y+OffsetY, *pWidth, *pHeight, SdlFlags);
 	if(m_pWindow == NULL)
 	{
-		dbg_msg("gfx", "unable to create window: %s", SDL_GetError());
+		debug::ErrorStream("Graphics") << "unable to create window: " << SDL_GetError() << std::endl;
 		return -1;
 	}
 
@@ -779,14 +779,14 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	m_GLContext = SDL_GL_CreateContext(m_pWindow);
 	if(m_GLContext == NULL)
 	{
-		dbg_msg("gfx", "unable to create OpenGL context: %s", SDL_GetError());
+		debug::ErrorStream("Graphics") << "unable to create OpenGL context: " << SDL_GetError() << std::endl;
 		return -1;
 	}
 	
 	glTexImage3D_Dyn = (PFNGLTEXIMAGE3DPROC) SDL_GL_GetProcAddress("glTexImage3D");
 	if(!glTexImage3D_Dyn)
 	{
-		dbg_msg("gfx", "glTexImage3D not supported");
+		debug::ErrorStream("Graphics") << "glTexImage3D not supported" << SDL_GetError() << std::endl;
 		return -1;
 	}
 
