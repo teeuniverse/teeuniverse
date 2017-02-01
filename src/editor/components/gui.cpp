@@ -57,6 +57,31 @@ public:
 	{ }
 };
 
+	//editor_undo
+class CCommand_Undo : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CCommand_Undo(CGuiEditor* pAssetsEditor) :
+		CCommandLineInterpreter::CCommand(),
+		m_pAssetsEditor(pAssetsEditor)
+	{ }
+
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		m_pAssetsEditor->AssetsManager()->Undo();
+		m_pAssetsEditor->RefreshPackageTree();
+		m_pAssetsEditor->RefreshAssetsTree();
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "editor_undo"; }
+	virtual const char* Description() { return "Undo the last editing"; }
+};
+
 	//editor_open
 class CCommand_OpenPackage : public CCommandLineInterpreter::CCommand
 {
@@ -1353,9 +1378,7 @@ protected:
 protected:
 	virtual void MouseClickAction()
 	{
-		AssetsManager()->Undo();
-		m_pAssetsEditor->RefreshPackageTree();
-		m_pAssetsEditor->RefreshAssetsTree();
+		CLI()->Execute("editor_undo");
 	}
 
 public:
@@ -1704,13 +1727,6 @@ void CGuiEditor::CMainWidget::Render()
 
 void CGuiEditor::CMainWidget::OnInputEvent(const CInput::CEvent& Event)
 {
-	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_Z && (Event.m_Flags & CInput::FLAG_RELEASE))
-	{
-		AssetsManager()->Undo();
-		m_pAssetsEditor->RefreshPackageTree();
-		m_pAssetsEditor->RefreshAssetsTree();
-		return;
-	}
 	if(Input()->KeyIsPressed(KEY_LCTRL) && Event.m_Key == KEY_A && (Event.m_Flags & CInput::FLAG_RELEASE))
 	{
 		Context()->m_Cfg_Scale -= 4;
@@ -1787,6 +1803,7 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->Register("editor_open", new CCommand_OpenPackage(this));
 	CLI()->Register("editor_save", new CCommand_SavePackage(this));
 	CLI()->Register("editor_quit", new CCommand_Quit(this));
+	CLI()->Register("editor_undo", new CCommand_Undo(this));
 	CLI()->Register("vflip", new CCommand_VFlip(this));
 	CLI()->Register("hflip", new CCommand_HFlip(this));
 	CLI()->Register("cwrotation", new CCommand_CWRotation(this));
@@ -1795,6 +1812,7 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	BindsManager()->Bind(KEY_O, CBindsManager::MODIFIER_CTRL, "editor_open");
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
 	BindsManager()->Bind(KEY_Q, CBindsManager::MODIFIER_CTRL, "editor_quit");
+	BindsManager()->Bind(KEY_Z, CBindsManager::MODIFIER_CTRL, "editor_undo");
 	
 	BindsManager()->Bind(KEY_N, CBindsManager::MODIFIER_NONE, "vflip");
 	BindsManager()->Bind(KEY_M, CBindsManager::MODIFIER_NONE, "hflip");

@@ -72,7 +72,7 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 		pLayout->Add(new gui::CLabelHeader(Context(), "General"), false);
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pHList->Add(new gui::CLabel(Context(), _LSTRING("Open package"), AssetsEditor()->m_Path_Sprite_IconSave), true);
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Open package"), AssetsEditor()->m_Path_Sprite_IconLoad), true);
 			pHList->Add(new gui::CBindEdit(Context(), "editor_open", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
@@ -89,6 +89,12 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			pLayout->Add(pHList, false);
 		}
 		pLayout->Add(new gui::CLabelHeader(Context(), "Editing"), false);
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Undo"), AssetsEditor()->m_Path_Sprite_IconNone), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_undo", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply vertical flip to the selection"), AssetsEditor()->m_Path_Sprite_IconVFlip), true);
@@ -111,7 +117,6 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply counter clock-wise rotation to the selection"), AssetsEditor()->m_Path_Sprite_IconRotateCCW), true);
 			pHList->Add(new gui::CBindEdit(Context(), "ccwrotation", 0, true), true);
-			pHList->Add(new gui::CBindEdit(Context(), "ccwrotation", 1, true), true);
 			pLayout->Add(pHList, false);
 		}
 		
