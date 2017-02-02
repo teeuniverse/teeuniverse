@@ -29,33 +29,65 @@ CSharedKernel::CSharedKernel()
 {
 	SetType(KERNEL_SHARED);
 	
-	m_pComponents.emplace_back(m_pStorage = new CStorage(this));
-	m_pComponents.emplace_back(m_pLocalization = new CLocalization(this));
-	m_pComponents.emplace_back(m_pCLI = new CCommandLineInterpreter(this));
-	m_pComponents.emplace_back(m_pAssetsManager = new CAssetsManager(this));
+	m_pSharedComponents.emplace_back(m_pStorage = new CStorage(this));
+	m_pSharedComponents.emplace_back(m_pLocalization = new CLocalization(this));
+	m_pSharedComponents.emplace_back(m_pCLI = new CCommandLineInterpreter(this));
+	m_pSharedComponents.emplace_back(m_pAssetsManager = new CAssetsManager(this));
 }
 	
 bool CSharedKernel::Init(int argc, const char** argv)
-{	
+{
+	//Shared components
+	for(unsigned int i=0; i<m_pSharedComponents.size(); i++)
+	{
+		if(!m_pSharedComponents[i]->InitConfig(argc, argv))
+		{
+			debug::ErrorStream("ErrorManager") << "Config initialization of " << m_pSharedComponents[i]->GetName() << " failed" << std::endl;
+			return false;
+		}
+	}
+	for(unsigned int i=0; i<m_pSharedComponents.size(); i++)
+	{
+		if(!m_pSharedComponents[i]->Init())
+		{
+			debug::ErrorStream("ErrorManager") << "Initialization of " << m_pSharedComponents[i]->GetName() << " failed" << std::endl;
+			return false;
+		}
+	}
+	
+	//Other components
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
+	{
 		if(!m_pComponents[i]->InitConfig(argc, argv))
 		{
 			debug::ErrorStream("ErrorManager") << "Config initialization of " << m_pComponents[i]->GetName() << " failed" << std::endl;
 			return false;
 		}
-		
+	}
+	
+	if(!m_ConfigFilename.empty())
+	{
+		CLI()->ExecuteFile(m_ConfigFilename.buffer());
+	}
+	
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
+	{
 		if(!m_pComponents[i]->Init())
 		{
 			debug::ErrorStream("ErrorManager") << "Initialization of " << m_pComponents[i]->GetName() << " failed" << std::endl;
 			return false;
 		}
+	}
 	
 	return true;
 }
 	
 bool CSharedKernel::PreUpdate()
 {
+	for(unsigned int i=0; i<m_pSharedComponents.size(); i++)
+		if(!m_pSharedComponents[i]->PreUpdate())
+			return false;
+	
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		if(!m_pComponents[i]->PreUpdate())
 			return false;
@@ -69,6 +101,10 @@ bool CSharedKernel::PostUpdate()
 		if(!m_pComponents[i]->PostUpdate())
 			return false;
 	
+	for(int i=m_pSharedComponents.size()-1; i>=0; i--)
+		if(!m_pSharedComponents[i]->PostUpdate())
+			return false;
+	
 	return true;
 }
 	
@@ -76,10 +112,16 @@ void CSharedKernel::Shutdown()
 {
 	for(int i=m_pComponents.size()-1; i>=0; i--)
 		m_pComponents[i]->Shutdown();
+	
+	for(int i=m_pSharedComponents.size()-1; i>=0; i--)
+		m_pSharedComponents[i]->Shutdown();
 }
 
 void CSharedKernel::Save(CCLI_Output* pOutput)
 {
+	for(unsigned int i=0; i<m_pSharedComponents.size(); i++)
+		m_pSharedComponents[i]->SaveConfig(pOutput);
+	
 	for(unsigned int i=0; i<m_pComponents.size(); i++)
 		m_pComponents[i]->SaveConfig(pOutput);
 }

@@ -89,7 +89,9 @@ public:
 	};
 
 protected:
+	std::vector< std::unique_ptr<IComponent> > m_pSharedComponents;
 	std::vector< std::unique_ptr<IComponent> > m_pComponents;
+	dynamic_string m_ConfigFilename;
 	CStorage* m_pStorage;
 	CLocalization* m_pLocalization;
 	CCommandLineInterpreter* m_pCLI;
@@ -115,6 +117,8 @@ public:
 	
 	inline int Type() const { return m_Type; }
 	inline void SetType(int Type) { m_Type = Type; }
+	
+	inline void SetConfigFilename(const char* pFilename) { m_ConfigFilename = pFilename; }
 };
 
 #endif

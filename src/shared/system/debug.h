@@ -23,12 +23,14 @@
 #include <cassert>
 
 #if defined(CONF_FAMILY_UNIX)
-	#define STREAMCOLOR_RED (TerminalColorSupported() ? "\033[41m" : "")
+	#define STREAMCOLOR_RED (TerminalColorSupported() ? "\033[31m" : "")
 	#define STREAMCOLOR_YELLOW (TerminalColorSupported() ? "\033[33m" : "")
+	#define STREAMCOLOR_CYAN (TerminalColorSupported() ? "\033[36m" : "")
 	#define STREAMCOLOR_DEFAULT (TerminalColorSupported() ? "\033[0m" : "")
 #else
 	#define STREAMCOLOR_RED ""
 	#define STREAMCOLOR_YELLOW ""
+	#define STREAMCOLOR_CYAN ""
 	#define STREAMCOLOR_DEFAULT ""
 #endif
 
@@ -39,6 +41,7 @@ namespace debug
 bool TerminalColorSupported();
 #endif
 
+inline std::ostream& DebugStream() { return (std::cerr << STREAMCOLOR_CYAN << " * Debug: " << STREAMCOLOR_DEFAULT); }
 inline std::ostream& InfoStream() { return (std::cout << " * "); }
 inline std::ostream& WarningStream() { return (std::cerr << STREAMCOLOR_YELLOW << " * Warning: " << STREAMCOLOR_DEFAULT); }
 inline std::ostream& ErrorStream() { return (std::cerr << STREAMCOLOR_RED << " * Error: " << STREAMCOLOR_DEFAULT); }

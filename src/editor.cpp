@@ -47,8 +47,6 @@ int main(int argc, char* argv[])
 	
 	pKernel->AssetsManager()->EnableAssetsHistory();
 	
-	pKernel->CLI()->ExecuteFile("config/settings_editor.cfg");
-	
 	bool Running = true;
 	do
 	{
