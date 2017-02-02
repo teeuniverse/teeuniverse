@@ -23,7 +23,7 @@
 
 #include <vector>
 
-template <typename T, int TABLESIZE>
+template <typename T, unsigned int TABLESIZE>
 class hashtable
 {
 protected:
@@ -62,7 +62,7 @@ public:
 	*/
 	void clear()
 	{
-		for(int i=0; i<TABLESIZE; i++)
+		for(unsigned int i=0; i<TABLESIZE; i++)
 			m_Table[i].clear();
 	}
 
@@ -73,7 +73,7 @@ public:
 	T* set(const char* pKey)
 	{
 		HASH Hash = hash(pKey);
-		for(int i=0; i<m_Table[Hash].size(); i++)
+		for(unsigned int i=0; i<m_Table[Hash].size(); i++)
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 				return &m_Table[Hash][i].m_Data;
@@ -92,7 +92,7 @@ public:
 	T* set(const char* pKey, const T& Data)
 	{
 		HASH Hash = hash(pKey);
-		for(int i=0; i<m_Table[Hash].size(); i++)
+		for(unsigned int i=0; i<m_Table[Hash].size(); i++)
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 			{
@@ -115,7 +115,7 @@ public:
 	void unset(const char* pKey)
 	{
 		HASH Hash = hash(pKey);
-		for(int i=0; i<m_Table[Hash].size(); i++)
+		for(unsigned int i=0; i<m_Table[Hash].size(); i++)
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 			{
@@ -133,7 +133,7 @@ public:
 	const T* get(const char* pKey) const
 	{
 		HASH Hash = hash(pKey);
-		for(int i=0; i<m_Table[Hash].size(); i++)
+		for(unsigned int i=0; i<m_Table[Hash].size(); i++)
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 				return &m_Table[Hash][i].m_Data;
@@ -141,16 +141,16 @@ public:
 		
 		return 0;
 	}
-	
-	T* get(int Id, int SubId)
+
+	T* get(unsigned int Id, unsigned int SubId)
 	{
 		if(Id >= 0 && Id < TABLESIZE && SubId >= 0 && SubId < m_Table[Id].size())
 			return &m_Table[Id][SubId].m_Data;
 		else
 			return 0;
 	}
-	
-	const char* get_key(int Id, int SubId) const
+
+	const char* get_key(unsigned int Id, unsigned int SubId) const
 	{
 		if(Id >= 0 && Id < TABLESIZE && SubId >= 0 && SubId < m_Table[Id].size())
 			return m_Table[Id][SubId].m_Key.buffer();
@@ -161,7 +161,7 @@ public:
 	T* get(const char* pKey)
 	{
 		HASH Hash = hash(pKey);
-		for(int i=0; i<m_Table[Hash].size(); i++)
+		for(unsigned int i=0; i<m_Table[Hash].size(); i++)
 		{
 			if(str_comp(m_Table[Hash][i].m_Key.buffer(), pKey) == 0)
 				return &m_Table[Hash][i].m_Data;
@@ -180,9 +180,9 @@ public:
 	{
 	public:
 		hashtable* m_pHashTable;
-		int m_Id;
-		int m_SubId;
-	
+		unsigned int m_Id;
+		unsigned int m_SubId;
+
 	public:
 		iterator() : m_pHashTable(0), m_Id(0), m_SubId(0) {}
 		iterator(hashtable* pHashTable) : m_pHashTable(pHashTable), m_SubId(0)
@@ -193,14 +193,14 @@ public:
 					break;
 			}
 		}
-		iterator(hashtable* pHashTable, int Id, int SubId) : m_pHashTable(pHashTable), m_Id(Id), m_SubId(SubId) {}
-		
+		iterator(hashtable* pHashTable, unsigned int Id, unsigned int SubId) : m_pHashTable(pHashTable), m_Id(Id), m_SubId(SubId) {}
+
 		iterator& operator++()
 		{
 			if(m_Id < TABLESIZE)
 			{
 				m_SubId++;
-				int TableSubSize = m_pHashTable->get_subtable_size(m_Id);
+				unsigned int TableSubSize = m_pHashTable->get_subtable_size(m_Id);
 				while(m_SubId >= TableSubSize && m_Id < TABLESIZE)
 				{
 					m_Id++;

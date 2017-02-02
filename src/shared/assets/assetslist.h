@@ -42,7 +42,7 @@
 		int Type = ASSET::TypeId+2;\
 		pLoadingContext->ArchiveFile()->SetItemType(Type, sizeof(class ASSET::CTuaType_##Version), m_Assets.size());\
 		\
-		for(int i=0; i<m_Assets.size(); i++)\
+		for(unsigned int i=0; i<m_Assets.size(); i++)\
 		{\
 			class ASSET::CTuaType_##Version* pItem = (class ASSET::CTuaType_##Version*) pLoadingContext->ArchiveFile()->GetItem(Type, i);\
 			ASSET::CTuaType_##Version::Write(pLoadingContext, m_Assets[i].m_Asset, *pItem);\
@@ -67,7 +67,7 @@ public:
 
 	void InitAssetState(const STATE& State)
 	{
-		for(int i=0; i<m_Assets.size(); i++)
+		for(unsigned int i=0; i<m_Assets.size(); i++)
 		{
 			m_Assets[i].m_State = State;
 		}
@@ -143,19 +143,19 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
-		for(int i=0; i<m_Assets.size(); i++)
+		for(unsigned int i=0; i<m_Assets.size(); i++)
 			m_Assets[i].m_Asset.AssetPathOperation(Operation);
 	}
 	
 	void SubPathOperation(const CAssetPath& Path, const CSubPath::COperation& Operation)
 	{
-		for(int i=0; i<m_Assets.size(); i++)
+		for(unsigned int i=0; i<m_Assets.size(); i++)
 			m_Assets[i].m_Asset.SubPathOperation(Path, Operation);
 	}
 	
 	bool FindAsset(const char* pAssetName, CAssetPath* pPath) const
 	{
-		for(int i=0; i<m_Assets.size(); i++)
+		for(unsigned int i=0; i<m_Assets.size(); i++)
 		{
 			if(str_comp(pAssetName, m_Assets[i].m_Asset.GetName()) == 0)
 			{
