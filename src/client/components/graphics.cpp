@@ -804,8 +804,6 @@ bool CGraphics::InitConfig(int argc, const char** argv)
 	m_Cfg_AsyncRender = 0;
 	m_Cfg_DbgTexture = -1;
 	
-	debug::DebugStream() << __LINE__ << ", " << m_Cfg_Fullscreen << std::endl;
-	
 	CLI()->RegisterConfigInteger("gfx_screen", "Screen index", &m_Cfg_Screen, 0, 4);
 	CLI()->RegisterConfigInteger("gfx_screen_width", "Screen resolution width", &m_Cfg_ScreenWidth, 0, 4096*4);
 	CLI()->RegisterConfigInteger("gfx_screen_height", "Screen resolution height", &m_Cfg_ScreenHeight, 0, 4096*4);
