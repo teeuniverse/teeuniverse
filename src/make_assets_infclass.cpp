@@ -46,7 +46,9 @@ int main(int argc, char* argv[])
 			exit(EXIT_FAILURE);
 		}
 		
-		int PackageId = pKernel->AssetsManager()->NewPackage("infclass");
+		int PackageId = -1;
+		
+		PackageId = pKernel->AssetsManager()->NewPackage("infclass");
 		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
 		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
@@ -181,6 +183,63 @@ int main(int argc, char* argv[])
 			pAsset->SetName("icHeroFlag");
 			pAsset->SetCollisionRadius(42.0f);
 			pAsset->SetGizmoPath(GizmoPath);
+		}
+		
+		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		
+		PackageId = pKernel->AssetsManager()->NewPackage("env_infclass");
+		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
+		
+		CAssetPath InfClassImage = CreateNewImage(pKernel.get(), PackageId, "infclass", "images/env_infclass/infclass.png", CStorage::TYPE_ALL, 16, 16);
+		
+		CAssetPath WarningLine;
+		CAssetPath WarningSign;
+		CAssetPath BonusLine;
+		CAssetPath BonusSign;
+		CREATE_SPRITE_PATH(WarningLine, PackageId, "warnLine", InfClassImage, 2, 0, 1, 1);
+		CREATE_SPRITE_PATH(WarningSign, PackageId, "warnSign", InfClassImage, 5, 2, 2, 2);
+		CREATE_SPRITE_PATH(BonusLine, PackageId, "bonusLine", InfClassImage, 10, 0, 1, 1);
+		CREATE_SPRITE_PATH(BonusSign, PackageId, "bonusSign", InfClassImage, 13, 2, 3, 2);
+		
+		//Material: WarnLine
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("warnLine");
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, WarningLine);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+		}
+		//Material: BonusLine
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("bonusLine");
+			
+			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			
+			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, BonusLine);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+		}
+		//Material: BonusZone
+		{
+			CAssetPath MaterialPath;
+			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			pAsset->SetName("bonusZone");
+			pAsset->SetTextureEnabled(true);
+			pAsset->SetTextureColor(vec4(0.627f, 0.0f, 0.996f, 0.122f));
 		}
 		
 		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
