@@ -771,6 +771,9 @@ void CAssetsManager::Load_UnivSport()
 		if(m_PackageId_UnivSport >= 0)
 		{
 			m_Path_ZoneType_Sport = FindAsset<CAsset_ZoneType>(m_PackageId_UnivSport, "sport");
+			m_Path_EntityType_SportBall = FindAsset<CAsset_EntityType>(m_PackageId_UnivSport, "spBall");
+			m_Path_EntityType_SportRedBall = FindAsset<CAsset_EntityType>(m_PackageId_UnivSport, "spRedBall");
+			m_Path_EntityType_SportBlueBall = FindAsset<CAsset_EntityType>(m_PackageId_UnivSport, "spBlueBall");
 		}
 	}
 }

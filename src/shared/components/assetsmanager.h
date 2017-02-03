@@ -97,6 +97,9 @@ public:
 	
 	int m_PackageId_UnivSport;
 	CAssetPath m_Path_ZoneType_Sport;
+	CAssetPath m_Path_EntityType_SportBall;
+	CAssetPath m_Path_EntityType_SportRedBall;
+	CAssetPath m_Path_EntityType_SportBlueBall;
 	
 	int m_PackageId_EnvClouds;
 	CAssetPath m_Path_Image_Cloud1;

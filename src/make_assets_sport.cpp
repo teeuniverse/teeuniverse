@@ -52,6 +52,8 @@ int main(int argc, char* argv[])
 		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 		
 		CAssetPath ImageZonesPath = CreateNewImage(pKernel.get(), PackageId, "zones", "images/univ_sport/zones.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+		CAssetPath ImageEntitiesPath = CreateNewImage(pKernel.get(), PackageId, "entities", "images/univ_sport/entities.png", CStorage::TYPE_ALL, 4, 4, true, 0);
+		pKernel->AssetsManager()->SetAssetValue_Hard<int>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 		
 		//Sport
 		{
@@ -110,6 +112,42 @@ int main(int argc, char* argv[])
 				pAsset->SetIndexBorderColor(SubPath, vec4(193.0f/255.0f, 193.0f/255.0f, 193.0f/255.0f, 1.0f));
 				pAsset->SetIndexGroup(SubPath, GroupId_Rule);
 			}
+		}
+		//EntityType, Ball Spawn
+		{
+			CAssetPath GizmoPath;
+			CAssetPath AssetPath;
+			
+			CREATE_SPRITE_PATH(GizmoPath, PackageId, "ball", ImageEntitiesPath, 0, 3, 1, 1);
+			
+			CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+			pAsset->SetName("spBall");
+			pAsset->SetCollisionRadius(64.0f);
+			pAsset->SetGizmoPath(GizmoPath);
+		}
+		//EntityType, Blue Ball Spawn
+		{
+			CAssetPath GizmoPath;
+			CAssetPath AssetPath;
+			
+			CREATE_SPRITE_PATH(GizmoPath, PackageId, "ballBlue", ImageEntitiesPath, 1, 3, 1, 1);
+			
+			CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+			pAsset->SetName("spBlueBall");
+			pAsset->SetCollisionRadius(64.0f);
+			pAsset->SetGizmoPath(GizmoPath);
+		}
+		//EntityType, Red Ball Spawn
+		{
+			CAssetPath GizmoPath;
+			CAssetPath AssetPath;
+			
+			CREATE_SPRITE_PATH(GizmoPath, PackageId, "ballRed", ImageEntitiesPath, 2, 3, 1, 1);
+			
+			CAsset_EntityType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_EntityType>(&AssetPath, PackageId);
+			pAsset->SetName("spRedBall");
+			pAsset->SetCollisionRadius(64.0f);
+			pAsset->SetGizmoPath(GizmoPath);
 		}
 		
 		pKernel->AssetsManager()->Save_AssetsFile(PackageId);

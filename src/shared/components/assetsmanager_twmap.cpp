@@ -181,6 +181,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	else
 		Load_UnivTeeWorlds();
 	
+	if(Format == MAPFORMAT_DUMMYCAPTURE)
+		Load_UnivSport();
+	
 	char aBuf[128];
 
 	CAssetPath MapPath;
@@ -810,9 +813,18 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 										{
 											case ddnet::ENTITY_SPAWN + ddnet::ENTITY_OFFSET:
 											{
-												CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
-												pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
-												pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												if(Format == MAPFORMAT_DUMMYCAPTURE)
+												{
+													CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+													pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_SportBall);
+													pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												}
+												else
+												{
+													CSubPath EntityPath = CAsset_MapEntities::SubPath_Entity(pEntitiesSpawn->AddEntity());
+													pEntitiesSpawn->SetEntityTypePath(EntityPath, m_Path_EntityType_TWSpawn);
+													pEntitiesSpawn->SetEntityPosition(EntityPath, vec2(i*32.0f + 16.0f, j*32.0f + 16.0f));
+												}
 												break;
 											}
 											case ddnet::ENTITY_SPAWN_RED + ddnet::ENTITY_OFFSET:
@@ -2090,6 +2102,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
 					else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
 						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+					else if(Format == MAPFORMAT_DUMMYCAPTURE && m_PackageId_UnivSport >= 0 && EntityTypePath == m_Path_EntityType_SportBall)
+						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
 					else
 						EntityGroupNeeded = true;
 				}
