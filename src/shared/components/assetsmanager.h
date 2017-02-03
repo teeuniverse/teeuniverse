@@ -75,6 +75,7 @@ public:
 	CAssetPath m_Path_ZoneType_DDFront;
 	CAssetPath m_Path_ZoneType_DDTele;
 	CAssetPath m_Path_ZoneType_DDSwitch;
+	CAssetPath m_Path_ZoneType_DDTune;
 	
 	int m_PackageId_UnivOpenFNG;
 	CAssetPath m_Path_ZoneType_OpenFNG;

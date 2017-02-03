@@ -38,6 +38,7 @@ public:
 	CAssetPath m_DDFrontPath;
 	CAssetPath m_DDTelePath;
 	CAssetPath m_DDSwitchPath;
+	CAssetPath m_DDTunePath;
 	CAssetPath m_OpenFNGPath;
 	CAssetPath m_NinslashPath;
 	CAssetPath m_SportPath;
@@ -48,6 +49,7 @@ public:
 	CAsset_MapZoneTiles* m_pDDFrontZone;
 	CAsset_MapZoneTiles* m_pDDTeleZone;
 	CAsset_MapZoneTiles* m_pDDSwitchZone;
+	CAsset_MapZoneTiles* m_pDDTuneZone;
 	CAsset_MapZoneTiles* m_pOpenFNGZone;
 	CAsset_MapZoneTiles* m_pNinslashZone;
 	CAsset_MapZoneTiles* m_pSportZone;
@@ -62,6 +64,7 @@ public:
 		m_pDDFrontZone(NULL),
 		m_pDDTeleZone(NULL),
 		m_pDDSwitchZone(NULL),
+		m_pDDTuneZone(NULL),
 		m_pOpenFNGZone(NULL),
 		m_pNinslashZone(NULL),
 		m_pSportZone(NULL),
@@ -107,6 +110,8 @@ public:
 			m_pDDTeleZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDTelePath);
 		if(m_pDDSwitchZone && &m_pDDSwitchZone != ppZone)
 			m_pDDSwitchZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDSwitchPath);
+		if(m_pDDTuneZone && &m_pDDTuneZone != ppZone)
+			m_pDDTuneZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_DDTunePath);
 		if(m_pOpenFNGZone && &m_pOpenFNGZone != ppZone)
 			m_pOpenFNGZone = m_pAssetsManager->GetAsset_Hard<CAsset_MapZoneTiles>(m_OpenFNGPath);
 		if(m_pNinslashZone && &m_pNinslashZone != ppZone)
@@ -1157,6 +1162,32 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 								}
 							}
 						}
+						else if(pTilemapItem->m_Flags == ddnet::TILESLAYERFLAG_TUNE)
+						{
+							//Tiles
+							ddnet::CTuneTile* pTiles = (ddnet::CTuneTile*) ArchiveFile.GetData(pTilemapItem->m_Tune);
+							int Width = pTilemapItem->m_Width;
+							int Height = pTilemapItem->m_Height;
+							
+							for(int j=0; j<Height; j++)
+							{
+								for(int i=0; i<Width; i++)
+								{
+									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+									
+									if(Format == MAPFORMAT_DDNET)
+									{
+										Load_UnivDDNet();
+										Zones.CreateZone(&Zones.m_pDDTuneZone, Zones.m_DDTunePath, "ddnetTuneZone", m_Path_ZoneType_DDTune, Width, Height);
+										if(Zones.m_pDDTuneZone)
+										{
+											Zones.m_pDDTuneZone->SetTileIndex(TilePath, pTiles[j*Width+i].m_Type);
+											Zones.m_pDDTuneZone->GetDataIntArray().set_clamp(i, j, 0, pTiles[j*Width+i].m_Number);
+										}
+									}
+								}
+							}
+						}
 						else if(pTilemapItem->m_Flags == 0x0)
 						{
 							CAssetPath MapLayerPath;
@@ -1715,7 +1746,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 	}
 	
-	//Step2: Save the game/front/tele/switch layer
+	//Step2: Save the game/front/tele/switch/tune layer
 	{
 		int StartLayer = LayerId;
 		
@@ -1728,6 +1759,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		int TeleHeight = 0;
 		int SwitchWidth = 0;
 		int SwitchHeight = 0;
+		int TuneWidth = 0;
+		int TuneHeight = 0;
 		
 		{
 			CAsset_Map::CIteratorZoneLayer ZoneIter;
@@ -1778,8 +1811,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 						{
-							SwitchWidth = max(pZone->GetTileWidth(), TeleWidth);
-							SwitchHeight = max(pZone->GetTileHeight(), TeleHeight);
+							SwitchWidth = max(pZone->GetTileWidth(), SwitchWidth);
+							SwitchHeight = max(pZone->GetTileHeight(), SwitchHeight);
+						}
+						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
+						{
+							TuneWidth = max(pZone->GetTileWidth(), TuneWidth);
+							TuneHeight = max(pZone->GetTileHeight(), TuneHeight);
 						}
 					}
 				}
@@ -1843,6 +1881,21 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				{
 					pSwitchTiles[j*SwitchWidth+i].m_Number = 0;
 					pSwitchTiles[j*SwitchWidth+i].m_Type = 0;
+				}
+			}
+		}
+			
+		ddnet::CTuneTile* pTuneTiles = NULL;
+		if(TuneWidth > 0 && TuneHeight > 0)
+		{
+			pTuneTiles = new ddnet::CTuneTile[TuneWidth*TuneHeight];	
+			
+			for(int j=0; j<TuneHeight; j++)
+			{
+				for(int i=0; i<TuneWidth; i++)
+				{
+					pTuneTiles[j*TuneWidth+i].m_Number = 0;
+					pTuneTiles[j*TuneWidth+i].m_Type = 0;
 				}
 			}
 		}
@@ -2000,6 +2053,18 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 								if(pZone->GetTileIndex(TilePath) > 0)
 									pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+							}
+						}
+					}
+					else if(Format == MAPFORMAT_DDNET && pTuneTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
+					{
+						for(int j=0; j<pZone->GetTileHeight(); j++)
+						{
+							for(int i=0; i<pZone->GetTileWidth(); i++)
+							{
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								if(pZone->GetTileIndex(TilePath) > 0)
+									pTuneTiles[j*TuneWidth+i].m_Type = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -2211,6 +2276,33 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			
 			delete[] pZeroTiles;
 			delete[] pSwitchTiles;
+		}
+		if(pTuneTiles)
+		{
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[TuneWidth*TuneHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*TuneWidth*TuneHeight);
+			
+			ddnet::CMapItemLayerTilemap LItem;
+			LItem.m_Version = 3;
+			LItem.m_Flags = ddnet::TILESLAYERFLAG_TUNE;
+			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
+			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Width = TuneWidth;
+			LItem.m_Height = TuneHeight;
+			LItem.m_Color.r = 255;
+			LItem.m_Color.g = 255;
+			LItem.m_Color.b = 255;
+			LItem.m_Color.a = 255;
+			LItem.m_ColorEnv = -1;
+			LItem.m_ColorEnvOffset = 0;
+			LItem.m_Image = -1;
+			LItem.m_Data = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Tune = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTuneTile), pTuneTiles);
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
+			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
+			
+			delete[] pZeroTiles;
+			delete[] pTuneTiles;
 		}
 		
 		ddnet::CMapItemGroup GItem;

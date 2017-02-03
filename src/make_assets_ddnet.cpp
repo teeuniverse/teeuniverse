@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
 		CAssetPath ImageZonesPath = CreateNewImage(pKernel.get(), PackageId, "zones_game", "images/univ_ddnet/zones_game.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 		CAssetPath ImageSwitchPath = CreateNewImage(pKernel.get(), PackageId, "zones_switch", "images/univ_ddnet/zones_switch.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 		CAssetPath ImageTelePath = CreateNewImage(pKernel.get(), PackageId, "zones_teleport", "images/univ_ddnet/zones_teleport.png", CStorage::TYPE_ALL, 16, 16, true, 0);
+		CAssetPath ImageTunePath = CreateNewImage(pKernel.get(), PackageId, "zones_tune", "images/univ_ddnet/zones_tune.png", CStorage::TYPE_ALL, 16, 16, true, 0);
 		
 		//Game/Front Layer
 		//Informations took from https://ddnet.tw/explain/explanations.json
@@ -577,6 +578,32 @@ int main(int argc, char* argv[])
 			}
 			
 			CREATE_ZONEINDEX(GroupId_Checkpoint, "Evil Checkpoint Teleport", "Sends tees to \"Checkpoint Destination\" with the same ID as the last touched \"Checkpoint Trigger\". Speed and hook are deleted")
+		}
+		
+		//Tele layer
+		{
+			CAssetPath AssetPath;
+			CSubPath SubPath;
+			
+			CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
+			pAsset->SetName("ddTune");
+			pAsset->SetImagePath(ImageTunePath);
+			
+			{
+				SubPath = CAsset_ZoneType::SubPath_DataInt(pAsset->AddDataInt());
+				pAsset->SetDataIntTitle(SubPath, "Tune ID");
+				pAsset->SetDataIntDescription(SubPath, "The Tune ID represent a set of tuning parameters");
+				pAsset->SetDataIntDefaultValue(SubPath, 1);
+				pAsset->SetDataIntMinValue(SubPath, 1);
+				pAsset->SetDataIntMaxValue(SubPath, 255);
+			}
+			
+			for(int i=0; i<68; i++)
+			{
+				CREATE_ZONEINDEX_NOUSE()
+			}
+			
+			CREATE_ZONEINDEX(-1, "Tune zone", "Area where tuning parameters are different")
 		}
 		
 		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
