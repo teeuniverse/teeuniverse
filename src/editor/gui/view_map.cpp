@@ -469,6 +469,25 @@ void CViewMap::Update(bool ParentEnabled)
 				break;
 		}
 	}
+	
+	if(ParentEnabled && IsEnabled())
+	{
+		while(AssetsEditor()->m_BindCall_ZoomIn > 0)
+		{
+			AssetsEditor()->m_BindCall_ZoomIn--;
+			SetCameraZoom(GetCameraZoom()*1.1f);
+		}
+		while(AssetsEditor()->m_BindCall_ZoomOut > 0)
+		{
+			AssetsEditor()->m_BindCall_ZoomOut--;
+			SetCameraZoom(GetCameraZoom()/1.1f);
+		}
+		while(AssetsEditor()->m_BindCall_Zoom11 > 0)
+		{
+			AssetsEditor()->m_BindCall_Zoom11--;
+			SetCameraZoomToUnit();
+		}
+	}
 }
 
 void CViewMap::RenderView()

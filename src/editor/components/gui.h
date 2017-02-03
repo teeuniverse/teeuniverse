@@ -68,6 +68,9 @@ public:
 	int m_BindCall_ApplyHFlip;
 	int m_BindCall_ApplyCWRotation;
 	int m_BindCall_ApplyCCWRotation;
+	int m_BindCall_ZoomIn;
+	int m_BindCall_ZoomOut;
+	int m_BindCall_Zoom11;
 	
 public:
 	CAssetPath m_Path_Image_Checker;

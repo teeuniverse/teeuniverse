@@ -88,6 +88,7 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			pHList->Add(new gui::CBindEdit(Context(), "editor_quit", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
+		
 		pLayout->Add(new gui::CLabelHeader(Context(), "Editing"), false);
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
@@ -117,6 +118,26 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 			pHList->Add(new gui::CLabel(Context(), _LSTRING("Apply counter clock-wise rotation to the selection"), AssetsEditor()->m_Path_Sprite_IconRotateCCW), true);
 			pHList->Add(new gui::CBindEdit(Context(), "ccwrotation", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		
+		pLayout->Add(new gui::CLabelHeader(Context(), "View"), false);
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Zoom in"), AssetsEditor()->m_Path_Sprite_IconNone), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_zoomin", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Zoom out"), AssetsEditor()->m_Path_Sprite_IconNone), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_zoomout", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Zoom 1:1"), AssetsEditor()->m_Path_Sprite_IconNone), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_zoom11", 0, true), true);
 			pLayout->Add(pHList, false);
 		}
 		

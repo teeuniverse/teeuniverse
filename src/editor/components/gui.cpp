@@ -192,6 +192,9 @@ DEFINE_CMD_BINDCALL(CCommand_VFlip, m_BindCall_ApplyVFlip, "vflip", "Apply verti
 DEFINE_CMD_BINDCALL(CCommand_HFlip, m_BindCall_ApplyHFlip, "hflip", "Apply horizontal flip to the current selection")
 DEFINE_CMD_BINDCALL(CCommand_CWRotation, m_BindCall_ApplyCWRotation, "cwrotation", "Apply a clockwise rotation to the current selection")
 DEFINE_CMD_BINDCALL(CCommand_CCWRotation, m_BindCall_ApplyCCWRotation, "ccwrotation", "Apply a counter-clockwise rotation to the current selection")
+DEFINE_CMD_BINDCALL(CCommand_ZoomIn, m_BindCall_ZoomIn, "editor_zoomin", "Zoom-in in the view")
+DEFINE_CMD_BINDCALL(CCommand_ZoomOut, m_BindCall_ZoomOut, "editor_zoomout", "Zoom-out in the view")
+DEFINE_CMD_BINDCALL(CCommand_Zoom11, m_BindCall_Zoom11, "editor_zoom11", "Set the zoom to 1:1 in the view")
 
 /* CONTEXT MENU *******************************************************/
 
@@ -1808,11 +1811,18 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->Register("hflip", new CCommand_HFlip(this));
 	CLI()->Register("cwrotation", new CCommand_CWRotation(this));
 	CLI()->Register("ccwrotation", new CCommand_CCWRotation(this));
+	CLI()->Register("editor_zoomin", new CCommand_ZoomIn(this));
+	CLI()->Register("editor_zoomout", new CCommand_ZoomOut(this));
+	CLI()->Register("editor_zoom11", new CCommand_Zoom11(this));
 	
 	BindsManager()->Bind(KEY_O, CBindsManager::MODIFIER_CTRL, "editor_open");
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
 	BindsManager()->Bind(KEY_Q, CBindsManager::MODIFIER_CTRL, "editor_quit");
 	BindsManager()->Bind(KEY_Z, CBindsManager::MODIFIER_CTRL, "editor_undo");
+	
+	BindsManager()->Bind(KEY_KP_PLUS, CBindsManager::MODIFIER_NONE, "editor_zoomin");
+	BindsManager()->Bind(KEY_KP_MINUS, CBindsManager::MODIFIER_NONE, "editor_zoomout");
+	BindsManager()->Bind(KEY_KP_0, CBindsManager::MODIFIER_NONE, "editor_zoom11");
 	
 	BindsManager()->Bind(KEY_N, CBindsManager::MODIFIER_NONE, "vflip");
 	BindsManager()->Bind(KEY_M, CBindsManager::MODIFIER_NONE, "hflip");
@@ -1828,6 +1838,9 @@ void CGuiEditor::ResetBindCalls()
 	m_BindCall_ApplyHFlip = 0;
 	m_BindCall_ApplyCWRotation = 0;
 	m_BindCall_ApplyCCWRotation = 0;
+	m_BindCall_ZoomIn = 0;
+	m_BindCall_ZoomOut = 0;
+	m_BindCall_Zoom11 = 0;
 }
 
 bool CGuiEditor::Init()
