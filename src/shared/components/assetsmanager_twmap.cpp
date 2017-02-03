@@ -1880,6 +1880,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				for(int i=0; i<SwitchWidth; i++)
 				{
 					pSwitchTiles[j*SwitchWidth+i].m_Number = 0;
+					pSwitchTiles[j*SwitchWidth+i].m_Delay = 0;
 					pSwitchTiles[j*SwitchWidth+i].m_Type = 0;
 				}
 			}
@@ -2034,37 +2035,54 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					}
 					else if(Format == MAPFORMAT_DDNET && pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 					{
+						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 								if(pZone->GetTileIndex(TilePath) > 0)
+								{
 									pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									if(DataInt.get_depth() > 0)
+										pTeleTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 0);
+								}
 							}
 						}
 					}
 					else if(Format == MAPFORMAT_DDNET && pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 					{
+						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 								if(pZone->GetTileIndex(TilePath) > 0)
+								{
 									pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									if(DataInt.get_depth() > 0)
+										pSwitchTiles[j*TuneWidth+i].m_Delay = DataInt.get_clamp(i, j, 0);
+									if(DataInt.get_depth() > 1)
+										pSwitchTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 1);
+								}
 							}
 						}
 					}
 					else if(Format == MAPFORMAT_DDNET && pTuneTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
 					{
+						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 								if(pZone->GetTileIndex(TilePath) > 0)
+								{
 									pTuneTiles[j*TuneWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									if(DataInt.get_depth() > 0)
+										pTuneTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 0);
+								}
 							}
 						}
 					}
