@@ -77,24 +77,24 @@ public:
 	{
 		if(*ppZone != NULL)
 			return;
-		
-		const CAsset_ZoneType* pZoneType = m_pAssetsManager->GetAsset<CAsset_ZoneType>(ZoneType);
-		if(!pZoneType)
-			return;
-		
+			
 		*ppZone = m_pAssetsManager->NewAsset_Hard<CAsset_MapZoneTiles>(&ZonePath, m_MapPath.GetPackageId());
-		
 		m_pAssetsManager->TryChangeAssetName_Hard(ZonePath, pName);
 		(*ppZone)->SetParentPath(m_MapPath);
-		(*ppZone)->SetZoneTypePath(ZoneType);
 
 		array2d<CAsset_MapZoneTiles::CTile>& Data = (*ppZone)->GetTileArray();
 		Data.resize(Width, Height);
 		
-		if(pZoneType->GetDataIntArraySize() > 0)
+		const CAsset_ZoneType* pZoneType = m_pAssetsManager->GetAsset<CAsset_ZoneType>(ZoneType);
+		if(pZoneType)
 		{
-			array2d<int>& DataInt = (*ppZone)->GetDataIntArray();
-			DataInt.resize(Width, Height, pZoneType->GetDataIntArraySize());
+			(*ppZone)->SetZoneTypePath(ZoneType);
+			
+			if(pZoneType->GetDataIntArraySize() > 0)
+			{
+				array2d<int>& DataInt = (*ppZone)->GetDataIntArray();
+				DataInt.resize(Width, Height, pZoneType->GetDataIntArraySize());
+			}
 		}
 		
 		CSubPath ZoneLayer = CAsset_Map::SubPath_ZoneLayer(m_pMap->AddZoneLayer());
