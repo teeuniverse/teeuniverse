@@ -2350,7 +2350,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Image = -1;
 			LItem.m_Data = ArchiveFile.AddData(TeleWidth*TeleHeight*sizeof(ddnet::CTile), pZeroTiles);
 			LItem.m_Tele = ArchiveFile.AddData(TeleWidth*TeleHeight*sizeof(ddnet::CTeleTile), pTeleTiles);
-			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Tele");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
 			delete[] pZeroTiles;
@@ -2377,7 +2377,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Image = -1;
 			LItem.m_Data = ArchiveFile.AddData(SwitchWidth*SwitchHeight*sizeof(ddnet::CTile), pZeroTiles);
 			LItem.m_Switch = ArchiveFile.AddData(SwitchWidth*SwitchHeight*sizeof(ddnet::CSwitchTile), pSwitchTiles);
-			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Switch");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
 			delete[] pZeroTiles;
@@ -2404,7 +2404,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Image = -1;
 			LItem.m_Data = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTile), pZeroTiles);
 			LItem.m_Tune = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTuneTile), pTuneTiles);
-			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
+			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Tune");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
 			delete[] pZeroTiles;
