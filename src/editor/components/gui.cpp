@@ -804,6 +804,7 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		pComboBox->Add(_LSTRING("OpenFNG / FNG2"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("Ninslash"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("DummyCapture"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pComboBox->Add(_LSTRING("Foot"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pHList->Add(pComboBox, true);
 	
 		pLayout->AddSeparator();
