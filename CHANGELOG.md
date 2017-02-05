@@ -2,11 +2,13 @@
 
 ## [Unreleased]
 ### Added
-- Support of DDNet front, switch and tele layer
 - Support of Ninslash maps
 - Support of FNG2 maps
 - Support of DummyCapture maps
+- Support of Toot maps
+- Support of DDNet front, switch, tele and tune layer
 - Object zone layers
+- Preference window to set keybindings
 - Option to create a ZIP file that contains the current package and all its dependencies
 - Button to apply dilate and border_add to images
 - Each quad get its own global color in addition of the color set for each vertex
@@ -23,6 +25,7 @@
 - Flickering cursor on some environments
 - Undo after creating a path block the tool
 - List of quads/entities is not refreshed after deleting an element
+- Crash when the editor is closed
 
 ## [0.2.1]
 ### Added
