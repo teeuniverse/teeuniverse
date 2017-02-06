@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
 	}
 	
 	CEditorKernel* pKernel = new CEditorKernel();
+	pKernel->SetConfigFilename("config/settings_editor.cfg");
 	if(!pKernel->Init(argc, (const char**) argv))
 	{
 		debug::ErrorStream("Main") << "unable to initialize editor kernel" << std::endl;

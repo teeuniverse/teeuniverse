@@ -135,8 +135,8 @@ public:
 
 	void Minimize();
 	void Maximize();
-	bool Fullscreen(bool State);		// on=true/off=false
-	void SetWindowBordered(bool State);	// on=true/off=false
+	bool Fullscreen(bool State);
+	void SetWindowBordered(bool State);
 	bool SetWindowScreen(int Index);
 	int GetWindowScreen();
 	int WindowActive();

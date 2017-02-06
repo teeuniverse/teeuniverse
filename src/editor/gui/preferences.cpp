@@ -150,7 +150,7 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 		
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
-			pHList->Add(new gui::CLabel(Context(), _LSTRING("FSAA Samples")), true);
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("FSAA Samples (restart needed)")), true);
 			pHList->Add(new gui::CExternalHSlider(Context(), &Graphics()->m_Cfg_FsaaSamples, 0, 16), true);
 			pLayout->Add(pHList, false);
 		}
