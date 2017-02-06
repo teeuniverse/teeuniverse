@@ -50,20 +50,38 @@ make_host
 make_release linux_x86 $TOOLCHAINDIR/Toolchain-linux32.cmake
 cd $SCRIPTDIR/cmake-build/linux_x86/build/release/linux_x86
 cp -a $ENVDIR/linux_x86/usr/lib/libicu* .
-tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86.tar.gz *
+cd ..
+rm -Rf teeuniverse-$TUVERSION-linux_x86
+mv linux_x86 teeuniverse-$TUVERSION-linux_x86
+tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86.tar.gz teeuniverse-$TUVERSION-linux_x86
 
 ## --- Linux 64bit
 make_release linux_x86_64 $TOOLCHAINDIR/Toolchain-linux64.cmake
 cd $SCRIPTDIR/cmake-build/linux_x86_64/build/release/linux_x86_64
 cp -a $ENVDIR/linux_x86_64/usr/lib/libicu* .
-tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86_64.tar.gz *
+cd ..
+rm -Rf teeuniverse-$TUVERSION-linux_x86_64
+mv linux_x86_64 teeuniverse-$TUVERSION-linux_x86_64
+tar -czvf $SCRIPTDIR/archives/teeuniverse-$TUVERSION-linux_x86_64.tar.gz teeuniverse-$TUVERSION-linux_x86_64
 
 ## --- Windows 32bit
 make_release win32 $TOOLCHAINDIR/Toolchain-mingw32.cmake "-DWITHOUT_HARFBUZZ=1"
 cd $SCRIPTDIR/cmake-build/win32/build/release/win32
 cp $ENVDIR/win32/usr/lib/*.dll .
-zip -r $SCRIPTDIR/archives/teeuniverse-$TUVERSION-win32.zip *
+cd ..
+rm -Rf teeuniverse-$TUVERSION-win32
+mv win32 teeuniverse-$TUVERSION-win32
+zip -r $SCRIPTDIR/archives/teeuniverse-$TUVERSION-win32.zip teeuniverse-$TUVERSION-win32
+
+## --- Windows 64bit
+make_release win64 $TOOLCHAINDIR/Toolchain-mingw64.cmake "-DWITHOUT_HARFBUZZ=1"
+cd $SCRIPTDIR/cmake-build/win64/build/release/win64
+cp $ENVDIR/win64/usr/lib/*.dll .
+cd ..
+rm -Rf teeuniverse-$TUVERSION-win64
+mv win64 teeuniverse-$TUVERSION-win64
+zip -r $SCRIPTDIR/archives/teeuniverse-$TUVERSION-win64.zip teeuniverse-$TUVERSION-win64
 
 # Cleanup
 cd $SCRIPTDIR
-rm -R cmake-build
+#~ rm -R cmake-build

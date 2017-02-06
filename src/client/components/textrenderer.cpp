@@ -569,7 +569,8 @@ void CTextRenderer::UpdateTextCache_Shaper(std::vector<CShaperGlyph>* pGlyphChai
 {
 	for(int i=Start; i<Length; i++)
 	{
-		CShaperGlyph& Glyph = pGlyphChain->increment();
+		pGlyphChain->emplace_back();
+		CShaperGlyph& Glyph = pGlyphChain->back();
 		Glyph.m_GlyphId = CGlyphId(FontId, FT_Get_Char_Index(m_Fonts[FontId]->m_FtFace, pTextUTF16[i]));
 		Glyph.m_CharPos = i;
 	}

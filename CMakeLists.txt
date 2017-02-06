@@ -164,6 +164,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions("-Wall -Wextra -Wno-unused-parameter -Wno-maybe-uninitialized")
 endif()
 
+if(MINGW)
+    add_definitions("-static-libgcc -static-libstdc++")
+endif()
+
 ########################################################################
 # SHARED
 ########################################################################

@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [0.2.2]
 ### Added
 - Support of Ninslash maps
 - Support of FNG2 maps
