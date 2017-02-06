@@ -329,6 +329,20 @@ set(teeuniverse_tools_libraries
 add_library(teeuniverse_tools ${teeuniverse_tools_src})
 target_link_libraries (teeuniverse_tools ${teeuniverse_tools_libraries})
 
+# TUP Info
+add_executable(tupinfo ${PROJECT_SOURCE_DIR}/src/tupinfo.cpp)
+set_target_properties(
+	tupinfo
+	PROPERTIES
+	ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/tupinfo"
+	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/tupinfo"
+	RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tupinfo"
+)
+target_link_libraries(
+	tupinfo
+	teeuniverse_tools
+)
+
 # Make Assets
 function(make_assets progname)
 	add_executable(make_assets_${progname} ${PROJECT_SOURCE_DIR}/src/make_assets_${progname}.cpp)
