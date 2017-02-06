@@ -84,4 +84,4 @@ zip -r $SCRIPTDIR/archives/teeuniverse-$TUVERSION-win64.zip teeuniverse-$TUVERSI
 
 # Cleanup
 cd $SCRIPTDIR
-#~ rm -R cmake-build
+rm -R cmake-build

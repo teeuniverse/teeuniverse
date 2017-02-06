@@ -849,8 +849,6 @@ void CGraphics::SaveConfig(class CCLI_Output* pOutput)
 
 bool CGraphics::Init()
 {
-	debug::DebugStream() << m_Cfg_FsaaSamples << std::endl;
-	
 	// Set all z to -5.0f
 	for(int i = 0; i < MAX_VERTICES; i++)
 		m_aVertices[i].m_Pos.z = -5.0f;
