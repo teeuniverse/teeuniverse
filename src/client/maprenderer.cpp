@@ -953,10 +953,10 @@ void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector
 		}
 		
 		Graphics()->SetColor4(
-			Quads[i].m_Color[0],
-			Quads[i].m_Color[1],
-			Quads[i].m_Color[2],
-			Quads[i].m_Color[3],
+			Quads[i].m_Color[0]*Color,
+			Quads[i].m_Color[1]*Color,
+			Quads[i].m_Color[2]*Color,
+			Quads[i].m_Color[3]*Color,
 			true
 		);
 		
