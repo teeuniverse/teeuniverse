@@ -747,6 +747,13 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	AddField_ImageTiles(pTab, CAsset_MapLayerTiles::IMAGEPATH, _LSTRING("Image"));
 	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));
 	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerTiles::LEVELOFDETAIL);
+		pComboBox->Add(_LSTRING("Low"));
+		pComboBox->Add(_LSTRING("High"));
+		AddField(pTab, pComboBox, _LSTRING("Level of detail"));
+	}
+	
 	pTab->AddSeparator();
 	
 	{
@@ -862,6 +869,14 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 	
 	AddField_MapGroups(pTab, CAsset_MapLayerQuads::PARENTPATH, _LSTRING("Group"));
 	AddField_Asset(pTab, CAsset_MapLayerQuads::IMAGEPATH, CAsset_Image::TypeId, _LSTRING("Image"));
+	
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerQuads::LEVELOFDETAIL);
+		pComboBox->Add(_LSTRING("Low"));
+		pComboBox->Add(_LSTRING("High"));
+		AddField(pTab, pComboBox, _LSTRING("Level of detail"));
+	}
+	
 	AddField_Integer_NoEdit(pTab, CAsset_MapLayerQuads::QUAD_ARRAYSIZE, _LSTRING("Number of quads"));
 	
 	pTab->Add(new CSubItemList_MapLayerQuads_Quad(AssetsEditor()), true);

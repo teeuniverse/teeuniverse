@@ -981,7 +981,7 @@ void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector
 		Graphics()->QuadsEnd();
 }
 
-void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
+void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, int LoD, bool DrawMesh)
 {
 	const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(GroupPath);
 	if(!pGroup)
@@ -1012,7 +1012,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 			if(!pLayer)
 				continue;
 			
-			if(!pLayer->GetVisibility())
+			if(!pLayer->GetVisibility() || pLayer->GetLevelOfDetail() > LoD)
 				continue;
 			
 			vec2 Position = TilePosToMapPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()));
@@ -1024,7 +1024,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 			if(!pLayer)
 				continue;
 			
-			if(!pLayer->GetVisibility())
+			if(!pLayer->GetVisibility() || pLayer->GetLevelOfDetail() > LoD)
 				continue;
 			
 			RenderQuads(pLayer->GetQuadPtr(), pLayer->GetQuadArraySize(), vec2(0.0f, 0.0f), pLayer->GetImagePath(), Color);
@@ -1035,7 +1035,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 			if(!pLayer)
 				continue;
 			
-			if(!pLayer->GetVisibility())
+			if(!pLayer->GetVisibility() || pLayer->GetLevelOfDetail() > LoD)
 				continue;
 			
 			RenderObjects(LayerPath, vec2(0.0f, 0.0f), DrawMesh);
@@ -1046,7 +1046,7 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh)
 		Graphics()->ClipPop();
 }
 
-void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh)
+void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color, int LoD, bool DrawMesh)
 {
 	const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(MapPath);
 	if(!pMap)
@@ -1056,14 +1056,14 @@ void CMapRenderer::RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh)
 		CAsset_Map::CIteratorBgGroup Iter;
 		for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
 		{
-			RenderGroup(pMap->GetBgGroup(*Iter), Color, DrawMesh);
+			RenderGroup(pMap->GetBgGroup(*Iter), Color, LoD, DrawMesh);
 		}
 	}
 	{
 		CAsset_Map::CIteratorFgGroup Iter;
 		for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
 		{
-			RenderGroup(pMap->GetFgGroup(*Iter), Color, DrawMesh);
+			RenderGroup(pMap->GetFgGroup(*Iter), Color, LoD, DrawMesh);
 		}
 	}
 		

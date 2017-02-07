@@ -157,6 +157,31 @@ public:
 	}
 };
 
+class CLODToggle : public gui::CToggle
+{
+protected:
+	CViewMap* m_pView;
+	
+protected:
+	virtual bool GetValue()
+	{
+		return m_pView->GetLoD() > 0;
+	}
+
+	virtual void SetValue(bool Value)
+	{
+		m_pView->SetLoD(Value ? 1 : 0);
+	}
+	
+public:
+	CLODToggle(CGui* pContext, CViewMap* pView) :
+		gui::CToggle(pContext, _LSTRING("Show map details")),
+		m_pView(pView)
+	{
+		
+	}
+};
+
 class CDisplaySettingsButton : public gui::CButton
 {
 protected:
@@ -220,6 +245,12 @@ protected:
 			}
 			
 			{
+				gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Rendering mode of zones"));
+				pLabel->NoTextClipping();
+				pLayout->Add(pLabel, false);
+			}
+			
+			{
 				gui::CHListLayout* pLayout2 = new gui::CHListLayout(Context());
 				pLayout->Add(pLayout2);
 				
@@ -239,6 +270,12 @@ protected:
 			}
 			
 			{
+				gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Rendering mode of entities"));
+				pLabel->NoTextClipping();
+				pLayout->Add(pLabel, false);
+			}
+			
+			{
 				gui::CHListLayout* pLayout2 = new gui::CHListLayout(Context());
 				pLayout->Add(pLayout2);
 				
@@ -246,6 +283,19 @@ protected:
 				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio1, 1), true);
 				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio2, 2), true);
 				pLayout2->Add(new CEntityStyleButton(m_pViewMap, m_pViewMap->AssetsEditor()->m_Path_Sprite_IconEntityRatio3, 3), true);
+			}
+			
+			pLayout->AddSeparator();
+			
+			{
+				gui::CLabelHeader* pLabel = new gui::CLabelHeader(Context(), _LSTRING("Layers"));
+				pLabel->NoTextClipping();
+				pLayout->Add(pLabel, false);
+			}
+			
+			{
+				gui::CToggle* pToggle = new CLODToggle(Context(), m_pViewMap);
+				pLayout->Add(pToggle, false);
 			}
 		}
 	
@@ -289,6 +339,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_ShowMeshes(false),
 	m_ShowEntities(3),
 	m_ZoomLockedToUnit(false),
+	m_LoD(1),
 	m_pCursorTool_MapStamp(NULL),
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
@@ -510,7 +561,7 @@ void CViewMap::RenderView()
 		Color.b = 1.0f - 2.0f*(m_ZoneOpacity-0.5f);
 	}
 	
-	MapRenderer()->RenderMap(MapPath, Color, m_ShowMeshes);
+	MapRenderer()->RenderMap(MapPath, Color, m_LoD, m_ShowMeshes);
 	
 	Color = 1.0f;
 	if(m_ZoneOpacity < 0.5f)

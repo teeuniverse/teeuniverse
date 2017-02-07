@@ -1313,8 +1313,11 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 							Color.b = static_cast<float>(pTilemapItem->m_Color.b)/255.0f;
 							Color.a = static_cast<float>(pTilemapItem->m_Color.a)/255.0f;
 							pMapLayer->SetColor(Color);
+							
+							//Level of detail
+							pMapLayer->SetLevelOfDetail((pLayerItem->m_Flags & ddnet::LAYERFLAG_DETAIL) ? 1 : 0);
 						}
-						else //Layers that are unknown flags (DDNet, old InfClass, ...)
+						else //Layers that have unknown flags (DDNet, old InfClass, ...)
 						{
 							CAssetPath ZonePath;
 							CAsset_MapZoneTiles* pZone = NewAsset_Hard<CAsset_MapZoneTiles>(&ZonePath, PackageId);
@@ -1406,6 +1409,9 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 						//Image
 						if(pQuadsItem->m_Image >= 0)
 							pMapLayer->SetImagePath(pImagePath[pQuadsItem->m_Image]);
+							
+						//Level of detail
+						pMapLayer->SetLevelOfDetail((pLayerItem->m_Flags & ddnet::LAYERFLAG_DETAIL) ? 1 : 0);
 					}
 				}
 			}
@@ -1473,7 +1479,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				LItem.m_Version = 3;
 				LItem.m_Flags = 0;
 				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Layer.m_Flags = (pLayer->GetLevelOfDetail() > 0 ? ddnet::LAYERFLAG_DETAIL : 0x0);
 				LItem.m_Width = Width;
 				LItem.m_Height = Height;
 				LItem.m_Color.r = pLayer->GetColor().r*255.0f;
@@ -1576,7 +1582,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 			ddnet::CMapItemLayerQuads LItem;
 			LItem.m_Version = 2;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = (pLayer->GetLevelOfDetail() > 0 ? ddnet::LAYERFLAG_DETAIL : 0x0);
 			LItem.m_Image = -1;
 			LItem.m_NumQuads = pLayer->GetQuadArraySize();
 			LItem.m_Data = ArchiveFile.AddDataSwapped(pLayer->GetQuadArraySize()*sizeof(ddnet::CQuad), pQuads);
@@ -1630,7 +1636,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 						ddnet::CMapItemLayerQuads LItem;
 						LItem.m_Version = 2;
 						LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
-						LItem.m_Layer.m_Flags = 0;
+						LItem.m_Layer.m_Flags = (pLayer->GetLevelOfDetail() > 0 ? ddnet::LAYERFLAG_DETAIL : 0x0);
 						LItem.m_Image = -1;
 						LItem.m_NumQuads = ExportedQuads.size();
 						LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(ddnet::CQuad), &ExportedQuads[0]);
@@ -1692,7 +1698,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				ddnet::CMapItemLayerQuads LItem;
 				LItem.m_Version = 2;
 				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
-				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Layer.m_Flags = (pLayer->GetLevelOfDetail() > 0 ? ddnet::LAYERFLAG_DETAIL : 0x0);
 				LItem.m_Image = -1;
 				LItem.m_NumQuads = ExportedQuads.size();
 				LItem.m_Data = ArchiveFile.AddDataSwapped(ExportedQuads.size()*sizeof(ddnet::CQuad), &ExportedQuads[0]);
@@ -2286,7 +2292,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_GAME;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = 0x0;
 			LItem.m_Width = GameWidth;
 			LItem.m_Height = GameHeight;
 			LItem.m_Color.r = 255;
@@ -2311,7 +2317,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_FRONT;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = 0x0;
 			LItem.m_Width = FrontWidth;
 			LItem.m_Height = FrontHeight;
 			LItem.m_Color.r = 255;
@@ -2338,7 +2344,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_TELE;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = 0x0;
 			LItem.m_Width = TeleWidth;
 			LItem.m_Height = TeleHeight;
 			LItem.m_Color.r = 255;
@@ -2365,7 +2371,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_SWITCH;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = 0x0;
 			LItem.m_Width = SwitchWidth;
 			LItem.m_Height = SwitchHeight;
 			LItem.m_Color.r = 255;
@@ -2392,7 +2398,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_TUNE;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = 0x0;
 			LItem.m_Width = TuneWidth;
 			LItem.m_Height = TuneHeight;
 			LItem.m_Color.r = 255;
@@ -2482,7 +2488,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				LItem.m_Version = 3;
 				LItem.m_Flags = 0;
 				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
-				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Layer.m_Flags = ddnet::LAYERFLAG_DETAIL;
 				LItem.m_Width = Width;
 				LItem.m_Height = Height;
 				LItem.m_Color.r = 255;
@@ -2560,7 +2566,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				ddnet::CMapItemLayerQuads LItem;
 				LItem.m_Version = 2;
 				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
-				LItem.m_Layer.m_Flags = 0;
+				LItem.m_Layer.m_Flags = ddnet::LAYERFLAG_DETAIL;
 				LItem.m_Image = -1;
 				LItem.m_NumQuads = Quads.size();
 				LItem.m_Data = ArchiveFile.AddDataSwapped(Quads.size()*sizeof(ddnet::CQuad), &Quads[0]);
@@ -2734,7 +2740,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			ddnet::CMapItemLayerQuads LItem;
 			LItem.m_Version = 2;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_QUADS;
-			LItem.m_Layer.m_Flags = 0;
+			LItem.m_Layer.m_Flags = ddnet::LAYERFLAG_DETAIL;
 			LItem.m_Image = -1;
 			LItem.m_NumQuads = EntityQuads[eId].size();
 			LItem.m_Data = ArchiveFile.AddDataSwapped(EntityQuads[eId].size()*sizeof(ddnet::CQuad), &EntityQuads[eId][0]);

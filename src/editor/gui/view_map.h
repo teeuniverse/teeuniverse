@@ -49,6 +49,7 @@ protected:
 	bool m_ShowMeshes;
 	int m_ShowEntities;
 	bool m_ZoomLockedToUnit;
+	int m_LoD;
 	
 	std::unique_ptr<class CMapRenderer> m_pMapRenderer;
 	
@@ -82,6 +83,9 @@ public:
 	
 	inline int GetGridAlign() const { return m_GridAligned; }
 	inline void SetGridAlign(int Value) { m_GridAligned = Value; }
+	
+	inline int GetLoD() const { return m_LoD; }
+	inline void SetLoD(int Value) { m_LoD = Value; }
 	
 	float GetCameraZoom();
 	void SetCameraZoom(float Value);

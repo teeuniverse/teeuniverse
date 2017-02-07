@@ -73,8 +73,8 @@ public:
 	void RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color);
 	void RenderZoneIntData(CAssetPath ZonePath, CAssetPath ZoneTypePath);
 	
-	void RenderGroup(CAssetPath GroupPath, vec4 Color, bool DrawMesh = false);
-	void RenderMap(CAssetPath MapPath, vec4 Color, bool DrawMesh = false);
+	void RenderGroup(CAssetPath GroupPath, vec4 Color, int LoD, bool DrawMesh = false);
+	void RenderMap(CAssetPath MapPath, vec4 Color, int LoD, bool DrawMesh = false);
 	
 	void RenderMap_Zones(CAssetPath MapPath, vec4 Color);
 };
