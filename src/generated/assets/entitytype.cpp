@@ -102,6 +102,23 @@ void CAsset_EntityType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCo
 	TuaType.m_CollisionRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CollisionRadius);
 }
 
+void CAsset_EntityType::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_EntityType& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_GizmoPath, SysType.m_GizmoPath);
+	SysType.m_CollisionRadius = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CollisionRadius);
+}
+
+
+void CAsset_EntityType::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_GizmoPath, TuaType.m_GizmoPath);
+	TuaType.m_CollisionRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CollisionRadius);
+}
+
 template<>
 float CAsset_EntityType::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const
 {

@@ -96,6 +96,7 @@ public:
 		OBJECT_PATHTYPE,
 		OBJECT_FILLTYPE,
 		OBJECT_ZONEINDEX,
+		OBJECT_ZONEFLAGS,
 		OBJECT,
 		VISIBILITY,
 	};
@@ -153,6 +154,18 @@ public:
 			tua_float m_Weight;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapZoneObjects::CVertex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			CTuaVec2 m_Position;
+			tua_int32 m_Smoothness;
+			CTuaVec2 m_ControlPoint0;
+			CTuaVec2 m_ControlPoint1;
+			tua_float m_Weight;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -252,6 +265,21 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
+		class CTuaType_0_2_3
+		{
+		public:
+			CTuaVec2 m_Position;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CTuaArray m_Vertex;
+			tua_int32 m_PathType;
+			tua_int32 m_FillType;
+			tua_uint8 m_ZoneIndex;
+			tua_uint32 m_ZoneFlags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
 	
 	private:
 		vec2 m_Position;
@@ -261,6 +289,7 @@ public:
 		int m_PathType;
 		int m_FillType;
 		uint8 m_ZoneIndex;
+		uint32 m_ZoneFlags;
 	
 	public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -378,6 +407,8 @@ public:
 		
 		inline uint8 GetZoneIndex() const { return m_ZoneIndex; }
 		
+		inline uint32 GetZoneFlags() const { return m_ZoneFlags; }
+		
 		inline void SetPosition(vec2 Value) { m_Position = Value; }
 		
 		inline void SetPositionX(float Value) { m_Position.x = Value; }
@@ -474,6 +505,8 @@ public:
 		
 		inline void SetZoneIndex(uint8 Value) { m_ZoneIndex = Value; }
 		
+		inline void SetZoneFlags(uint32 Value) { m_ZoneFlags = Value; }
+		
 		inline int AddVertex()
 		{
 			int Id = m_Vertex.size();
@@ -528,6 +561,17 @@ public:
 		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapZoneObjects& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
+	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ZoneTypePath;
+		CTuaArray m_Object;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
 
@@ -760,6 +804,13 @@ public:
 		else return 0;
 	}
 	
+	inline uint32 GetObjectZoneFlags(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetZoneFlags();
+		else return 0;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
@@ -914,6 +965,12 @@ public:
 			m_Object[SubPath.GetId()].SetZoneIndex(Value);
 	}
 	
+	inline void SetObjectZoneFlags(const CSubPath& SubPath, uint32 Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetZoneFlags(Value);
+	}
+	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	
 	inline int AddObject()
@@ -955,6 +1012,8 @@ public:
 
 template<> int CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> uint32 CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
+template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
 template<> bool CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;

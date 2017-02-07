@@ -20,46 +20,22 @@
 #include <shared/assets/assetssaveloadcontext.h>
 #include <shared/archivefile.h>
 
+#define ASSET_TUATYPEIMPL_VERSION(Version) void CAsset::CTuaType_##Version::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_##Version& TuaType, CAsset& SysType)\
+{\
+	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));\
+}\
+void CAsset::CTuaType_##Version::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_##Version& TuaType)\
+{\
+	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());\
+}
+
 //TAG_ASSETSVERSION
-void CAsset::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset& SysType)
-{
-	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
-}
 
-void CAsset::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_1_0& TuaType)
-{
-	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
-}
-
-void CAsset::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset& SysType)
-{
-	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
-}
-
-void CAsset::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_0& TuaType)
-{
-	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
-}
-
-void CAsset::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset& SysType)
-{
-	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
-}
-
-void CAsset::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_1& TuaType)
-{
-	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
-}
-
-void CAsset::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset& SysType)
-{
-	SysType.SetName(pLoadingContext->ArchiveFile()->GetString(TuaType.m_Name));
-}
-
-void CAsset::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_2& TuaType)
-{
-	TuaType.m_Name = pLoadingContext->ArchiveFile()->AddString(SysType.GetName());
-}
+ASSET_TUATYPEIMPL_VERSION(0_1_0)
+ASSET_TUATYPEIMPL_VERSION(0_2_0)
+ASSET_TUATYPEIMPL_VERSION(0_2_1)
+ASSET_TUATYPEIMPL_VERSION(0_2_2)
+ASSET_TUATYPEIMPL_VERSION(0_2_3)
 
 template<>
 const char* CAsset::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const

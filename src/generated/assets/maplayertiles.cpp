@@ -45,6 +45,7 @@ CAsset_MapLayerTiles::CAsset_MapLayerTiles()
 	m_Visibility = true;
 	m_PositionX = 0;
 	m_PositionY = 0;
+	m_LevelOfDetail = 0;
 }
 
 void CAsset_MapLayerTiles::CTile::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerTiles::CTile& SysType)
@@ -299,6 +300,73 @@ void CAsset_MapLayerTiles::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	TuaType.m_PositionY = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PositionY);
 }
 
+void CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles::CTile& SysType)
+{
+	SysType.m_Index = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Index);
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Flags);
+}
+
+
+void CAsset_MapLayerTiles::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	{
+		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_3* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
+		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
+		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
+		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
+		SysType.m_Tile.resize(Width, Height, Depth);
+		int Size = Width * Height * Depth;
+		for(int i=0; i<Size; i++)
+		{
+			CTile ReadedValue;
+			CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Read(pLoadingContext, pData[i], ReadedValue);
+			SysType.m_Tile.linear_set_clamp(i, ReadedValue);
+		}
+	}
+	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+	SysType.m_PositionX = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PositionX);
+	SysType.m_PositionY = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PositionY);
+	SysType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_LevelOfDetail);
+}
+
+
+void CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Index = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index);
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Flags);
+}
+
+void CAsset_MapLayerTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	{
+		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
+		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
+		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
+		CAsset_MapLayerTiles::CTile::CTuaType_0_2_3* pData = new CAsset_MapLayerTiles::CTile::CTuaType_0_2_3[SysType.m_Tile.get_linear_size()];
+		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
+		{
+			CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
+		}
+		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapLayerTiles::CTile::CTuaType_0_2_3)*SysType.m_Tile.get_linear_size());
+		delete[] pData;
+	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+	TuaType.m_PositionX = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PositionX);
+	TuaType.m_PositionY = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PositionY);
+	TuaType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LevelOfDetail);
+}
+
 template<>
 int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {
@@ -318,6 +386,8 @@ int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int D
 			return GetPositionX();
 		case POSITIONY:
 			return GetPositionY();
+		case LEVELOFDETAIL:
+			return GetLevelOfDetail();
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -347,6 +417,9 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int 
 			return true;
 		case POSITIONY:
 			SetPositionY(Value);
+			return true;
+		case LEVELOFDETAIL:
+			SetLevelOfDetail(Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);

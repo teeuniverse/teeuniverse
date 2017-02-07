@@ -308,6 +308,72 @@ void CAsset_SkeletonSkin::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 	}
 }
 
+void CAsset_SkeletonSkin::CBone::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonSkin::CBone& SysType)
+{
+	pLoadingContext->ReadAssetPath(TuaType.m_SpritePath, SysType.m_SpritePath);
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_BonePath, SysType.m_BonePath);
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_LayerPath, SysType.m_LayerPath);
+	SysType.m_Anchor = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Anchor);
+	SysType.m_Translation.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_X);
+	SysType.m_Translation.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_Y);
+	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
+	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
+	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
+}
+
+
+void CAsset_SkeletonSkin::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonSkin& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
+	{
+		const CAsset_SkeletonSkin::CBone::CTuaType_0_2_3* pData = (const CAsset_SkeletonSkin::CBone::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Sprite.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Sprite.m_Size);
+		SysType.m_Sprite.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_SkeletonSkin::CBone::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_Sprite[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_SkeletonSkin::CBone::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_3& TuaType)
+{
+	pLoadingContext->WriteAssetPath(SysType.m_SpritePath, TuaType.m_SpritePath);
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_BonePath, TuaType.m_BonePath);
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_LayerPath, TuaType.m_LayerPath);
+	TuaType.m_Anchor = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Anchor);
+	TuaType.m_Translation.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.x);
+	TuaType.m_Translation.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.y);
+	TuaType.m_Scale.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.x);
+	TuaType.m_Scale.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.y);
+	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
+}
+
+void CAsset_SkeletonSkin::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
+	{
+		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
+		CAsset_SkeletonSkin::CBone::CTuaType_0_2_3* pData = new CAsset_SkeletonSkin::CBone::CTuaType_0_2_3[SysType.m_Sprite.size()];
+		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
+		{
+			CAsset_SkeletonSkin::CBone::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
+		}
+		TuaType.m_Sprite.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonSkin::CBone::CTuaType_0_2_3)*SysType.m_Sprite.size());
+		delete[] pData;
+	}
+}
+
 template<>
 int CAsset_SkeletonSkin::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

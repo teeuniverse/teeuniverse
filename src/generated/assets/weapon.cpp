@@ -118,6 +118,27 @@ void CAsset_Weapon::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContex
 	pLoadingContext->WriteAssetPath(SysType.m_AttackAnimationPath, TuaType.m_AttackAnimationPath);
 }
 
+void CAsset_Weapon::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Weapon& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_CharacterPath, SysType.m_CharacterPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_CursorPath, SysType.m_CursorPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_SkinPath, SysType.m_SkinPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_AttackAnimationPath, SysType.m_AttackAnimationPath);
+}
+
+
+void CAsset_Weapon::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Weapon& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_CharacterPath, TuaType.m_CharacterPath);
+	pLoadingContext->WriteAssetPath(SysType.m_CursorPath, TuaType.m_CursorPath);
+	pLoadingContext->WriteAssetPath(SysType.m_SkinPath, TuaType.m_SkinPath);
+	pLoadingContext->WriteAssetPath(SysType.m_AttackAnimationPath, TuaType.m_AttackAnimationPath);
+}
+
 template<>
 CAssetPath CAsset_Weapon::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

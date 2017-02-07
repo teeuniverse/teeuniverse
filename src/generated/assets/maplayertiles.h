@@ -74,6 +74,7 @@ public:
 		VISIBILITY,
 		POSITIONX,
 		POSITIONY,
+		LEVELOFDETAIL,
 	};
 	
 	class CTile
@@ -113,6 +114,15 @@ public:
 			tua_uint8 m_Flags;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerTiles::CTile& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			tua_uint8 m_Index;
+			tua_uint8 m_Flags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -187,6 +197,21 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
+	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ImagePath;
+		tua_uint32 m_Color;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		tua_int32 m_PositionX;
+		tua_int32 m_PositionY;
+		tua_int32 m_LevelOfDetail;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_3& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
@@ -196,6 +221,7 @@ private:
 	bool m_Visibility;
 	int m_PositionX;
 	int m_PositionY;
+	int m_LevelOfDetail;
 
 public:
 	virtual ~CAsset_MapLayerTiles() {}
@@ -250,6 +276,8 @@ public:
 	
 	inline int GetPositionY() const { return m_PositionY; }
 	
+	inline int GetLevelOfDetail() const { return m_LevelOfDetail; }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
@@ -273,6 +301,8 @@ public:
 	inline void SetPositionX(int Value) { m_PositionX = Value; }
 	
 	inline void SetPositionY(int Value) { m_PositionY = Value; }
+	
+	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

@@ -25,45 +25,24 @@
 
 #include <utility>
 
+#define ASSET_TUATYPE_VERSION(Version) class CTuaType_##Version\
+{\
+public:\
+	tua_stringid m_Name;\
+	static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_##Version& TuaType, CAsset& SysType);\
+	static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_##Version& TuaType);\
+};
+
 class CAsset
 {
 public:
 	//TAG_ASSETSVERSION
-	class CTuaType_0_1_0
-	{
-	public:
-		tua_stringid m_Name;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_1_0& TuaType);
-
-	};
 	
-	class CTuaType_0_2_0
-	{
-	public:
-		tua_stringid m_Name;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_0& TuaType);
-
-	};
-	
-	class CTuaType_0_2_1
-	{
-	public:
-		tua_stringid m_Name;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_1& TuaType);
-
-	};
-	
-	class CTuaType_0_2_2
-	{
-	public:
-		tua_stringid m_Name;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset& SysType, CTuaType_0_2_2& TuaType);
-
-	};
+	ASSET_TUATYPE_VERSION(0_1_0)
+	ASSET_TUATYPE_VERSION(0_2_0)
+	ASSET_TUATYPE_VERSION(0_2_1)
+	ASSET_TUATYPE_VERSION(0_2_2)
+	ASSET_TUATYPE_VERSION(0_2_3)
 
 private:
 	class CAssetsManager* m_pAssetsManager;

@@ -67,6 +67,8 @@ public:
 		INDEX_BORDERINDEX,
 		INDEX_BORDERCOLOR,
 		INDEX_GROUP,
+		INDEX_ROTATIONALLOWED,
+		INDEX_MIRRORALLOWED,
 		INDEX,
 		IMAGEPATH,
 		DATAINT_ARRAYSIZE,
@@ -195,6 +197,22 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
+		class CTuaType_0_2_3
+		{
+		public:
+			tua_uint8 m_Used;
+			tua_stringid m_Description;
+			tua_uint32 m_Color;
+			tua_stringid m_Title;
+			tua_int32 m_BorderIndex;
+			tua_uint32 m_BorderColor;
+			tua_int32 m_Group;
+			tua_uint8 m_RotationAllowed;
+			tua_uint8 m_MirrorAllowed;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
 	
 	private:
 		bool m_Used;
@@ -204,6 +222,8 @@ public:
 		int m_BorderIndex;
 		vec4 m_BorderColor;
 		int m_Group;
+		bool m_RotationAllowed;
+		bool m_MirrorAllowed;
 	
 	public:
 		CIndex();
@@ -221,6 +241,10 @@ public:
 		
 		inline int GetGroup() const { return m_Group; }
 		
+		inline bool GetRotationAllowed() const { return m_RotationAllowed; }
+		
+		inline bool GetMirrorAllowed() const { return m_MirrorAllowed; }
+		
 		inline void SetUsed(bool Value) { m_Used = Value; }
 		
 		inline void SetDescription(const char* Value) { m_Description = Value; }
@@ -234,6 +258,10 @@ public:
 		inline void SetBorderColor(vec4 Value) { m_BorderColor = Value; }
 		
 		inline void SetGroup(int Value) { m_Group = Value; }
+		
+		inline void SetRotationAllowed(bool Value) { m_RotationAllowed = Value; }
+		
+		inline void SetMirrorAllowed(bool Value) { m_MirrorAllowed = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -275,6 +303,19 @@ public:
 			tua_int32 m_NullValue;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType::CDataInt& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			tua_stringid m_Title;
+			tua_stringid m_Description;
+			tua_int32 m_DefaultValue;
+			tua_int32 m_MinValue;
+			tua_int32 m_MaxValue;
+			tua_int32 m_NullValue;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType::CDataInt& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -352,6 +393,17 @@ public:
 		CTuaArray m_Group;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_ZoneType& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_2& TuaType);
+	};
+	
+	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
+	{
+	public:
+		CTuaArray m_Index;
+		CAssetPath::CTuaType m_ImagePath;
+		CTuaArray m_DataInt;
+		CTuaArray m_Group;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
 
@@ -446,6 +498,20 @@ public:
 		if(SubPath.GetId() < m_Index.size())
 			return m_Index[SubPath.GetId()].GetGroup();
 		else return 0;
+	}
+	
+	inline bool GetIndexRotationAllowed(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetRotationAllowed();
+		else return false;
+	}
+	
+	inline bool GetIndexMirrorAllowed(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetMirrorAllowed();
+		else return false;
 	}
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
@@ -572,6 +638,18 @@ public:
 	{
 		if(SubPath.GetId() < m_Index.size())
 			m_Index[SubPath.GetId()].SetGroup(Value);
+	}
+	
+	inline void SetIndexRotationAllowed(const CSubPath& SubPath, bool Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetRotationAllowed(Value);
+	}
+	
+	inline void SetIndexMirrorAllowed(const CSubPath& SubPath, bool Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetMirrorAllowed(Value);
 	}
 	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }

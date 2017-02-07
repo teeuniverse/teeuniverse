@@ -110,6 +110,25 @@ void CAsset_CharacterPart::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonSkinPath, TuaType.m_SkeletonSkinPath);
 }
 
+void CAsset_CharacterPart::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_CharacterPart& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_CharacterPath, SysType.m_CharacterPath);
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_CharacterPart, SysType.m_CharacterPart);
+	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonSkinPath, SysType.m_SkeletonSkinPath);
+}
+
+
+void CAsset_CharacterPart::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_CharacterPath, TuaType.m_CharacterPath);
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_CharacterPart, TuaType.m_CharacterPart);
+	pLoadingContext->WriteAssetPath(SysType.m_SkeletonSkinPath, TuaType.m_SkeletonSkinPath);
+}
+
 template<>
 CAssetPath CAsset_CharacterPart::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

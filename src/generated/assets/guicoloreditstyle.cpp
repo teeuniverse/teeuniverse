@@ -134,6 +134,31 @@ void CAsset_GuiColorEditStyle::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLo
 	pLoadingContext->WriteAssetPath(SysType.m_WheelIconPath, TuaType.m_WheelIconPath);
 }
 
+void CAsset_GuiColorEditStyle::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_GuiColorEditStyle& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ButtonStylePath, SysType.m_ButtonStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_PopupStylePath, SysType.m_PopupStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_RGBIconPath, SysType.m_RGBIconPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_HSVIconPath, SysType.m_HSVIconPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_SquareIconPath, SysType.m_SquareIconPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_WheelIconPath, SysType.m_WheelIconPath);
+}
+
+
+void CAsset_GuiColorEditStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiColorEditStyle& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ButtonStylePath, TuaType.m_ButtonStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_PopupStylePath, TuaType.m_PopupStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_RGBIconPath, TuaType.m_RGBIconPath);
+	pLoadingContext->WriteAssetPath(SysType.m_HSVIconPath, TuaType.m_HSVIconPath);
+	pLoadingContext->WriteAssetPath(SysType.m_SquareIconPath, TuaType.m_SquareIconPath);
+	pLoadingContext->WriteAssetPath(SysType.m_WheelIconPath, TuaType.m_WheelIconPath);
+}
+
 template<>
 CAssetPath CAsset_GuiColorEditStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

@@ -177,6 +177,39 @@ void CAsset_GuiLabelStyle::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	pLoadingContext->WriteAssetPath(SysType.m_IconPath, TuaType.m_IconPath);
 }
 
+void CAsset_GuiLabelStyle::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_GuiLabelStyle& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_MinWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinWidth);
+	SysType.m_MinHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinHeight);
+	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
+	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
+	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Spacing);
+	SysType.m_FontSize = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FontSize);
+	SysType.m_TextColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextColor);
+	SysType.m_TextAlignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TextAlignment);
+	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconPath, SysType.m_IconPath);
+}
+
+
+void CAsset_GuiLabelStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLabelStyle& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
+	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);
+	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
+	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
+	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Spacing);
+	TuaType.m_FontSize = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FontSize);
+	TuaType.m_TextColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextColor);
+	TuaType.m_TextAlignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TextAlignment);
+	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconPath, TuaType.m_IconPath);
+}
+
 template<>
 int CAsset_GuiLabelStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

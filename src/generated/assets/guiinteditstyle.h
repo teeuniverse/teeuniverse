@@ -83,6 +83,15 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
+	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
+	{
+	public:
+		CAssetPath::CTuaType m_IncreaseButtonStylePath;
+		CAssetPath::CTuaType m_DecreaseButtonStylePath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_GuiIntEditStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType_0_2_3& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_IncreaseButtonStylePath;

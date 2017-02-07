@@ -18,7 +18,8 @@
 
 import sys, os
 
-versionList = ["0.1.0", "0.2.0", "0.2.1", "0.2.2"]
+# TAG_ASSETSVERSION
+versionList = ["0.1.0", "0.2.0", "0.2.1", "0.2.2", "0.2.3"]
 
 class SubPathType:
 	def __init__(self, name, enumname, numidx):
@@ -211,7 +212,7 @@ class TypeUInt32(Type):
 	def generateRead(self, varSys, varTua, version):
 		return [varSys + " = pLoadingContext->ArchiveFile()->ReadUInt32(" + varTua + ");"]
 	def getSetInterfaces(self):
-		return [ GetSetInterface_Simple("", self.tname, "uint32", self.tname, self.tname, "0") ]
+		return [ GetSetInterface_Simple("", self.tname, self.tname, self.tname, "0") ]
 
 class TypeInt32(Type):
 	def __init__(self):
@@ -1945,11 +1946,12 @@ mapLayerQuads.addClass(mapLayerQuads_quad)
 mapLayerQuads.addMember("0.1.0", "ParentPath", TypeAssetPath())
 mapLayerQuads.addMember("0.1.0", "ImagePath", TypeAssetPath())
 mapLayerQuads.addMember("0.1.0", "Quad", TypeArray(mapLayerQuads_quad))
+mapLayerQuads.addMember("0.1.0", "Visibility", TypeBool(), "true")
+mapLayerQuads.addMember("0.2.3", "LevelOfDetail", TypeInt32(), "0")
 mapLayerQuads.addPublicFunc([
 	"void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
 ])
-mapLayerQuads.addMember("0.1.0", "Visibility", TypeBool(), "true")
 mapLayerQuads.addPublicLines([
 	"enum",
 	"{",
@@ -1980,6 +1982,7 @@ mapLayerTiles.addMember("0.1.0", "Tile", TypeArray2d(mapLayerTiles_tile))
 mapLayerTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
 mapLayerTiles.addMember("0.2.1", "PositionX", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.1", "PositionY", TypeInt32(), "0")
+mapLayerTiles.addMember("0.2.3", "LevelOfDetail", TypeInt32(), "0")
 
 mapLayerTiles.addPublicLines([
 	"enum",
@@ -1997,6 +2000,7 @@ assetsList.append(mapLayerTiles)
 # MAP ZONE TILES #######################################################
 mapZoneTiles_tile = Class("Tile")
 mapZoneTiles_tile.addMember("0.1.0", "Index", TypeUInt8(), "0")
+mapZoneTiles_tile.addMember("0.2.3", "Flags", TypeUInt32(), "0x0")
 
 mapZoneTiles = ClassAsset("MapZoneTiles", len(assetsList))
 mapZoneTiles.setInheritance(mainAsset)
@@ -2040,6 +2044,8 @@ zoneType_index.addMember("0.2.0", "Title", TypeString(128))
 zoneType_index.addMember("0.2.0", "BorderIndex", TypeInt32(), "0")
 zoneType_index.addMember("0.2.0", "BorderColor", TypeColor(), "1.0f")
 zoneType_index.addMember("0.2.2", "Group", TypeInt32(), "-1")
+zoneType_index.addMember("0.2.3", "RotationAllowed", TypeBool(), "false")
+zoneType_index.addMember("0.2.3", "MirrorAllowed", TypeBool(), "false")
 
 zoneType = ClassAsset("ZoneType", len(assetsList))
 zoneType.setInheritance(mainAsset)
@@ -2275,6 +2281,7 @@ mapLayerObjects.addClass(mapLayerObjects_object)
 mapLayerObjects.addMember("0.2.0", "ParentPath", TypeAssetPath())
 mapLayerObjects.addMember("0.2.0", "Object", TypeArray(mapLayerObjects_object))
 mapLayerObjects.addMember("0.2.0", "Visibility", TypeBool(), "true")
+mapLayerObjects.addMember("0.2.3", "LevelOfDetail", TypeInt32(), "0")
 mapLayerObjects.addPublicFunc([
 	"void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetObjectDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;"
@@ -2383,6 +2390,7 @@ mapZoneObjects_object.addMember("0.2.2", "Vertex", TypeArray(mapZoneObjects_vert
 mapZoneObjects_object.addMember("0.2.2", "PathType", TypeInt32(), "PATHTYPE_OPEN")
 mapZoneObjects_object.addMember("0.2.2", "FillType", TypeInt32(), "FILLTYPE_NONE")
 mapZoneObjects_object.addMember("0.2.2", "ZoneIndex", TypeUInt8(), "1")
+mapZoneObjects_object.addMember("0.2.3", "ZoneFlags", TypeUInt32(), "0x0")
 mapZoneObjects_object.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"

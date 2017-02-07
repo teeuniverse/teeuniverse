@@ -40,6 +40,8 @@ CAsset_ZoneType::CIndex::CIndex()
 	m_BorderIndex = 0;
 	m_BorderColor = 1.0f;
 	m_Group = -1;
+	m_RotationAllowed = false;
+	m_MirrorAllowed = false;
 }
 
 CAsset_ZoneType::CDataInt::CDataInt()
@@ -357,6 +359,129 @@ void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	}
 }
 
+void CAsset_ZoneType::CIndex::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType::CIndex& SysType)
+{
+	SysType.m_Used = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Used);
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
+	SysType.m_BorderIndex = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderIndex);
+	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
+	SysType.m_Group = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Group);
+	SysType.m_RotationAllowed = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_RotationAllowed);
+	SysType.m_MirrorAllowed = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_MirrorAllowed);
+}
+
+
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType::CDataInt& SysType)
+{
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
+	SysType.m_Description = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Description);
+	SysType.m_DefaultValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_DefaultValue);
+	SysType.m_MinValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinValue);
+	SysType.m_MaxValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MaxValue);
+	SysType.m_NullValue = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_NullValue);
+}
+
+
+void CAsset_ZoneType::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_ZoneType& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	{
+		const CAsset_ZoneType::CIndex::CTuaType_0_2_3* pData = (const CAsset_ZoneType::CIndex::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
+		SysType.m_Index.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
+		}
+	}
+	
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	{
+		const CAsset_ZoneType::CDataInt::CTuaType_0_2_3* pData = (const CAsset_ZoneType::CDataInt::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_DataInt.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_DataInt.m_Size);
+		SysType.m_DataInt.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_ZoneType::CDataInt::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_DataInt[i]);
+		}
+	}
+	
+	{
+		const tua_stringid* pData = (const tua_stringid*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Group.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Group.m_Size);
+		SysType.m_Group.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			SysType.m_Group[i] = pLoadingContext->ArchiveFile()->GetString(pData[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_ZoneType::CIndex::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CIndex& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Used = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Used);
+	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+	TuaType.m_BorderIndex = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_BorderIndex);
+	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
+	TuaType.m_Group = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Group);
+	TuaType.m_RotationAllowed = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_RotationAllowed);
+	TuaType.m_MirrorAllowed = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_MirrorAllowed);
+}
+
+void CAsset_ZoneType::CDataInt::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType::CDataInt& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+	TuaType.m_Description = pLoadingContext->ArchiveFile()->AddString(SysType.m_Description.buffer());
+	TuaType.m_DefaultValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DefaultValue);
+	TuaType.m_MinValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinValue);
+	TuaType.m_MaxValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MaxValue);
+	TuaType.m_NullValue = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_NullValue);
+}
+
+void CAsset_ZoneType::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_ZoneType& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	{
+		TuaType.m_Index.m_Size = SysType.m_Index.size();
+		CAsset_ZoneType::CIndex::CTuaType_0_2_3* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_3[SysType.m_Index.size()];
+		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
+		{
+			CAsset_ZoneType::CIndex::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
+		}
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_3)*SysType.m_Index.size());
+		delete[] pData;
+	}
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	{
+		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
+		CAsset_ZoneType::CDataInt::CTuaType_0_2_3* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_2_3[SysType.m_DataInt.size()];
+		for(unsigned int i=0; i<SysType.m_DataInt.size(); i++)
+		{
+			CAsset_ZoneType::CDataInt::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
+		}
+		TuaType.m_DataInt.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_2_3)*SysType.m_DataInt.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Group.m_Size = SysType.m_Group.size();
+		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		for(unsigned int i=0; i<SysType.m_Group.size(); i++)
+		{
+			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());
+		}
+		TuaType.m_Group.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
+		delete[] pData;
+	}
+}
+
 template<>
 int CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {
@@ -427,6 +552,10 @@ bool CAsset_ZoneType::GetValue(int ValueType, const CSubPath& SubPath, bool Defa
 	{
 		case INDEX_USED:
 			return GetIndexUsed(SubPath);
+		case INDEX_ROTATIONALLOWED:
+			return GetIndexRotationAllowed(SubPath);
+		case INDEX_MIRRORALLOWED:
+			return GetIndexMirrorAllowed(SubPath);
 	}
 	return CAsset::GetValue<bool>(ValueType, SubPath, DefaultValue);
 }
@@ -438,6 +567,12 @@ bool CAsset_ZoneType::SetValue(int ValueType, const CSubPath& SubPath, bool Valu
 	{
 		case INDEX_USED:
 			SetIndexUsed(SubPath, Value);
+			return true;
+		case INDEX_ROTATIONALLOWED:
+			SetIndexRotationAllowed(SubPath, Value);
+			return true;
+		case INDEX_MIRRORALLOWED:
+			SetIndexMirrorAllowed(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<bool>(ValueType, SubPath, Value);

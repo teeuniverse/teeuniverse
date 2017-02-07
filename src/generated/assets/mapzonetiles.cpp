@@ -36,6 +36,7 @@
 CAsset_MapZoneTiles::CTile::CTile()
 {
 	m_Index = 0;
+	m_Flags = 0x0;
 }
 
 CAsset_MapZoneTiles::CAsset_MapZoneTiles()
@@ -298,6 +299,92 @@ void CAsset_MapZoneTiles::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 	}
 }
 
+void CAsset_MapZoneTiles::CTile::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneTiles::CTile& SysType)
+{
+	SysType.m_Index = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Index);
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Flags);
+}
+
+
+void CAsset_MapZoneTiles::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneTiles& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ZoneTypePath, SysType.m_ZoneTypePath);
+	{
+		const CAsset_MapZoneTiles::CTile::CTuaType_0_2_3* pData = (const CAsset_MapZoneTiles::CTile::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
+		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Width);
+		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Height);
+		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Tile.m_Depth);
+		SysType.m_Tile.resize(Width, Height, Depth);
+		int Size = Width * Height * Depth;
+		for(int i=0; i<Size; i++)
+		{
+			CTile ReadedValue;
+			CAsset_MapZoneTiles::CTile::CTuaType_0_2_3::Read(pLoadingContext, pData[i], ReadedValue);
+			SysType.m_Tile.linear_set_clamp(i, ReadedValue);
+		}
+	}
+	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+	{
+		const tua_int32* pData = (const tua_int32*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_DataInt.m_Data);
+		uint32 Width = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_DataInt.m_Width);
+		uint32 Height = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_DataInt.m_Height);
+		uint32 Depth = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_DataInt.m_Depth);
+		SysType.m_DataInt.resize(Width, Height, Depth);
+		int Size = Width * Height * Depth;
+		for(int i=0; i<Size; i++)
+		{
+			int ReadedValue;
+			ReadedValue = pLoadingContext->ArchiveFile()->ReadInt32(pData[i]);
+			SysType.m_DataInt.linear_set_clamp(i, ReadedValue);
+		}
+	}
+	
+}
+
+
+void CAsset_MapZoneTiles::CTile::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Index = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index);
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Flags);
+}
+
+void CAsset_MapZoneTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ZoneTypePath, TuaType.m_ZoneTypePath);
+	{
+		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
+		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
+		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
+		CAsset_MapZoneTiles::CTile::CTuaType_0_2_3* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_3[SysType.m_Tile.get_linear_size()];
+		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
+		{
+			CAsset_MapZoneTiles::CTile::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
+		}
+		TuaType.m_Tile.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_3)*SysType.m_Tile.get_linear_size());
+		delete[] pData;
+	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+	{
+		TuaType.m_DataInt.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_width());
+		TuaType.m_DataInt.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_height());
+		TuaType.m_DataInt.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_depth());
+		tua_int32* pData = new tua_int32[SysType.m_DataInt.get_linear_size()];
+		for(int i=0; i<SysType.m_DataInt.get_linear_size(); i++)
+		{
+			pData[i] = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DataInt.linear_get_clamp(i));
+		}
+		TuaType.m_DataInt.m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) pData, sizeof(tua_int32)*SysType.m_DataInt.get_linear_size());
+		delete[] pData;
+	}
+}
+
 template<>
 int CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {
@@ -354,6 +441,29 @@ bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, int V
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+uint32 CAsset_MapZoneTiles::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case TILE_FLAGS:
+			return GetTileFlags(SubPath);
+	}
+	return CAsset::GetValue<uint32>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapZoneTiles::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value)
+{
+	switch(ValueType)
+	{
+		case TILE_FLAGS:
+			SetTileFlags(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
 }
 
 template<>

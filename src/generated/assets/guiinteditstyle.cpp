@@ -102,6 +102,23 @@ void CAsset_GuiIntEditStyle::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoad
 	pLoadingContext->WriteAssetPath(SysType.m_DecreaseButtonStylePath, TuaType.m_DecreaseButtonStylePath);
 }
 
+void CAsset_GuiIntEditStyle::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_GuiIntEditStyle& SysType)
+{
+	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IncreaseButtonStylePath, SysType.m_IncreaseButtonStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_DecreaseButtonStylePath, SysType.m_DecreaseButtonStylePath);
+}
+
+
+void CAsset_GuiIntEditStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiIntEditStyle& SysType, CTuaType_0_2_3& TuaType)
+{
+	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IncreaseButtonStylePath, TuaType.m_IncreaseButtonStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_DecreaseButtonStylePath, TuaType.m_DecreaseButtonStylePath);
+}
+
 template<>
 CAssetPath CAsset_GuiIntEditStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

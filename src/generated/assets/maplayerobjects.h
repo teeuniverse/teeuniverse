@@ -102,6 +102,7 @@ public:
 		OBJECT_ORTHOTESSELATION,
 		OBJECT,
 		VISIBILITY,
+		LEVELOFDETAIL,
 	};
 	
 	class CIteratorObject
@@ -170,6 +171,19 @@ public:
 			CTuaVec2 m_ControlPoint1;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			CTuaVec2 m_Position;
+			tua_float m_Weight;
+			tua_uint32 m_Color;
+			tua_int32 m_Smoothness;
+			CTuaVec2 m_ControlPoint0;
+			CTuaVec2 m_ControlPoint1;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CVertex& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -292,6 +306,22 @@ public:
 			tua_int32 m_OrthoTesselation;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_MapLayerObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			CTuaVec2 m_Position;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CAssetPath::CTuaType m_StylePath;
+			CTuaArray m_Vertex;
+			tua_int32 m_PathType;
+			tua_int32 m_FillType;
+			tua_int32 m_LineType;
+			tua_int32 m_OrthoTesselation;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -601,11 +631,23 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
+	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Object;
+		tua_uint8 m_Visibility;
+		tua_int32 m_LevelOfDetail;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_2_3& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
 	std::vector<CAsset_MapLayerObjects::CObject> m_Object;
 	bool m_Visibility;
+	int m_LevelOfDetail;
 
 public:
 	void GetObjectTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -851,6 +893,8 @@ public:
 	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
+	inline int GetLevelOfDetail() const { return m_LevelOfDetail; }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
 	inline void SetObjectArraySize(int Value) { m_Object.resize(Value); }
@@ -1020,6 +1064,8 @@ public:
 	}
 	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
+	
+	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
 	
 	inline int AddObject()
 	{
