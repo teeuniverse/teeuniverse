@@ -24,6 +24,8 @@
 #include <client/gui/slider.h>
 #include <client/gui/bind-edit.h>
 
+#include <algorithm>
+
 class CCloseButton : public gui::CButton
 {
 protected:
