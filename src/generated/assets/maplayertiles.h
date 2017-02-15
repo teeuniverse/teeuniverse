@@ -61,7 +61,7 @@ public:
 	{
 		NAME = CAsset::NAME,
 		PARENTPATH,
-		IMAGEPATH,
+		STYLEPATH,
 		COLOR,
 		TILE_WIDTH,
 		TILE_HEIGHT,
@@ -70,11 +70,13 @@ public:
 		TILE_ARRAY,
 		TILE_INDEX,
 		TILE_FLAGS,
+		TILE_BRUSH,
 		TILE,
 		VISIBILITY,
 		POSITIONX,
 		POSITIONY,
 		LEVELOFDETAIL,
+		SOURCEPATH,
 	};
 	
 	class CTile
@@ -121,6 +123,7 @@ public:
 		public:
 			tua_uint8 m_Index;
 			tua_uint8 m_Flags;
+			tua_uint8 m_Brush;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles::CTile& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_3& TuaType);
 		};
@@ -129,6 +132,7 @@ public:
 	private:
 		uint8 m_Index;
 		uint8 m_Flags;
+		uint8 m_Brush;
 	
 	public:
 		CTile();
@@ -136,9 +140,13 @@ public:
 		
 		inline uint8 GetFlags() const { return m_Flags; }
 		
+		inline uint8 GetBrush() const { return m_Brush; }
+		
 		inline void SetIndex(uint8 Value) { m_Index = Value; }
 		
 		inline void SetFlags(uint8 Value) { m_Flags = Value; }
+		
+		inline void SetBrush(uint8 Value) { m_Brush = Value; }
 		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
@@ -149,7 +157,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
+		CAssetPath::CTuaType m_StylePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
 		tua_uint8 m_Visibility;
@@ -161,7 +169,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
+		CAssetPath::CTuaType m_StylePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
 		tua_uint8 m_Visibility;
@@ -173,7 +181,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
+		CAssetPath::CTuaType m_StylePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
 		tua_uint8 m_Visibility;
@@ -187,7 +195,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
+		CAssetPath::CTuaType m_StylePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
 		tua_uint8 m_Visibility;
@@ -201,13 +209,14 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
+		CAssetPath::CTuaType m_StylePath;
 		tua_uint32 m_Color;
 		CTuaArray2d m_Tile;
 		tua_uint8 m_Visibility;
 		tua_int32 m_PositionX;
 		tua_int32 m_PositionY;
 		tua_int32 m_LevelOfDetail;
+		CAssetPath::CTuaType m_SourcePath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_3& TuaType);
 	};
@@ -215,13 +224,14 @@ public:
 
 private:
 	CAssetPath m_ParentPath;
-	CAssetPath m_ImagePath;
+	CAssetPath m_StylePath;
 	vec4 m_Color;
 	array2d< CTile > m_Tile;
 	bool m_Visibility;
 	int m_PositionX;
 	int m_PositionY;
 	int m_LevelOfDetail;
+	CAssetPath m_SourcePath;
 
 public:
 	virtual ~CAsset_MapLayerTiles() {}
@@ -249,7 +259,7 @@ public:
 	CAsset_MapLayerTiles();
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
-	inline CAssetPath GetImagePath() const { return m_ImagePath; }
+	inline CAssetPath GetStylePath() const { return m_StylePath; }
 	
 	inline vec4 GetColor() const { return m_Color; }
 	
@@ -270,6 +280,8 @@ public:
 	
 	inline uint8 GetTileFlags(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).GetFlags(); }
 	
+	inline uint8 GetTileBrush(const CSubPath& SubPath) const { return m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).GetBrush(); }
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline int GetPositionX() const { return m_PositionX; }
@@ -278,9 +290,11 @@ public:
 	
 	inline int GetLevelOfDetail() const { return m_LevelOfDetail; }
 	
+	inline CAssetPath GetSourcePath() const { return m_SourcePath; }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
-	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
+	inline void SetStylePath(const CAssetPath& Value) { m_StylePath = Value; }
 	
 	inline void SetColor(vec4 Value) { m_Color = Value; }
 	
@@ -296,6 +310,8 @@ public:
 	
 	inline void SetTileFlags(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetFlags(Value); }
 	
+	inline void SetTileBrush(const CSubPath& SubPath, uint8 Value) { m_Tile.get_clamp(SubPath.GetId(), SubPath.GetId2()).SetBrush(Value); }
+	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	
 	inline void SetPositionX(int Value) { m_PositionX = Value; }
@@ -304,14 +320,17 @@ public:
 	
 	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
 	
+	inline void SetSourcePath(const CAssetPath& Value) { m_SourcePath = Value; }
+	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_ParentPath);
-		Operation.Apply(m_ImagePath);
+		Operation.Apply(m_StylePath);
 		for(int i=0; i<m_Tile.get_linear_size(); i++)
 		{
 			m_Tile.linear_get_clamp(i).AssetPathOperation(Operation);
 		}
+		Operation.Apply(m_SourcePath);
 	}
 	
 };

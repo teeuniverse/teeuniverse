@@ -1520,13 +1520,22 @@ protected:
 				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);
 				break;
 			}
-			case CAsset_Material::TypeId:
+			case CAsset_PathMaterial::TypeId:
 			{
 				int Tokken = AssetsManager()->GenerateToken();
-				CAsset_Material* pMaterial = AssetsManager()->NewAsset<CAsset_Material>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				CAsset_PathMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_PathMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
 				if(!pMaterial)
 					break;
-				AssetsManager()->TryChangeAssetName(AssetPath, "material", Tokken);
+				AssetsManager()->TryChangeAssetName(AssetPath, "pathMaterial", Tokken);
+				break;
+			}
+			case CAsset_TilingMaterial::TypeId:
+			{
+				int Tokken = AssetsManager()->GenerateToken();
+				CAsset_TilingMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_TilingMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				if(!pMaterial)
+					break;
+				AssetsManager()->TryChangeAssetName(AssetPath, "tilingMaterial", Tokken);
 				break;
 			}
 		}
@@ -1552,8 +1561,11 @@ public:
 			case CAsset_Map::TypeId:
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconMap);
 				break;
-			case CAsset_Material::TypeId:
+			case CAsset_PathMaterial::TypeId:
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconLineStyle);
+				break;
+			case CAsset_TilingMaterial::TypeId:
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconTileStyle);
 				break;
 		}
 	}
@@ -1646,7 +1658,8 @@ protected:
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_IMAGE));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _LSTRING("New Map")));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Material::TypeId, _LSTRING("New Material")));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_PathMaterial::TypeId, _LSTRING("New Path Material")));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_TilingMaterial::TypeId, _LSTRING("New Tiling Material")));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CPreferencesButton(m_pAssetsEditor, pMenu));
 		
@@ -1991,6 +2004,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconVertex = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconVertex");
 		m_Path_Sprite_IconPencil = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPencil");
 		m_Path_Sprite_IconLineStyle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineStyle");
+		m_Path_Sprite_IconTileStyle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTileStyle");
 		m_Path_Sprite_IconLayer = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLayer");
 		m_Path_Sprite_IconBigMesh = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigMesh");
 		m_Path_Sprite_IconBigVFlip = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBigVFlip");
@@ -2155,8 +2169,11 @@ CAssetPath CGuiEditor::GetItemIcon(const CAssetPath& AssetPath, const CSubPath& 
 			case CAsset_EntityType::TypeId:
 				IconPath = m_Path_Sprite_IconEntityType;
 				break;
-			case CAsset_Material::TypeId:
+			case CAsset_PathMaterial::TypeId:
 				IconPath = m_Path_Sprite_IconLineStyle;
+				break;
+			case CAsset_TilingMaterial::TypeId:
+				IconPath = m_Path_Sprite_IconTileStyle;
 				break;
 			case CAsset_GuiRectStyle::TypeId:
 				IconPath = m_Path_Sprite_IconGuiRect;

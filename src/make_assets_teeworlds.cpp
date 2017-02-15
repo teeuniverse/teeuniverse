@@ -35,6 +35,35 @@
 	pSprite->SetHeight(h);\
 }
 
+#define CREATE_TILINGMATERIAL_CONDITION_NOTNULL(relx, rely) {\
+	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NOTNULL);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
+}
+
+#define CREATE_TILINGMATERIAL_CONDITION_NULL(relx, rely) {\
+	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NULL);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
+}
+
+#define CREATE_TILINGMATERIAL_CONDITION_INDEX(relx, rely, index) {\
+	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_INDEX);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_VALUE, index);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
+}
+
+#define CREATE_TILINGMATERIAL_CONDITION_NOBORDER(relx, rely) {\
+	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
+}
+
 int main(int argc, char* argv[])
 {
 	CSharedKernel* pKernel = new CSharedKernel();
@@ -57,6 +86,9 @@ int main(int argc, char* argv[])
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_teeworlds/entities.png", CStorage::TYPE_ALL, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
+	int GroupId_Physics = -1;
+	int GroupId_Death = -1;
+
 	//Zones
 	{
 		CAssetPath AssetPath;
@@ -66,8 +98,8 @@ int main(int argc, char* argv[])
 		pAsset->SetName("teeworlds");
 		pAsset->SetImagePath(ImageZonesPath);
 		
-		int GroupId_Physics = pAsset->AddGroup();
-		int GroupId_Death = pAsset->AddGroup();
+		GroupId_Physics = pAsset->AddGroup();
+		GroupId_Death = pAsset->AddGroup();
 		
 		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Physics), "Physics");
 		pAsset->SetGroup(CAsset_ZoneType::SubPath_Group(GroupId_Death), "Death");
@@ -303,142 +335,142 @@ int main(int argc, char* argv[])
 		//Material: RedRock
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("redRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(188.0f/255.0f, 95.0f/255.0f, 53.0f/255.0f, 1.0f));
 			pAsset->SetTextureSpacing(-16.0f);
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, RedRockTopPath);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, RedRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: YellowRock
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("yellowRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(244.0f/255.0f, 209.0f/255.0f, 126.0f/255.0f, 1.0f));
 			pAsset->SetTextureSpacing(-16.0f);
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, YellowRockTopPath);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, YellowRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: BrownRock
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("brownRock");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(129.0f/255.0f, 90.0f/255.0f, 71.0f/255.0f, 1.0f));
 			pAsset->SetTextureSpacing(-16.0f);
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, BrownRockTopPath);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, BrownRockTopPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: Underground cable
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("undergroundCable");
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
 			{
 				CSubPath SpritePath;
 				
 				for(int i=0; i<2; i++)
 				{
-					SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-					pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCablePath);
-					pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+					SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+					pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCablePath);
+					pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 				}
 				
-				SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCable2Path);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCable2Path);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 				
 				for(int i=0; i<2; i++)
 				{
-					SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-					pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCablePath);
-					pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+					SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+					pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCablePath);
+					pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+					pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 				}
 			}
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCableCap);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_VFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CAP_START);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCableCap);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CAP_START);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
 			}
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCableCap);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CAP_END);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCableCap);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CAP_END);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
 			}
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCableCornerConvex);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_VFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCableCornerConvex);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONVEX);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, UndergroundCableCornerConcave);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONCAVE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, UndergroundCableCornerConcave);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONCAVE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 		}
 		
@@ -446,14 +478,183 @@ int main(int argc, char* argv[])
 	}
 	
 	/* ENV GENERIC */
-	PackageId = pKernel->AssetsManager()->NewPackage("env_generic");
-	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
-	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
-	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
-	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "genericSpikes", "images/env_generic/generic_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	CreateNewImage(pKernel, PackageId, "genericUnhookable", "images/env_generic/generic_unhookable.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	{
+		PackageId = pKernel->AssetsManager()->NewPackage("env_generic");
+		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+		pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
+		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
+		CreateNewImage(pKernel, PackageId, "genericSpikes", "images/env_generic/generic_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CAssetPath UnhookableImagePath = CreateNewImage(pKernel, PackageId, "genericUnhookable", "images/env_generic/generic_unhookable.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		
+		//TilingMaterial: SmallUnhookable
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("smallUnhookable");
+			pAsset->SetImagePath(UnhookableImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 23);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 24);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 25);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 8);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 9);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 40);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 41);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+		}
+		//TilingMaterial: smallBlueUnhookable
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("smallBlueUnhookable");
+			pAsset->SetImagePath(UnhookableImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 17);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 18);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 2);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 34);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+		}
+		//TilingMaterial: smallRedUnhookable
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("smallRedUnhookable");
+			pAsset->SetImagePath(UnhookableImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 144);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 145);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 146);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 129);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 130);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 160);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 161);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 162);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+			}
+		}
+		
+		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	}
 	
 	/* ENV GRASS */
 	{
@@ -492,10 +693,376 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE_PATH(DarkDirtPath, PackageId, "darkDirt", MainImagePath, 8, 1, 1, 1);
 		CREATE_SPRITE_PATH(DirtTransitionPath, PackageId, "dirtTransition", MainImagePath, 8, 5, 1, 1);
 		
+		//TilingMaterial: GrassAndDirt
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("grassAndDirt");
+			pAsset->SetImagePath(MainImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 2);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 66);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 67);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 68);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			//top
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			//right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//bottom
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 52);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			//left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 20);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 4);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 36);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//inside corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			//inside corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			//right transition
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//left transition
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 38);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//left grass
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 19);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -2);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+			}
+			//right grass
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 17);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -2);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+			}
+			//top corner right 2
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 2);
+			}
+			//top corner left 2
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 2);
+			}
+		}
+		
+		//TilingMaterial: Cave
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("cave");
+			pAsset->SetImagePath(MainImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 13);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 29);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 42);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 43);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 44);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 45);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			//top
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 26);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			//right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 25);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//bottom
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 10);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			//left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 24);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 8);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 9);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 40);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 41);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//inside corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 11);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 12);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 27);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			//inside corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 28);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+		}
+
 		//Material: GrassAndDirt
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("grassAndDirt");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(161.0f/255.0f, 110.0f/255.0f, 54.0f/255.0f, 1.0f));
@@ -503,196 +1070,491 @@ int main(int argc, char* argv[])
 			
 			//Labels
 			{
-				CSubPath LabelPath = CAsset_Material::SubPath_Label(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LABEL));
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec4>(MaterialPath, LabelPath, CAsset_Material::LABEL_COLOR, vec4(144.0f/255.0f, 1.0f, 0.0f, 0.5f));
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_Material::LABEL_ANGLESTART, -Pi/4.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_Material::LABEL_ANGLEEND, Pi/4.0f);
+				CSubPath LabelPath = CAsset_PathMaterial::SubPath_Label(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LABEL));
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec4>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_COLOR, vec4(144.0f/255.0f, 1.0f, 0.0f, 0.5f));
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_ANGLESTART, -Pi/4.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_ANGLEEND, Pi/4.0f);
 			}
 			{
-				CSubPath LabelPath = CAsset_Material::SubPath_Label(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LABEL));
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec4>(MaterialPath, LabelPath, CAsset_Material::LABEL_COLOR, vec4(1.0f, 143.0f/255.0f, 0.0f, 0.5f));
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_Material::LABEL_ANGLESTART, Pi/4.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_Material::LABEL_ANGLEEND, 7.0f*Pi/4.0f);
+				CSubPath LabelPath = CAsset_PathMaterial::SubPath_Label(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LABEL));
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec4>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_COLOR, vec4(1.0f, 143.0f/255.0f, 0.0f, 0.5f));
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_ANGLESTART, Pi/4.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, LabelPath, CAsset_PathMaterial::LABEL_ANGLEEND, 7.0f*Pi/4.0f);
 			}
 			
 			//Layers
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, GrassPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 1);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 1);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DirtPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 1);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassToDirtPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION | CAsset_Material::SPRITEFLAG_VFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 1);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, GrassToDirtPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION | CAsset_PathMaterial::SPRITEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 1);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtToGrassPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION | CAsset_Material::SPRITEFLAG_HFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_LINE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 1);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DirtToGrassPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION | CAsset_PathMaterial::SPRITEFLAG_HFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_LINE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassCornerConvexPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, GrassCornerConvexPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_X, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONVEX);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassCornerConcavePath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONCAVE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 0);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, GrassCornerConcavePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_X, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONCAVE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 0);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtCornerConvexPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_HFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 1);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 1);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DirtCornerConvexPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_X, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_HFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONVEX);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 1);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtCornerConcavePath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_HFLIP);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONCAVE);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 1);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 1);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DirtCornerConcavePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_X, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_HFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONCAVE);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 1);
 			}
 			
 			{
-				CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, GrassDirtCornerPath);
-				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.516129032f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_X, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILETYPE, CAsset_Material::SPRITETILE_CORNER_CONVEX);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL0, 0);
-				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_TILELABEL1, 1);
+				CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, GrassDirtCornerPath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.516129032f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_X, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILETYPE, CAsset_PathMaterial::SPRITETILE_CORNER_CONVEX);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL0, 0);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_TILELABEL1, 1);
 			}
 		}
 		
 		//Material: DarkDirt
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("darkDirt");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(98.0f/255.0f, 73.0f/255.0f, 45.0f/255.0f, 1.0f));
 			pAsset->SetTextureSpacing(-16.0f);
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DarkDirtPath);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DarkDirtPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
 		}
 		
 		//Material: DirtTransition
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("dirtTransition");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(84.0f/255.0f, 62.0f/255.0f, 36.0f/255.0f, 1.0f));
 			pAsset->SetTextureSpacing(-16.0f);
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, DirtTransitionPath);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FLAGS, CAsset_Material::SPRITEFLAG_ROTATION);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, DirtTransitionPath);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
 		}
 		
 		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
 	}
 	
 	/* ENV JUNGLE */
-	PackageId = pKernel->AssetsManager()->NewPackage("env_jungle");
-	pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
-	pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
-	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
-	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
-	CreateNewImage(pKernel, PackageId, "jungleMain", "images/env_jungle/jungle_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	CreateNewImage(pKernel, PackageId, "jungleDoodads", "images/env_jungle/jungle_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	CreateNewImage(pKernel, PackageId, "jungleSpikes", "images/env_jungle/jungle_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	CreateNewImage(pKernel, PackageId, "jungleUnhookable", "images/env_jungle/jungle_unhookables.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	CreateNewImage(pKernel, PackageId, "jungleBackground", "images/env_jungle/jungle_background.png", CStorage::TYPE_ALL, 1, 1);
-	CreateNewImage(pKernel, PackageId, "jungleMidground", "images/env_jungle/jungle_midground.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	{
+		PackageId = pKernel->AssetsManager()->NewPackage("env_jungle");
+		pKernel->AssetsManager()->SetPackageAuthor(PackageId, "necropotame");
+		pKernel->AssetsManager()->SetPackageCredits(PackageId, "TeeWorlds");
+		pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
+		CAssetPath MainImagePath = CreateNewImage(pKernel, PackageId, "jungleMain", "images/env_jungle/jungle_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "jungleDoodads", "images/env_jungle/jungle_doodads.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "jungleSpikes", "images/env_jungle/jungle_deathtiles.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "jungleUnhookable", "images/env_jungle/jungle_unhookables.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		CreateNewImage(pKernel, PackageId, "jungleBackground", "images/env_jungle/jungle_background.png", CStorage::TYPE_ALL, 1, 1);
+		CreateNewImage(pKernel, PackageId, "jungleMidground", "images/env_jungle/jungle_midground.png", CStorage::TYPE_ALL, 16, 16, true, 2);
+		
+		//TilingMaterial: Cave
+		{
+			CAssetPath MaterialPath;
+			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
+			pAsset->SetName("jungle");
+			pAsset->SetImagePath(MainImagePath);
+			
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+			}
+			//random bricks
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 66);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/200.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 67);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/200.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
+			}
+			//top
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 96);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 97);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 98);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+			}
+			//right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//bottom
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 52);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 99);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 100);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 101);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+			}
+			//left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+			}
+			//corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+			}
+			//inside corner top-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner top-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//inside corner bottom-left
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 50);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			//inside corner bottom-right
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 51);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP);
+				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+			}
+			//right bottom
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//left bottom
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+			}
+			//top corner right 2
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+			}
+			//top corner left 2
+			{
+				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+			}
+		}
+		
+		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	}
 	
 	/* ENV MOON */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_moon");

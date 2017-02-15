@@ -222,7 +222,7 @@ void CViewManager::Update(bool ParentEnabled)
 		case CAsset_MapEntities::TypeId:
 			m_pCurrentView = m_pViewMap;
 			break;
-		case CAsset_Material::TypeId:
+		case CAsset_PathMaterial::TypeId:
 			m_pCurrentView = m_pViewMaterial;
 			break;
 		case CAsset_GuiRectStyle::TypeId:

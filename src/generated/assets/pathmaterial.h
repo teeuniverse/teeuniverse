@@ -29,8 +29,8 @@
  * It's too much to avoid mistakes.
  */
 
-#ifndef __CLIENT_ASSETS_MATERIAL__
-#define __CLIENT_ASSETS_MATERIAL__
+#ifndef __CLIENT_ASSETS_PATHMATERIAL__
+#define __CLIENT_ASSETS_PATHMATERIAL__
 
 #include <shared/assets/asset.h>
 #include <cassert>
@@ -39,7 +39,7 @@
 #include <shared/assets/assetpath.h>
 #include <shared/tl/algorithm.h>
 
-class CAsset_Material : public CAsset
+class CAsset_PathMaterial : public CAsset
 {
 public:
 	enum
@@ -162,8 +162,8 @@ public:
 		class CTuaType_0_1_0
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLabel& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_1_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_PathMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_1_0& TuaType);
 		};
 		
 		class CTuaType_0_2_0
@@ -172,8 +172,8 @@ public:
 			tua_uint32 m_Color;
 			tua_float m_AngleStart;
 			tua_float m_AngleEnd;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLabel& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_PathMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 		class CTuaType_0_2_1
@@ -182,8 +182,8 @@ public:
 			tua_uint32 m_Color;
 			tua_float m_AngleStart;
 			tua_float m_AngleEnd;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CLabel& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_1& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_PathMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 		class CTuaType_0_2_2
@@ -192,8 +192,8 @@ public:
 			tua_uint32 m_Color;
 			tua_float m_AngleStart;
 			tua_float m_AngleEnd;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Material::CLabel& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_2& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_PathMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 		class CTuaType_0_2_3
@@ -202,8 +202,8 @@ public:
 			tua_uint32 m_Color;
 			tua_float m_AngleStart;
 			tua_float m_AngleEnd;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Material::CLabel& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLabel& SysType, CTuaType_0_2_3& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_PathMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -237,8 +237,8 @@ public:
 		class CTuaType_0_1_0
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_1_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_PathMaterial::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_1_0& TuaType);
 		};
 		
 		class CTuaType_0_2_0
@@ -254,8 +254,8 @@ public:
 			tua_int32 m_TileType;
 			tua_int32 m_TileLabel0;
 			tua_int32 m_TileLabel1;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_PathMaterial::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 		class CTuaType_0_2_1
@@ -271,8 +271,8 @@ public:
 			tua_int32 m_TileType;
 			tua_int32 m_TileLabel0;
 			tua_int32 m_TileLabel1;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_1& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_PathMaterial::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 		class CTuaType_0_2_2
@@ -288,8 +288,8 @@ public:
 			tua_int32 m_TileType;
 			tua_int32 m_TileLabel0;
 			tua_int32 m_TileLabel1;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_2& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_PathMaterial::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 		class CTuaType_0_2_3
@@ -305,8 +305,8 @@ public:
 			tua_int32 m_TileType;
 			tua_int32 m_TileLabel0;
 			tua_int32 m_TileLabel1;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Material::CSprite& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CSprite& SysType, CTuaType_0_2_3& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_PathMaterial::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -392,40 +392,40 @@ public:
 		class CTuaType_0_1_0
 		{
 		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_1_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_PathMaterial::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_1_0& TuaType);
 		};
 		
 		class CTuaType_0_2_0
 		{
 		public:
 			CTuaArray m_Sprite;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_PathMaterial::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 		class CTuaType_0_2_1
 		{
 		public:
 			CTuaArray m_Sprite;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_1& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_PathMaterial::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 		class CTuaType_0_2_2
 		{
 		public:
 			CTuaArray m_Sprite;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_2& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_PathMaterial::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 		class CTuaType_0_2_3
 		{
 		public:
 			CTuaArray m_Sprite;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Material::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material::CLayer& SysType, CTuaType_0_2_3& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_PathMaterial::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 	
@@ -435,12 +435,12 @@ public:
 	public:
 		inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 		
-		inline const CAsset_Material::CSprite* GetSpritePtr() const { return &(m_Sprite.front()); }
+		inline const CAsset_PathMaterial::CSprite* GetSpritePtr() const { return &(m_Sprite.front()); }
 		
 		inline const std::vector<CSprite>& GetSpriteArray() const { return m_Sprite; }
 		inline std::vector<CSprite>& GetSpriteArray() { return m_Sprite; }
 		
-		inline const CAsset_Material::CSprite& GetSprite(const CSubPath& SubPath) const
+		inline const CAsset_PathMaterial::CSprite& GetSprite(const CSubPath& SubPath) const
 		{
 			assert(SubPath.GetId() < m_Sprite.size());
 			{
@@ -548,7 +548,7 @@ public:
 		
 		inline void SetSpriteArraySize(int Value) { m_Sprite.resize(Value); }
 		
-		inline void SetSprite(const CSubPath& SubPath, const CAsset_Material::CSprite& Value)
+		inline void SetSprite(const CSubPath& SubPath, const CAsset_PathMaterial::CSprite& Value)
 		{
 			if(SubPath.GetId() < m_Sprite.size())
 			{
@@ -647,7 +647,7 @@ public:
 			return Id;
 		}
 		
-		inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_Material::CSprite()); }
+		inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_PathMaterial::CSprite()); }
 		
 		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 		
@@ -667,8 +667,8 @@ public:
 	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_1_0& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_PathMaterial& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_1_0& TuaType);
 	};
 	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
@@ -682,8 +682,8 @@ public:
 		tua_float m_TextureAngle;
 		tua_float m_TextureSpacing;
 		tua_uint8 m_TextureEnabled;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_0& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_PathMaterial& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_2_0& TuaType);
 	};
 	
 	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
@@ -697,8 +697,8 @@ public:
 		tua_float m_TextureAngle;
 		tua_float m_TextureSpacing;
 		tua_uint8 m_TextureEnabled;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_1& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_PathMaterial& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_2_1& TuaType);
 	};
 	
 	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
@@ -712,8 +712,8 @@ public:
 		tua_float m_TextureAngle;
 		tua_float m_TextureSpacing;
 		tua_uint8 m_TextureEnabled;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_2& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_PathMaterial& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_2_2& TuaType);
 	};
 	
 	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
@@ -727,14 +727,14 @@ public:
 		tua_float m_TextureAngle;
 		tua_float m_TextureSpacing;
 		tua_uint8 m_TextureEnabled;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Material& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Material& SysType, CTuaType_0_2_3& TuaType);
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_PathMaterial& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
 
 private:
-	std::vector<CAsset_Material::CLabel> m_Label;
-	std::vector<CAsset_Material::CLayer> m_Layer;
+	std::vector<CAsset_PathMaterial::CLabel> m_Label;
+	std::vector<CAsset_PathMaterial::CLayer> m_Layer;
 	CAssetPath m_TexturePath;
 	vec4 m_TextureColor;
 	vec2 m_TextureSize;
@@ -743,7 +743,7 @@ private:
 	bool m_TextureEnabled;
 
 public:
-	virtual ~CAsset_Material() {}
+	virtual ~CAsset_PathMaterial() {}
 	
 	template<typename T>
 	T GetValue(int ValueType, const CSubPath& SubPath, T DefaultValue) const
@@ -765,15 +765,15 @@ public:
 	
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
-	CAsset_Material();
+	CAsset_PathMaterial();
 	inline int GetLabelArraySize() const { return m_Label.size(); }
 	
-	inline const CAsset_Material::CLabel* GetLabelPtr() const { return &(m_Label.front()); }
+	inline const CAsset_PathMaterial::CLabel* GetLabelPtr() const { return &(m_Label.front()); }
 	
-	inline const std::vector<CAsset_Material::CLabel>& GetLabelArray() const { return m_Label; }
-	inline std::vector<CAsset_Material::CLabel>& GetLabelArray() { return m_Label; }
+	inline const std::vector<CAsset_PathMaterial::CLabel>& GetLabelArray() const { return m_Label; }
+	inline std::vector<CAsset_PathMaterial::CLabel>& GetLabelArray() { return m_Label; }
 	
-	inline const CAsset_Material::CLabel& GetLabel(const CSubPath& SubPath) const
+	inline const CAsset_PathMaterial::CLabel& GetLabel(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Label.size());
 		{
@@ -804,12 +804,12 @@ public:
 	
 	inline int GetLayerArraySize() const { return m_Layer.size(); }
 	
-	inline const CAsset_Material::CLayer* GetLayerPtr() const { return &(m_Layer.front()); }
+	inline const CAsset_PathMaterial::CLayer* GetLayerPtr() const { return &(m_Layer.front()); }
 	
-	inline const std::vector<CAsset_Material::CLayer>& GetLayerArray() const { return m_Layer; }
-	inline std::vector<CAsset_Material::CLayer>& GetLayerArray() { return m_Layer; }
+	inline const std::vector<CAsset_PathMaterial::CLayer>& GetLayerArray() const { return m_Layer; }
+	inline std::vector<CAsset_PathMaterial::CLayer>& GetLayerArray() { return m_Layer; }
 	
-	inline const CAsset_Material::CLayer& GetLayer(const CSubPath& SubPath) const
+	inline const CAsset_PathMaterial::CLayer& GetLayer(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		{
@@ -824,7 +824,7 @@ public:
 		else return 0;
 	}
 	
-	inline const CAsset_Material::CSprite* GetLayerSpritePtr(const CSubPath& SubPath) const
+	inline const CAsset_PathMaterial::CSprite* GetLayerSpritePtr(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_Layer.size())
 			return m_Layer[SubPath.GetId()].GetSpritePtr();
@@ -842,7 +842,7 @@ public:
 		return m_Layer[SubPath.GetId()].GetSpriteArray();
 	}
 	
-	inline const CAsset_Material::CSprite& GetLayerSprite(const CSubPath& SubPath) const
+	inline const CAsset_PathMaterial::CSprite& GetLayerSprite(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Layer.size());
 		return m_Layer[SubPath.GetId()].GetSprite(SubPath.PopId());
@@ -964,7 +964,7 @@ public:
 	
 	inline void SetLabelArraySize(int Value) { m_Label.resize(Value); }
 	
-	inline void SetLabel(const CSubPath& SubPath, const CAsset_Material::CLabel& Value)
+	inline void SetLabel(const CSubPath& SubPath, const CAsset_PathMaterial::CLabel& Value)
 	{
 		if(SubPath.GetId() < m_Label.size())
 		{
@@ -992,7 +992,7 @@ public:
 	
 	inline void SetLayerArraySize(int Value) { m_Layer.resize(Value); }
 	
-	inline void SetLayer(const CSubPath& SubPath, const CAsset_Material::CLayer& Value)
+	inline void SetLayer(const CSubPath& SubPath, const CAsset_PathMaterial::CLayer& Value)
 	{
 		if(SubPath.GetId() < m_Layer.size())
 		{
@@ -1006,7 +1006,7 @@ public:
 			m_Layer[SubPath.GetId()].SetSpriteArraySize(Value);
 	}
 	
-	inline void SetLayerSprite(const CSubPath& SubPath, const CAsset_Material::CSprite& Value)
+	inline void SetLayerSprite(const CSubPath& SubPath, const CAsset_PathMaterial::CSprite& Value)
 	{
 		if(SubPath.GetId() < m_Layer.size())
 			m_Layer[SubPath.GetId()].SetSprite(SubPath.PopId(), Value);
@@ -1128,9 +1128,9 @@ public:
 	
 	inline int AddLayerSprite(const CSubPath& SubPath) { return m_Layer[SubPath.GetId()].AddSprite(); }
 	
-	inline void AddAtLabel(int Index) { m_Label.insert(m_Label.begin() + Index, CAsset_Material::CLabel()); }
+	inline void AddAtLabel(int Index) { m_Label.insert(m_Label.begin() + Index, CAsset_PathMaterial::CLabel()); }
 	
-	inline void AddAtLayer(int Index) { m_Layer.insert(m_Layer.begin() + Index, CAsset_Material::CLayer()); }
+	inline void AddAtLayer(int Index) { m_Layer.insert(m_Layer.begin() + Index, CAsset_PathMaterial::CLayer()); }
 	
 	inline void AddAtLayerSprite(const CSubPath& SubPath, int Index) { m_Layer[SubPath.GetId()].AddAtSprite(Index); }
 	
@@ -1167,17 +1167,17 @@ public:
 	
 };
 
-template<> int CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, int Value);
-template<> bool CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
-template<> float CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, float Value);
-template<> vec2 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
-template<> vec4 CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
-template<> CAssetPath CAsset_Material::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
-template<> bool CAsset_Material::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+template<> int CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> bool CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
+template<> float CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> vec2 CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
+template<> vec4 CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
+template<> CAssetPath CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
+template<> bool CAsset_PathMaterial::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
 
 #endif

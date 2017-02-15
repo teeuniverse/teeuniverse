@@ -183,6 +183,7 @@ public:
 	CAssetPath m_Path_Sprite_IconVertex;
 	CAssetPath m_Path_Sprite_IconPencil;
 	CAssetPath m_Path_Sprite_IconLineStyle;
+	CAssetPath m_Path_Sprite_IconTileStyle;
 	CAssetPath m_Path_Sprite_IconLayer;
 	CAssetPath m_Path_Sprite_IconBigMesh;
 	CAssetPath m_Path_Sprite_IconBigHFlip;

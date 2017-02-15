@@ -23,7 +23,7 @@
 #include <shared/geometry/quad.h>
 #include <generated/assets/maplayerobjects.h>
 #include <generated/assets/mapzoneobjects.h>
-#include <generated/assets/material.h>
+#include <generated/assets/pathmaterial.h>
 #include <generated/assets/zonetype.h>
 
 void TesselateBezierCurve(const std::vector<CBezierVertex>& BezierVertices, std::vector<CLineVertex>& OutputVertices, float MinWidth);
@@ -42,7 +42,7 @@ public:
 	float m_VMax;
 };
 
-void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_Material::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo);
+void GenerateMaterialQuads_GetSpriteInfo(const CAssetsManager* pAssetsManager, const CAsset_PathMaterial::CSprite* pMaterialSprite, CSpriteInfo& SpriteInfo);
 void GenerateMaterialQuads(
 	const class CAssetsManager* pAssetsManager,
 	std::vector<CTexturedQuad>& OutputQuads,

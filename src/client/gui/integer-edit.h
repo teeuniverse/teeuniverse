@@ -72,6 +72,7 @@ protected:
 public:
 	CAbstractIntegerEdit(class CGui *pConfig);
 	
+	bool IsEditable() const;
 	void Editable(bool Value);
 	
 	void SetIntEditStyle(CAssetPath Path);

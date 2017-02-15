@@ -50,7 +50,8 @@ class CAssetsInspector : public gui::CTabs
 		TAB_ZONETYPE_ASSET,
 		TAB_ENTITYTYPE_ASSET,
 		TAB_SPRITE_ASSET,
-		TAB_MATERIAL_ASSET,
+		TAB_PATHMATERIAL_ASSET,
+		TAB_TILINGMATERIAL_ASSET,
 		NUM_TABS
 	};
 
@@ -66,12 +67,14 @@ private:
 	void AddField_Flag(gui::CVListLayout* pList, int Member, int Mask, const CLocalizableString& Text);
 	void AddField_Integer(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
+	void AddField_Integer_MapLayerTiles_NoSource(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Color(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Float(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const CLocalizableString& Text);
 	void AddField_Angle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text);
 	void AddField_ImageTiles(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
+	void AddField_TileLayerStyle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_MapGroups(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
 
@@ -99,7 +102,8 @@ private:
 	gui::CVScrollLayout* CreateTab_ZoneType_Asset();
 	gui::CVScrollLayout* CreateTab_EntityType_Asset();
 	gui::CVScrollLayout* CreateTab_Sprite_Asset();
-	gui::CVScrollLayout* CreateTab_Material_Asset();
+	gui::CVScrollLayout* CreateTab_PathMaterial_Asset();
+	gui::CVScrollLayout* CreateTab_TilingMaterial_Asset();
 
 public:
 	CAssetsInspector(CGuiEditor* pAssetsEditor);

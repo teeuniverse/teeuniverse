@@ -52,7 +52,7 @@ void CCursorTool_MapCrop::OnViewButtonClick(int Button)
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-		if(!pLayer)
+		if(!pLayer || pLayer->GetSourcePath().IsNotNull())
 			return;
 		
 		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
@@ -222,7 +222,7 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 		{
 			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-			if(!pLayer)
+			if(!pLayer || pLayer->GetSourcePath().IsNotNull())
 				return;
 			
 			ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
@@ -391,7 +391,7 @@ void CCursorTool_MapCrop::RenderView()
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-		if(!pLayer)
+		if(!pLayer || pLayer->GetSourcePath().IsNotNull())
 			return;
 		
 		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
@@ -444,8 +444,18 @@ void CCursorTool_MapCrop::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
-		case CAsset_MapGroup::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
+			{
+				Enable();
+				
+				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+				if(!pLayer || pLayer->GetSourcePath().IsNotNull())
+					Editable(false);
+				else
+					Editable(true);
+			}
+			break;
+		case CAsset_MapGroup::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 			Enable();
 			break;

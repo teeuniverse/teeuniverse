@@ -37,6 +37,7 @@ CAsset_MapLayerTiles::CTile::CTile()
 {
 	m_Index = 0;
 	m_Flags = 0x0;
+	m_Brush = 0;
 }
 
 CAsset_MapLayerTiles::CAsset_MapLayerTiles()
@@ -60,7 +61,7 @@ void CAsset_MapLayerTiles::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoading
 	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_StylePath, SysType.m_StylePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
 		const CAsset_MapLayerTiles::CTile::CTuaType_0_1_0* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -92,7 +93,7 @@ void CAsset_MapLayerTiles::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadin
 	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	pLoadingContext->WriteAssetPath(SysType.m_StylePath, TuaType.m_StylePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -121,7 +122,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoading
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_StylePath, SysType.m_StylePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
 		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_0* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -153,7 +154,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadin
 	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	pLoadingContext->WriteAssetPath(SysType.m_StylePath, TuaType.m_StylePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -182,7 +183,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoading
 	CAsset::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_StylePath, SysType.m_StylePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
 		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_1* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_1*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -216,7 +217,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadin
 	CAsset::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	pLoadingContext->WriteAssetPath(SysType.m_StylePath, TuaType.m_StylePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -247,7 +248,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoading
 	CAsset::CTuaType_0_2_2::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_StylePath, SysType.m_StylePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
 		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_2* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -281,7 +282,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	CAsset::CTuaType_0_2_2::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	pLoadingContext->WriteAssetPath(SysType.m_StylePath, TuaType.m_StylePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -304,6 +305,7 @@ void CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* p
 {
 	SysType.m_Index = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Index);
 	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Flags);
+	SysType.m_Brush = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_Brush);
 }
 
 
@@ -312,7 +314,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoading
 	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_StylePath, SysType.m_StylePath);
 	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
 	{
 		const CAsset_MapLayerTiles::CTile::CTuaType_0_2_3* pData = (const CAsset_MapLayerTiles::CTile::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Tile.m_Data);
@@ -333,6 +335,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoading
 	SysType.m_PositionX = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PositionX);
 	SysType.m_PositionY = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PositionY);
 	SysType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_LevelOfDetail);
+	pLoadingContext->ReadAssetPath(TuaType.m_SourcePath, SysType.m_SourcePath);
 }
 
 
@@ -340,6 +343,7 @@ void CAsset_MapLayerTiles::CTile::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* 
 {
 	TuaType.m_Index = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index);
 	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Flags);
+	TuaType.m_Brush = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Brush);
 }
 
 void CAsset_MapLayerTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_3& TuaType)
@@ -347,7 +351,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadin
 	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	pLoadingContext->WriteAssetPath(SysType.m_StylePath, TuaType.m_StylePath);
 	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
 	{
 		TuaType.m_Tile.m_Width = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_width());
@@ -365,6 +369,7 @@ void CAsset_MapLayerTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadin
 	TuaType.m_PositionX = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PositionX);
 	TuaType.m_PositionY = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PositionY);
 	TuaType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LevelOfDetail);
+	pLoadingContext->WriteAssetPath(SysType.m_SourcePath, TuaType.m_SourcePath);
 }
 
 template<>
@@ -382,6 +387,8 @@ int CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath, int D
 			return GetTileIndex(SubPath);
 		case TILE_FLAGS:
 			return GetTileFlags(SubPath);
+		case TILE_BRUSH:
+			return GetTileBrush(SubPath);
 		case POSITIONX:
 			return GetPositionX();
 		case POSITIONY:
@@ -411,6 +418,9 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, int 
 			return true;
 		case TILE_FLAGS:
 			SetTileFlags(SubPath, Value);
+			return true;
+		case TILE_BRUSH:
+			SetTileBrush(SubPath, Value);
 			return true;
 		case POSITIONX:
 			SetPositionX(Value);
@@ -478,8 +488,10 @@ CAssetPath CAsset_MapLayerTiles::GetValue(int ValueType, const CSubPath& SubPath
 	{
 		case PARENTPATH:
 			return GetParentPath();
-		case IMAGEPATH:
-			return GetImagePath();
+		case STYLEPATH:
+			return GetStylePath();
+		case SOURCEPATH:
+			return GetSourcePath();
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -492,8 +504,11 @@ bool CAsset_MapLayerTiles::SetValue(int ValueType, const CSubPath& SubPath, CAss
 		case PARENTPATH:
 			SetParentPath(Value);
 			return true;
-		case IMAGEPATH:
-			SetImagePath(Value);
+		case STYLEPATH:
+			SetStylePath(Value);
+			return true;
+		case SOURCEPATH:
+			SetSourcePath(Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);

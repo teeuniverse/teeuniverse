@@ -1016,7 +1016,18 @@ void CMapRenderer::RenderGroup(CAssetPath GroupPath, vec4 Color, int LoD, bool D
 				continue;
 			
 			vec2 Position = TilePosToMapPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()));
-			RenderTiles_Image(pLayer->GetTileArray(), Position, pLayer->GetImagePath(), pLayer->GetColor()*Color, true);
+			
+			CAssetPath ImagePath;
+			if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
+				ImagePath = pLayer->GetStylePath();
+			else if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+			{
+				const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(pLayer->GetStylePath());
+				if(pMaterial)
+					ImagePath = pMaterial->GetImagePath();
+			}
+			
+			RenderTiles_Image(pLayer->GetTileArray(), Position, ImagePath, pLayer->GetColor()*Color, true);
 		}
 		else if(LayerPath.GetType() == CAsset_MapLayerQuads::TypeId)
 		{

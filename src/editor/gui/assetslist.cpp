@@ -1893,7 +1893,8 @@ void CAssetsTree::Refresh()
 	REFRESH_ASSET_LIST(CAsset_MapEntities)
 	REFRESH_ASSET_LIST(CAsset_ZoneType)
 	REFRESH_ASSET_LIST(CAsset_EntityType)
-	REFRESH_ASSET_LIST(CAsset_Material)
+	REFRESH_ASSET_LIST(CAsset_PathMaterial)
+	REFRESH_ASSET_LIST(CAsset_TilingMaterial)
 	
 	//Skeletons
 	//	SkeletonAnimations

@@ -60,8 +60,9 @@
 #include <generated/assets/sprite.h>
 #include <generated/assets/weapon.h>
 #include <generated/assets/maplayerobjects.h>
-#include <generated/assets/material.h>
+#include <generated/assets/pathmaterial.h>
 #include <generated/assets/guicomboboxstyle.h>
 #include <generated/assets/mapzoneobjects.h>
+#include <generated/assets/tilingmaterial.h>
 
 #endif

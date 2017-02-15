@@ -165,7 +165,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 if(MINGW)
-    add_definitions("-static-libgcc -static-libstdc++")
+	SET(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} --static -static-libgcc")
+	SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} --static -static-libgcc -static-libstdc++")
 endif()
 
 ########################################################################

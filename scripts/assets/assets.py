@@ -1971,18 +1971,20 @@ assetsList.append(mapLayerQuads)
 mapLayerTiles_tile = Class("Tile")
 mapLayerTiles_tile.addMember("0.1.0", "Index", TypeUInt8(), "0")
 mapLayerTiles_tile.addMember("0.1.0", "Flags", TypeUInt8(), "0x0")
+mapLayerTiles_tile.addMember("0.2.3", "Brush", TypeUInt8(), "0")
 
 mapLayerTiles = ClassAsset("MapLayerTiles", len(assetsList))
 mapLayerTiles.setInheritance(mainAsset)
 mapLayerTiles.addClass(mapLayerTiles_tile)
 mapLayerTiles.addMember("0.1.0", "ParentPath", TypeAssetPath())
-mapLayerTiles.addMember("0.1.0", "ImagePath", TypeAssetPath())
+mapLayerTiles.addMember("0.1.0", "StylePath", TypeAssetPath())
 mapLayerTiles.addMember("0.1.0", "Color", TypeColor(), "1.0f")
 mapLayerTiles.addMember("0.1.0", "Tile", TypeArray2d(mapLayerTiles_tile))
 mapLayerTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
 mapLayerTiles.addMember("0.2.1", "PositionX", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.1", "PositionY", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.3", "LevelOfDetail", TypeInt32(), "0")
+mapLayerTiles.addMember("0.2.3", "SourcePath", TypeAssetPath())
 
 mapLayerTiles.addPublicLines([
 	"enum",
@@ -2326,7 +2328,7 @@ material_sprite.addMember("0.2.0", "TileLabel1", TypeInt32(), "0")
 material_layer = Class("Layer")
 material_layer.addMember("0.2.0", "Sprite", TypeArray(material_sprite))
 
-material = ClassAsset("Material", len(assetsList))
+material = ClassAsset("PathMaterial", len(assetsList))
 material.setInheritance(mainAsset)
 material.addClass(material_label)
 material.addClass(material_sprite)
@@ -2424,6 +2426,40 @@ mapZoneObjects.addPublicLines([
 ])
 
 assetsList.append(mapZoneObjects)
+
+# TILING MATERIAL ######################################################
+tilingMaterial_cond = Class("Condition")
+tilingMaterial_cond.addMember("0.2.3", "Type", TypeInt32(), "CONDITIONTYPE_NOTNULL")
+tilingMaterial_cond.addMember("0.2.3", "Value", TypeInt32(), "-1")
+tilingMaterial_cond.addMember("0.2.3", "RelPosX", TypeInt32(), "0")
+tilingMaterial_cond.addMember("0.2.3", "RelPosY", TypeInt32(), "0")
+
+tilingMaterial_rule = Class("Rule")
+tilingMaterial_rule.addClass(tilingMaterial_cond)
+tilingMaterial_rule.addMember("0.2.3", "Condition", TypeArray(tilingMaterial_cond))
+tilingMaterial_rule.addMember("0.2.3", "Probability", TypeFloat(), "1.0f")
+tilingMaterial_rule.addMember("0.2.3", "TileIndex", TypeUInt8(), "1")
+tilingMaterial_rule.addMember("0.2.3", "TileFlags", TypeUInt8(), "0x0")
+
+tilingMaterial = ClassAsset("TilingMaterial", len(assetsList))
+tilingMaterial.setInheritance(mainAsset)
+tilingMaterial.addClass(tilingMaterial_rule)
+tilingMaterial.addMember("0.2.3", "ImagePath", TypeAssetPath())
+tilingMaterial.addMember("0.2.3", "Rule", TypeArray(tilingMaterial_rule))
+
+tilingMaterial.addPublicLines([
+	"enum",
+	"{",
+	"	CONDITIONTYPE_NOTNULL = 0,",
+	"	CONDITIONTYPE_NULL,",
+	"	CONDITIONTYPE_INDEX,",
+	"	CONDITIONTYPE_NOTINDEX,",
+	"	CONDITIONTYPE_NOBORDER,",
+	"};",
+	""
+])
+
+assetsList.append(tilingMaterial)
 
 #########################################
 

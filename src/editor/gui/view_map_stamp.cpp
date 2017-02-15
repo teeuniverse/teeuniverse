@@ -28,6 +28,7 @@
 #include <client/maprenderer.h>
 #include <generated/assets/maplayertiles.h>
 #include <generated/assets/mapzonetiles.h>
+#include <shared/autolayer.h>
 
 /* ENTITY PALETTE *****************************************************/
 
@@ -722,8 +723,8 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 			{
 				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer)
-					Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
+				if(pLayer && pLayer->GetSourcePath().IsNull())
+					Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
 			}
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
 			{
@@ -780,7 +781,7 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 			{
 				//Copy tiles
 				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer)
+				if(pLayer && pLayer->GetSourcePath().IsNull())
 				{
 					vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
 					vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
@@ -803,6 +804,7 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 							CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
 							m_TileSelection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
 							m_TileSelection.get_clamp(i, j).SetFlags(pLayer->GetTileFlags(TilePath));
+							m_TileSelection.get_clamp(i, j).SetBrush(pLayer->GetTileBrush(TilePath));
 						}
 					}
 					
@@ -834,7 +836,9 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						for(int i=0; i<m_TileSelection.get_width(); i++)
 						{
 							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
-							m_TileSelection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
+							int Index = pLayer->GetTileIndex(TilePath);
+							m_TileSelection.get_clamp(i, j).SetIndex((Index != 0) ? 1 : 0);
+							m_TileSelection.get_clamp(i, j).SetBrush(Index);
 						}
 					}
 					
@@ -974,7 +978,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{
 		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-		if(pLayer)
+		if(pLayer && pLayer->GetSourcePath().IsNull())
 		{
 			TileX -= pLayer->GetPositionX();
 			TileY -= pLayer->GetPositionY();
@@ -991,6 +995,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 					CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
 					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
 					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_FLAGS, m_TileSelection.get_clamp(i-TileX, j-TileY).GetFlags(), m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapLayerTiles::TILE_BRUSH, m_TileSelection.get_clamp(i-TileX, j-TileY).GetBrush(), m_Token);
 				}
 			}
 		}
@@ -1010,7 +1015,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 				for(int i=MinX; i<MaxX; i++)
 				{
 					CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetIndex(), m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), TilePath, CAsset_MapZoneTiles::TILE_INDEX, m_TileSelection.get_clamp(i-TileX, j-TileY).GetBrush(), m_Token);
 				}
 			}
 			
@@ -1036,7 +1041,20 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 					}
 				}
 			}
-					
+			
+			//Update tile layers that use this zone as source
+			for(int p=0; p<AssetsManager()->GetNumPackages(); p++)
+			{
+				for(int l=0; l<AssetsManager()->GetNumAssets<CAsset_MapLayerTiles>(p); l++)
+				{
+					CAssetPath AutoLayerPath = CAssetPath(CAsset_MapLayerTiles::TypeId, p, l);
+					const CAsset_MapLayerTiles* pAutoLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AutoLayerPath);
+					if(pAutoLayer && pAutoLayer->GetSourcePath() == AssetsEditor()->GetEditedAssetPath())
+					{
+						ApplyTilingMaterials(AssetsManager(), AutoLayerPath, m_Token);
+					}
+				}
+			}
 		}
 	}
 	
@@ -1053,7 +1071,7 @@ void CCursorTool_MapStamp::RenderView()
 		if(!pLayer)
 			return;
 		
-		ImagePath = pLayer->GetImagePath();
+		ImagePath = pLayer->GetStylePath();
 		Color = pLayer->GetColor();
 	}
 	
@@ -1071,6 +1089,13 @@ void CCursorTool_MapStamp::RenderView()
 	{
 		if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 		{
+			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(!pLayer || pLayer->GetSourcePath().IsNotNull())
+			{
+				ViewMap()->MapRenderer()->UnsetGroup();
+				return;
+			}
+			
 			vec2 LayerPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorTilePos.x), floor(CursorTilePos.y)));
 			ViewMap()->MapRenderer()->RenderTiles_Image(m_TileSelection, LayerPos, ImagePath, Color, false);
 		
@@ -1233,8 +1258,18 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 {
 	switch(AssetsEditor()->GetEditedAssetPath().GetType())
 	{
-		case CAsset_MapEntities::TypeId:
 		case CAsset_MapLayerTiles::TypeId:
+			{
+				Enable();
+				
+				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+				if(!pLayer || pLayer->GetSourcePath().IsNotNull())
+					Editable(false);
+				else
+					Editable(true);
+			}
+			break;
+		case CAsset_MapEntities::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
 			Enable();
@@ -1297,6 +1332,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 					int Index = (MinY + j) * pImage->GetGridWidth() + MinX + i;
 					m_TileSelection.get_clamp(i, j).SetIndex(Index);
 					m_TileSelection.get_clamp(i, j).SetFlags(0x0);
+					m_TileSelection.get_clamp(i, j).SetBrush((Index != 0) ? 1 : 0);
 				}
 			}
 		}
@@ -1305,6 +1341,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 			m_TileSelection.resize(1, 1);
 			m_TileSelection.get_clamp(0, 0).SetIndex(0);	
 			m_TileSelection.get_clamp(0, 0).SetFlags(0x0);
+			m_TileSelection.get_clamp(0, 0).SetBrush(0);
 		}
 		m_SelectionEnabled = true;
 	}
@@ -1358,7 +1395,8 @@ void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePat
 		Number = Index.GetId();
 	
 	m_TileSelection.resize(1, 1);
-	m_TileSelection.get_clamp(0, 0).SetIndex(Number);
+	m_TileSelection.get_clamp(0, 0).SetIndex((Number != 0) ? 1 : 0);
+	m_TileSelection.get_clamp(0, 0).SetBrush(Number);
 	m_TileSelection.get_clamp(0, 0).SetFlags(0x0);
 	
 	if(pZoneType && pZoneType->GetDataIntArraySize())

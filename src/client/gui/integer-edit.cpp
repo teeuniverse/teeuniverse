@@ -109,6 +109,11 @@ void CAbstractIntegerEdit::Editable(bool Value)
 	}
 }
 
+bool CAbstractIntegerEdit::IsEditable() const
+{
+	return m_pEntry->IsEditable();
+}
+
 void CAbstractIntegerEdit::SetIntEditStyle(CAssetPath Path)
 {
 	m_IntEditStylePath = Path;

@@ -206,37 +206,37 @@ int main(int argc, char* argv[])
 		//Material: WarnLine
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("warnLine");
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, WarningLine);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, WarningLine);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: BonusLine
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("bonusLine");
 			
-			CSubPath LayerPath = CAsset_Material::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_Material::TYPE_LAYER));
+			CSubPath LayerPath = CAsset_PathMaterial::SubPath_Layer(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_PathMaterial::TYPE_LAYER));
 			
-			CSubPath SpritePath = CAsset_Material::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_Material::TYPE_LAYER_SPRITE));
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_ALIGNMENT, CAsset_Material::SPRITEALIGN_STRETCHED);
-			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_FILLING, CAsset_Material::SPRITEFILLING_STRETCHING);
-			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_PATH, BonusLine);
-			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_SIZE, 0.5f);
-			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_Material::LAYER_SPRITE_POSITION_Y, -16.0f);
+			CSubPath SpritePath = CAsset_PathMaterial::SubPath_LayerSprite(LayerPath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, LayerPath, CAsset_PathMaterial::TYPE_LAYER_SPRITE));
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_ALIGNMENT, CAsset_PathMaterial::SPRITEALIGN_STRETCHED);
+			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FILLING, CAsset_PathMaterial::SPRITEFILLING_STRETCHING);
+			pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_PATH, BonusLine);
+			pKernel->AssetsManager()->SetAssetValue_Hard<vec2>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_SIZE, 0.5f);
+			pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_POSITION_Y, -16.0f);
 		}
 		//Material: BonusZone
 		{
 			CAssetPath MaterialPath;
-			CAsset_Material* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_Material>(&MaterialPath, PackageId);
+			CAsset_PathMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_PathMaterial>(&MaterialPath, PackageId);
 			pAsset->SetName("bonusZone");
 			pAsset->SetTextureEnabled(true);
 			pAsset->SetTextureColor(vec4(0.627f, 0.0f, 0.996f, 0.122f));
