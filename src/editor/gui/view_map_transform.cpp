@@ -328,16 +328,20 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 		
 		if(m_DragType == DRAGTYPE_TRANSLATION)
 		{
-			vec2 NewPivotPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos) - m_ClickDiff;
-		
-			if(ViewMap()->GetGridAlign())
+			ivec2 RelPos = Context()->GetMouseRelPos();
+			if(RelPos.x != 0 || RelPos.y != 0)
 			{
-				NewPivotPos = ViewMap()->MapRenderer()->MapPosToTilePos(NewPivotPos);
-				NewPivotPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(NewPivotPos.x), floor(NewPivotPos.y))) + vec2(16.0f, 16.0f);
-			}
+				vec2 NewPivotPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos) - m_ClickDiff;
 			
-			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
-			m_Transformed = true;
+				if(ViewMap()->GetGridAlign())
+				{
+					NewPivotPos = ViewMap()->MapRenderer()->MapPosToTilePos(NewPivotPos);
+					NewPivotPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(NewPivotPos.x), floor(NewPivotPos.y))) + vec2(16.0f, 16.0f);
+				}
+				
+				AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), SelectedQuad, CAsset_MapLayerQuads::QUAD_PIVOT, NewPivotPos, m_Token);
+				m_Transformed = true;
+			}
 		}
 		else if(m_DragType == DRAGTYPE_GIZMO)
 		{
