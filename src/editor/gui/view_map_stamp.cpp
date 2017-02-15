@@ -1273,6 +1273,7 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 		case CAsset_MapZoneTiles::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
 			Enable();
+			Editable(true);
 			break;
 		default:
 			Disable();

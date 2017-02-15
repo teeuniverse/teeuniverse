@@ -458,6 +458,7 @@ void CCursorTool_MapCrop::Update(bool ParentEnabled)
 		case CAsset_MapGroup::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
 			Enable();
+			Editable(true);
 			break;
 		default:
 			Disable();
