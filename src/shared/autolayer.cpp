@@ -40,22 +40,49 @@ void ApplyTilingMaterials(CAssetsManager* pAssetsManager, CAssetPath LayerPath, 
 		
 		const array2d<CAsset_MapZoneTiles::CTile>& SrcTiles = pSource->GetTileArray();
 		
-		for(int j=0; j<Tiles.get_height(); j++)
+		if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
 		{
-			for(int i=0; i<Tiles.get_width(); i++)
+			const CAsset_TilingMaterial* pMaterial = pAssetsManager->GetAsset<CAsset_TilingMaterial>(pLayer->GetStylePath());
+			if(pMaterial)
 			{
-				Tiles.get_clamp(i, j).SetBrush(SrcTiles.get_clamp(i, j).GetIndex());
+				const std::vector<CAsset_TilingMaterial::CZoneConverter>& ZoneConverter = pMaterial->GetZoneConverterArray();
+				
+				for(int j=0; j<Tiles.get_height(); j++)
+				{
+					for(int i=0; i<Tiles.get_width(); i++)
+					{
+						int IndexFound = -1;
+						
+						for(unsigned int z=0; z<ZoneConverter.size(); z++)
+						{
+							if(ZoneConverter[z].GetZoneTypePath() != pSource->GetZoneTypePath() || ZoneConverter[z].GetOldIndex() != SrcTiles.get_clamp(i, j).GetIndex())
+								continue;
+							
+							IndexFound = ZoneConverter[z].GetNewIndex();
+						}
+						
+						if(IndexFound)
+							Tiles.get_clamp(i, j).SetBrush(IndexFound);
+						else
+							Tiles.get_clamp(i, j).SetBrush(0);
+					}
+				}
 			}
 		}
 	}
 	
 	//Step 2: Create tiles from brush
-	if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+	ApplyTilingMaterials_Tiles(pAssetsManager, Tiles, pLayer->GetStylePath(), 0);
+}
+
+void ApplyTilingMaterials_Tiles(CAssetsManager* pAssetsManager, array2d<CAsset_MapLayerTiles::CTile>& Tiles, CAssetPath StylePath, int Seed)
+{	
+	//Step 2: Create tiles from brush
+	if(StylePath.GetType() == CAsset_TilingMaterial::TypeId)
 	{
-		const CAsset_TilingMaterial* pMaterial = pAssetsManager->GetAsset<CAsset_TilingMaterial>(pLayer->GetStylePath());
+		const CAsset_TilingMaterial* pMaterial = pAssetsManager->GetAsset<CAsset_TilingMaterial>(StylePath);
 		if(pMaterial)
 		{
-			int Seed = 0;
 			std::mt19937 RandomEngine(Seed);
 			std::uniform_real_distribution<float> Distribution(0.0f, 1.0f);
 			
@@ -76,23 +103,7 @@ void ApplyTilingMaterials(CAssetsManager* pAssetsManager, CAssetPath LayerPath, 
 						const std::vector<CAsset_TilingMaterial::CRule::CCondition>& Conditions = pMaterial->GetRuleConditionArray(*RuleIter);
 						for(unsigned int c=0; c<Conditions.size(); c++)
 						{
-							if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTNULL)
-							{
-								if(Tiles.get_clamp(i + Conditions[c].GetRelPosX(), j + Conditions[c].GetRelPosY()).GetBrush() == 0)
-								{
-									IsValidRule = false;
-									break;
-								}
-							}
-							else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NULL)
-							{
-								if(Tiles.get_clamp(i + Conditions[c].GetRelPosX(), j + Conditions[c].GetRelPosY()).GetBrush() != 0)
-								{
-									IsValidRule = false;
-									break;
-								}
-							}
-							else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX)
+							if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX)
 							{
 								if(Tiles.get_clamp(i + Conditions[c].GetRelPosX(), j + Conditions[c].GetRelPosY()).GetBrush() != Conditions[c].GetValue())
 								{

@@ -442,7 +442,7 @@ public:
 		SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 		
 		CImagePicker* pImagePicker = new CPaletteImagePicker(pCursorTool, this, m_ImagePath);
-		pImagePicker->EnableSelection();
+		pImagePicker->SetSelectionType(CPaletteImagePicker::SELECTTYPE_AREA);
 		Add(pImagePicker);
 	}
 	

@@ -43,7 +43,7 @@ public:
 		CImagePicker(pAssetsEditor, ImagePath),
 		m_pImageView(pImageView)
 	{
-		EnableSelection();
+		SetSelectionType(CImagePicker::SELECTTYPE_AREA);
 	}
 };
 

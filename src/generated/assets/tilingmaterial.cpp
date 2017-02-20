@@ -35,8 +35,8 @@
 
 CAsset_TilingMaterial::CRule::CCondition::CCondition()
 {
-	m_Type = CONDITIONTYPE_NOTNULL;
-	m_Value = -1;
+	m_Type = CONDITIONTYPE_INDEX;
+	m_Value = 1;
 	m_RelPosX = 0;
 	m_RelPosY = 0;
 }
@@ -46,6 +46,11 @@ CAsset_TilingMaterial::CRule::CRule()
 	m_Probability = 1.0f;
 	m_TileIndex = 1;
 	m_TileFlags = 0x0;
+}
+
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType)
+{
 }
 
 
@@ -66,6 +71,10 @@ void CAsset_TilingMaterial::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadin
 }
 
 
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule::CCondition& SysType, CTuaType_0_1_0& TuaType)
 {
 }
@@ -79,6 +88,11 @@ void CAsset_TilingMaterial::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadi
 	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
 
 }
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType)
+{
+}
+
 
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CRule::CCondition& SysType)
 {
@@ -97,6 +111,10 @@ void CAsset_TilingMaterial::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadin
 }
 
 
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_0& TuaType)
+{
+}
+
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule::CCondition& SysType, CTuaType_0_2_0& TuaType)
 {
 }
@@ -110,6 +128,11 @@ void CAsset_TilingMaterial::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadi
 	CAsset::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
 }
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType)
+{
+}
+
 
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CRule::CCondition& SysType)
 {
@@ -128,6 +151,10 @@ void CAsset_TilingMaterial::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadin
 }
 
 
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_1& TuaType)
+{
+}
+
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule::CCondition& SysType, CTuaType_0_2_1& TuaType)
 {
 }
@@ -141,6 +168,11 @@ void CAsset_TilingMaterial::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadi
 	CAsset::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
 
 }
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType)
+{
+}
+
 
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CRule::CCondition& SysType)
 {
@@ -159,6 +191,10 @@ void CAsset_TilingMaterial::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadin
 }
 
 
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_2& TuaType)
+{
+}
+
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule::CCondition& SysType, CTuaType_0_2_2& TuaType)
 {
 }
@@ -172,6 +208,14 @@ void CAsset_TilingMaterial::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadi
 	CAsset::CTuaType_0_2_2::Write(pLoadingContext, SysType, TuaType);
 
 }
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType)
+{
+	pLoadingContext->ReadAssetPath(TuaType.m_ZoneTypePath, SysType.m_ZoneTypePath);
+	SysType.m_OldIndex = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_OldIndex);
+	SysType.m_NewIndex = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_NewIndex);
+}
+
 
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CRule::CCondition& SysType)
 {
@@ -206,6 +250,16 @@ void CAsset_TilingMaterial::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadin
 
 	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
 	{
+		const CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3* pData = (const CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ZoneConverter.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ZoneConverter.m_Size);
+		SysType.m_ZoneConverter.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_ZoneConverter[i]);
+		}
+	}
+	
+	{
 		const CAsset_TilingMaterial::CRule::CTuaType_0_2_3* pData = (const CAsset_TilingMaterial::CRule::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Rule.m_Data);
 		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Rule.m_Size);
 		SysType.m_Rule.resize(Size);
@@ -217,6 +271,13 @@ void CAsset_TilingMaterial::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadin
 	
 }
 
+
+void CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_3& TuaType)
+{
+	pLoadingContext->WriteAssetPath(SysType.m_ZoneTypePath, TuaType.m_ZoneTypePath);
+	TuaType.m_OldIndex = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_OldIndex);
+	TuaType.m_NewIndex = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_NewIndex);
+}
 
 void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule::CCondition& SysType, CTuaType_0_2_3& TuaType)
 {
@@ -249,6 +310,16 @@ void CAsset_TilingMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadi
 
 	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
 	{
+		TuaType.m_ZoneConverter.m_Size = SysType.m_ZoneConverter.size();
+		CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3* pData = new CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3[SysType.m_ZoneConverter.size()];
+		for(unsigned int i=0; i<SysType.m_ZoneConverter.size(); i++)
+		{
+			CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_ZoneConverter[i], pData[i]);
+		}
+		TuaType.m_ZoneConverter.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_TilingMaterial::CZoneConverter::CTuaType_0_2_3)*SysType.m_ZoneConverter.size());
+		delete[] pData;
+	}
+	{
 		TuaType.m_Rule.m_Size = SysType.m_Rule.size();
 		CAsset_TilingMaterial::CRule::CTuaType_0_2_3* pData = new CAsset_TilingMaterial::CRule::CTuaType_0_2_3[SysType.m_Rule.size()];
 		for(unsigned int i=0; i<SysType.m_Rule.size(); i++)
@@ -265,6 +336,12 @@ int CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, int 
 {
 	switch(ValueType)
 	{
+		case ZONECONVERTER_ARRAYSIZE:
+			return GetZoneConverterArraySize();
+		case ZONECONVERTER_OLDINDEX:
+			return GetZoneConverterOldIndex(SubPath);
+		case ZONECONVERTER_NEWINDEX:
+			return GetZoneConverterNewIndex(SubPath);
 		case RULE_ARRAYSIZE:
 			return GetRuleArraySize();
 		case RULE_CONDITION_ARRAYSIZE:
@@ -290,6 +367,15 @@ bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, int
 {
 	switch(ValueType)
 	{
+		case ZONECONVERTER_ARRAYSIZE:
+			SetZoneConverterArraySize(Value);
+			return true;
+		case ZONECONVERTER_OLDINDEX:
+			SetZoneConverterOldIndex(SubPath, Value);
+			return true;
+		case ZONECONVERTER_NEWINDEX:
+			SetZoneConverterNewIndex(SubPath, Value);
+			return true;
 		case RULE_ARRAYSIZE:
 			SetRuleArraySize(Value);
 			return true;
@@ -348,6 +434,8 @@ CAssetPath CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPat
 	{
 		case IMAGEPATH:
 			return GetImagePath();
+		case ZONECONVERTER_ZONETYPEPATH:
+			return GetZoneConverterZoneTypePath(SubPath);
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -360,6 +448,9 @@ bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, CAs
 		case IMAGEPATH:
 			SetImagePath(Value);
 			return true;
+		case ZONECONVERTER_ZONETYPEPATH:
+			SetZoneConverterZoneTypePath(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);
 }
@@ -368,6 +459,8 @@ int CAsset_TilingMaterial::AddSubItem(int Type, const CSubPath& SubPath)
 {
 	switch(Type)
 	{
+		case TYPE_ZONECONVERTER:
+			return AddZoneConverter();
 		case TYPE_RULE:
 			return AddRule();
 		case TYPE_RULE_CONDITION:
@@ -380,6 +473,9 @@ int CAsset_TilingMaterial::AddSubItemAt(int Type, const CSubPath& SubPath, int I
 {
 	switch(Type)
 	{
+		case TYPE_ZONECONVERTER:
+			AddAtZoneConverter(Index);
+			return Index;
 		case TYPE_RULE:
 			AddAtRule(Index);
 			return Index;
@@ -394,6 +490,9 @@ void CAsset_TilingMaterial::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
+		case TYPE_ZONECONVERTER:
+			DeleteZoneConverter(SubPath);
+			break;
 		case TYPE_RULE:
 			DeleteRule(SubPath);
 			break;
@@ -407,6 +506,9 @@ void CAsset_TilingMaterial::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{
+		case TYPE_ZONECONVERTER:
+			RelMoveZoneConverter(SubPath, RelMove);
+			break;
 		case TYPE_RULE:
 			RelMoveRule(SubPath, RelMove);
 			break;

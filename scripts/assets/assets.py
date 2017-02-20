@@ -2428,9 +2428,14 @@ mapZoneObjects.addPublicLines([
 assetsList.append(mapZoneObjects)
 
 # TILING MATERIAL ######################################################
+tilingMaterial_zone = Class("ZoneConverter")
+tilingMaterial_zone.addMember("0.2.3", "ZoneTypePath", TypeAssetPath())
+tilingMaterial_zone.addMember("0.2.3", "OldIndex", TypeUInt8())
+tilingMaterial_zone.addMember("0.2.3", "NewIndex", TypeUInt8())
+
 tilingMaterial_cond = Class("Condition")
-tilingMaterial_cond.addMember("0.2.3", "Type", TypeInt32(), "CONDITIONTYPE_NOTNULL")
-tilingMaterial_cond.addMember("0.2.3", "Value", TypeInt32(), "-1")
+tilingMaterial_cond.addMember("0.2.3", "Type", TypeInt32(), "CONDITIONTYPE_INDEX")
+tilingMaterial_cond.addMember("0.2.3", "Value", TypeInt32(), "1")
 tilingMaterial_cond.addMember("0.2.3", "RelPosX", TypeInt32(), "0")
 tilingMaterial_cond.addMember("0.2.3", "RelPosY", TypeInt32(), "0")
 
@@ -2443,15 +2448,15 @@ tilingMaterial_rule.addMember("0.2.3", "TileFlags", TypeUInt8(), "0x0")
 
 tilingMaterial = ClassAsset("TilingMaterial", len(assetsList))
 tilingMaterial.setInheritance(mainAsset)
+tilingMaterial.addClass(tilingMaterial_zone)
 tilingMaterial.addClass(tilingMaterial_rule)
 tilingMaterial.addMember("0.2.3", "ImagePath", TypeAssetPath())
+tilingMaterial.addMember("0.2.3", "ZoneConverter", TypeArray(tilingMaterial_zone))
 tilingMaterial.addMember("0.2.3", "Rule", TypeArray(tilingMaterial_rule))
 
 tilingMaterial.addPublicLines([
 	"enum",
 	"{",
-	"	CONDITIONTYPE_NOTNULL = 0,",
-	"	CONDITIONTYPE_NULL,",
 	"	CONDITIONTYPE_INDEX,",
 	"	CONDITIONTYPE_NOTINDEX,",
 	"	CONDITIONTYPE_NOBORDER,",

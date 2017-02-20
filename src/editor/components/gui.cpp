@@ -2029,6 +2029,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconFillOuter = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFillOuter");
 		m_Path_Sprite_IconLineHide = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineHide");
 		m_Path_Sprite_IconLineShow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineShow");
+		m_Path_Sprite_IconScript = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconScript");
 	
 		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
 		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");

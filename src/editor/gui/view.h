@@ -97,6 +97,7 @@ private:
 	CView* m_pViewSprite;
 	CView* m_pViewMap;
 	CView* m_pViewMaterial;
+	CView* m_pViewTilingMaterial;
 	CView* m_pViewGui;
 	
 public:

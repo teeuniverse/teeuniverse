@@ -43,8 +43,6 @@ class CAsset_TilingMaterial : public CAsset
 public:
 	enum
 	{
-		CONDITIONTYPE_NOTNULL = 0,
-		CONDITIONTYPE_NULL,
 		CONDITIONTYPE_INDEX,
 		CONDITIONTYPE_NOTINDEX,
 		CONDITIONTYPE_NOBORDER,
@@ -54,10 +52,12 @@ public:
 	
 	enum
 	{
+		TYPE_ZONECONVERTER,
 		TYPE_RULE_CONDITION,
 		TYPE_RULE,
 	};
 	
+	static inline CSubPath SubPath_ZoneConverter(int Id0) { return CSubPath(TYPE_ZONECONVERTER, Id0, 0, 0); }
 	static inline CSubPath SubPath_RuleCondition(int Id0, int Id1) { return CSubPath(TYPE_RULE_CONDITION, Id0, Id1, 0); }
 	static inline CSubPath SubPath_Rule(int Id0) { return CSubPath(TYPE_RULE, Id0, 0, 0); }
 	
@@ -65,6 +65,13 @@ public:
 	{
 		NAME = CAsset::NAME,
 		IMAGEPATH,
+		ZONECONVERTER_ARRAYSIZE,
+		ZONECONVERTER_PTR,
+		ZONECONVERTER_ARRAY,
+		ZONECONVERTER_ZONETYPEPATH,
+		ZONECONVERTER_OLDINDEX,
+		ZONECONVERTER_NEWINDEX,
+		ZONECONVERTER,
 		RULE_ARRAYSIZE,
 		RULE_PTR,
 		RULE_ARRAY,
@@ -81,6 +88,25 @@ public:
 		RULE_TILEFLAGS,
 		RULE,
 	};
+	
+	class CIteratorZoneConverter
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorZoneConverter() : m_Index(0), m_Reverse(false) {}
+		CIteratorZoneConverter(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorZoneConverter& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_ZoneConverter(m_Index); }
+		bool operator==(const CIteratorZoneConverter& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorZoneConverter& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorZoneConverter BeginZoneConverter() const { return CIteratorZoneConverter(0, false); }
+	CIteratorZoneConverter EndZoneConverter() const { return CIteratorZoneConverter(m_ZoneConverter.size(), false); }
+	CIteratorZoneConverter ReverseBeginZoneConverter() const { return CIteratorZoneConverter(m_ZoneConverter.size()-1, true); }
+	CIteratorZoneConverter ReverseEndZoneConverter() const { return CIteratorZoneConverter(-1, true); }
 	
 	class CIteratorRule
 	{
@@ -101,6 +127,72 @@ public:
 	CIteratorRule ReverseBeginRule() const { return CIteratorRule(m_Rule.size()-1, true); }
 	CIteratorRule ReverseEndRule() const { return CIteratorRule(-1, true); }
 	
+	class CZoneConverter
+	{
+	public:
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			CAssetPath::CTuaType m_ZoneTypePath;
+			tua_uint8 m_OldIndex;
+			tua_uint8 m_NewIndex;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CZoneConverter& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CZoneConverter& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
+	
+	private:
+		CAssetPath m_ZoneTypePath;
+		uint8 m_OldIndex;
+		uint8 m_NewIndex;
+	
+	public:
+		inline CAssetPath GetZoneTypePath() const { return m_ZoneTypePath; }
+		
+		inline uint8 GetOldIndex() const { return m_OldIndex; }
+		
+		inline uint8 GetNewIndex() const { return m_NewIndex; }
+		
+		inline void SetZoneTypePath(const CAssetPath& Value) { m_ZoneTypePath = Value; }
+		
+		inline void SetOldIndex(uint8 Value) { m_OldIndex = Value; }
+		
+		inline void SetNewIndex(uint8 Value) { m_NewIndex = Value; }
+		
+		void AssetPathOperation(const CAssetPath::COperation& Operation)
+		{
+			Operation.Apply(m_ZoneTypePath);
+		}
+		
+	};
 	class CRule
 	{
 	public:
@@ -369,6 +461,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_ImagePath;
+		CTuaArray m_ZoneConverter;
 		CTuaArray m_Rule;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial& SysType, CTuaType_0_2_3& TuaType);
@@ -377,6 +470,7 @@ public:
 
 private:
 	CAssetPath m_ImagePath;
+	std::vector<CAsset_TilingMaterial::CZoneConverter> m_ZoneConverter;
 	std::vector<CAsset_TilingMaterial::CRule> m_Rule;
 
 public:
@@ -403,6 +497,42 @@ public:
 	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
+	
+	inline int GetZoneConverterArraySize() const { return m_ZoneConverter.size(); }
+	
+	inline const CAsset_TilingMaterial::CZoneConverter* GetZoneConverterPtr() const { return &(m_ZoneConverter.front()); }
+	
+	inline const std::vector<CAsset_TilingMaterial::CZoneConverter>& GetZoneConverterArray() const { return m_ZoneConverter; }
+	inline std::vector<CAsset_TilingMaterial::CZoneConverter>& GetZoneConverterArray() { return m_ZoneConverter; }
+	
+	inline const CAsset_TilingMaterial::CZoneConverter& GetZoneConverter(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_ZoneConverter.size());
+		{
+			return m_ZoneConverter[SubPath.GetId()];
+		}
+	}
+	
+	inline CAssetPath GetZoneConverterZoneTypePath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			return m_ZoneConverter[SubPath.GetId()].GetZoneTypePath();
+		else return CAssetPath::Null();
+	}
+	
+	inline uint8 GetZoneConverterOldIndex(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			return m_ZoneConverter[SubPath.GetId()].GetOldIndex();
+		else return 0;
+	}
+	
+	inline uint8 GetZoneConverterNewIndex(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			return m_ZoneConverter[SubPath.GetId()].GetNewIndex();
+		else return 0;
+	}
 	
 	inline int GetRuleArraySize() const { return m_Rule.size(); }
 	
@@ -501,6 +631,34 @@ public:
 	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
+	inline void SetZoneConverterArraySize(int Value) { m_ZoneConverter.resize(Value); }
+	
+	inline void SetZoneConverter(const CSubPath& SubPath, const CAsset_TilingMaterial::CZoneConverter& Value)
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+		{
+			m_ZoneConverter[SubPath.GetId()] = Value;
+		}
+	}
+	
+	inline void SetZoneConverterZoneTypePath(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			m_ZoneConverter[SubPath.GetId()].SetZoneTypePath(Value);
+	}
+	
+	inline void SetZoneConverterOldIndex(const CSubPath& SubPath, uint8 Value)
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			m_ZoneConverter[SubPath.GetId()].SetOldIndex(Value);
+	}
+	
+	inline void SetZoneConverterNewIndex(const CSubPath& SubPath, uint8 Value)
+	{
+		if(SubPath.GetId() < m_ZoneConverter.size())
+			m_ZoneConverter[SubPath.GetId()].SetNewIndex(Value);
+	}
+	
 	inline void SetRuleArraySize(int Value) { m_Rule.resize(Value); }
 	
 	inline void SetRule(const CSubPath& SubPath, const CAsset_TilingMaterial::CRule& Value)
@@ -565,6 +723,13 @@ public:
 			m_Rule[SubPath.GetId()].SetTileFlags(Value);
 	}
 	
+	inline int AddZoneConverter()
+	{
+		int Id = m_ZoneConverter.size();
+		m_ZoneConverter.emplace_back();
+		return Id;
+	}
+	
 	inline int AddRule()
 	{
 		int Id = m_Rule.size();
@@ -574,17 +739,25 @@ public:
 	
 	inline int AddRuleCondition(const CSubPath& SubPath) { return m_Rule[SubPath.GetId()].AddCondition(); }
 	
+	inline void AddAtZoneConverter(int Index) { m_ZoneConverter.insert(m_ZoneConverter.begin() + Index, CAsset_TilingMaterial::CZoneConverter()); }
+	
 	inline void AddAtRule(int Index) { m_Rule.insert(m_Rule.begin() + Index, CAsset_TilingMaterial::CRule()); }
 	
 	inline void AddAtRuleCondition(const CSubPath& SubPath, int Index) { m_Rule[SubPath.GetId()].AddAtCondition(Index); }
+	
+	inline void DeleteZoneConverter(const CSubPath& SubPath) { m_ZoneConverter.erase(m_ZoneConverter.begin() + SubPath.GetId()); }
 	
 	inline void DeleteRule(const CSubPath& SubPath) { m_Rule.erase(m_Rule.begin() + SubPath.GetId()); }
 	
 	inline void DeleteRuleCondition(const CSubPath& SubPath) { m_Rule[SubPath.GetId()].DeleteCondition(SubPath.PopId()); }
 	
+	inline void RelMoveZoneConverter(const CSubPath& SubPath, int RelMove) { relative_move(m_ZoneConverter, SubPath.GetId(), RelMove); }
+	
 	inline void RelMoveRule(const CSubPath& SubPath, int RelMove) { relative_move(m_Rule, SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveRuleCondition(const CSubPath& SubPath, int RelMove) { m_Rule[SubPath.GetId()].RelMoveCondition(SubPath.PopId(), RelMove); }
+	
+	inline bool IsValidZoneConverter(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ZoneConverter.size()); }
 	
 	inline bool IsValidRule(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Rule.size()); }
 	
@@ -593,6 +766,10 @@ public:
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_ImagePath);
+		for(unsigned int i=0; i<m_ZoneConverter.size(); i++)
+		{
+			m_ZoneConverter[i].AssetPathOperation(Operation);
+		}
 		for(unsigned int i=0; i<m_Rule.size(); i++)
 		{
 			m_Rule[i].AssetPathOperation(Operation);

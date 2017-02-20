@@ -16,12 +16,30 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <shared/components/assetsmanager.h>
+#ifndef __CLIENT_ASSETSEDITOR_VIEWTILINGMATERIAL__
+#define __CLIENT_ASSETSEDITOR_VIEWTILINGMATERIAL__
 
-#ifndef __SHARED_AUTOLAYER__
-#define __SHARED_AUTOLAYER__
+#include <client/gui/listlayout.h>
+#include <editor/gui/view.h>
+#include <shared/tl/array2d.h>
+#include <generated/assets/maplayertiles.h>
 
-void ApplyTilingMaterials_Tiles(CAssetsManager* pAssetsManager, array2d<CAsset_MapLayerTiles::CTile>& Tiles, CAssetPath StylePath, int Seed);
-void ApplyTilingMaterials(CAssetsManager* pAssetsManager, CAssetPath LayerPath, int Token);
+class CViewTilingMaterial : public CViewManager::CView
+{	
+protected:
+	std::unique_ptr<class CMapRenderer> m_pMapRenderer;
+	array2d<CAsset_MapLayerTiles::CTile> m_MapPreview;
+	CAssetPath m_MaterialApplied;
+	
+public:
+	CViewTilingMaterial(CGuiEditor* pAssetsEditor);
+	virtual void OnButtonClick(int Button);
+	virtual void RenderView();
+	
+	inline class CMapRenderer* MapRenderer() { return m_pMapRenderer.get(); }
+	
+	void GenerateMapPreview();
+	void RefreshMapPreview();
+};
 
 #endif

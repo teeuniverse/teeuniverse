@@ -35,23 +35,17 @@
 	pSprite->SetHeight(h);\
 }
 
-#define CREATE_TILINGMATERIAL_CONDITION_NOTNULL(relx, rely) {\
-	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NOTNULL);\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
-}
-
-#define CREATE_TILINGMATERIAL_CONDITION_NULL(relx, rely) {\
-	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NULL);\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
-	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
-}
-
 #define CREATE_TILINGMATERIAL_CONDITION_INDEX(relx, rely, index) {\
 	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_INDEX);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_VALUE, index);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
+}
+
+#define CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(relx, rely, index) {\
+	CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, RulePath, CAsset_TilingMaterial::TYPE_RULE_CONDITION));\
+	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX);\
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_VALUE, index);\
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, relx);\
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, CondPath, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, rely);\
@@ -86,15 +80,15 @@ int main(int argc, char* argv[])
 	CAssetPath ImageEntitiesPath = CreateNewImage(pKernel, PackageId, "entities", "images/univ_teeworlds/entities.png", CStorage::TYPE_ALL, 4, 4);
 	pKernel->AssetsManager()->SetAssetValue_Hard<int>(ImageEntitiesPath, CSubPath::Null(), CAsset_Image::TEXELSIZE, 768);
 	
+	CAssetPath TeeWorldsZoneTypePath;
 	int GroupId_Physics = -1;
 	int GroupId_Death = -1;
 
 	//Zones
 	{
-		CAssetPath AssetPath;
 		CSubPath SubPath;
 		
-		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&AssetPath, PackageId);
+		CAsset_ZoneType* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_ZoneType>(&TeeWorldsZoneTypePath, PackageId);
 		pAsset->SetName("teeworlds");
 		pAsset->SetImagePath(ImageZonesPath);
 		
@@ -495,51 +489,57 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(UnhookableImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 23);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 24);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 25);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 8);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 9);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 40);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 41);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 		}
 		//TilingMaterial: smallBlueUnhookable
@@ -550,51 +550,57 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(UnhookableImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 17);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 18);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 2);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 34);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 		}
 		//TilingMaterial: smallRedUnhookable
@@ -605,51 +611,57 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(UnhookableImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 144);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 145);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 146);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 129);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 130);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 160);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 161);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 162);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 0.125f);
-				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 3);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 		}
 		
@@ -701,216 +713,228 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(MainImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 2);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 3);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 66);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 67);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 68);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			//top
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			//right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//bottom
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 52);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			//left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 20);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 4);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 36);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//inside corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			//inside corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			//right transition
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//left transition
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 38);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//left grass
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 19);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -2);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -2, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 1, 1);
 			}
 			//right grass
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 17);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -2);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -2, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 1, 1);
 			}
 			//top corner right 2
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 2);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 2, 1);
 			}
 			//top corner left 2
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 2);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 2, 1);
 			}
 		}
 		
@@ -922,140 +946,152 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(MainImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 13);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 29);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 42);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 43);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 44);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 45);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/150.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			//top
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 26);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			//right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 25);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//bottom
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 10);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			//left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 24);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 8);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 9);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 40);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 41);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//inside corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 11);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 12);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 27);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			//inside corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 28);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 		}
 
@@ -1261,7 +1297,7 @@ int main(int argc, char* argv[])
 		CreateNewImage(pKernel, PackageId, "jungleBackground", "images/env_jungle/jungle_background.png", CStorage::TYPE_ALL, 1, 1);
 		CreateNewImage(pKernel, PackageId, "jungleMidground", "images/env_jungle/jungle_midground.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		
-		//TilingMaterial: Cave
+		//TilingMaterial: Jungle
 		{
 			CAssetPath MaterialPath;
 			CAsset_TilingMaterial* pAsset = pKernel->AssetsManager()->NewAsset_Hard<CAsset_TilingMaterial>(&MaterialPath, PackageId);
@@ -1269,287 +1305,299 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(MainImagePath);
 			
 			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 1);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
+				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
+				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
+				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, 1);
+			}
+			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
 			}
 			//random bricks
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 66);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/200.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 67);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/200.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 				CREATE_TILINGMATERIAL_CONDITION_NOBORDER(0, 0);
 			}
 			//top
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 16);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 96);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 97);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 98);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/15.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
 			}
 			//right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//bottom
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 52);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 99);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 100);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 101);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/10.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
 			}
 			//left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 21);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 5);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
 			}
 			//corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 37);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 39);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
 			}
 			//inside corner top-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner top-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 54);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 53);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/2.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//inside corner bottom-left
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 50);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			//inside corner bottom-right
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 48);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 49);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 51);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP);
 				pKernel->AssetsManager()->SetAssetValue_Hard<float>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_PROBABILITY, 1.0f/3.0f);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, -1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, -1, 1);
 			}
 			//right bottom
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//left bottom
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 22);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 1, 1);
 			}
 			//top corner right 2
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 33);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(1, 1, 1);
 			}
 			//top corner left 2
 			{
 				CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_RULE));
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, RulePath, CAsset_TilingMaterial::RULE_TILEINDEX, 32);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(0, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(0, -1);
-				CREATE_TILINGMATERIAL_CONDITION_NULL(-1, 0);
-				CREATE_TILINGMATERIAL_CONDITION_NOTNULL(-1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(0, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(0, -1, 1);
+				CREATE_TILINGMATERIAL_CONDITION_NOTINDEX(-1, 0, 1);
+				CREATE_TILINGMATERIAL_CONDITION_INDEX(-1, 1, 1);
 			}
 		}
 		

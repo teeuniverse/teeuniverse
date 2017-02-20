@@ -21,6 +21,7 @@
 #include <editor/gui/view_sprite.h>
 #include <editor/gui/view_map.h>
 #include <editor/gui/view_material.h>
+#include <editor/gui/view_tilingmaterial.h>
 #include <editor/gui/view_gui.h>
 #include <editor/components/gui.h>
 #include <shared/components/assetsmanager.h>
@@ -181,12 +182,14 @@ CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 	m_pViewSprite(NULL),
 	m_pViewMap(NULL),
 	m_pViewMaterial(NULL),
+	m_pViewTilingMaterial(NULL),
 	m_pViewGui(NULL)
 {
 	m_pViewImage = new CViewImage(AssetsEditor());
 	m_pViewSprite = new CViewSprite(AssetsEditor());
 	m_pViewMap = new CViewMap(AssetsEditor());
 	m_pViewMaterial = new CViewMaterial(AssetsEditor());
+	m_pViewTilingMaterial = new CViewTilingMaterial(AssetsEditor());
 	m_pViewGui = new CViewGui(AssetsEditor());
 }
 
@@ -197,6 +200,7 @@ void CViewManager::Destroy()
 	m_pViewSprite->Destroy();
 	m_pViewMap->Destroy();
 	m_pViewMaterial->Destroy();
+	m_pViewTilingMaterial->Destroy();
 	m_pViewGui->Destroy();
 	
 	gui::CWidget::Destroy();
@@ -224,6 +228,9 @@ void CViewManager::Update(bool ParentEnabled)
 			break;
 		case CAsset_PathMaterial::TypeId:
 			m_pCurrentView = m_pViewMaterial;
+			break;
+		case CAsset_TilingMaterial::TypeId:
+			m_pCurrentView = m_pViewTilingMaterial;
 			break;
 		case CAsset_GuiRectStyle::TypeId:
 		case CAsset_GuiLineStyle::TypeId:

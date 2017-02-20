@@ -17,6 +17,7 @@
  */
 
 #include <editor/gui/assetsinspector.h>
+#include <editor/gui/image_picker.h>
 #include <editor/components/gui.h>
 #include <shared/components/assetsmanager.h>
 #include <client/components/assetsrenderer.h>
@@ -1813,6 +1814,158 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_PathMaterial_Asset()
 
 /* TILING MATERIAL ****************************************************/
 
+class CNewSubItemButton_TilingMaterial_ZoneConv : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	int m_Type;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath, m_Type, Token);
+		CSubPath SubPath = CAsset_TilingMaterial::SubPath_ZoneConverter(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_ZoneConv(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, LString, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath),
+		m_Type(Type)
+	{
+		
+	}
+};
+
+class CNewSubItemButton_TilingMaterial_Rule : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	int m_Type;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath, m_Type, Token);
+		CSubPath SubPath = CAsset_TilingMaterial::SubPath_Rule(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_Rule(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, LString, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath),
+		m_Type(Type)
+	{
+		
+	}
+};
+
+class CTileChooser : public gui::CButton
+{
+public:
+	class CTilePicker : public CImagePicker
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		gui::CPopup* m_pPopup;
+	protected:
+		virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY)
+		{
+			int Index = MinY*16 + MinX;
+			AssetsManager()->SetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, Index);
+			m_pPopup->Close();
+		}
+		
+	public:
+		CTilePicker(CGuiEditor* pAssetsEditor, gui::CPopup* pPopup, CAssetPath ImagePath) :
+			CImagePicker(pAssetsEditor, ImagePath),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pPopup(pPopup)
+		{
+			SetSelectionType(CImagePicker::SELECTTYPE_TILE);
+		}
+	};
+	
+	class CTileChooserPopup : public gui::CPopup
+	{
+	public:
+		CTileChooserPopup(CGuiEditor* pAssetsEditor, gui::CRect& CreationRect) :
+			gui::CPopup(pAssetsEditor, CreationRect, 512, 512, gui::CPopup::ALIGNMENT_SIDE)
+		{
+			CAssetPath ImagePath;
+			
+			const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(pAssetsEditor->GetEditedAssetPath());
+			if(pMaterial)
+				ImagePath = pMaterial->GetImagePath();
+			
+			Add(new CTilePicker(pAssetsEditor, this, ImagePath));
+		}
+		
+		virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+	};
+
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Index;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		Context()->DisplayPopup(new CTileChooserPopup(m_pAssetsEditor, m_DrawRect));
+	}
+	
+public:
+	CTileChooser(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Unknown tile")),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Index(-1)
+	{
+		
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(IsEnabled() && ParentEnabled)
+		{
+			if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+				Editable(false);
+			else
+				Editable(true);
+		}
+		
+		int NewIndex = AssetsManager()->GetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, -1);
+		
+		if(NewIndex != m_Index)
+		{
+			m_Index = NewIndex;
+			
+			if(NewIndex < 0)
+				SetText(_LSTRING("Unknown tile"));
+			else
+			{
+				CLocalizableString LString(_("Tile #{int:TileId}"));
+				LString.AddInteger("TileId", NewIndex);
+				SetText(LString);
+			}
+		}
+		
+		gui::CButton::Update(ParentEnabled);
+	}
+};
 
 class CSubItemList_TilingMaterial_Rule : public CSubItemList
 {
@@ -1820,26 +1973,50 @@ protected:
 	virtual void GenerateList()
 	{
 		Clear();
-		const CAsset_TilingMaterial* pLayer = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
-		if(pLayer)
+		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pMaterial)
 		{
+			CLocalizableString LString_ZoneConverter(_("Zone relation: {str:ZoneName} #{int:OldIndex} → #{int:NewIndex}"));
 			CLocalizableString LString_Rule(_("Rule {int:Id}"));
 			CLocalizableString LString_Condition(_("Condition {int:Id}"));
 			
+			CAsset_TilingMaterial::CIteratorZoneConverter ConvIter;
+			int ConvCounter = 1;
+			for(ConvIter = pMaterial->BeginZoneConverter(); ConvIter != pMaterial->EndZoneConverter(); ++ConvIter)
+			{
+				gui::CExpand* pExpand = new gui::CExpand(Context());
+				Add(pExpand, false);
+				
+				CAssetPath ZoneType = pMaterial->GetZoneConverterZoneTypePath(*ConvIter);
+				
+				LString_ZoneConverter.ClearParameters();
+				LString_ZoneConverter.AddString("ZoneName", AssetsManager()->GetAssetValue<const char*>(ZoneType, CSubPath::Null(), CAsset_ZoneType::NAME, NULL));
+				LString_ZoneConverter.AddInteger("OldIndex", pMaterial->GetZoneConverterOldIndex(*ConvIter));
+				LString_ZoneConverter.AddInteger("NewIndex", pMaterial->GetZoneConverterNewIndex(*ConvIter));
+				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *ConvIter, LString_ZoneConverter, m_pAssetsEditor->m_Path_Sprite_IconZoneType));
+			
+				ConvCounter++;
+			}
+			
+			if(ConvCounter > 0)
+			{
+				AddSeparator();
+			}
+			
 			CAsset_TilingMaterial::CIteratorRule RuleIter;
 			int RuleCounter = 1;
-			for(RuleIter = pLayer->BeginRule(); RuleIter != pLayer->EndRule(); ++RuleIter)
+			for(RuleIter = pMaterial->BeginRule(); RuleIter != pMaterial->EndRule(); ++RuleIter)
 			{
 				gui::CExpand* pExpand = new gui::CExpand(Context());
 				Add(pExpand, false);
 				
 				LString_Rule.ClearParameters();
 				LString_Rule.AddInteger("Id", RuleCounter);
-				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *RuleIter, LString_Rule, m_pAssetsEditor->m_Path_Sprite_IconNone));
+				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *RuleIter, LString_Rule, m_pAssetsEditor->m_Path_Sprite_IconScript));
 			
 				RuleCounter++;
 				
-				const std::vector<CAsset_TilingMaterial::CRule::CCondition>& Conditions = pLayer->GetRuleConditionArray(*RuleIter);
+				const std::vector<CAsset_TilingMaterial::CRule::CCondition>& Conditions = pMaterial->GetRuleConditionArray(*RuleIter);
 				for(unsigned int i=0; i<Conditions.size(); i++)
 				{
 					CSubPath ConditionSubPath = CAsset_TilingMaterial::SubPath_RuleCondition((*RuleIter).GetId(), i);
@@ -1857,6 +2034,35 @@ public:
 	{ }	
 };
 
+
+class CNewSubItemButton_TilingMaterial_Condition : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pMaterial && pMaterial->IsValidRule(m_pAssetsEditor->GetEditedSubPath()))
+		{
+			int Token = AssetsManager()->GenerateToken();
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::TYPE_RULE_CONDITION, Token);
+			
+			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+		}
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_Condition(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add Condition"), pAssetsEditor->m_Path_Sprite_IconSystem),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
 gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 {
 	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
@@ -1866,14 +2072,30 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	AddField_AssetProperties(pTab);
 	
 	AddField_ImageTiles(pTab, CAsset_TilingMaterial::IMAGEPATH, _LSTRING("Image"));
+
+	{
+		gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
+		pTab->Add(pLayout, false);
+		pLayout->Add(new CNewSubItemButton_TilingMaterial_ZoneConv(AssetsEditor(), CAsset_TilingMaterial::TYPE_ZONECONVERTER, CSubPath::Null(), _LSTRING("Add Zone Relation"), AssetsEditor()->m_Path_Sprite_IconZoneTiles), true);
+		pLayout->Add(new CNewSubItemButton_TilingMaterial_Rule(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE, CSubPath::Null(), _LSTRING("Add Rule"), AssetsEditor()->m_Path_Sprite_IconSystem), true);
+	}
 	
 	pTab->Add(new CSubItemList_TilingMaterial_Rule(AssetsEditor()), true);
+	
+	//Zone converter
+	gui::CVListLayout* pConvEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_ZONECONVERTER);
+	pTab->Add(pConvEditor, false);
+	AddField_Asset(pConvEditor, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, CAsset_ZoneType::TypeId, _LSTRING("Input zone type"));
+	AddField_Integer(pConvEditor, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, _LSTRING("Input zone index"));
+	AddField_Integer(pConvEditor, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, _LSTRING("Output index"));
 	
 	//Rule
 	gui::CVListLayout* pRuleEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE);
 	pTab->Add(pRuleEditor, false);
 	
-	AddField_Integer(pRuleEditor, CAsset_TilingMaterial::RULE_TILEINDEX, _LSTRING("Tile Index"));
+	pRuleEditor->Add(new CNewSubItemButton_TilingMaterial_Condition(AssetsEditor()), false);
+	
+	AddField(pRuleEditor, new CTileChooser(AssetsEditor()), _LSTRING("Tile"));
 	
 	AddField_Flag(pRuleEditor, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP, _LSTRING("Horizontal Flip"));
 	AddField_Flag(pRuleEditor, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP, _LSTRING("Vertical Flip"));
@@ -1883,7 +2105,13 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	gui::CVListLayout* pConditionEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE_CONDITION);
 	pTab->Add(pConditionEditor, false);
 	
-	AddField_Integer(pConditionEditor, CAsset_TilingMaterial::RULE_CONDITION_TYPE, _LSTRING("Type"));
+	{
+		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_TilingMaterial::RULE_CONDITION_TYPE);
+		pComboBox->Add(_LSTRING("Equal to Index..."), AssetsEditor()->m_Path_Sprite_IconNone);
+		pComboBox->Add(_LSTRING("Not equal to Index..."), AssetsEditor()->m_Path_Sprite_IconNone);
+		pComboBox->Add(_LSTRING("Not in layer border"), AssetsEditor()->m_Path_Sprite_IconNone);
+		AddField(pConditionEditor, pComboBox, _LSTRING("Type"));
+	}
 	AddField_Integer(pConditionEditor, CAsset_TilingMaterial::RULE_CONDITION_VALUE, _LSTRING("Value"));
 	AddField_Integer(pConditionEditor, CAsset_TilingMaterial::RULE_CONDITION_RELPOSX, _LSTRING("Position X"));
 	AddField_Integer(pConditionEditor, CAsset_TilingMaterial::RULE_CONDITION_RELPOSY, _LSTRING("Position Y"));

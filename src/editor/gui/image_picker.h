@@ -24,10 +24,18 @@
 
 class CImagePicker : public gui::CWidget
 {
+public:
+	enum
+	{
+		SELECTTYPE_NONE=0,
+		SELECTTYPE_TILE,
+		SELECTTYPE_AREA,
+	};
+	
 protected:
 	class CGuiEditor* m_pAssetsEditor;
 	CAssetPath m_ImagePath;
-	bool m_SelectionEnabled;
+	int m_SelectionType;
 	ivec2 m_Pivot;
 	bool m_DragSelection;
 
@@ -45,7 +53,7 @@ public:
 	virtual void OnButtonRelease(int Button);
 	
 	inline void SetImage(const CAssetPath& ImagePath) { m_ImagePath = ImagePath; }
-	inline void EnableSelection() { m_SelectionEnabled = true; }
+	inline void SetSelectionType(int Type) { m_SelectionType = Type; }
 };
 
 #endif

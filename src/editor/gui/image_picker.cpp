@@ -26,7 +26,7 @@ CImagePicker::CImagePicker(CGuiEditor* pAssetsEditor, CAssetPath ImagePath) :
 	gui::CWidget(pAssetsEditor),
 	m_pAssetsEditor(pAssetsEditor),
 	m_ImagePath(ImagePath),
-	m_SelectionEnabled(false),
+	m_SelectionType(SELECTTYPE_NONE),
 	m_DragSelection(false)
 {
 	
@@ -66,24 +66,46 @@ void CImagePicker::ComputeImageSizes(const CAsset_Image* pImage, float& x0, floa
 	
 void CImagePicker::OnButtonClick(int Button)
 {
-	if(!m_SelectionEnabled || Button != KEY_MOUSE_1)
+	if(Button != KEY_MOUSE_1)
 		return;
 	
-	const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
-	if(!pImage)
-		return;
-	
-	float x0;
-	float y0;
-	float xStep;
-	float yStep;
-	ComputeImageSizes(pImage, x0, y0, xStep, yStep);
-	
-	ivec2 MousePos = Context()->GetMousePos();
-	
-	m_Pivot.x = clamp((int)((MousePos.x - x0) / xStep), 0, pImage->GetGridWidth()-1);
-	m_Pivot.y = clamp((int)((MousePos.y - y0) / yStep), 0, pImage->GetGridHeight()-1);
-	m_DragSelection = true;
+	if(m_SelectionType == SELECTTYPE_AREA)
+	{
+		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
+		if(!pImage)
+			return;
+		
+		float x0;
+		float y0;
+		float xStep;
+		float yStep;
+		ComputeImageSizes(pImage, x0, y0, xStep, yStep);
+		
+		ivec2 MousePos = Context()->GetMousePos();
+		
+		m_Pivot.x = clamp((int)((MousePos.x - x0) / xStep), 0, pImage->GetGridWidth()-1);
+		m_Pivot.y = clamp((int)((MousePos.y - y0) / yStep), 0, pImage->GetGridHeight()-1);
+		m_DragSelection = true;
+	}
+	else if(m_SelectionType == SELECTTYPE_TILE)
+	{
+		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
+		if(!pImage)
+			return;
+		
+		float x0;
+		float y0;
+		float xStep;
+		float yStep;
+		ComputeImageSizes(pImage, x0, y0, xStep, yStep);
+		
+		ivec2 MousePos = Context()->GetMousePos();
+		
+		m_Pivot.x = clamp((int)((MousePos.x - x0) / xStep), 0, pImage->GetGridWidth()-1);
+		m_Pivot.y = clamp((int)((MousePos.y - y0) / yStep), 0, pImage->GetGridHeight()-1);
+		
+		OnImagePicked(m_Pivot.x, m_Pivot.y, m_Pivot.x+1, m_Pivot.y+1);
+	}
 }
 
 void CImagePicker::OnButtonRelease(int Button)
@@ -93,7 +115,7 @@ void CImagePicker::OnButtonRelease(int Button)
 	
 	m_DragSelection = false;
 	
-	if(m_SelectionEnabled)
+	if(m_SelectionType == SELECTTYPE_AREA)
 	{
 		const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(m_ImagePath);
 		if(!pImage)

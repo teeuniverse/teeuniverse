@@ -62,6 +62,7 @@ public:
 	
 	void RenderGrid(float Step, vec4 Color);
 	void RenderGrid_LayerTiles(CAssetPath LayerPath);
+	void RenderTiles_Style(const array2d<CAsset_MapLayerTiles::CTile>& Tiles, vec2 Pos, CAssetPath StylePath, vec4 Color, bool Repeat);
 	void RenderTiles_Image(const array2d<CAsset_MapLayerTiles::CTile>& Tiles, vec2 Pos, CAssetPath ImagePath, vec4 Color, bool Repeat);
 	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapLayerTiles::CTile>& Tiles, vec2 Pos, vec4 Color, bool Repeat);
 	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile>& Tiles, vec2 Pos, vec4 Color, bool Repeat);
