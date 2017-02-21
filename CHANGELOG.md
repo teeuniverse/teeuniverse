@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.2.3]
+### Added
+- Automatic tiling
+- Level of detail parameter for map layers (similar to "detail" option in TeeWorlds)
+
+### Fixed
+- Click on a quad don't change the rotation/scaling mode
+- The stamp tool doesn't select the correct tiles in negative coordinates
+
 ## [0.2.2]
 ### Added
 - Support of Ninslash maps
