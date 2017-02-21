@@ -136,9 +136,6 @@ void CViewTilingMaterial::OnButtonClick(int Button)
 				int ConditionFound = -1;
 				for(unsigned int c=0; c<Conditions.size(); c++)
 				{
-					if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
-						continue;
-					
 					if(Conditions[c].GetRelPosX() == X && Conditions[c].GetRelPosY() == Y)
 					{
 						ConditionFound = c;
@@ -148,9 +145,10 @@ void CViewTilingMaterial::OnButtonClick(int Button)
 				
 				if(ConditionFound >= 0)
 				{
+					CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), ConditionFound);
 					if(Button == KEY_MOUSE_1)
 					{
-						AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CAsset_TilingMaterial::SubPath_RuleCondition(RulePath.GetId(), ConditionFound));
+						AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CondPath);
 					}
 					else if(Button == KEY_MOUSE_2)
 					{
@@ -158,6 +156,24 @@ void CViewTilingMaterial::OnButtonClick(int Button)
 						
 						CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 						pState->m_NumUpdates++;
+					}
+					else if(Button == KEY_MOUSE_3)
+					{
+						int Type = AssetsManager()->GetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, 0);
+						Type = (Type+1)%CAsset_TilingMaterial::NUM_CONDITIONTYPES;
+						AssetsManager()->SetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), CondPath, CAsset_TilingMaterial::RULE_CONDITION_TYPE, Type);
+						switch(Type)
+						{
+							case CAsset_TilingMaterial::CONDITIONTYPE_INDEX:
+							case CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX:
+								AssetsManager()->SetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), CondPath, CAsset_TilingMaterial::RULE_CONDITION_VALUE, 1);
+								break;
+							case CAsset_TilingMaterial::CONDITIONTYPE_LABEL:
+							case CAsset_TilingMaterial::CONDITIONTYPE_NOTLABEL:
+							case CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER:
+								AssetsManager()->SetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), CondPath, CAsset_TilingMaterial::RULE_CONDITION_VALUE, 0);
+								break;
+						}
 					}
 				}
 				else if(Button == KEY_MOUSE_1)
@@ -225,22 +241,88 @@ void CViewTilingMaterial::RenderView()
 			const std::vector<CAsset_TilingMaterial::CRule::CCondition>& Conditions = pMaterial->GetRuleConditionArray(RulePath);
 			for(unsigned int c=0; c<Conditions.size(); c++)
 			{
-				if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
-					continue;
-				
 				vec2 V0 = MapRenderer()->MapPosToScreenPos(MapRenderer()->TilePosToMapPos(vec2(Conditions[c].GetRelPosX()+1, Conditions[c].GetRelPosY()+1)) + LayerShift);
 				vec2 V3 = MapRenderer()->MapPosToScreenPos(MapRenderer()->TilePosToMapPos(vec2(Conditions[c].GetRelPosX()+2, Conditions[c].GetRelPosY()+2)) + LayerShift);
 				
-				if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX)
-					Graphics()->SetColor(vec4(0.5f, 1.0f, 0.5f, 0.5f), true);
-				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX)
-					Graphics()->SetColor(vec4(1.0f, 0.5f, 0.5f, 0.5f), true);
+				if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_LABEL)
+					Graphics()->SetColor(vec4(0.7f, 1.0f, 0.7f, 0.5f), true);
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTLABEL)
+					Graphics()->SetColor(vec4(1.0f, 0.7f, 0.7f, 0.5f), true);
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
+					Graphics()->SetColor(vec4(1.0f, 0.7f, 1.0f, 0.5f), true);
 				
 				CGraphics::CQuadItem QuadItem(V0.x, V0.y, V3.x - V0.x, V3.y - V0.y);
 				Graphics()->QuadsDrawTL(&QuadItem, 1);
 			}
 			
 			Graphics()->QuadsEnd();
+			
+			CLocalizableString LString_Index(_("Index {int:Index}"));
+			CLocalizableString LString_Label(_("Label {int:Index}"));
+			CLocalizableString LString_NoBorder(_("No Border"));
+			dynamic_string Buffer;
+			
+			for(unsigned int c=0; c<Conditions.size(); c++)
+			{
+				vec2 V0 = MapRenderer()->MapPosToScreenPos(MapRenderer()->TilePosToMapPos(vec2(Conditions[c].GetRelPosX()+1, Conditions[c].GetRelPosY()+1)) + LayerShift);
+				vec2 V3 = MapRenderer()->MapPosToScreenPos(MapRenderer()->TilePosToMapPos(vec2(Conditions[c].GetRelPosX()+2, Conditions[c].GetRelPosY()+2)) + LayerShift);
+				vec2 Pos = (V0 + V3)/2.0f;
+				
+				CTextRenderer::CTextCache TextCache;
+				TextCache.SetText(Buffer.buffer());
+				
+				if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX)
+				{
+					CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(Conditions[c].GetValue());
+					if(pMaterial->IsValidIndex(IndexPath))
+						TextCache.SetText(pMaterial->GetIndexTitle(IndexPath));
+					else
+					{
+						LString_Index.ClearParameters();
+						LString_Index.AddInteger("Index", Conditions[c].GetValue());
+					
+						Buffer.clear();
+						Localization()->Format(Buffer, NULL, LString_Index);
+						
+						TextCache.SetText(Buffer.buffer());
+					}
+				}
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_LABEL || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTLABEL)
+				{
+					CSubPath LabelPath = CAsset_TilingMaterial::SubPath_Label(Conditions[c].GetValue());
+					if(pMaterial->IsValidLabel(LabelPath))
+						TextCache.SetText(pMaterial->GetLabelTitle(LabelPath));
+					else
+					{
+						LString_Label.ClearParameters();
+						LString_Label.AddInteger("Index", Conditions[c].GetValue());
+					
+						Buffer.clear();
+						Localization()->Format(Buffer, NULL, LString_Label);
+						
+						TextCache.SetText(Buffer.buffer());
+					}
+				}
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
+				{
+					Buffer.clear();
+					Localization()->Format(Buffer, NULL, LString_NoBorder);
+					TextCache.SetText(Buffer.buffer());
+				}
+				
+				vec4 TextColor = 1.0f;
+				if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_INDEX || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_LABEL)
+					TextColor = vec4(0.0f, 0.5f, 0.0f, 1.0f);
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTINDEX || Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTLABEL)
+					TextColor = vec4(0.5f, 0.0f, 0.0f, 1.0f);
+				else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
+					TextColor = vec4(0.5f, 0.0f, 0.5f, 1.0f);
+				
+				TextCache.SetBoxSize(ivec2(V3.x - V0.x, V3.y - V0.y));
+				TextCache.SetFontSize(12.0f);
+				float TextWidth = TextRenderer()->GetTextWidth(&TextCache);
+				TextRenderer()->DrawText(&TextCache, ivec2(Pos.x - TextWidth/2.0f, Pos.y - (V3.y - V0.y)/2.0f), TextColor);
+			}
 		}
 	}
 	else

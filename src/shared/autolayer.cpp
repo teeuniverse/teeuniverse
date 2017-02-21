@@ -119,6 +119,52 @@ void ApplyTilingMaterials_Tiles(CAssetsManager* pAssetsManager, array2d<CAsset_M
 									break;
 								}
 							}
+							else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_LABEL)
+							{
+								bool LabelIndexFound = false;
+								CSubPath LabelPath = CAsset_TilingMaterial::SubPath_Label(Conditions[c].GetValue());
+								if(pMaterial->IsValidLabel(LabelPath))
+								{
+									const std::vector<uint8>& Indices = pMaterial->GetLabelIndexArray(LabelPath);
+									for(unsigned int li=0; li<Indices.size(); li++)
+									{
+										if(Indices[li] == Tiles.get_clamp(i + Conditions[c].GetRelPosX(), j + Conditions[c].GetRelPosY()).GetBrush())
+										{
+											LabelIndexFound = true;
+											break;
+										}
+									}
+								}
+									
+								if(!LabelIndexFound)
+								{
+									IsValidRule = false;
+									break;
+								}
+							}
+							else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOTLABEL)
+							{
+								bool LabelIndexFound = false;
+								CSubPath LabelPath = CAsset_TilingMaterial::SubPath_Label(Conditions[c].GetValue());
+								if(pMaterial->IsValidLabel(LabelPath))
+								{
+									const std::vector<uint8>& Indices = pMaterial->GetLabelIndexArray(LabelPath);
+									for(unsigned int li=0; li<Indices.size(); li++)
+									{
+										if(Indices[li] == Tiles.get_clamp(i + Conditions[c].GetRelPosX(), j + Conditions[c].GetRelPosY()).GetBrush())
+										{
+											LabelIndexFound = true;
+											break;
+										}
+									}
+								}
+									
+								if(LabelIndexFound)
+								{
+									IsValidRule = false;
+									break;
+								}
+							}
 							else if(Conditions[c].GetType() == CAsset_TilingMaterial::CONDITIONTYPE_NOBORDER)
 							{
 								if(

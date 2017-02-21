@@ -121,12 +121,23 @@ class CSubItemEditor : public gui::CVListLayout
 protected:
 	CGuiEditor* m_pAssetsEditor;
 	int m_SubPathType;
+	int m_SubPathType2;
 	
 public:
 	CSubItemEditor(CGuiEditor* pAssetsEditor, int SubPathType) :
 		gui::CVListLayout(pAssetsEditor),
 		m_pAssetsEditor(pAssetsEditor),
-		m_SubPathType(SubPathType)
+		m_SubPathType(SubPathType),
+		m_SubPathType2(-1)
+	{
+		
+	}
+	
+	CSubItemEditor(CGuiEditor* pAssetsEditor, int SubPathType, int SubPathType2) :
+		gui::CVListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPathType(SubPathType),
+		m_SubPathType2(SubPathType2)
 	{
 		
 	}
@@ -136,6 +147,8 @@ public:
 		if(ParentEnabled)
 		{
 			if(m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType)
+				Enable();
+			else if(m_SubPathType2 >= 0 && m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType2)
 				Enable();
 			else
 				Disable();
@@ -1814,6 +1827,66 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_PathMaterial_Asset()
 
 /* TILING MATERIAL ****************************************************/
 
+class CNewSubItemButton_TilingMaterial_Index : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	int m_Type;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath, m_Type, Token);
+		CSubPath SubPath = CAsset_TilingMaterial::SubPath_Index(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_Index(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, LString, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath),
+		m_Type(Type)
+	{
+		
+	}
+};
+
+class CNewSubItemButton_TilingMaterial_Label : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CSubPath m_SubPath;
+	int m_Type;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath, m_Type, Token);
+		CSubPath SubPath = CAsset_TilingMaterial::SubPath_Label(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_Label(CGuiEditor* pAssetsEditor, int Type, CSubPath SubPath, const CLocalizableString& LString, CAssetPath IconPath) :
+		gui::CButton(pAssetsEditor, LString, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_SubPath(SubPath),
+		m_Type(Type)
+	{
+		
+	}
+};
+
 class CNewSubItemButton_TilingMaterial_ZoneConv : public gui::CButton
 {
 protected:
@@ -1976,54 +2049,70 @@ protected:
 		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
 		if(pMaterial)
 		{
+			CLocalizableString LString_Index(_("Index {str:IndexName} (#{int:Index})"));
+			CLocalizableString LString_Label(_("Label {str:LabelName}"));
 			CLocalizableString LString_ZoneConverter(_("Zone relation: {str:ZoneName} #{int:OldIndex} → #{int:NewIndex}"));
-			CLocalizableString LString_Rule(_("Rule {int:Id}"));
-			CLocalizableString LString_Condition(_("Condition {int:Id}"));
+			CLocalizableString LString_Rule(_("Rule for tile #{int:Index}"));
+			
+			CAsset_TilingMaterial::CIteratorIndex IndexIter;
+			int IndexCounter = 0;
+			for(IndexIter = pMaterial->BeginIndex(); IndexIter != pMaterial->EndIndex(); ++IndexIter)
+			{
+				LString_Index.ClearParameters();
+				LString_Index.AddInteger("Index", IndexCounter+1);
+				LString_Index.AddString("IndexName", pMaterial->GetIndexTitle(*IndexIter));
+				Add(new CSubItem(m_pAssetsEditor, *IndexIter, LString_Index, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+			
+				IndexCounter++;
+			}
+			
+			if(IndexCounter > 0)
+				AddSeparator();
+			
+			CAsset_TilingMaterial::CIteratorLabel LabelIter;
+			int LabelCounter = 0;
+			for(LabelIter = pMaterial->BeginLabel(); LabelIter != pMaterial->EndLabel(); ++LabelIter)
+			{
+				LString_Label.ClearParameters();
+				LString_Label.AddString("LabelName", pMaterial->GetLabelTitle(*LabelIter));
+				Add(new CSubItem(m_pAssetsEditor, *LabelIter, LString_Label, m_pAssetsEditor->m_Path_Sprite_IconLabel), false);
+			
+				LabelCounter++;
+			}
+			
+			if(LabelCounter > 0)
+				AddSeparator();
 			
 			CAsset_TilingMaterial::CIteratorZoneConverter ConvIter;
-			int ConvCounter = 1;
+			int ConvCounter = 0;
 			for(ConvIter = pMaterial->BeginZoneConverter(); ConvIter != pMaterial->EndZoneConverter(); ++ConvIter)
 			{
-				gui::CExpand* pExpand = new gui::CExpand(Context());
-				Add(pExpand, false);
-				
 				CAssetPath ZoneType = pMaterial->GetZoneConverterZoneTypePath(*ConvIter);
 				
 				LString_ZoneConverter.ClearParameters();
 				LString_ZoneConverter.AddString("ZoneName", AssetsManager()->GetAssetValue<const char*>(ZoneType, CSubPath::Null(), CAsset_ZoneType::NAME, NULL));
 				LString_ZoneConverter.AddInteger("OldIndex", pMaterial->GetZoneConverterOldIndex(*ConvIter));
 				LString_ZoneConverter.AddInteger("NewIndex", pMaterial->GetZoneConverterNewIndex(*ConvIter));
-				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *ConvIter, LString_ZoneConverter, m_pAssetsEditor->m_Path_Sprite_IconZoneType));
+				Add(new CSubItem(m_pAssetsEditor, *ConvIter, LString_ZoneConverter, m_pAssetsEditor->m_Path_Sprite_IconZoneType), false);
 			
 				ConvCounter++;
 			}
 			
 			if(ConvCounter > 0)
-			{
 				AddSeparator();
-			}
 			
 			CAsset_TilingMaterial::CIteratorRule RuleIter;
-			int RuleCounter = 1;
+			int RuleCounter = 0;
 			for(RuleIter = pMaterial->BeginRule(); RuleIter != pMaterial->EndRule(); ++RuleIter)
 			{
 				gui::CExpand* pExpand = new gui::CExpand(Context());
 				Add(pExpand, false);
 				
 				LString_Rule.ClearParameters();
-				LString_Rule.AddInteger("Id", RuleCounter);
-				pExpand->SetTitle(new CSubItem(m_pAssetsEditor, *RuleIter, LString_Rule, m_pAssetsEditor->m_Path_Sprite_IconScript));
+				LString_Rule.AddInteger("Index", pMaterial->GetRuleTileIndex(*RuleIter));
+				Add(new CSubItem(m_pAssetsEditor, *RuleIter, LString_Rule, m_pAssetsEditor->m_Path_Sprite_IconScript), false);
 			
 				RuleCounter++;
-				
-				const std::vector<CAsset_TilingMaterial::CRule::CCondition>& Conditions = pMaterial->GetRuleConditionArray(*RuleIter);
-				for(unsigned int i=0; i<Conditions.size(); i++)
-				{
-					CSubPath ConditionSubPath = CAsset_TilingMaterial::SubPath_RuleCondition((*RuleIter).GetId(), i);
-					LString_Condition.ClearParameters();
-					LString_Condition.AddInteger("Id", i+1);
-					pExpand->Add(new CSubItem(m_pAssetsEditor, ConditionSubPath, LString_Condition, m_pAssetsEditor->m_Path_Sprite_IconNone));
-				}
 			}
 		}
 	}
@@ -2034,6 +2123,228 @@ public:
 	{ }	
 };
 
+class CSubItemList_TilingMaterial_LabelIndex : public gui::CVScrollLayout
+{
+protected:
+	CAssetPath m_AssetPath;
+	int m_LabelId;
+	int m_AssetVersion;
+	CGuiEditor* m_pAssetsEditor;
+	bool m_UpdateNeeded;
+	
+public:
+	CSubItemList_TilingMaterial_LabelIndex(CGuiEditor* pAssetsEditor) :
+		gui::CVScrollLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_UpdateNeeded(true)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_TilingMaterial::TypeId)
+			{
+				if(
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL ||
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL_INDEX
+				)
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(m_LabelId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_LabelId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}
+				else
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_LabelId = -1;
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}	
+			}
+			
+			CSubPath LabelPath = CAsset_TilingMaterial::SubPath_Label(m_LabelId);
+			
+			if(m_LabelId >= 0)
+			{
+				const CAsset_TilingMaterial* pMaterial = AssetsManager()->template GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
+				if(pMaterial && pMaterial->IsValidLabel(LabelPath))
+				{
+					if(m_UpdateNeeded)
+					{
+						Clear();
+							
+						const typename CAsset_TilingMaterial::CLabel& Label = pMaterial->GetLabel(LabelPath);
+						
+						CLocalizableString LString_Index(_("Index {str:IndexName} (#{int:Index})"));
+						for(int i=0; i<Label.GetIndexArraySize(); i++)
+						{
+							int Index = Label.GetIndexArray()[i];
+							CSubPath LabelIndexPath = CAsset_TilingMaterial::SubPath_LabelIndex(LabelPath.GetId(), i);
+							CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(Index);
+							
+							LString_Index.ClearParameters();
+							LString_Index.AddInteger("Index", Index);
+							LString_Index.AddString("IndexName", pMaterial->GetIndexTitle(IndexPath));
+							Add(new CSubItem(m_pAssetsEditor, LabelIndexPath, LString_Index, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+						}
+						
+						m_UpdateNeeded = false;
+					}
+				}
+			}
+			else if(m_UpdateNeeded)
+			{
+				Clear();
+				m_UpdateNeeded = false;
+			}
+		}
+		
+		gui::CVScrollLayout::Update(ParentEnabled);
+	}
+};
+
+class CSubItemList_TilingMaterial_Cond : public gui::CVScrollLayout
+{
+protected:
+	CAssetPath m_AssetPath;
+	int m_RuleId;
+	int m_AssetVersion;
+	CGuiEditor* m_pAssetsEditor;
+	bool m_UpdateNeeded;
+	
+public:
+	CSubItemList_TilingMaterial_Cond(CGuiEditor* pAssetsEditor) :
+		gui::CVScrollLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_UpdateNeeded(true)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_TilingMaterial::TypeId)
+			{
+				if(
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
+					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
+				)
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(m_RuleId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_RuleId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}
+				else
+				{
+					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+					if(
+						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
+						(pState && m_AssetVersion != pState->m_NumUpdates)
+					)
+					{
+						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
+						m_RuleId = -1;
+						m_AssetVersion = pState->m_NumUpdates;
+						m_UpdateNeeded = true;
+					}
+				}	
+			}
+			
+			CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(m_RuleId);
+			
+			if(m_RuleId >= 0)
+			{
+				const CAsset_TilingMaterial* pMaterial = AssetsManager()->template GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
+				if(pMaterial && pMaterial->IsValidRule(RulePath))
+				{
+					if(m_UpdateNeeded)
+					{
+						Clear();
+							
+						const typename CAsset_TilingMaterial::CRule& Rule = pMaterial->GetRule(RulePath);
+						
+						CLocalizableString LString_Condition(_("Condition {int:Id}"));
+						for(int i=0; i<Rule.GetConditionArraySize(); i++)
+						{
+							LString_Condition.ClearParameters();
+							LString_Condition.AddInteger("Id", i+1);
+							CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
+							
+							Add(new CSubItem(m_pAssetsEditor, CondPath, LString_Condition, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
+						}
+						
+						m_UpdateNeeded = false;
+					}
+				}
+			}
+			else if(m_UpdateNeeded)
+			{
+				Clear();
+				m_UpdateNeeded = false;
+			}
+		}
+		
+		gui::CVScrollLayout::Update(ParentEnabled);
+	}
+};
+
+class CNewSubItemButton_TilingMaterial_LabelIndex : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pMaterial && pMaterial->IsValidLabel(m_pAssetsEditor->GetEditedSubPath()))
+		{
+			int Token = AssetsManager()->GenerateToken();
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::TYPE_LABEL_INDEX, Token);
+			
+			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+		}
+	}
+
+public:
+	CNewSubItemButton_TilingMaterial_LabelIndex(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add Index"), pAssetsEditor->m_Path_Sprite_IconNone),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
 
 class CNewSubItemButton_TilingMaterial_Condition : public gui::CButton
 {
@@ -2073,14 +2384,33 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	
 	AddField_ImageTiles(pTab, CAsset_TilingMaterial::IMAGEPATH, _LSTRING("Image"));
 
-	{
-		gui::CHListLayout* pLayout = new gui::CHListLayout(Context());
-		pTab->Add(pLayout, false);
-		pLayout->Add(new CNewSubItemButton_TilingMaterial_ZoneConv(AssetsEditor(), CAsset_TilingMaterial::TYPE_ZONECONVERTER, CSubPath::Null(), _LSTRING("Add Zone Relation"), AssetsEditor()->m_Path_Sprite_IconZoneTiles), true);
-		pLayout->Add(new CNewSubItemButton_TilingMaterial_Rule(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE, CSubPath::Null(), _LSTRING("Add Rule"), AssetsEditor()->m_Path_Sprite_IconSystem), true);
-	}
+	pTab->Add(new CNewSubItemButton_TilingMaterial_Index(AssetsEditor(), CAsset_TilingMaterial::TYPE_INDEX, CSubPath::Null(), _LSTRING("Add Index"), AssetsEditor()->m_Path_Sprite_IconNone), false);
+	pTab->Add(new CNewSubItemButton_TilingMaterial_Label(AssetsEditor(), CAsset_TilingMaterial::TYPE_LABEL, CSubPath::Null(), _LSTRING("Add Label"), AssetsEditor()->m_Path_Sprite_IconLabel), false);
+	pTab->Add(new CNewSubItemButton_TilingMaterial_ZoneConv(AssetsEditor(), CAsset_TilingMaterial::TYPE_ZONECONVERTER, CSubPath::Null(), _LSTRING("Add Zone Relation"), AssetsEditor()->m_Path_Sprite_IconZoneTiles), false);
+	pTab->Add(new CNewSubItemButton_TilingMaterial_Rule(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE, CSubPath::Null(), _LSTRING("Add Rule"), AssetsEditor()->m_Path_Sprite_IconSystem), false);
 	
 	pTab->Add(new CSubItemList_TilingMaterial_Rule(AssetsEditor()), true);
+	
+	//Index
+	gui::CVListLayout* pIndexEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_INDEX);
+	pTab->Add(pIndexEditor, false);
+	AddField_Text(pIndexEditor, CAsset_TilingMaterial::INDEX_TITLE, _LSTRING("Name"));
+	
+	//Condition List
+	gui::CVListLayout* pLabelIndexList = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_LABEL, CAsset_TilingMaterial::TYPE_LABEL_INDEX);
+	pTab->Add(pLabelIndexList, true);
+	pLabelIndexList->Add(new CSubItemList_TilingMaterial_LabelIndex(AssetsEditor()), true);
+	pLabelIndexList->Add(new CNewSubItemButton_TilingMaterial_LabelIndex(AssetsEditor()), false);
+	
+	//Label
+	gui::CVListLayout* pLabelEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_LABEL);
+	pTab->Add(pLabelEditor, false);
+	AddField_Text(pLabelEditor, CAsset_TilingMaterial::LABEL_TITLE, _LSTRING("Name"));
+	
+	//Label Index
+	gui::CVListLayout* pLabelIndexEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_LABEL_INDEX);
+	pTab->Add(pLabelIndexEditor, false);
+	AddField_Integer(pLabelIndexEditor, CAsset_TilingMaterial::LABEL_INDEX, _LSTRING("Index"));
 	
 	//Zone converter
 	gui::CVListLayout* pConvEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_ZONECONVERTER);
@@ -2089,14 +2419,19 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	AddField_Integer(pConvEditor, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, _LSTRING("Input zone index"));
 	AddField_Integer(pConvEditor, CAsset_TilingMaterial::ZONECONVERTER_NEWINDEX, _LSTRING("Output index"));
 	
+	//Condition List
+	gui::CVListLayout* pCondList = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE, CAsset_TilingMaterial::TYPE_RULE_CONDITION);
+	pTab->Add(pCondList, true);
+	pCondList->Add(new CSubItemList_TilingMaterial_Cond(AssetsEditor()), true);
+	pCondList->Add(new CNewSubItemButton_TilingMaterial_Condition(AssetsEditor()), false);
+	
 	//Rule
 	gui::CVListLayout* pRuleEditor = new CSubItemEditor(AssetsEditor(), CAsset_TilingMaterial::TYPE_RULE);
 	pTab->Add(pRuleEditor, false);
 	
-	pRuleEditor->Add(new CNewSubItemButton_TilingMaterial_Condition(AssetsEditor()), false);
-	
 	AddField(pRuleEditor, new CTileChooser(AssetsEditor()), _LSTRING("Tile"));
 	
+	AddField_Float(pRuleEditor, CAsset_TilingMaterial::RULE_PROBABILITY, _LSTRING("Probability"));
 	AddField_Flag(pRuleEditor, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_VFLIP, _LSTRING("Horizontal Flip"));
 	AddField_Flag(pRuleEditor, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_HFLIP, _LSTRING("Vertical Flip"));
 	AddField_Flag(pRuleEditor, CAsset_TilingMaterial::RULE_TILEFLAGS, CAsset_MapLayerTiles::TILEFLAG_ROTATE, _LSTRING("Rotation of 90°"));
@@ -2107,8 +2442,10 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	
 	{
 		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_TilingMaterial::RULE_CONDITION_TYPE);
-		pComboBox->Add(_LSTRING("Equal to Index..."), AssetsEditor()->m_Path_Sprite_IconNone);
-		pComboBox->Add(_LSTRING("Not equal to Index..."), AssetsEditor()->m_Path_Sprite_IconNone);
+		pComboBox->Add(_LSTRING("Is index..."), AssetsEditor()->m_Path_Sprite_IconNone);
+		pComboBox->Add(_LSTRING("Is not index..."), AssetsEditor()->m_Path_Sprite_IconNone);
+		pComboBox->Add(_LSTRING("Has label..."), AssetsEditor()->m_Path_Sprite_IconLabel);
+		pComboBox->Add(_LSTRING("Doesn't have label..."), AssetsEditor()->m_Path_Sprite_IconLabel);
 		pComboBox->Add(_LSTRING("Not in layer border"), AssetsEditor()->m_Path_Sprite_IconNone);
 		AddField(pConditionEditor, pComboBox, _LSTRING("Type"));
 	}

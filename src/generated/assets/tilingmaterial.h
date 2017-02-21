@@ -43,9 +43,12 @@ class CAsset_TilingMaterial : public CAsset
 public:
 	enum
 	{
-		CONDITIONTYPE_INDEX,
+		CONDITIONTYPE_INDEX=0,
 		CONDITIONTYPE_NOTINDEX,
+		CONDITIONTYPE_LABEL,
+		CONDITIONTYPE_NOTLABEL,
 		CONDITIONTYPE_NOBORDER,
+		NUM_CONDITIONTYPES,
 	};
 	
 	static const int TypeId = 31;
@@ -55,11 +58,17 @@ public:
 		TYPE_ZONECONVERTER,
 		TYPE_RULE_CONDITION,
 		TYPE_RULE,
+		TYPE_INDEX,
+		TYPE_LABEL_INDEX,
+		TYPE_LABEL,
 	};
 	
 	static inline CSubPath SubPath_ZoneConverter(int Id0) { return CSubPath(TYPE_ZONECONVERTER, Id0, 0, 0); }
 	static inline CSubPath SubPath_RuleCondition(int Id0, int Id1) { return CSubPath(TYPE_RULE_CONDITION, Id0, Id1, 0); }
 	static inline CSubPath SubPath_Rule(int Id0) { return CSubPath(TYPE_RULE, Id0, 0, 0); }
+	static inline CSubPath SubPath_Index(int Id0) { return CSubPath(TYPE_INDEX, Id0, 0, 0); }
+	static inline CSubPath SubPath_LabelIndex(int Id0, int Id1) { return CSubPath(TYPE_LABEL_INDEX, Id0, Id1, 0); }
+	static inline CSubPath SubPath_Label(int Id0) { return CSubPath(TYPE_LABEL, Id0, 0, 0); }
 	
 	enum
 	{
@@ -87,6 +96,20 @@ public:
 		RULE_TILEINDEX,
 		RULE_TILEFLAGS,
 		RULE,
+		INDEX_ARRAYSIZE,
+		INDEX_PTR,
+		INDEX_ARRAY,
+		INDEX_TITLE,
+		INDEX,
+		LABEL_ARRAYSIZE,
+		LABEL_PTR,
+		LABEL_ARRAY,
+		LABEL_TITLE,
+		LABEL_INDEX_ARRAYSIZE,
+		LABEL_INDEX_PTR,
+		LABEL_INDEX_ARRAY,
+		LABEL_INDEX,
+		LABEL,
 	};
 	
 	class CIteratorZoneConverter
@@ -126,6 +149,44 @@ public:
 	CIteratorRule EndRule() const { return CIteratorRule(m_Rule.size(), false); }
 	CIteratorRule ReverseBeginRule() const { return CIteratorRule(m_Rule.size()-1, true); }
 	CIteratorRule ReverseEndRule() const { return CIteratorRule(-1, true); }
+	
+	class CIteratorIndex
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorIndex() : m_Index(0), m_Reverse(false) {}
+		CIteratorIndex(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorIndex& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_Index(m_Index); }
+		bool operator==(const CIteratorIndex& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorIndex& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorIndex BeginIndex() const { return CIteratorIndex(0, false); }
+	CIteratorIndex EndIndex() const { return CIteratorIndex(m_Index.size(), false); }
+	CIteratorIndex ReverseBeginIndex() const { return CIteratorIndex(m_Index.size()-1, true); }
+	CIteratorIndex ReverseEndIndex() const { return CIteratorIndex(-1, true); }
+	
+	class CIteratorLabel
+	{
+	protected:
+		int m_Index;
+		bool m_Reverse;
+	public:
+		CIteratorLabel() : m_Index(0), m_Reverse(false) {}
+		CIteratorLabel(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorLabel& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_Label(m_Index); }
+		bool operator==(const CIteratorLabel& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorLabel& Iter2) { return Iter2.m_Index != m_Index; }
+	};
+	
+	CIteratorLabel BeginLabel() const { return CIteratorLabel(0, false); }
+	CIteratorLabel EndLabel() const { return CIteratorLabel(m_Label.size(), false); }
+	CIteratorLabel ReverseBeginLabel() const { return CIteratorLabel(m_Label.size()-1, true); }
+	CIteratorLabel ReverseEndLabel() const { return CIteratorLabel(-1, true); }
 	
 	class CZoneConverter
 	{
@@ -429,6 +490,154 @@ public:
 		}
 		
 	};
+	class CIndex
+	{
+	public:
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			tua_stringid m_Title;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CIndex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
+	
+	private:
+		_dynamic_string<128> m_Title;
+	
+	public:
+		inline const char* GetTitle() const { return m_Title.buffer(); }
+		
+		inline void SetTitle(const char* Value) { m_Title = Value; }
+		
+		void AssetPathOperation(const CAssetPath::COperation& Operation)
+		{
+		}
+		
+	};
+	class CLabel
+	{
+	public:
+		class CTuaType_0_1_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_1_0& TuaType);
+		};
+		
+		class CTuaType_0_2_0
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_0& TuaType);
+		};
+		
+		class CTuaType_0_2_1
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_1& TuaType);
+		};
+		
+		class CTuaType_0_2_2
+		{
+		public:
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_2& TuaType);
+		};
+		
+		class CTuaType_0_2_3
+		{
+		public:
+			tua_stringid m_Title;
+			CTuaArray m_Index;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CLabel& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
+	
+	private:
+		_dynamic_string<128> m_Title;
+		std::vector<uint8> m_Index;
+	
+	public:
+		inline const char* GetTitle() const { return m_Title.buffer(); }
+		
+		inline int GetIndexArraySize() const { return m_Index.size(); }
+		
+		inline const uint8* GetIndexPtr() const { return &(m_Index.front()); }
+		
+		inline const std::vector<uint8>& GetIndexArray() const { return m_Index; }
+		inline std::vector<uint8>& GetIndexArray() { return m_Index; }
+		
+		inline uint8 GetIndex(const CSubPath& SubPath) const
+		{
+			assert(SubPath.GetId() < m_Index.size());
+			{
+				return m_Index[SubPath.GetId()];
+			}
+		}
+		
+		inline void SetTitle(const char* Value) { m_Title = Value; }
+		
+		inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
+		
+		inline void SetIndex(const CSubPath& SubPath, uint8 Value)
+		{
+			if(SubPath.GetId() < m_Index.size())
+			{
+				m_Index[SubPath.GetId()] = Value;
+			}
+		}
+		
+		inline int AddIndex()
+		{
+			int Id = m_Index.size();
+			m_Index.emplace_back();
+			return Id;
+		}
+		
+		inline void AddAtIndex(int Index) { m_Index.insert(m_Index.begin() + Index, uint8()); }
+		
+		inline void DeleteIndex(const CSubPath& SubPath) { m_Index.erase(m_Index.begin() + SubPath.GetId()); }
+		
+		inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
+		
+		inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
+		
+		void AssetPathOperation(const CAssetPath::COperation& Operation)
+		{
+		}
+		
+	};
 	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
 	{
 	public:
@@ -463,6 +672,8 @@ public:
 		CAssetPath::CTuaType m_ImagePath;
 		CTuaArray m_ZoneConverter;
 		CTuaArray m_Rule;
+		CTuaArray m_Index;
+		CTuaArray m_Label;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial& SysType, CTuaType_0_2_3& TuaType);
 	};
@@ -472,6 +683,8 @@ private:
 	CAssetPath m_ImagePath;
 	std::vector<CAsset_TilingMaterial::CZoneConverter> m_ZoneConverter;
 	std::vector<CAsset_TilingMaterial::CRule> m_Rule;
+	std::vector<CAsset_TilingMaterial::CIndex> m_Index;
+	std::vector<CAsset_TilingMaterial::CLabel> m_Label;
 
 public:
 	virtual ~CAsset_TilingMaterial() {}
@@ -629,6 +842,82 @@ public:
 		else return 0;
 	}
 	
+	inline int GetIndexArraySize() const { return m_Index.size(); }
+	
+	inline const CAsset_TilingMaterial::CIndex* GetIndexPtr() const { return &(m_Index.front()); }
+	
+	inline const std::vector<CAsset_TilingMaterial::CIndex>& GetIndexArray() const { return m_Index; }
+	inline std::vector<CAsset_TilingMaterial::CIndex>& GetIndexArray() { return m_Index; }
+	
+	inline const CAsset_TilingMaterial::CIndex& GetIndex(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_Index.size());
+		{
+			return m_Index[SubPath.GetId()];
+		}
+	}
+	
+	inline const char* GetIndexTitle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Index.size())
+			return m_Index[SubPath.GetId()].GetTitle();
+		else return NULL;
+	}
+	
+	inline int GetLabelArraySize() const { return m_Label.size(); }
+	
+	inline const CAsset_TilingMaterial::CLabel* GetLabelPtr() const { return &(m_Label.front()); }
+	
+	inline const std::vector<CAsset_TilingMaterial::CLabel>& GetLabelArray() const { return m_Label; }
+	inline std::vector<CAsset_TilingMaterial::CLabel>& GetLabelArray() { return m_Label; }
+	
+	inline const CAsset_TilingMaterial::CLabel& GetLabel(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_Label.size());
+		{
+			return m_Label[SubPath.GetId()];
+		}
+	}
+	
+	inline const char* GetLabelTitle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetTitle();
+		else return NULL;
+	}
+	
+	inline int GetLabelIndexArraySize(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetIndexArraySize();
+		else return 0;
+	}
+	
+	inline const uint8* GetLabelIndexPtr(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetIndexPtr();
+		else return NULL;
+	}
+	
+	inline const std::vector<uint8>& GetLabelIndexArray(const CSubPath& SubPath) const
+	{
+		assert(SubPath.GetId() < m_Label.size());
+		return m_Label[SubPath.GetId()].GetIndexArray();
+	}
+	inline std::vector<uint8>& GetLabelIndexArray(const CSubPath& SubPath)
+	{
+		assert(SubPath.GetId() < m_Label.size());
+		return m_Label[SubPath.GetId()].GetIndexArray();
+	}
+	
+	inline uint8 GetLabelIndex(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Label.size())
+			return m_Label[SubPath.GetId()].GetIndex(SubPath.PopId());
+		else return 0;
+	}
+	
 	inline void SetImagePath(const CAssetPath& Value) { m_ImagePath = Value; }
 	
 	inline void SetZoneConverterArraySize(int Value) { m_ZoneConverter.resize(Value); }
@@ -723,6 +1012,50 @@ public:
 			m_Rule[SubPath.GetId()].SetTileFlags(Value);
 	}
 	
+	inline void SetIndexArraySize(int Value) { m_Index.resize(Value); }
+	
+	inline void SetIndex(const CSubPath& SubPath, const CAsset_TilingMaterial::CIndex& Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+		{
+			m_Index[SubPath.GetId()] = Value;
+		}
+	}
+	
+	inline void SetIndexTitle(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() < m_Index.size())
+			m_Index[SubPath.GetId()].SetTitle(Value);
+	}
+	
+	inline void SetLabelArraySize(int Value) { m_Label.resize(Value); }
+	
+	inline void SetLabel(const CSubPath& SubPath, const CAsset_TilingMaterial::CLabel& Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+		{
+			m_Label[SubPath.GetId()] = Value;
+		}
+	}
+	
+	inline void SetLabelTitle(const CSubPath& SubPath, const char* Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetTitle(Value);
+	}
+	
+	inline void SetLabelIndexArraySize(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetIndexArraySize(Value);
+	}
+	
+	inline void SetLabelIndex(const CSubPath& SubPath, uint8 Value)
+	{
+		if(SubPath.GetId() < m_Label.size())
+			m_Label[SubPath.GetId()].SetIndex(SubPath.PopId(), Value);
+	}
+	
 	inline int AddZoneConverter()
 	{
 		int Id = m_ZoneConverter.size();
@@ -739,11 +1072,33 @@ public:
 	
 	inline int AddRuleCondition(const CSubPath& SubPath) { return m_Rule[SubPath.GetId()].AddCondition(); }
 	
+	inline int AddIndex()
+	{
+		int Id = m_Index.size();
+		m_Index.emplace_back();
+		return Id;
+	}
+	
+	inline int AddLabel()
+	{
+		int Id = m_Label.size();
+		m_Label.emplace_back();
+		return Id;
+	}
+	
+	inline int AddLabelIndex(const CSubPath& SubPath) { return m_Label[SubPath.GetId()].AddIndex(); }
+	
 	inline void AddAtZoneConverter(int Index) { m_ZoneConverter.insert(m_ZoneConverter.begin() + Index, CAsset_TilingMaterial::CZoneConverter()); }
 	
 	inline void AddAtRule(int Index) { m_Rule.insert(m_Rule.begin() + Index, CAsset_TilingMaterial::CRule()); }
 	
 	inline void AddAtRuleCondition(const CSubPath& SubPath, int Index) { m_Rule[SubPath.GetId()].AddAtCondition(Index); }
+	
+	inline void AddAtIndex(int Index) { m_Index.insert(m_Index.begin() + Index, CAsset_TilingMaterial::CIndex()); }
+	
+	inline void AddAtLabel(int Index) { m_Label.insert(m_Label.begin() + Index, CAsset_TilingMaterial::CLabel()); }
+	
+	inline void AddAtLabelIndex(const CSubPath& SubPath, int Index) { m_Label[SubPath.GetId()].AddAtIndex(Index); }
 	
 	inline void DeleteZoneConverter(const CSubPath& SubPath) { m_ZoneConverter.erase(m_ZoneConverter.begin() + SubPath.GetId()); }
 	
@@ -751,17 +1106,35 @@ public:
 	
 	inline void DeleteRuleCondition(const CSubPath& SubPath) { m_Rule[SubPath.GetId()].DeleteCondition(SubPath.PopId()); }
 	
+	inline void DeleteIndex(const CSubPath& SubPath) { m_Index.erase(m_Index.begin() + SubPath.GetId()); }
+	
+	inline void DeleteLabel(const CSubPath& SubPath) { m_Label.erase(m_Label.begin() + SubPath.GetId()); }
+	
+	inline void DeleteLabelIndex(const CSubPath& SubPath) { m_Label[SubPath.GetId()].DeleteIndex(SubPath.PopId()); }
+	
 	inline void RelMoveZoneConverter(const CSubPath& SubPath, int RelMove) { relative_move(m_ZoneConverter, SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveRule(const CSubPath& SubPath, int RelMove) { relative_move(m_Rule, SubPath.GetId(), RelMove); }
 	
 	inline void RelMoveRuleCondition(const CSubPath& SubPath, int RelMove) { m_Rule[SubPath.GetId()].RelMoveCondition(SubPath.PopId(), RelMove); }
 	
+	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { relative_move(m_Label, SubPath.GetId(), RelMove); }
+	
+	inline void RelMoveLabelIndex(const CSubPath& SubPath, int RelMove) { m_Label[SubPath.GetId()].RelMoveIndex(SubPath.PopId(), RelMove); }
+	
 	inline bool IsValidZoneConverter(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ZoneConverter.size()); }
 	
 	inline bool IsValidRule(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Rule.size()); }
 	
 	inline bool IsValidRuleCondition(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Rule.size() && m_Rule[SubPath.GetId()].IsValidCondition(SubPath.PopId())); }
+	
+	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
+	
+	inline bool IsValidLabel(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Label.size()); }
+	
+	inline bool IsValidLabelIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Label.size() && m_Label[SubPath.GetId()].IsValidIndex(SubPath.PopId())); }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
@@ -774,12 +1147,22 @@ public:
 		{
 			m_Rule[i].AssetPathOperation(Operation);
 		}
+		for(unsigned int i=0; i<m_Index.size(); i++)
+		{
+			m_Index[i].AssetPathOperation(Operation);
+		}
+		for(unsigned int i=0; i<m_Label.size(); i++)
+		{
+			m_Label[i].AssetPathOperation(Operation);
+		}
 	}
 	
 };
 
 template<> int CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> const char* CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const;
+template<> bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, const char* Value);
 template<> float CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
 template<> bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, float Value);
 template<> CAssetPath CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;

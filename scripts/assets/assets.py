@@ -2433,6 +2433,13 @@ tilingMaterial_zone.addMember("0.2.3", "ZoneTypePath", TypeAssetPath())
 tilingMaterial_zone.addMember("0.2.3", "OldIndex", TypeUInt8())
 tilingMaterial_zone.addMember("0.2.3", "NewIndex", TypeUInt8())
 
+tilingMaterial_index = Class("Index")
+tilingMaterial_index.addMember("0.2.3", "Title", TypeString(128))
+
+tilingMaterial_label = Class("Label")
+tilingMaterial_label.addMember("0.2.3", "Title", TypeString(128))
+tilingMaterial_label.addMember("0.2.3", "Index", TypeArray(TypeUInt8()))
+
 tilingMaterial_cond = Class("Condition")
 tilingMaterial_cond.addMember("0.2.3", "Type", TypeInt32(), "CONDITIONTYPE_INDEX")
 tilingMaterial_cond.addMember("0.2.3", "Value", TypeInt32(), "1")
@@ -2450,16 +2457,23 @@ tilingMaterial = ClassAsset("TilingMaterial", len(assetsList))
 tilingMaterial.setInheritance(mainAsset)
 tilingMaterial.addClass(tilingMaterial_zone)
 tilingMaterial.addClass(tilingMaterial_rule)
+tilingMaterial.addClass(tilingMaterial_index)
+tilingMaterial.addClass(tilingMaterial_label)
 tilingMaterial.addMember("0.2.3", "ImagePath", TypeAssetPath())
 tilingMaterial.addMember("0.2.3", "ZoneConverter", TypeArray(tilingMaterial_zone))
 tilingMaterial.addMember("0.2.3", "Rule", TypeArray(tilingMaterial_rule))
+tilingMaterial.addMember("0.2.3", "Index", TypeArray(tilingMaterial_index))
+tilingMaterial.addMember("0.2.3", "Label", TypeArray(tilingMaterial_label))
 
 tilingMaterial.addPublicLines([
 	"enum",
 	"{",
-	"	CONDITIONTYPE_INDEX,",
+	"	CONDITIONTYPE_INDEX=0,",
 	"	CONDITIONTYPE_NOTINDEX,",
+	"	CONDITIONTYPE_LABEL,",
+	"	CONDITIONTYPE_NOTLABEL,",
 	"	CONDITIONTYPE_NOBORDER,",
+	"	NUM_CONDITIONTYPES,",
 	"};",
 	""
 ])

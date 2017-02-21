@@ -642,7 +642,8 @@ void CLocalization::Format(dynamic_string& Buffer, const char* pLanguageCode, co
 						if(str_comp_num("str:", pText+ParamTypeStart, 4) == 0)
 						{
 							const char* pValue = Parameters[PIter].m_String.m_pValue;
-							BufferIter = Buffer.append_at(BufferIter, pValue);
+							if(pValue)
+								BufferIter = Buffer.append_at(BufferIter, pValue);
 						}
 						else if(str_comp_num("int:", pText+ParamTypeStart, 4) == 0)
 						{

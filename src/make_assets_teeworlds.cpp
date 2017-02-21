@@ -489,6 +489,14 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(UnhookableImagePath);
 			
 			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "NoHook");
+			}
+			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
@@ -550,6 +558,14 @@ int main(int argc, char* argv[])
 			pAsset->SetImagePath(UnhookableImagePath);
 			
 			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "NoHook");
+			}
+			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
 				pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_OLDINDEX, 3);
@@ -610,6 +626,14 @@ int main(int argc, char* argv[])
 			pAsset->SetName("smallRedUnhookable");
 			pAsset->SetImagePath(UnhookableImagePath);
 			
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "NoHook");
+			}
 			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
@@ -712,6 +736,14 @@ int main(int argc, char* argv[])
 			pAsset->SetName("grassAndDirt");
 			pAsset->SetImagePath(MainImagePath);
 			
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Solid");
+			}
 			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
@@ -945,6 +977,14 @@ int main(int argc, char* argv[])
 			pAsset->SetName("cave");
 			pAsset->SetImagePath(MainImagePath);
 			
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Solid");
+			}
 			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);
@@ -1304,6 +1344,14 @@ int main(int argc, char* argv[])
 			pAsset->SetName("jungle");
 			pAsset->SetImagePath(MainImagePath);
 			
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Empty");
+			}
+			{
+				CSubPath IndexPath = CAsset_TilingMaterial::SubPath_Index(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_INDEX));
+				pKernel->AssetsManager()->SetAssetValue_Hard<const char*>(MaterialPath, IndexPath, CAsset_TilingMaterial::INDEX_TITLE, "Solid");
+			}
 			{
 				CSubPath ConvPath = CAsset_TilingMaterial::SubPath_ZoneConverter(pKernel->AssetsManager()->AddSubItem_Hard(MaterialPath, CSubPath::Null(), CAsset_TilingMaterial::TYPE_ZONECONVERTER));
 				pKernel->AssetsManager()->SetAssetValue_Hard<CAssetPath>(MaterialPath, ConvPath, CAsset_TilingMaterial::ZONECONVERTER_ZONETYPEPATH, TeeWorldsZoneTypePath);

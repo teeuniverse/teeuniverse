@@ -64,6 +64,16 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* 
 }
 
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CIndex& SysType)
+{
+}
+
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial::CLabel& SysType)
+{
+}
+
+
 void CAsset_TilingMaterial::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_TilingMaterial& SysType)
 {
 	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
@@ -80,6 +90,14 @@ void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_1_0::Write(CAssetsSave
 }
 
 void CAsset_TilingMaterial::CRule::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CIndex::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_1_0& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_1_0& TuaType)
 {
 }
 
@@ -104,6 +122,16 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* 
 }
 
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CIndex& SysType)
+{
+}
+
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial::CLabel& SysType)
+{
+}
+
+
 void CAsset_TilingMaterial::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_TilingMaterial& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -120,6 +148,14 @@ void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_0::Write(CAssetsSave
 }
 
 void CAsset_TilingMaterial::CRule::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule& SysType, CTuaType_0_2_0& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_0& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_0& TuaType)
 {
 }
 
@@ -144,6 +180,16 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* 
 }
 
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CIndex& SysType)
+{
+}
+
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial::CLabel& SysType)
+{
+}
+
+
 void CAsset_TilingMaterial::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_TilingMaterial& SysType)
 {
 	CAsset::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
@@ -160,6 +206,14 @@ void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_1::Write(CAssetsSave
 }
 
 void CAsset_TilingMaterial::CRule::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule& SysType, CTuaType_0_2_1& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_1& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_1& TuaType)
 {
 }
 
@@ -184,6 +238,16 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* 
 }
 
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CIndex& SysType)
+{
+}
+
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial::CLabel& SysType)
+{
+}
+
+
 void CAsset_TilingMaterial::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_TilingMaterial& SysType)
 {
 	CAsset::CTuaType_0_2_2::Read(pLoadingContext, TuaType, SysType);
@@ -200,6 +264,14 @@ void CAsset_TilingMaterial::CRule::CCondition::CTuaType_0_2_2::Write(CAssetsSave
 }
 
 void CAsset_TilingMaterial::CRule::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CRule& SysType, CTuaType_0_2_2& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_2& TuaType)
+{
+}
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_2& TuaType)
 {
 }
 
@@ -244,6 +316,28 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* 
 }
 
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CIndex& SysType)
+{
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
+}
+
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial::CLabel& SysType)
+{
+	SysType.m_Title = pLoadingContext->ArchiveFile()->GetString(TuaType.m_Title);
+	{
+		const tua_uint8* pData = (const tua_uint8*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
+		SysType.m_Index.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			SysType.m_Index[i] = pLoadingContext->ArchiveFile()->ReadUInt8(pData[i]);
+		}
+	}
+	
+}
+
+
 void CAsset_TilingMaterial::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_TilingMaterial& SysType)
 {
 	CAsset::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
@@ -266,6 +360,26 @@ void CAsset_TilingMaterial::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoadin
 		for(uint32 i=0; i<Size; i++)
 		{
 			CAsset_TilingMaterial::CRule::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_Rule[i]);
+		}
+	}
+	
+	{
+		const CAsset_TilingMaterial::CIndex::CTuaType_0_2_3* pData = (const CAsset_TilingMaterial::CIndex::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Index.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Index.m_Size);
+		SysType.m_Index.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_TilingMaterial::CIndex::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_Index[i]);
+		}
+	}
+	
+	{
+		const CAsset_TilingMaterial::CLabel::CTuaType_0_2_3* pData = (const CAsset_TilingMaterial::CLabel::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Label.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Label.m_Size);
+		SysType.m_Label.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_TilingMaterial::CLabel::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_Label[i]);
 		}
 	}
 	
@@ -304,6 +418,26 @@ void CAsset_TilingMaterial::CRule::CTuaType_0_2_3::Write(CAssetsSaveLoadContext*
 	TuaType.m_TileFlags = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_TileFlags);
 }
 
+void CAsset_TilingMaterial::CIndex::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CIndex& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+}
+
+void CAsset_TilingMaterial::CLabel::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial::CLabel& SysType, CTuaType_0_2_3& TuaType)
+{
+	TuaType.m_Title = pLoadingContext->ArchiveFile()->AddString(SysType.m_Title.buffer());
+	{
+		TuaType.m_Index.m_Size = SysType.m_Index.size();
+		tua_uint8* pData = new tua_uint8[SysType.m_Index.size()];
+		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
+		{
+			pData[i] = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_Index[i]);
+		}
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(tua_uint8)*SysType.m_Index.size());
+		delete[] pData;
+	}
+}
+
 void CAsset_TilingMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_TilingMaterial& SysType, CTuaType_0_2_3& TuaType)
 {
 	CAsset::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
@@ -327,6 +461,26 @@ void CAsset_TilingMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadi
 			CAsset_TilingMaterial::CRule::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Rule[i], pData[i]);
 		}
 		TuaType.m_Rule.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_TilingMaterial::CRule::CTuaType_0_2_3)*SysType.m_Rule.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Index.m_Size = SysType.m_Index.size();
+		CAsset_TilingMaterial::CIndex::CTuaType_0_2_3* pData = new CAsset_TilingMaterial::CIndex::CTuaType_0_2_3[SysType.m_Index.size()];
+		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
+		{
+			CAsset_TilingMaterial::CIndex::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
+		}
+		TuaType.m_Index.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_TilingMaterial::CIndex::CTuaType_0_2_3)*SysType.m_Index.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Label.m_Size = SysType.m_Label.size();
+		CAsset_TilingMaterial::CLabel::CTuaType_0_2_3* pData = new CAsset_TilingMaterial::CLabel::CTuaType_0_2_3[SysType.m_Label.size()];
+		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
+		{
+			CAsset_TilingMaterial::CLabel::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
+		}
+		TuaType.m_Label.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_TilingMaterial::CLabel::CTuaType_0_2_3)*SysType.m_Label.size());
 		delete[] pData;
 	}
 }
@@ -358,6 +512,14 @@ int CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, int 
 			return GetRuleTileIndex(SubPath);
 		case RULE_TILEFLAGS:
 			return GetRuleTileFlags(SubPath);
+		case INDEX_ARRAYSIZE:
+			return GetIndexArraySize();
+		case LABEL_ARRAYSIZE:
+			return GetLabelArraySize();
+		case LABEL_INDEX_ARRAYSIZE:
+			return GetLabelIndexArraySize(SubPath);
+		case LABEL_INDEX:
+			return GetLabelIndex(SubPath);
 	}
 	return CAsset::GetValue<int>(ValueType, SubPath, DefaultValue);
 }
@@ -400,8 +562,48 @@ bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, int
 		case RULE_TILEFLAGS:
 			SetRuleTileFlags(SubPath, Value);
 			return true;
+		case INDEX_ARRAYSIZE:
+			SetIndexArraySize(Value);
+			return true;
+		case LABEL_ARRAYSIZE:
+			SetLabelArraySize(Value);
+			return true;
+		case LABEL_INDEX_ARRAYSIZE:
+			SetLabelIndexArraySize(SubPath, Value);
+			return true;
+		case LABEL_INDEX:
+			SetLabelIndex(SubPath, Value);
+			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+const char* CAsset_TilingMaterial::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case INDEX_TITLE:
+			return GetIndexTitle(SubPath);
+		case LABEL_TITLE:
+			return GetLabelTitle(SubPath);
+	}
+	return CAsset::GetValue<const char*>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_TilingMaterial::SetValue(int ValueType, const CSubPath& SubPath, const char* Value)
+{
+	switch(ValueType)
+	{
+		case INDEX_TITLE:
+			SetIndexTitle(SubPath, Value);
+			return true;
+		case LABEL_TITLE:
+			SetLabelTitle(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<const char*>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -465,6 +667,12 @@ int CAsset_TilingMaterial::AddSubItem(int Type, const CSubPath& SubPath)
 			return AddRule();
 		case TYPE_RULE_CONDITION:
 			return AddRuleCondition(SubPath);
+		case TYPE_INDEX:
+			return AddIndex();
+		case TYPE_LABEL:
+			return AddLabel();
+		case TYPE_LABEL_INDEX:
+			return AddLabelIndex(SubPath);
 	}
 	return -1;
 }
@@ -481,6 +689,15 @@ int CAsset_TilingMaterial::AddSubItemAt(int Type, const CSubPath& SubPath, int I
 			return Index;
 		case TYPE_RULE_CONDITION:
 			AddAtRuleCondition(SubPath, Index);
+			return Index;
+		case TYPE_INDEX:
+			AddAtIndex(Index);
+			return Index;
+		case TYPE_LABEL:
+			AddAtLabel(Index);
+			return Index;
+		case TYPE_LABEL_INDEX:
+			AddAtLabelIndex(SubPath, Index);
 			return Index;
 	}
 	return -1;
@@ -499,6 +716,15 @@ void CAsset_TilingMaterial::DeleteSubItem(const CSubPath& SubPath)
 		case TYPE_RULE_CONDITION:
 			DeleteRuleCondition(SubPath);
 			break;
+		case TYPE_INDEX:
+			DeleteIndex(SubPath);
+			break;
+		case TYPE_LABEL:
+			DeleteLabel(SubPath);
+			break;
+		case TYPE_LABEL_INDEX:
+			DeleteLabelIndex(SubPath);
+			break;
 	}
 }
 
@@ -514,6 +740,15 @@ void CAsset_TilingMaterial::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
 			break;
 		case TYPE_RULE_CONDITION:
 			RelMoveRuleCondition(SubPath, RelMove);
+			break;
+		case TYPE_INDEX:
+			RelMoveIndex(SubPath, RelMove);
+			break;
+		case TYPE_LABEL:
+			RelMoveLabel(SubPath, RelMove);
+			break;
+		case TYPE_LABEL_INDEX:
+			RelMoveLabelIndex(SubPath, RelMove);
 			break;
 	}
 }

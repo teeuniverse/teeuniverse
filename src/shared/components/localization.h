@@ -101,9 +101,14 @@ public:
 			m_Type = Param.m_Type;
 			if(Param.m_Type == TYPE_STRING)
 			{
-				int Length = str_length(Param.m_String.m_pValue);
-				m_String.m_pValue = new char[Length+1];
-				str_copy(m_String.m_pValue, Param.m_String.m_pValue, Length+1);
+				if(Param.m_String.m_pValue)
+				{
+					int Length = str_length(Param.m_String.m_pValue);
+					m_String.m_pValue = new char[Length+1];
+					str_copy(m_String.m_pValue, Param.m_String.m_pValue, Length+1);
+				}
+				else
+					m_String.m_pValue = nullptr;
 			}
 			else
 				m_String = Param.m_String;
@@ -116,7 +121,7 @@ public:
 			m_Name = std::move(Param.m_Name);
 			
 			if(Param.m_Type == TYPE_STRING)
-				Param.m_String.m_pValue = NULL;
+				Param.m_String.m_pValue = nullptr;
 		}
 	};
 	
@@ -161,9 +166,14 @@ public:
 	{
 		m_Parameters.emplace_back();
 		m_Parameters.back().m_Name = pName;
-		int Length = str_length(pValue);
-		m_Parameters.back().m_String.m_pValue = new char[Length+1];
-		str_copy(m_Parameters.back().m_String.m_pValue, pValue, Length+1);
+		if(pValue)
+		{
+			int Length = str_length(pValue);
+			m_Parameters.back().m_String.m_pValue = new char[Length+1];
+			str_copy(m_Parameters.back().m_String.m_pValue, pValue, Length+1);
+		}
+		else
+			m_Parameters.back().m_String.m_pValue = nullptr;
 		m_Parameters.back().m_Type = TYPE_STRING;
 	}
 	
