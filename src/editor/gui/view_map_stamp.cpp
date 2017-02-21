@@ -977,10 +977,10 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 				{
 					vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
 					vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-					int TileX0 = static_cast<int>(PivotTilePos.x) - pLayer->GetPositionX();
-					int TileY0 = static_cast<int>(PivotTilePos.y) - pLayer->GetPositionY();
-					int TileX1 = static_cast<int>(CursorTilePos.x) - pLayer->GetPositionX();
-					int TileY1 = static_cast<int>(CursorTilePos.y) - pLayer->GetPositionY();
+					int TileX0 = std::floor(PivotTilePos.x) - pLayer->GetPositionX();
+					int TileY0 = std::floor(PivotTilePos.y) - pLayer->GetPositionY();
+					int TileX1 = std::floor(CursorTilePos.x) - pLayer->GetPositionX();
+					int TileY1 = std::floor(CursorTilePos.y) - pLayer->GetPositionY();
 				
 					int X0 = min(TileX0, TileX1);
 					int Y0 = min(TileY0, TileY1);
@@ -1008,10 +1008,10 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 				//Copy tiles
 				vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
 				vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-				int TileX0 = static_cast<int>(PivotTilePos.x);
-				int TileY0 = static_cast<int>(PivotTilePos.y);
-				int TileX1 = static_cast<int>(CursorTilePos.x);
-				int TileY1 = static_cast<int>(CursorTilePos.y);
+				int TileX0 = std::floor(PivotTilePos.x);
+				int TileY0 = std::floor(PivotTilePos.y);
+				int TileX1 = std::floor(CursorTilePos.x);
+				int TileY1 = std::floor(CursorTilePos.y);
 			
 				int X0 = min(TileX0, TileX1);
 				int Y0 = min(TileY0, TileY1);
@@ -1164,8 +1164,8 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
 
-	int TileX = CursorMapPos.x/32.0f;
-	int TileY = CursorMapPos.y/32.0f;
+	int TileX = std::floor(CursorMapPos.x/32.0f);
+	int TileY = std::floor(CursorMapPos.y/32.0f);
 	
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 	{
@@ -1423,10 +1423,10 @@ void CCursorTool_MapStamp::RenderView()
 		}
 		else
 		{
-			int TileX0 = static_cast<int>(PivotTilePos.x);
-			int TileY0 = static_cast<int>(PivotTilePos.y);
-			int TileX1 = static_cast<int>(CursorTilePos.x);
-			int TileY1 = static_cast<int>(CursorTilePos.y);
+			int TileX0 = std::floor(PivotTilePos.x);
+			int TileY0 = std::floor(PivotTilePos.y);
+			int TileX1 = std::floor(CursorTilePos.x);
+			int TileY1 = std::floor(CursorTilePos.y);
 		
 			int X0 = min(TileX0, TileX1);
 			int Y0 = min(TileY0, TileY1);
