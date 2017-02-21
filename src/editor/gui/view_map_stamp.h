@@ -48,6 +48,7 @@ public:
 	virtual void OnMouseMove();
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
 	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const std::vector<int>& DataInt);
+	void PaletteCallback_SelectBrushType(CAssetPath MaterialPath, CSubPath Index);
 	void PaletteCallback_SelectEntityType(CAssetPath ZoneTypePath);
 	void VFlipSelection();
 	void HFlipSelection();
