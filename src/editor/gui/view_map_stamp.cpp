@@ -1029,7 +1029,7 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 						{
 							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
 							int Index = pLayer->GetTileIndex(TilePath);
-							m_TileSelection.get_clamp(i, j).SetIndex((Index != 0) ? 1 : 0);
+							m_TileSelection.get_clamp(i, j).SetIndex(Index);
 							m_TileSelection.get_clamp(i, j).SetBrush(Index);
 						}
 					}
@@ -1592,7 +1592,7 @@ void CCursorTool_MapStamp::PaletteCallback_SelectZoneType(CAssetPath ZoneTypePat
 		Number = Index.GetId();
 	
 	m_TileSelection.resize(1, 1);
-	m_TileSelection.get_clamp(0, 0).SetIndex((Number != 0) ? 1 : 0);
+	m_TileSelection.get_clamp(0, 0).SetIndex(Number);
 	m_TileSelection.get_clamp(0, 0).SetBrush(Number);
 	m_TileSelection.get_clamp(0, 0).SetFlags(0x0);
 	
