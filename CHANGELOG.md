@@ -1,5 +1,17 @@
 # Change Log
 
+## [0.2.4]
+### Added
+- Position parameter for zone layers
+- Seed parameter for layers that use a material
+
+## Changed
+- Faster update of tiles for layers that use materials
+- Crop tool can resize zone layers in all directions
+
+### Fixed
+- Wrong TeleID in exported maps
+
 ## [0.2.3]
 ### Added
 - Automatic tiling
