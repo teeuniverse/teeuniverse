@@ -181,6 +181,22 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
+		class CTuaType_0_2_4
+		{
+		public:
+			CAssetPath::CTuaType m_SpritePath;
+			CSubPath::CTuaType m_BonePath;
+			CSubPath::CTuaType m_LayerPath;
+			tua_float m_Anchor;
+			CTuaVec2 m_Translation;
+			CTuaVec2 m_Scale;
+			tua_float m_Angle;
+			tua_uint32 m_Color;
+			tua_int32 m_Alignment;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonSkin::CBone& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_4& TuaType);
+		};
+		
 	
 	private:
 		CAssetPath m_SpritePath;
@@ -296,6 +312,15 @@ public:
 		CTuaArray m_Sprite;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonSkin& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType_0_2_3& TuaType);
+	};
+	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_SkeletonPath;
+		CTuaArray m_Sprite;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonSkin& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin& SysType, CTuaType_0_2_4& TuaType);
 	};
 	
 

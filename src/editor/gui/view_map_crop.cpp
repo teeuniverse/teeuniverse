@@ -65,8 +65,8 @@ void CCursorTool_MapCrop::OnViewButtonClick(int Button)
 		if(!pLayer)
 			return;
 			
-		CropMin = ViewMap()->MapRenderer()->TilePosToScreenPos(0.0f);
-		CropSize = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight())) - CropMin;
+		CropMin = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()));
+		CropSize = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()) + vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight())) - CropMin;
 	}
 	else
 		return;
@@ -348,20 +348,111 @@ void CCursorTool_MapCrop::OnViewMouseMove()
 			ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 			vec2 GizmoMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(GizmoPos);
 			
-			if(m_DragType == DRAGTYPE_RIGHT)
+			if(m_DragType == DRAGTYPE_TOP)
 			{
-				int ClipSizeX = std::floor(GizmoMapPos.x/32.0f);
+				int ClipPosY = std::ceil(GizmoMapPos.y/32.0f);
+				int ShiftY = pLayer->GetPositionY() - ClipPosY;
+				
+				if(ShiftY != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
+				{
+					CAsset_MapZoneTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<CAsset_MapZoneTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
+					Tiles.apply_shift(0, ShiftY);
+					
+					int ClipSizeY = pLayer->GetTileHeight() + ShiftY;
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONY, ClipPosY, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
+				}
+			}
+			else if(m_DragType == DRAGTYPE_TL)
+			{
+				int ClipPosX = std::ceil(GizmoMapPos.x/32.0f);
+				int ClipPosY = std::ceil(GizmoMapPos.y/32.0f);
+				int ShiftX = pLayer->GetPositionX() - ClipPosX;
+				int ShiftY = pLayer->GetPositionY() - ClipPosY;
+				
+				if((ShiftX != 0 || ShiftY != 0) && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
+				{
+					CAsset_MapZoneTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<CAsset_MapZoneTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
+					Tiles.apply_shift(ShiftX, ShiftY);
+					
+					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;
+					int ClipSizeY = pLayer->GetTileHeight() + ShiftY;
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONX, ClipPosX, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONY, ClipPosY, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
+				}			
+			}
+			else if(m_DragType == DRAGTYPE_TR)
+			{
+				int ClipPosY = std::ceil(GizmoMapPos.y/32.0f);
+				int ShiftY = pLayer->GetPositionY() - ClipPosY;
+				
+				if(ShiftY != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
+				{
+					CAsset_MapZoneTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<CAsset_MapZoneTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
+					Tiles.apply_shift(0, ShiftY);
+					
+					int ClipSizeY = pLayer->GetTileHeight() + ShiftY;
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONY, ClipPosY, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
+				}
+				
+				int ClipSizeX = std::floor(GizmoMapPos.x/32.0f) - pLayer->GetPositionX();
+				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);	
+			}
+			else if(m_DragType == DRAGTYPE_LEFT)
+			{
+				int ClipPosX = std::ceil(GizmoMapPos.x/32.0f);
+				int ShiftX = pLayer->GetPositionX() - ClipPosX;
+				
+				if(ShiftX != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
+				{
+					CAsset_MapZoneTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<CAsset_MapZoneTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
+					Tiles.apply_shift(ShiftX, 0);
+					
+					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONX, ClipPosX, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);
+				}			
+			}
+			else if(m_DragType == DRAGTYPE_RIGHT)
+			{
+				int ClipSizeX = std::floor(GizmoMapPos.x/32.0f) - pLayer->GetPositionX();
 				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);
 			}
 			else if(m_DragType == DRAGTYPE_BOTTOM)
 			{
-				int ClipSizeY = std::floor(GizmoMapPos.y/32.0f);
+				int ClipSizeY = std::floor(GizmoMapPos.y/32.0f) - pLayer->GetPositionY();
+				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
+			}
+			else if(m_DragType == DRAGTYPE_BL)
+			{
+				int ClipPosX = std::ceil(GizmoMapPos.x/32.0f);
+				int ShiftX = pLayer->GetPositionX() - ClipPosX;
+				
+				if(ShiftX != 0 && AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token))
+				{
+					CAsset_MapZoneTiles* pEditableLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<CAsset_MapZoneTiles::CTile>& Tiles = pEditableLayer->GetTileArray();
+					Tiles.apply_shift(ShiftX, 0);
+					
+					int ClipSizeX = pLayer->GetTileWidth() + ShiftX;
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::POSITIONX, ClipPosX, m_Token);
+					AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);
+				}
+				
+				int ClipSizeY = std::floor(GizmoMapPos.y/32.0f) - pLayer->GetPositionY();
 				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
 			}
 			else if(m_DragType == DRAGTYPE_BR)
 			{
-				int ClipSizeX = std::floor(GizmoMapPos.x/32.0f);
-				int ClipSizeY = std::floor(GizmoMapPos.y/32.0f);
+				int ClipSizeX = std::floor(GizmoMapPos.x/32.0f) - pLayer->GetPositionX();
+				int ClipSizeY = std::floor(GizmoMapPos.y/32.0f) - pLayer->GetPositionY();
 				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_WIDTH, ClipSizeX, m_Token);
 				AssetsManager()->SetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneTiles::TILE_HEIGHT, ClipSizeY, m_Token);
 			}
@@ -404,8 +495,9 @@ void CCursorTool_MapCrop::RenderView()
 		if(!pLayer)
 			return;
 			
-		CropMin = ViewMap()->MapRenderer()->MapPosToScreenPos(0.0f);
-		CropSize = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight())) - CropMin;
+		ViewMap()->MapRenderer()->UnsetGroup();
+		CropMin = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()));
+		CropSize = ViewMap()->MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()) + vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight())) - CropMin;
 	}
 	else
 		return;
@@ -417,21 +509,18 @@ void CCursorTool_MapCrop::RenderView()
 	//Scaling
 	CAssetPath GizmoPath = AssetsEditor()->m_Path_Sprite_GizmoScale;
 	
-	if(AssetsEditor()->GetEditedAssetPath().GetType() != CAsset_MapZoneTiles::TypeId)
-	{
-		//Pivot
-		AssetsRenderer()->DrawSprite(
-			AssetsEditor()->m_Path_Sprite_GizmoPivot,
-			vec2(CropMin + CropSize/2.0f),
-			1.0f, 0.0f, 0x0, 1.0f
-		);
-		
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y - GizmoSize), 1.0f, 0.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMax.y + GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, Pi/2.0f+Pi/4.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y - GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
-		AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMin.y - GizmoSize), 1.0f, Pi/4.0f, 0x0, 1.0f);
-	}
+	//Pivot
+	AssetsRenderer()->DrawSprite(
+		AssetsEditor()->m_Path_Sprite_GizmoPivot,
+		vec2(CropMin + CropSize/2.0f),
+		1.0f, 0.0f, 0x0, 1.0f
+	);
+	
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y - GizmoSize), 1.0f, 0.0f, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMax.y + GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x - GizmoSize, CropMin.y + CropSize.y/2.0f), 1.0f, Pi/2.0f+Pi/4.0f, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMin.y - GizmoSize), 1.0f, Pi/2.0f, 0x0, 1.0f);
+	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMin.y - GizmoSize), 1.0f, Pi/4.0f, 0x0, 1.0f);
 	
 	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMax.x + GizmoSize, CropMax.y + GizmoSize), 1.0f, Pi, 0x0, 1.0f);
 	AssetsRenderer()->DrawSprite(GizmoPath, vec2(CropMin.x + CropSize.x/2.0f, CropMax.y + GizmoSize), 1.0f, Pi/4.0f+Pi, 0x0, 1.0f);

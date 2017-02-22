@@ -108,7 +108,7 @@ void CViewTilingMaterial::GenerateMapPreview()
 
 void CViewTilingMaterial::RefreshMapPreview()
 {
-	ApplyTilingMaterials_Tiles(AssetsManager(), m_MapPreview, AssetsEditor()->GetEditedAssetPath(), rand());
+	ApplyTilingMaterials_Tiles(AssetsManager(), m_MapPreview, AssetsEditor()->GetEditedAssetPath(), 0, 0, m_MapPreview.get_width(), m_MapPreview.get_height(), rand());
 	m_MaterialApplied = AssetsEditor()->GetEditedAssetPath();
 }
 

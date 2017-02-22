@@ -1434,7 +1434,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	return PackageId;
 }
 
-void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId)
+void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId, vec2 LayerShift)
 {
 	const CAsset_MapGroup* pGroup = GetAsset<CAsset_MapGroup>(GroupPath);
 	if(!pGroup)
@@ -1729,8 +1729,8 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 	
 		ddnet::CMapItemGroup GItem;
 		GItem.m_Version = ddnet::CMapItemGroup::CURRENT_VERSION;
-		GItem.m_OffsetX = pGroup->GetPositionX() + GroupOffset.x;
-		GItem.m_OffsetY = pGroup->GetPositionY() + GroupOffset.y;
+		GItem.m_OffsetX = pGroup->GetPositionX() + GroupOffset.x + LayerShift.x * pGroup->GetHardParallaxY();
+		GItem.m_OffsetY = pGroup->GetPositionY() + GroupOffset.y + LayerShift.y * pGroup->GetHardParallaxY();
 		GItem.m_ParallaxX = pGroup->GetHardParallaxX()*100.0f;
 		GItem.m_ParallaxY = pGroup->GetHardParallaxY()*100.0f;
 		GItem.m_StartLayer = StartLayer;
@@ -1801,31 +1801,19 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	
 	int GroupId = 0;
 	int LayerId = 0;
-	
-	//Step1: Save background layers
-	{
-		CAsset_Map::CIteratorBgGroup Iter;
-		for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
-		{
-			Save_Map_Group(ArchiveFile, pMap->GetBgGroup(*Iter), Images, GroupId, LayerId);
-		}
-	}
-	
-	//Step2: Save the game/front/tele/switch/tune layer
-	{
-		int StartLayer = LayerId;
 		
+	vec2 LayerShift = vec2(0.0f, 0.0f);
+	
+	{		
 		//Get game layer size
+		int GameX = 0;
+		int GameY = 0;
 		int GameWidth = 0;
 		int GameHeight = 0;
-		int FrontWidth = 0;
-		int FrontHeight = 0;
-		int TeleWidth = 0;
-		int TeleHeight = 0;
-		int SwitchWidth = 0;
-		int SwitchHeight = 0;
-		int TuneWidth = 0;
-		int TuneHeight = 0;
+		bool FrontEnabled = false;
+		bool TeleEnabled = false;
+		bool SwitchEnabled = false;
+		bool TuneEnabled = false;
 		
 		{
 			CAsset_Map::CIteratorZoneLayer ZoneIter;
@@ -1838,56 +1826,80 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					{
 						if(pZone->GetZoneTypePath() == m_Path_ZoneType_Ninslash)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 					}
 					else
 					{
 						if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 						else if(Format == MAPFORMAT_DUMMYCAPTURE && m_PackageId_UnivSport >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_Sport)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 						else if(Format == MAPFORMAT_FOOT && m_PackageId_UnivSport >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_Sport)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 						else if(Format == MAPFORMAT_OPENFNG && m_PackageId_UnivOpenFNG >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNG)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 						{
-							GameWidth = max(pZone->GetTileWidth(), GameWidth);
-							GameHeight = max(pZone->GetTileHeight(), GameHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 						{
-							FrontWidth = max(pZone->GetTileWidth(), FrontWidth);
-							FrontHeight = max(pZone->GetTileHeight(), FrontHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
+							FrontEnabled = true;
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 						{
-							TeleWidth = max(pZone->GetTileWidth(), TeleWidth);
-							TeleHeight = max(pZone->GetTileHeight(), TeleHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
+							TeleEnabled = true;
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 						{
-							SwitchWidth = max(pZone->GetTileWidth(), SwitchWidth);
-							SwitchHeight = max(pZone->GetTileHeight(), SwitchHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
+							SwitchEnabled = true;
 						}
 						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
 						{
-							TuneWidth = max(pZone->GetTileWidth(), TuneWidth);
-							TuneHeight = max(pZone->GetTileHeight(), TuneHeight);
+							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+							GameX = std::min(GameX, pZone->GetPositionX());
+							GameY = std::min(GameY, pZone->GetPositionY());
+							TuneEnabled = true;
 						}
 					}
 				}
@@ -1895,6 +1907,20 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			}
 		}
 		
+		LayerShift.x = GameX * 32.0f;
+		LayerShift.y = GameY * 32.0f;
+		
+		//Step1: Save background layers
+		{
+			CAsset_Map::CIteratorBgGroup Iter;
+			for(Iter = pMap->BeginBgGroup(); Iter != pMap->EndBgGroup(); ++Iter)
+			{
+				Save_Map_Group(ArchiveFile, pMap->GetBgGroup(*Iter), Images, GroupId, LayerId, LayerShift);
+			}
+		}
+		
+		//Step2: Save the game/front/tele/switch/tune layer
+		int StartLayer = LayerId;
 		ddnet::CTile* pGameTiles = new ddnet::CTile[GameWidth*GameHeight];
 		
 		for(int j=0; j<GameHeight; j++)
@@ -1909,64 +1935,64 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 			
 		ddnet::CTile* pFrontTiles = NULL;
-		if(FrontWidth > 0 && FrontHeight > 0)
+		if(FrontEnabled)
 		{
-			pFrontTiles = new ddnet::CTile[FrontWidth*FrontHeight];	
+			pFrontTiles = new ddnet::CTile[GameWidth*GameHeight];	
 			
-			for(int j=0; j<FrontHeight; j++)
+			for(int j=0; j<GameHeight; j++)
 			{
-				for(int i=0; i<FrontWidth; i++)
+				for(int i=0; i<GameWidth; i++)
 				{
-					pFrontTiles[j*FrontWidth+i].m_Index = 0;
-					pFrontTiles[j*FrontWidth+i].m_Flags = 0;
-					pFrontTiles[j*FrontWidth+i].m_Skip = 0;
-					pFrontTiles[j*FrontWidth+i].m_Reserved = 0;
+					pFrontTiles[j*GameWidth+i].m_Index = 0;
+					pFrontTiles[j*GameWidth+i].m_Flags = 0;
+					pFrontTiles[j*GameWidth+i].m_Skip = 0;
+					pFrontTiles[j*GameWidth+i].m_Reserved = 0;
 				}
 			}
 		}
 			
 		ddnet::CTeleTile* pTeleTiles = NULL;
-		if(TeleWidth > 0 && TeleHeight > 0)
+		if(TeleEnabled)
 		{
-			pTeleTiles = new ddnet::CTeleTile[TeleWidth*TeleHeight];	
+			pTeleTiles = new ddnet::CTeleTile[GameWidth*GameHeight];	
 			
-			for(int j=0; j<TeleHeight; j++)
+			for(int j=0; j<GameHeight; j++)
 			{
-				for(int i=0; i<TeleWidth; i++)
+				for(int i=0; i<GameWidth; i++)
 				{
-					pTeleTiles[j*TeleWidth+i].m_Number = 0;
-					pTeleTiles[j*TeleWidth+i].m_Type = 0;
+					pTeleTiles[j*GameWidth+i].m_Number = 0;
+					pTeleTiles[j*GameWidth+i].m_Type = 0;
 				}
 			}
 		}
 			
 		ddnet::CSwitchTile* pSwitchTiles = NULL;
-		if(SwitchWidth > 0 && SwitchHeight > 0)
+		if(SwitchEnabled)
 		{
-			pSwitchTiles = new ddnet::CSwitchTile[SwitchWidth*SwitchHeight];	
+			pSwitchTiles = new ddnet::CSwitchTile[GameWidth*GameHeight];	
 			
-			for(int j=0; j<SwitchHeight; j++)
+			for(int j=0; j<GameHeight; j++)
 			{
-				for(int i=0; i<SwitchWidth; i++)
+				for(int i=0; i<GameWidth; i++)
 				{
-					pSwitchTiles[j*SwitchWidth+i].m_Number = 0;
-					pSwitchTiles[j*SwitchWidth+i].m_Delay = 0;
-					pSwitchTiles[j*SwitchWidth+i].m_Type = 0;
+					pSwitchTiles[j*GameWidth+i].m_Number = 0;
+					pSwitchTiles[j*GameWidth+i].m_Delay = 0;
+					pSwitchTiles[j*GameWidth+i].m_Type = 0;
 				}
 			}
 		}
 			
 		ddnet::CTuneTile* pTuneTiles = NULL;
-		if(TuneWidth > 0 && TuneHeight > 0)
+		if(TuneEnabled)
 		{
-			pTuneTiles = new ddnet::CTuneTile[TuneWidth*TuneHeight];	
+			pTuneTiles = new ddnet::CTuneTile[GameWidth*GameHeight];	
 			
-			for(int j=0; j<TuneHeight; j++)
+			for(int j=0; j<GameHeight; j++)
 			{
-				for(int i=0; i<TuneWidth; i++)
+				for(int i=0; i<GameWidth; i++)
 				{
-					pTuneTiles[j*TuneWidth+i].m_Number = 0;
-					pTuneTiles[j*TuneWidth+i].m_Type = 0;
+					pTuneTiles[j*GameWidth+i].m_Number = 0;
+					pTuneTiles[j*GameWidth+i].m_Type = 0;
 				}
 			}
 		}
@@ -1990,6 +2016,9 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								switch(pZone->GetTileIndex(TilePath))
 								{
 									case 0:
@@ -2008,7 +2037,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 									case ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_FLAMER:
 										break;
 									default:
-										pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+										pGameTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
 								}
 							}
 						}
@@ -2025,18 +2054,20 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
 								
 								switch(pZone->GetTileIndex(TilePath))
 								{
 									case 1:
-										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_SOLID;
+										pGameTiles[J*GameWidth+I].m_Index = ddnet::TILE_SOLID;
 										break;
 									case 2:
-										if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
-											pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_DEATH;
+										if(pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_SOLID && pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_NOHOOK)
+											pGameTiles[J*GameWidth+I].m_Index = ddnet::TILE_DEATH;
 										break;
 									case 3:
-										pGameTiles[j*GameWidth+i].m_Index = ddnet::TILE_NOHOOK;
+										pGameTiles[J*GameWidth+I].m_Index = ddnet::TILE_NOHOOK;
 										break;
 								}
 							}
@@ -2049,15 +2080,18 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
+								if(pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_SOLID && pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_NOHOOK)
 								{
 									switch(pZone->GetTileIndex(TilePath))
 									{
 										case 2:
-											pGameTiles[j*GameWidth+i].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+											pGameTiles[J*GameWidth+I].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
 											break;
 										case 3:
-											pGameTiles[j*GameWidth+i].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
+											pGameTiles[J*GameWidth+I].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
 											break;
 									}
 								}
@@ -2071,15 +2105,18 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
+								if(pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_SOLID && pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_NOHOOK)
 								{
 									switch(pZone->GetTileIndex(TilePath))
 									{
 										case 2:
-											pGameTiles[j*GameWidth+i].m_Index = 55;
+											pGameTiles[J*GameWidth+I].m_Index = 55;
 											break;
 										case 3:
-											pGameTiles[j*GameWidth+i].m_Index = 56;
+											pGameTiles[J*GameWidth+I].m_Index = 56;
 											break;
 									}
 								}
@@ -2093,10 +2130,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								if(pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_SOLID && pGameTiles[j*GameWidth+i].m_Index != ddnet::TILE_NOHOOK)
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
+								if(pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_SOLID && pGameTiles[J*GameWidth+I].m_Index != ddnet::TILE_NOHOOK)
 								{
 									if(pZone->GetTileIndex(TilePath) > 0)
-										pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+										pGameTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
 								}
 							}
 						}
@@ -2108,8 +2148,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								if(pZone->GetTileIndex(TilePath) > 0)
-									pGameTiles[j*GameWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+									pGameTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -2120,8 +2163,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								if(pZone->GetTileIndex(TilePath) > 0)
-									pFrontTiles[j*FrontWidth+i].m_Index = pZone->GetTileIndex(TilePath);
+									pFrontTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
 							}
 						}
 					}
@@ -2133,11 +2179,14 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								if(pZone->GetTileIndex(TilePath) > 0)
 								{
-									pTeleTiles[j*TeleWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									pTeleTiles[J*GameWidth+I].m_Type = pZone->GetTileIndex(TilePath);
 									if(DataInt.get_depth() > 0)
-										pTeleTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 0);
+										pTeleTiles[J*GameWidth+I].m_Number = DataInt.get_clamp(i, j, 0);
 								}
 							}
 						}
@@ -2150,13 +2199,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								if(pZone->GetTileIndex(TilePath) > 0)
 								{
-									pSwitchTiles[j*SwitchWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									pSwitchTiles[J*GameWidth+I].m_Type = pZone->GetTileIndex(TilePath);
 									if(DataInt.get_depth() > 0)
-										pSwitchTiles[j*TuneWidth+i].m_Delay = DataInt.get_clamp(i, j, 0);
+										pSwitchTiles[J*GameWidth+I].m_Delay = DataInt.get_clamp(i, j, 0);
 									if(DataInt.get_depth() > 1)
-										pSwitchTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 1);
+										pSwitchTiles[J*GameWidth+I].m_Number = DataInt.get_clamp(i, j, 1);
 								}
 							}
 						}
@@ -2169,11 +2221,14 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							for(int i=0; i<pZone->GetTileWidth(); i++)
 							{
 								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+								int I =  i + pZone->GetPositionX() - GameX;
+								int J =  j + pZone->GetPositionY() - GameY;
+								
 								if(pZone->GetTileIndex(TilePath) > 0)
 								{
-									pTuneTiles[j*TuneWidth+i].m_Type = pZone->GetTileIndex(TilePath);
+									pTuneTiles[J*GameWidth+I].m_Type = pZone->GetTileIndex(TilePath);
 									if(DataInt.get_depth() > 0)
-										pTuneTiles[j*TuneWidth+i].m_Number = DataInt.get_clamp(i, j, 0);
+										pTuneTiles[J*GameWidth+I].m_Number = DataInt.get_clamp(i, j, 0);
 								}
 							}
 						}
@@ -2310,16 +2365,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 		if(pFrontTiles)
 		{
-			ddnet::CTile* pZeroTiles = new ddnet::CTile[FrontWidth*FrontHeight];
-			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*FrontWidth*FrontHeight);
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[GameWidth*GameHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*GameWidth*GameHeight);
 			
 			ddnet::CMapItemLayerTilemap LItem;
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_FRONT;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 			LItem.m_Layer.m_Flags = 0x0;
-			LItem.m_Width = FrontWidth;
-			LItem.m_Height = FrontHeight;
+			LItem.m_Width = GameWidth;
+			LItem.m_Height = GameHeight;
 			LItem.m_Color.r = 255;
 			LItem.m_Color.g = 255;
 			LItem.m_Color.b = 255;
@@ -2327,8 +2382,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_ColorEnv = -1;
 			LItem.m_ColorEnvOffset = 0;
 			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(FrontWidth*FrontHeight*sizeof(ddnet::CTile), pZeroTiles);
-			LItem.m_Front = ArchiveFile.AddData(FrontWidth*FrontHeight*sizeof(ddnet::CTile), pFrontTiles);
+			LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Front = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pFrontTiles);
 			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Front");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
@@ -2337,16 +2392,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 		if(pTeleTiles)
 		{
-			ddnet::CTile* pZeroTiles = new ddnet::CTile[TeleWidth*TeleHeight];
-			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*TeleWidth*TeleHeight);
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[GameWidth*GameHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*GameWidth*GameHeight);
 			
 			ddnet::CMapItemLayerTilemap LItem;
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_TELE;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 			LItem.m_Layer.m_Flags = 0x0;
-			LItem.m_Width = TeleWidth;
-			LItem.m_Height = TeleHeight;
+			LItem.m_Width = GameWidth;
+			LItem.m_Height = GameHeight;
 			LItem.m_Color.r = 255;
 			LItem.m_Color.g = 255;
 			LItem.m_Color.b = 255;
@@ -2354,8 +2409,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_ColorEnv = -1;
 			LItem.m_ColorEnvOffset = 0;
 			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(TeleWidth*TeleHeight*sizeof(ddnet::CTile), pZeroTiles);
-			LItem.m_Tele = ArchiveFile.AddData(TeleWidth*TeleHeight*sizeof(ddnet::CTeleTile), pTeleTiles);
+			LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Tele = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTeleTile), pTeleTiles);
 			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Tele");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
@@ -2364,16 +2419,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 		if(pSwitchTiles)
 		{
-			ddnet::CTile* pZeroTiles = new ddnet::CTile[SwitchWidth*SwitchHeight];
-			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*SwitchWidth*SwitchHeight);
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[GameWidth*GameHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*GameWidth*GameHeight);
 			
 			ddnet::CMapItemLayerTilemap LItem;
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_SWITCH;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 			LItem.m_Layer.m_Flags = 0x0;
-			LItem.m_Width = SwitchWidth;
-			LItem.m_Height = SwitchHeight;
+			LItem.m_Width = GameWidth;
+			LItem.m_Height = GameHeight;
 			LItem.m_Color.r = 255;
 			LItem.m_Color.g = 255;
 			LItem.m_Color.b = 255;
@@ -2381,8 +2436,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_ColorEnv = -1;
 			LItem.m_ColorEnvOffset = 0;
 			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(SwitchWidth*SwitchHeight*sizeof(ddnet::CTile), pZeroTiles);
-			LItem.m_Switch = ArchiveFile.AddData(SwitchWidth*SwitchHeight*sizeof(ddnet::CSwitchTile), pSwitchTiles);
+			LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Switch = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CSwitchTile), pSwitchTiles);
 			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Switch");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
@@ -2391,16 +2446,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		}
 		if(pTuneTiles)
 		{
-			ddnet::CTile* pZeroTiles = new ddnet::CTile[TuneWidth*TuneHeight];
-			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*TuneWidth*TuneHeight);
+			ddnet::CTile* pZeroTiles = new ddnet::CTile[GameWidth*GameHeight];
+			mem_zero(pZeroTiles, sizeof(ddnet::CTile)*GameWidth*GameHeight);
 			
 			ddnet::CMapItemLayerTilemap LItem;
 			LItem.m_Version = 3;
 			LItem.m_Flags = ddnet::TILESLAYERFLAG_TUNE;
 			LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 			LItem.m_Layer.m_Flags = 0x0;
-			LItem.m_Width = TuneWidth;
-			LItem.m_Height = TuneHeight;
+			LItem.m_Width = GameWidth;
+			LItem.m_Height = GameHeight;
 			LItem.m_Color.r = 255;
 			LItem.m_Color.g = 255;
 			LItem.m_Color.b = 255;
@@ -2408,8 +2463,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			LItem.m_ColorEnv = -1;
 			LItem.m_ColorEnvOffset = 0;
 			LItem.m_Image = -1;
-			LItem.m_Data = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTile), pZeroTiles);
-			LItem.m_Tune = ArchiveFile.AddData(TuneWidth*TuneHeight*sizeof(ddnet::CTuneTile), pTuneTiles);
+			LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pZeroTiles);
+			LItem.m_Tune = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTuneTile), pTuneTiles);
 			StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), "Tune");
 			ArchiveFile.AddItem(ddnet::MAPITEMTYPE_LAYER, LayerId++, sizeof(ddnet::CMapItemLayerTilemap), &LItem);
 			
@@ -2440,7 +2495,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		CAsset_Map::CIteratorFgGroup Iter;
 		for(Iter = pMap->BeginFgGroup(); Iter != pMap->EndFgGroup(); ++Iter)
 		{
-			Save_Map_Group(ArchiveFile, pMap->GetFgGroup(*Iter), Images, GroupId, LayerId);
+			Save_Map_Group(ArchiveFile, pMap->GetFgGroup(*Iter), Images, GroupId, LayerId, LayerShift);
 		}
 	}
 	

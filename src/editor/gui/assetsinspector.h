@@ -68,6 +68,7 @@ private:
 	void AddField_Integer(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Integer_NoEdit(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Integer_MapLayerTiles_NoSource(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
+	void AddField_Seed(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Color(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Float(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const CLocalizableString& Text);

@@ -718,8 +718,8 @@ void CViewMap::RenderView()
 		{
 			MapRenderer()->SetGroup(GetMapGroupPath());
 			
-			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(0.0f, 0.0f));
-			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetTileWidth(), pLayer->GetTileHeight()));
+			vec2 MinCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX(), pLayer->GetPositionY()));
+			vec2 MaxCorner = MapRenderer()->TilePosToScreenPos(vec2(pLayer->GetPositionX() + pLayer->GetTileWidth(), pLayer->GetPositionY() + pLayer->GetTileHeight()));
 			
 			gui::CRect Rect;
 			Rect.x = MinCorner.x;

@@ -137,6 +137,27 @@ void CAsset_GuiButtonStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadi
 	pLoadingContext->WriteAssetPath(SysType.m_FocusStylePath, TuaType.m_FocusStylePath);
 }
 
+void CAsset_GuiButtonStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiButtonStyle& SysType)
+{
+	CAsset::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleStylePath, SysType.m_IdleStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverStylePath, SysType.m_MouseOverStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ReadOnlyStylePath, SysType.m_ReadOnlyStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_FocusStylePath, SysType.m_FocusStylePath);
+}
+
+
+void CAsset_GuiButtonStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_2_4& TuaType)
+{
+	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IdleStylePath, TuaType.m_IdleStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverStylePath, TuaType.m_MouseOverStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_ReadOnlyStylePath, TuaType.m_ReadOnlyStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_FocusStylePath, TuaType.m_FocusStylePath);
+}
+
 template<>
 CAssetPath CAsset_GuiButtonStyle::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const
 {

@@ -169,6 +169,21 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Layer;
+		CTuaVec2 m_Position;
+		CTuaVec2 m_HardParallax;
+		tua_uint8 m_Clipping;
+		CTuaVec2 m_ClipPosition;
+		CTuaVec2 m_ClipSize;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapGroup& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapGroup& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;

@@ -210,6 +210,29 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiRectStyle& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		tua_int32 m_Flags;
+		tua_uint32 m_BackgroundColor;
+		tua_float m_BackgroundPadding;
+		tua_uint32 m_BorderColor;
+		tua_int32 m_BorderFlags;
+		tua_float m_CornerRadius;
+		tua_int32 m_CornerFlags;
+		tua_int32 m_ImagePadding;
+		CAssetPath::CTuaType m_ImageTPath;
+		CAssetPath::CTuaType m_ImageRPath;
+		CAssetPath::CTuaType m_ImageBPath;
+		CAssetPath::CTuaType m_ImageLPath;
+		CAssetPath::CTuaType m_ImageTRPath;
+		CAssetPath::CTuaType m_ImageBRPath;
+		CAssetPath::CTuaType m_ImageBLPath;
+		CAssetPath::CTuaType m_ImageTLPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiRectStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiRectStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	int m_Flags;

@@ -21,7 +21,8 @@
 #ifndef __SHARED_AUTOLAYER__
 #define __SHARED_AUTOLAYER__
 
-void ApplyTilingMaterials_Tiles(CAssetsManager* pAssetsManager, array2d<CAsset_MapLayerTiles::CTile>& Tiles, CAssetPath StylePath, int Seed);
-void ApplyTilingMaterials(CAssetsManager* pAssetsManager, CAssetPath LayerPath, int Token);
+void ApplyTilingMaterials_Tiles(CAssetsManager* pAssetsManager, array2d<CAsset_MapLayerTiles::CTile>& Tiles, CAssetPath StylePath, int X, int Y, int W, int H, int Seed);
+void ApplyTilingMaterials_Layer(CAssetsManager* pAssetsManager, CAssetPath LayerPath, int X, int Y, int W, int H, int Token);
+void ApplyTilingMaterials_FullLayer(CAssetsManager* pAssetsManager, CAssetPath LayerPath, int Token);
 
 #endif

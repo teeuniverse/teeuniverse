@@ -209,7 +209,7 @@ public:
 	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
 	int Load_AssetsFile(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
 	
-	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId);
+	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId, vec2 LayerShift);
 	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
 	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
 	

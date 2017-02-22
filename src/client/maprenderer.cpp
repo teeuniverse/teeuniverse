@@ -1106,7 +1106,8 @@ void CMapRenderer::RenderMap_Zones(CAssetPath MapPath, vec4 Color)
 			if(!pZone->GetVisibility())
 				continue;
 			
-			RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), 0.0f, Color, true);
+			vec2 Position = TilePosToMapPos(vec2(pZone->GetPositionX(), pZone->GetPositionY()));
+			RenderTiles_Zone(pZone->GetZoneTypePath(), pZone->GetTileArray(), Position, Color, true);
 		}
 		else if(ZonePath.GetType() == CAsset_MapZoneObjects::TypeId)
 		{

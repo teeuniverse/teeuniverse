@@ -173,6 +173,33 @@ void CAsset_GuiToggleStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadi
 	TuaType.m_SwitchIcon = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_SwitchIcon);
 }
 
+void CAsset_GuiToggleStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiToggleStyle& SysType)
+{
+	CAsset::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleTrueStylePath, SysType.m_IdleTrueStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverTrueStylePath, SysType.m_MouseOverTrueStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconTruePath, SysType.m_IconTruePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleFalseStylePath, SysType.m_IdleFalseStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverFalseStylePath, SysType.m_MouseOverFalseStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_IconFalsePath, SysType.m_IconFalsePath);
+	SysType.m_SwitchIcon = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_SwitchIcon);
+}
+
+
+void CAsset_GuiToggleStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_2_4& TuaType)
+{
+	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IdleTrueStylePath, TuaType.m_IdleTrueStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverTrueStylePath, TuaType.m_MouseOverTrueStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconTruePath, TuaType.m_IconTruePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IdleFalseStylePath, TuaType.m_IdleFalseStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverFalseStylePath, TuaType.m_MouseOverFalseStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_IconFalsePath, TuaType.m_IconFalsePath);
+	TuaType.m_SwitchIcon = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_SwitchIcon);
+}
+
 template<>
 bool CAsset_GuiToggleStyle::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const
 {

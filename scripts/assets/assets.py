@@ -19,7 +19,7 @@
 import sys, os
 
 # TAG_ASSETSVERSION
-versionList = ["0.1.0", "0.2.0", "0.2.1", "0.2.2", "0.2.3"]
+versionList = ["0.1.0", "0.2.0", "0.2.1", "0.2.2", "0.2.3", "0.2.4"]
 
 class SubPathType:
 	def __init__(self, name, enumname, numidx):
@@ -1985,6 +1985,7 @@ mapLayerTiles.addMember("0.2.1", "PositionX", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.1", "PositionY", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.3", "LevelOfDetail", TypeInt32(), "0")
 mapLayerTiles.addMember("0.2.3", "SourcePath", TypeAssetPath())
+mapLayerTiles.addMember("0.2.4", "RandomSeed", TypeInt32())
 
 mapLayerTiles.addPublicLines([
 	"enum",
@@ -2012,6 +2013,8 @@ mapZoneTiles.addMember("0.1.0", "ZoneTypePath", TypeAssetPath())
 mapZoneTiles.addMember("0.1.0", "Tile", TypeArray2d(mapZoneTiles_tile))
 mapZoneTiles.addMember("0.1.0", "Visibility", TypeBool(), "true")
 mapZoneTiles.addMember("0.2.2", "DataInt", TypeArray2d(TypeInt32()))
+mapZoneTiles.addMember("0.2.4", "PositionX", TypeInt32(), "0")
+mapZoneTiles.addMember("0.2.4", "PositionY", TypeInt32(), "0")
 
 assetsList.append(mapZoneTiles)
 

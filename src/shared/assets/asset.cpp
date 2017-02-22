@@ -36,6 +36,7 @@ ASSET_TUATYPEIMPL_VERSION(0_2_0)
 ASSET_TUATYPEIMPL_VERSION(0_2_1)
 ASSET_TUATYPEIMPL_VERSION(0_2_2)
 ASSET_TUATYPEIMPL_VERSION(0_2_3)
+ASSET_TUATYPEIMPL_VERSION(0_2_4)
 
 template<>
 const char* CAsset::GetValue(int ValueType, const CSubPath& SubPath, const char* DefaultValue) const

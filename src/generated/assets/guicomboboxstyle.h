@@ -95,6 +95,16 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_ButtonPath;
+		CAssetPath::CTuaType m_PopupPath;
+		CAssetPath::CTuaType m_EnumPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiComboBoxStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiComboBoxStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ButtonPath;

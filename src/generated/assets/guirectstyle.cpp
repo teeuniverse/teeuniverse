@@ -270,6 +270,51 @@ void CAsset_GuiRectStyle::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 	pLoadingContext->WriteAssetPath(SysType.m_ImageTLPath, TuaType.m_ImageTLPath);
 }
 
+void CAsset_GuiRectStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiRectStyle& SysType)
+{
+	CAsset::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Flags);
+	SysType.m_BackgroundColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BackgroundColor);
+	SysType.m_BackgroundPadding = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_BackgroundPadding);
+	SysType.m_BorderColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_BorderColor);
+	SysType.m_BorderFlags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_BorderFlags);
+	SysType.m_CornerRadius = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CornerRadius);
+	SysType.m_CornerFlags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_CornerFlags);
+	SysType.m_ImagePadding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_ImagePadding);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageTPath, SysType.m_ImageTPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageRPath, SysType.m_ImageRPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageBPath, SysType.m_ImageBPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageLPath, SysType.m_ImageLPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageTRPath, SysType.m_ImageTRPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageBRPath, SysType.m_ImageBRPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageBLPath, SysType.m_ImageBLPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImageTLPath, SysType.m_ImageTLPath);
+}
+
+
+void CAsset_GuiRectStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiRectStyle& SysType, CTuaType_0_2_4& TuaType)
+{
+	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Flags);
+	TuaType.m_BackgroundColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BackgroundColor);
+	TuaType.m_BackgroundPadding = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_BackgroundPadding);
+	TuaType.m_BorderColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_BorderColor);
+	TuaType.m_BorderFlags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_BorderFlags);
+	TuaType.m_CornerRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CornerRadius);
+	TuaType.m_CornerFlags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_CornerFlags);
+	TuaType.m_ImagePadding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_ImagePadding);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageTPath, TuaType.m_ImageTPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageRPath, TuaType.m_ImageRPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageBPath, TuaType.m_ImageBPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageLPath, TuaType.m_ImageLPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageTRPath, TuaType.m_ImageTRPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageBRPath, TuaType.m_ImageBRPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageBLPath, TuaType.m_ImageBLPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImageTLPath, TuaType.m_ImageTLPath);
+}
+
 template<>
 int CAsset_GuiRectStyle::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

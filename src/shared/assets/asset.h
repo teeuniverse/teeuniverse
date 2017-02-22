@@ -43,6 +43,7 @@ public:
 	ASSET_TUATYPE_VERSION(0_2_1)
 	ASSET_TUATYPE_VERSION(0_2_2)
 	ASSET_TUATYPE_VERSION(0_2_3)
+	ASSET_TUATYPE_VERSION(0_2_4)
 
 private:
 	class CAssetsManager* m_pAssetsManager;

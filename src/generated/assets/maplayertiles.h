@@ -77,6 +77,7 @@ public:
 		POSITIONY,
 		LEVELOFDETAIL,
 		SOURCEPATH,
+		RANDOMSEED,
 	};
 	
 	class CTile
@@ -126,6 +127,16 @@ public:
 			tua_uint8 m_Brush;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapLayerTiles::CTile& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
+		class CTuaType_0_2_4
+		{
+		public:
+			tua_uint8 m_Index;
+			tua_uint8 m_Flags;
+			tua_uint8 m_Brush;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapLayerTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles::CTile& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
 	
@@ -221,6 +232,23 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_StylePath;
+		tua_uint32 m_Color;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		tua_int32 m_PositionX;
+		tua_int32 m_PositionY;
+		tua_int32 m_LevelOfDetail;
+		CAssetPath::CTuaType m_SourcePath;
+		tua_int32 m_RandomSeed;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapLayerTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerTiles& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
@@ -232,6 +260,7 @@ private:
 	int m_PositionY;
 	int m_LevelOfDetail;
 	CAssetPath m_SourcePath;
+	int m_RandomSeed;
 
 public:
 	virtual ~CAsset_MapLayerTiles() {}
@@ -292,6 +321,8 @@ public:
 	
 	inline CAssetPath GetSourcePath() const { return m_SourcePath; }
 	
+	inline int GetRandomSeed() const { return m_RandomSeed; }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
 	inline void SetStylePath(const CAssetPath& Value) { m_StylePath = Value; }
@@ -321,6 +352,8 @@ public:
 	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
 	
 	inline void SetSourcePath(const CAssetPath& Value) { m_SourcePath = Value; }
+	
+	inline void SetRandomSeed(int Value) { m_RandomSeed = Value; }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

@@ -132,6 +132,15 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
+		class CTuaType_0_2_4
+		{
+		public:
+			CAssetPath::CTuaType m_TypePath;
+			CTuaVec2 m_Position;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapEntities::CEntity& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities::CEntity& SysType, CTuaType_0_2_4& TuaType);
+		};
+		
 	
 	private:
 		CAssetPath m_TypePath;
@@ -209,6 +218,16 @@ public:
 		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapEntities& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType_0_2_3& TuaType);
+	};
+	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CTuaArray m_Entity;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapEntities& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapEntities& SysType, CTuaType_0_2_4& TuaType);
 	};
 	
 

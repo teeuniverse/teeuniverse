@@ -70,6 +70,8 @@ public:
 		DATAINT_PTR,
 		DATAINT_ARRAY,
 		DATAINT,
+		POSITIONX,
+		POSITIONY,
 	};
 	
 	class CTile
@@ -114,6 +116,15 @@ public:
 			tua_uint32 m_Flags;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_MapZoneTiles::CTile& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_3& TuaType);
+		};
+		
+		class CTuaType_0_2_4
+		{
+		public:
+			tua_uint8 m_Index;
+			tua_uint32 m_Flags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
 	
@@ -193,6 +204,20 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ZoneTypePath;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		CTuaArray2d m_DataInt;
+		tua_int32 m_PositionX;
+		tua_int32 m_PositionY;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
@@ -200,6 +225,8 @@ private:
 	array2d< CTile > m_Tile;
 	bool m_Visibility;
 	array2d< int > m_DataInt;
+	int m_PositionX;
+	int m_PositionY;
 
 public:
 	virtual ~CAsset_MapZoneTiles() {}
@@ -261,6 +288,10 @@ public:
 	
 	inline int GetDataInt(const CSubPath& SubPath) const { return m_DataInt.get_clamp(SubPath.GetId(), SubPath.GetId2()); }
 	
+	inline int GetPositionX() const { return m_PositionX; }
+	
+	inline int GetPositionY() const { return m_PositionY; }
+	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
 	
 	inline void SetZoneTypePath(const CAssetPath& Value) { m_ZoneTypePath = Value; }
@@ -286,6 +317,10 @@ public:
 	inline void SetDataIntDepth(int Value) { m_DataInt.resize_depth(max(Value, 1)); }
 	
 	inline void SetDataInt(const CSubPath& SubPath, int Value) { m_DataInt.set_clamp(SubPath.GetId(), SubPath.GetId2(), Value); }
+	
+	inline void SetPositionX(int Value) { m_PositionX = Value; }
+	
+	inline void SetPositionY(int Value) { m_PositionY = Value; }
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{

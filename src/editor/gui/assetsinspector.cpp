@@ -722,12 +722,12 @@ protected:
 	virtual void MouseClickAction()
 	{
 		int Token = AssetsManager()->GenerateToken();
-		ApplyTilingMaterials(AssetsManager(), m_pAssetsEditor->GetEditedAssetPath(), Token);
+		ApplyTilingMaterials_FullLayer(AssetsManager(), m_pAssetsEditor->GetEditedAssetPath(), Token);
 	}
 	
 public:
 	CMapLayerTilesButton_ApplyStyle(CGuiEditor* pAssetsEditor) :
-		gui::CButton(pAssetsEditor, _LSTRING("Apply style from source"), pAssetsEditor->m_Path_Sprite_IconSystem),
+		gui::CButton(pAssetsEditor, _LSTRING("Apply style"), pAssetsEditor->m_Path_Sprite_IconSystem),
 		m_pAssetsEditor(pAssetsEditor)
 	{ }
 };
@@ -780,6 +780,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerTiles_Asset()
 	AddField_Asset(pTab, CAsset_MapLayerTiles::SOURCEPATH, CAsset_MapZoneTiles::TypeId, _LSTRING("Source"));
 	AddField_TileLayerStyle(pTab, CAsset_MapLayerTiles::STYLEPATH, _LSTRING("Style"));
 	AddField_Color(pTab, CAsset_MapLayerTiles::COLOR, _LSTRING("Color"));
+	AddField_Seed(pTab, CAsset_MapLayerTiles::RANDOMSEED, _LSTRING("Seed"));
 	
 	{
 		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerTiles::LEVELOFDETAIL);
@@ -1215,6 +1216,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneTiles_Asset()
 	
 	AddField_AssetProperties(pTab);
 		
+	AddField_Integer(pTab, CAsset_MapZoneTiles::POSITIONX, _LSTRING("Position X"));
+	AddField_Integer(pTab, CAsset_MapZoneTiles::POSITIONY, _LSTRING("Position Y"));
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_WIDTH, _LSTRING("Width"));	
 	AddField_Integer(pTab, CAsset_MapZoneTiles::TILE_HEIGHT, _LSTRING("Height"));
 	AddField_Asset(pTab, CAsset_MapZoneTiles::ZONETYPEPATH, CAsset_ZoneType::TypeId, _LSTRING("Zone type"));
@@ -2845,6 +2848,121 @@ void CAssetsInspector::AddField_Integer_NoEdit(gui::CVListLayout* pList, int Mem
 		m_pAssetsEditor,
 		Member,
 		true
+	);
+	
+	AddField(pList, pWidget, Text);
+}
+
+/* INTEGER EDIT *******************************************************/
+
+class CMemberSeedEdit : public gui::CHListLayout
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	
+public:
+	class CButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		int m_Member;
+	
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPath(),
+				m_Member,
+				rand()
+			);
+		}
+		
+	public:
+		CButton(CGuiEditor* pAssetsEditor, int Member) :
+			gui::CButton(pAssetsEditor, pAssetsEditor->m_Path_Sprite_IconSystem),
+			m_pAssetsEditor(pAssetsEditor),
+			m_Member(Member)
+		{
+			
+		}
+	};
+	
+	class CTextEdit : public gui::CAbstractTextEdit
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		int m_Member;
+		
+	protected:
+		virtual void SaveFromTextBuffer()
+		{
+			const char* pText = GetText();
+			pText = str_skip_whitespaces((char*) pText);
+			
+			uint32 Value = str_to_int_base(pText, 16);
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPath(),
+				m_Member,
+				Value
+			);
+		}
+		
+		virtual void CopyToTextBuffer()
+		{
+			uint32 Value = m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPath(),
+				m_Member,
+				0
+			);
+			
+			char aBuf[16];
+			str_format(aBuf, sizeof(aBuf), "%08X", Value);
+			SetText(aBuf);
+		}
+		
+		virtual void Update(bool ParentEnabled)
+		{
+			if(IsEnabled() && ParentEnabled)
+			{
+				if(!AssetsManager()->IsValidPackage(m_pAssetsEditor->GetEditedPackageId()) || AssetsManager()->IsReadOnlyPackage(m_pAssetsEditor->GetEditedPackageId()))
+					Editable(false);
+				else
+					Editable(true);
+			}
+			
+			gui::CAbstractTextEdit::Update(ParentEnabled);
+		}
+		
+	public:
+		CTextEdit(CGuiEditor* pAssetsEditor, int Member) :
+			gui::CAbstractTextEdit(pAssetsEditor),
+			m_pAssetsEditor(pAssetsEditor),
+			m_Member(Member)
+		{
+			
+		}
+	};
+
+public:
+	CMemberSeedEdit(CGuiEditor* pAssetsEditor, int Member) :
+		gui::CHListLayout(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member)
+	{
+		Add(new CTextEdit(m_pAssetsEditor, m_Member), true);
+		Add(new CButton(m_pAssetsEditor, m_Member), false);
+	}
+};
+
+void CAssetsInspector::AddField_Seed(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
+{
+	CMemberSeedEdit* pWidget = new CMemberSeedEdit(
+		m_pAssetsEditor,
+		Member
 	);
 	
 	AddField(pList, pWidget, Text);

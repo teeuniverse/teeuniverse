@@ -677,6 +677,150 @@ void CAsset_PathMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 	TuaType.m_TextureEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TextureEnabled);
 }
 
+void CAsset_PathMaterial::CLabel::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_PathMaterial::CLabel& SysType)
+{
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_AngleStart = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_AngleStart);
+	SysType.m_AngleEnd = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_AngleEnd);
+}
+
+
+void CAsset_PathMaterial::CSprite::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_PathMaterial::CSprite& SysType)
+{
+	pLoadingContext->ReadAssetPath(TuaType.m_Path, SysType.m_Path);
+	SysType.m_Size.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_X);
+	SysType.m_Size.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_Y);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_Flags = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Flags);
+	SysType.m_Position.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_X);
+	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
+	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
+	SysType.m_Filling = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Filling);
+	SysType.m_TileType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileType);
+	SysType.m_TileLabel0 = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileLabel0);
+	SysType.m_TileLabel1 = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_TileLabel1);
+}
+
+
+void CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_PathMaterial::CLayer& SysType)
+{
+	{
+		const CAsset_PathMaterial::CSprite::CTuaType_0_2_4* pData = (const CAsset_PathMaterial::CSprite::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Sprite.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Sprite.m_Size);
+		SysType.m_Sprite.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_PathMaterial::CSprite::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_Sprite[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_PathMaterial::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_PathMaterial& SysType)
+{
+	CAsset::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
+
+	{
+		const CAsset_PathMaterial::CLabel::CTuaType_0_2_4* pData = (const CAsset_PathMaterial::CLabel::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Label.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Label.m_Size);
+		SysType.m_Label.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_PathMaterial::CLabel::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_Label[i]);
+		}
+	}
+	
+	{
+		const CAsset_PathMaterial::CLayer::CTuaType_0_2_4* pData = (const CAsset_PathMaterial::CLayer::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Layer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Layer.m_Size);
+		SysType.m_Layer.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_Layer[i]);
+		}
+	}
+	
+	pLoadingContext->ReadAssetPath(TuaType.m_TexturePath, SysType.m_TexturePath);
+	SysType.m_TextureColor = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_TextureColor);
+	SysType.m_TextureSize.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_X);
+	SysType.m_TextureSize.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSize.m_Y);
+	SysType.m_TextureAngle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureAngle);
+	SysType.m_TextureSpacing = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_TextureSpacing);
+	SysType.m_TextureEnabled = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_TextureEnabled);
+}
+
+
+void CAsset_PathMaterial::CLabel::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLabel& SysType, CTuaType_0_2_4& TuaType)
+{
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_AngleStart = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_AngleStart);
+	TuaType.m_AngleEnd = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_AngleEnd);
+}
+
+void CAsset_PathMaterial::CSprite::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CSprite& SysType, CTuaType_0_2_4& TuaType)
+{
+	pLoadingContext->WriteAssetPath(SysType.m_Path, TuaType.m_Path);
+	TuaType.m_Size.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.x);
+	TuaType.m_Size.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.y);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_Flags = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Flags);
+	TuaType.m_Position.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.x);
+	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
+	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
+	TuaType.m_Filling = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Filling);
+	TuaType.m_TileType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileType);
+	TuaType.m_TileLabel0 = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileLabel0);
+	TuaType.m_TileLabel1 = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_TileLabel1);
+}
+
+void CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial::CLayer& SysType, CTuaType_0_2_4& TuaType)
+{
+	{
+		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
+		CAsset_PathMaterial::CSprite::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_4[SysType.m_Sprite.size()];
+		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
+		{
+			CAsset_PathMaterial::CSprite::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
+		}
+		TuaType.m_Sprite.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_4)*SysType.m_Sprite.size());
+		delete[] pData;
+	}
+}
+
+void CAsset_PathMaterial::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_PathMaterial& SysType, CTuaType_0_2_4& TuaType)
+{
+	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	{
+		TuaType.m_Label.m_Size = SysType.m_Label.size();
+		CAsset_PathMaterial::CLabel::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_4[SysType.m_Label.size()];
+		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
+		{
+			CAsset_PathMaterial::CLabel::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
+		}
+		TuaType.m_Label.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_4)*SysType.m_Label.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
+		CAsset_PathMaterial::CLayer::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_4[SysType.m_Layer.size()];
+		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
+		{
+			CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
+		}
+		TuaType.m_Layer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_4)*SysType.m_Layer.size());
+		delete[] pData;
+	}
+	pLoadingContext->WriteAssetPath(SysType.m_TexturePath, TuaType.m_TexturePath);
+	TuaType.m_TextureColor = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_TextureColor);
+	TuaType.m_TextureSize.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.x);
+	TuaType.m_TextureSize.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSize.y);
+	TuaType.m_TextureAngle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureAngle);
+	TuaType.m_TextureSpacing = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_TextureSpacing);
+	TuaType.m_TextureEnabled = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_TextureEnabled);
+}
+
 template<>
 int CAsset_PathMaterial::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {

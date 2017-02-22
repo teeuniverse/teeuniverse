@@ -455,7 +455,7 @@ protected:
 			m_Tiles.get_clamp(3, 4).SetBrush(0);
 			m_Tiles.get_clamp(4, 4).SetBrush(0);
 			
-			ApplyTilingMaterials_Tiles(AssetsManager(), m_Tiles, m_MaterialPath, 0);
+			ApplyTilingMaterials_Tiles(AssetsManager(), m_Tiles, m_MaterialPath, 0, 0, m_Tiles.get_width(), m_Tiles.get_height(), 0);
 		}
 		
 		virtual void UpdateBoundingSize()
@@ -1006,21 +1006,21 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
 			{
 				//Copy tiles
-				vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
-				vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
-				int TileX0 = std::floor(PivotTilePos.x);
-				int TileY0 = std::floor(PivotTilePos.y);
-				int TileX1 = std::floor(CursorTilePos.x);
-				int TileY1 = std::floor(CursorTilePos.y);
-			
-				int X0 = min(TileX0, TileX1);
-				int Y0 = min(TileY0, TileY1);
-				int X1 = max(TileX0, TileX1) + 1;
-				int Y1 = max(TileY0, TileY1) + 1;
-				
 				const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer)
 				{
+					vec2 PivotTilePos = ViewMap()->MapRenderer()->MapPosToTilePos(m_Pivot);
+					vec2 CursorTilePos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
+					int TileX0 = std::floor(PivotTilePos.x) - pLayer->GetPositionX();
+					int TileY0 = std::floor(PivotTilePos.y) - pLayer->GetPositionY();
+					int TileX1 = std::floor(CursorTilePos.x) - pLayer->GetPositionX();
+					int TileY1 = std::floor(CursorTilePos.y) - pLayer->GetPositionY();
+				
+					int X0 = min(TileX0, TileX1);
+					int Y0 = min(TileY0, TileY1);
+					int X1 = max(TileX0, TileX1) + 1;
+					int Y1 = max(TileY0, TileY1) + 1;
+					
 					m_TileSelection.resize(X1-X0, Y1-Y0);
 					
 					for(int j=0; j<m_TileSelection.get_height(); j++)
@@ -1193,7 +1193,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 			
 			//Apply auto-tiling
 			if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
-				ApplyTilingMaterials(AssetsManager(), AssetsEditor()->GetEditedAssetPath(), m_Token);
+				ApplyTilingMaterials_Layer(AssetsManager(), AssetsEditor()->GetEditedAssetPath(), MinX, MinY, MaxX-MinX, MaxY-MinY, m_Token);
 		}
 	}
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
@@ -1201,6 +1201,9 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
 		if(pLayer)
 		{
+			TileX -= pLayer->GetPositionX();
+			TileY -= pLayer->GetPositionY();
+			
 			int MinX = clamp(TileX, 0, pLayer->GetTileWidth()-1);
 			int MinY = clamp(TileY, 0, pLayer->GetTileHeight()-1);
 			int MaxX = clamp(TileX + m_TileSelection.get_width(), 1, pLayer->GetTileWidth());
@@ -1247,7 +1250,7 @@ void CCursorTool_MapStamp::OnViewMouseMove()
 					const CAsset_MapLayerTiles* pAutoLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AutoLayerPath);
 					if(pAutoLayer && pAutoLayer->GetSourcePath() == AssetsEditor()->GetEditedAssetPath())
 					{
-						ApplyTilingMaterials(AssetsManager(), AutoLayerPath, m_Token);
+						ApplyTilingMaterials_Layer(AssetsManager(), AutoLayerPath, MinX, MinY, MaxX-MinX, MaxY-MinY, m_Token);
 					}
 				}
 			}

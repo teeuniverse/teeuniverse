@@ -98,6 +98,16 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_2_3& TuaType);
 	};
 	
+	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
+	{
+	public:
+		CAssetPath::CTuaType m_CharacterPath;
+		CSubPath::CTuaType m_CharacterPart;
+		CAssetPath::CTuaType m_SkeletonSkinPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_CharacterPart& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_CharacterPart& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_CharacterPath;
