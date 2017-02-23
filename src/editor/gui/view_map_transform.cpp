@@ -783,7 +783,7 @@ void CCursorTool_MapEdit::Update(bool ParentEnabled)
 void CCursorTool_MapEdit::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Edit Tool: Change the shape of object by moving verticies."));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Edit Tool: Change an object’s shape by moving vertices"));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
@@ -874,7 +874,7 @@ void CCursorTool_MapEraser::Update(bool ParentEnabled)
 void CCursorTool_MapEraser::OnMouseMove()
 {
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
-		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Eraser Tool: Delete objects in the map."));
+		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Eraser Tool: Delete objects in the map"));
 	
 	CCursorTool_MapPicker::OnMouseMove();
 }
