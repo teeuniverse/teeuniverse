@@ -176,20 +176,23 @@ void CBindsManager::SaveConfig(CCLI_Output* pOutput)
 
 bool CBindsManager::PreUpdate()
 {
-	for(int i=0; i<Input()->NumEvents(); i++)
+	if(!Input()->IsTextEdited())
 	{
-		CInput::CEvent Event = Input()->GetEvent(i);
-		if(Event.m_Flags & CInput::FLAG_RELEASE && Event.m_Key != KEY_UNKNOWN)
+		for(int i=0; i<Input()->NumEvents(); i++)
 		{
-			if(Input()->KeyIsPressed(KEY_LCTRL))
+			CInput::CEvent Event = Input()->GetEvent(i);
+			if(Event.m_Flags & CInput::FLAG_RELEASE && Event.m_Key != KEY_UNKNOWN)
 			{
-				if(m_aKeyToCommand[MODIFIER_CTRL][Event.m_Key].length() > 0)
-					CLI()->Execute(m_aKeyToCommand[MODIFIER_CTRL][Event.m_Key].buffer());
-			}
-			else
-			{
-				if(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].length() > 0)
-					CLI()->Execute(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].buffer());
+				if(Input()->KeyIsPressed(KEY_LCTRL))
+				{
+					if(m_aKeyToCommand[MODIFIER_CTRL][Event.m_Key].length() > 0)
+						CLI()->Execute(m_aKeyToCommand[MODIFIER_CTRL][Event.m_Key].buffer());
+				}
+				else
+				{
+					if(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].length() > 0)
+						CLI()->Execute(m_aKeyToCommand[MODIFIER_NONE][Event.m_Key].buffer());
+				}
 			}
 		}
 	}

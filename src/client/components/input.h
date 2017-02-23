@@ -160,6 +160,7 @@ public:
 	void MouseModeRelative();
 	int MouseDoubleClick();
 
+	bool IsTextEdited() const;
 	const char* GetEditedText() const;
 	void StartTextEditing(int x, int y, int w, int h);
 	void StopTextEditing();

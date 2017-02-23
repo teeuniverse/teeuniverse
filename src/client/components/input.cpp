@@ -331,6 +331,11 @@ int CInput::KeyID(const char* pKeyName) const
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
 
+bool CInput::IsTextEdited() const
+{
+	return m_TextEdited;
+}
+
 const char* CInput::GetEditedText() const
 {
 	if(m_Composing)
