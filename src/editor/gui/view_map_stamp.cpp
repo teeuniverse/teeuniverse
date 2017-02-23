@@ -1581,10 +1581,10 @@ void CCursorTool_MapStamp::PaletteCallback_SelectImage(CAssetPath ImagePath, int
 		CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
 		Quad.SetPivot(0.0f);
 		
-		Quad.SetVertex0(vec2(-Size.x/2.0f, -Size.y/2.0f));
-		Quad.SetVertex1(vec2(Size.x/2.0f, -Size.y/2.0f));
-		Quad.SetVertex2(vec2(-Size.x/2.0f, Size.y/2.0f));
-		Quad.SetVertex3(vec2(Size.x/2.0f, Size.y/2.0f));
+		Quad.SetVertex0(vec2(-Size.x/4.0f, -Size.y/4.0f));
+		Quad.SetVertex1(vec2(Size.x/4.0f, -Size.y/4.0f));
+		Quad.SetVertex2(vec2(-Size.x/4.0f, Size.y/4.0f));
+		Quad.SetVertex3(vec2(Size.x/4.0f, Size.y/4.0f));
 		
 		Quad.SetUV0(vec2(UVMin.x, UVMin.y));
 		Quad.SetUV1(vec2(UVMax.x, UVMin.y));
