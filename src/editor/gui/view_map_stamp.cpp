@@ -18,6 +18,7 @@
 
 #include <editor/gui/view_map_stamp.h>
 #include <editor/gui/image_picker.h>
+#include <editor/gui/tilingmaterial_picker.h>
 #include <editor/components/gui.h>
 #include <client/components/assetsrenderer.h>
 #include <client/gui/popup.h>
@@ -401,180 +402,46 @@ public:
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
 
-/* TILING MATERIAL PALETTE ********************************************/
+/* MATERIAL PALETTE ***************************************************/
 
 class CPopup_MaterialPalette : public gui::CPopup
 {
 protected:
-	class CBrushIcon : public gui::CWidget
-	{
-	protected:
-		CGuiEditor* m_pAssetsEditor;
-		CAssetPath m_MaterialPath;
-		CSubPath m_IndexSubPath;
-		array2d<CAsset_MapLayerTiles::CTile> m_Tiles;
-		int m_Number;
-		
-	public:
-		CBrushIcon(CGuiEditor *pAssetsEditor, CAssetPath MaterialPath, CSubPath IndexSubPath) :
-			gui::CWidget(pAssetsEditor),
-			m_pAssetsEditor(pAssetsEditor),
-			m_MaterialPath(MaterialPath),
-			m_IndexSubPath(IndexSubPath)
-		{
-			int Index = IndexSubPath.GetId();
-			m_Tiles.resize(5, 5);
-			
-			m_Tiles.get_clamp(0, 0).SetBrush(0);
-			m_Tiles.get_clamp(1, 0).SetBrush(0);
-			m_Tiles.get_clamp(2, 0).SetBrush(0);
-			m_Tiles.get_clamp(3, 0).SetBrush(0);
-			m_Tiles.get_clamp(4, 0).SetBrush(0);
-			
-			m_Tiles.get_clamp(0, 1).SetBrush(0);
-			m_Tiles.get_clamp(1, 1).SetBrush(Index);
-			m_Tiles.get_clamp(2, 1).SetBrush(Index);
-			m_Tiles.get_clamp(3, 1).SetBrush(0);
-			m_Tiles.get_clamp(4, 1).SetBrush(0);
-			
-			m_Tiles.get_clamp(0, 2).SetBrush(0);
-			m_Tiles.get_clamp(1, 2).SetBrush(Index);
-			m_Tiles.get_clamp(2, 2).SetBrush(Index);
-			m_Tiles.get_clamp(3, 2).SetBrush(Index);
-			m_Tiles.get_clamp(4, 2).SetBrush(0);
-			
-			m_Tiles.get_clamp(0, 3).SetBrush(0);
-			m_Tiles.get_clamp(1, 3).SetBrush(Index);
-			m_Tiles.get_clamp(2, 3).SetBrush(Index);
-			m_Tiles.get_clamp(3, 3).SetBrush(Index);
-			m_Tiles.get_clamp(4, 3).SetBrush(0);
-			
-			m_Tiles.get_clamp(0, 4).SetBrush(0);
-			m_Tiles.get_clamp(1, 4).SetBrush(0);
-			m_Tiles.get_clamp(2, 4).SetBrush(0);
-			m_Tiles.get_clamp(3, 4).SetBrush(0);
-			m_Tiles.get_clamp(4, 4).SetBrush(0);
-			
-			ApplyTilingMaterials_Tiles(AssetsManager(), m_Tiles, m_MaterialPath, 0, 0, m_Tiles.get_width(), m_Tiles.get_height(), 0);
-		}
-		
-		virtual void UpdateBoundingSize()
-		{
-			m_BoundingSizeRect.BSMinimum(32.0f*3, 32.0f*3);
-		}
-		
-		virtual void Render()
-		{
-			Graphics()->ClipPush(m_DrawRect.x, m_DrawRect.y, m_DrawRect.w, m_DrawRect.h);
-			
-			CMapRenderer MapRenderer(ClientKernel());
-			
-			MapRenderer.SetTime(0.0f);
-			MapRenderer.SetLocalTime(time_get()/(float)time_freq());
-			MapRenderer.SetCanvas(m_DrawRect, vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2));
-			MapRenderer.SetCamera(0.0f, 1.0f);
-			
-			MapRenderer.RenderTiles_Style(m_Tiles, vec2(-32.0f*2.0f, -32.0f*2.0f), m_MaterialPath, 1.0f, true);
-			
-			Graphics()->ClipPop();
-		}
-	};
-	
-	class CBrushButton : public gui::CButton
+	class CPaletteMaterialPicker : public CTilingMaterialPicker
 	{
 	protected:
 		CPopup_MaterialPalette* m_pPopup;
 		CCursorTool_MapStamp* m_pCursorTool;
-		CAssetPath m_MaterialPath;
-		CSubPath m_IndexSubPath;
 		
-	public:
-		CBrushButton(CGuiEditor *pAssetsEditor, CCursorTool_MapStamp* pCursorTool, CPopup_MaterialPalette* pPopup, CAssetPath MaterialPath, CSubPath IndexSubPath) :
-			gui::CButton(pAssetsEditor, ""),
-			m_pPopup(pPopup),
-			m_pCursorTool(pCursorTool),
-			m_MaterialPath(MaterialPath),
-			m_IndexSubPath(IndexSubPath)
+	protected:
+		virtual void OnBrushPicked(CSubPath IndexPath)
 		{
-			SetButtonStyle(pAssetsEditor->m_Path_Button_PaletteIcon);
-			SetIconWidget(new CBrushIcon(pAssetsEditor, m_MaterialPath, m_IndexSubPath));
-		}
-		
-		virtual void MouseClickAction()
-		{
-			m_pCursorTool->PaletteCallback_SelectBrushType(m_MaterialPath, m_IndexSubPath);
+			m_pCursorTool->PaletteCallback_SelectBrushType(m_MaterialPath, IndexPath);
 			m_pPopup->Close();
 		}
-		
-		virtual void OnMouseMove()
+	
+	public:
+		CPaletteMaterialPicker(CCursorTool_MapStamp* pCursorTool, CPopup_MaterialPalette* pPopup, CAssetPath ImagePath) :
+			CTilingMaterialPicker(pCursorTool->AssetsEditor(), ImagePath),
+			m_pPopup(pPopup),
+			m_pCursorTool(pCursorTool)
 		{
-			if(m_pPopup->m_pIndexTitle && m_VisibilityRect.IsInside(Context()->GetMousePos()))
-			{
-				const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_MaterialPath);
-				if(pMaterial && pMaterial->IsValidIndex(m_IndexSubPath))
-				{
-					m_pPopup->m_pIndexTitle->SetText(pMaterial->GetIndexTitle(m_IndexSubPath));
-				}
-				else
-				{
-					m_pPopup->m_pIndexTitle->SetText(_LSTRING("Empty"));
-				}
-			}
 			
-			gui::CButton::OnMouseMove();
 		}
 	};
 	
 protected:
-	CAssetPath m_MaterialPath;
-	gui::CLabel* m_pIndexTitle;
+	CGuiEditor* m_pAssetsEditor;
 	
 public:
 	CPopup_MaterialPalette(CGuiEditor* pAssetsEditor, CCursorTool_MapStamp* pCursorTool, const gui::CRect& CreatorRect, CAssetPath MaterialPath) :
 		gui::CPopup(pAssetsEditor, CreatorRect, CreatorRect.w-16, CreatorRect.h-16, gui::CPopup::ALIGNMENT_INNER),
-		m_MaterialPath(MaterialPath),
-		m_pIndexTitle(NULL)
+		m_pAssetsEditor(pAssetsEditor)
 	{
-		SetBoxStyle(pAssetsEditor->m_Path_Box_DialogPanel);
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 		
-		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_MaterialPath);
-		if(!pMaterial)
-			return;
-		
-		gui::CVListLayout* pVList = new gui::CVListLayout(Context());
-		Add(pVList);
-		
-		//Description of the current zone
-		{
-			gui::CVListLayout* pHeader = new gui::CVListLayout(Context());
-			pHeader->SetBoxStyle(pAssetsEditor->m_Path_Box_PanelHeader);
-			pVList->Add(pHeader);
-			
-			m_pIndexTitle = new gui::CLabel(Context(), _LSTRING("Select a brush type by clicking on it"));
-			m_pIndexTitle->SetLabelStyle(pAssetsEditor->m_Path_Label_Group);
-			pHeader->Add(m_pIndexTitle, false);
-		}
-		
-		//List of brushes
-		{
-			gui::CBoxLayout* pList = new gui::CBoxLayout(Context());
-			pVList->Add(pList, -1);
-			pList->SetBoxStyle(pAssetsEditor->m_Path_Box_Panel);
-			
-			if(!pMaterial->IsValidIndex(CAsset_TilingMaterial::SubPath_Index(0)))
-				pList->Add(new CBrushButton(pAssetsEditor, pCursorTool, this, m_MaterialPath, CSubPath::Null()));
-			
-			CAsset_TilingMaterial::CIteratorIndex IndexIter;
-			
-			gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Brushes"));
-			pLabel->SetLabelStyle(pAssetsEditor->m_Path_Label_Group);
-			pList->Add(pLabel, true);
-			
-			for(IndexIter = pMaterial->BeginIndex(); IndexIter != pMaterial->EndIndex(); ++IndexIter)
-			{
-				pList->Add(new CBrushButton(pAssetsEditor, pCursorTool, this, m_MaterialPath, *IndexIter));
-			}
-		}
+		CTilingMaterialPicker* pImagePicker = new CPaletteMaterialPicker(pCursorTool, this, MaterialPath);
+		Add(pImagePicker);
 	}
 	
 	virtual void OnButtonClick(int Button)
@@ -971,7 +838,6 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 			
 			if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
 			{
-				//Copy tiles
 				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
 				if(pLayer && pLayer->GetSourcePath().IsNull())
 				{
@@ -987,20 +853,60 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 					int X1 = max(TileX0, TileX1) + 1;
 					int Y1 = max(TileY0, TileY1) + 1;
 					
-					m_TileSelection.resize(X1-X0, Y1-Y0);
-				
-					for(int j=0; j<m_TileSelection.get_height(); j++)
+					if(Input()->KeyIsPressed(KEY_LSHIFT))
 					{
-						for(int i=0; i<m_TileSelection.get_width(); i++)
+						int Token = AssetsManager()->GenerateToken();
+						
+						for(int j=Y0; j<Y1; j++)
 						{
-							CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
-							m_TileSelection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
-							m_TileSelection.get_clamp(i, j).SetFlags(pLayer->GetTileFlags(TilePath));
-							m_TileSelection.get_clamp(i, j).SetBrush(pLayer->GetTileBrush(TilePath));
+							for(int i=X0; i<X1; i++)
+							{
+								CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
+								AssetsManager()->SetAssetValue<int>(
+									AssetsEditor()->GetEditedAssetPath(),
+									TilePath,
+									CAsset_MapLayerTiles::TILE_INDEX,
+									1,
+									Token
+								);
+								AssetsManager()->SetAssetValue<int>(
+									AssetsEditor()->GetEditedAssetPath(),
+									TilePath,
+									CAsset_MapLayerTiles::TILE_FLAGS,
+									0x0,
+									Token
+								);
+								AssetsManager()->SetAssetValue<int>(
+									AssetsEditor()->GetEditedAssetPath(),
+									TilePath,
+									CAsset_MapLayerTiles::TILE_BRUSH,
+									1,
+									Token
+								);
+							}
 						}
+			
+						//Apply auto-tiling
+						if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+							ApplyTilingMaterials_Layer(AssetsManager(), AssetsEditor()->GetEditedAssetPath(), X0, Y0, X1-X0, Y1-Y0, Token);
 					}
+					else
+					{
+						m_TileSelection.resize(X1-X0, Y1-Y0);
 					
-					m_SelectionEnabled = true;
+						for(int j=0; j<m_TileSelection.get_height(); j++)
+						{
+							for(int i=0; i<m_TileSelection.get_width(); i++)
+							{
+								CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
+								m_TileSelection.get_clamp(i, j).SetIndex(pLayer->GetTileIndex(TilePath));
+								m_TileSelection.get_clamp(i, j).SetFlags(pLayer->GetTileFlags(TilePath));
+								m_TileSelection.get_clamp(i, j).SetBrush(pLayer->GetTileBrush(TilePath));
+							}
+						}
+						
+						m_SelectionEnabled = true;
+					}
 				}
 			}
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
@@ -1021,49 +927,109 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 					int X1 = max(TileX0, TileX1) + 1;
 					int Y1 = max(TileY0, TileY1) + 1;
 					
-					m_TileSelection.resize(X1-X0, Y1-Y0);
-					
-					for(int j=0; j<m_TileSelection.get_height(); j++)
+					if(Input()->KeyIsPressed(KEY_LSHIFT))
 					{
-						for(int i=0; i<m_TileSelection.get_width(); i++)
-						{
-							CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
-							int Index = pLayer->GetTileIndex(TilePath);
-							m_TileSelection.get_clamp(i, j).SetIndex(Index);
-							m_TileSelection.get_clamp(i, j).SetBrush(Index);
-						}
-					}
-					
-					const array2d<int>& Data = pLayer->GetDataIntArray();
-					if(Data.get_depth())
-					{
-						m_IntDataSelection.resize(X1-X0, Y1-Y0, Data.get_depth());
+						int Index = 1;
 						
-						for(int j=0; j<m_TileSelection.get_height(); j++)
+						const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(pLayer->GetZoneTypePath());
+						if(pZoneType)
 						{
-							for(int i=0; i<m_TileSelection.get_width(); i++)
+							CAsset_ZoneType::CIteratorIndex Iter = pZoneType->BeginIndex();
+							while(Iter != pZoneType->EndIndex())
 							{
-								for(int d=0; d<Data.get_depth(); d++)
+								if(pZoneType->IsValidIndex(*Iter) && pZoneType->GetIndexUsed(*Iter) && (*Iter).GetId() > 0)
 								{
-									m_IntDataSelection.get_clamp(i, j, d) = Data.get_clamp(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1), d);
+									Index = (*Iter).GetId();
+									break;
+								}
+								++Iter;
+							}
+						}
+						
+						int Token = AssetsManager()->GenerateToken();
+						
+						for(int j=Y0; j<Y1; j++)
+						{
+							for(int i=X0; i<X1; i++)
+							{
+								CSubPath TilePath = CAsset_MapLayerTiles::SubPath_Tile(i, j);
+								AssetsManager()->SetAssetValue<int>(
+									AssetsEditor()->GetEditedAssetPath(),
+									TilePath,
+									CAsset_MapZoneTiles::TILE_INDEX,
+									Index,
+									Token
+								);
+								AssetsManager()->SetAssetValue<int>(
+									AssetsEditor()->GetEditedAssetPath(),
+									TilePath,
+									CAsset_MapZoneTiles::TILE_FLAGS,
+									0x0,
+									Token
+								);
+							}
+						}
+			
+						//Update tile layers that use this zone as source
+						for(int p=0; p<AssetsManager()->GetNumPackages(); p++)
+						{
+							for(int l=0; l<AssetsManager()->GetNumAssets<CAsset_MapLayerTiles>(p); l++)
+							{
+								CAssetPath AutoLayerPath = CAssetPath(CAsset_MapLayerTiles::TypeId, p, l);
+								const CAsset_MapLayerTiles* pAutoLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AutoLayerPath);
+								if(pAutoLayer && pAutoLayer->GetSourcePath() == AssetsEditor()->GetEditedAssetPath())
+								{
+									ApplyTilingMaterials_Layer(AssetsManager(), AutoLayerPath, X0, Y0, X1-X0, Y1-Y0, Token);
 								}
 							}
 						}
 					}
 					else
 					{
-						m_IntDataSelection.resize(X1-X0, Y1-Y0, 1);
+						m_TileSelection.resize(X1-X0, Y1-Y0);
 						
 						for(int j=0; j<m_TileSelection.get_height(); j++)
 						{
 							for(int i=0; i<m_TileSelection.get_width(); i++)
 							{
-								m_IntDataSelection.set_clamp(i, j, 0, 0);
+								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1));
+								int Index = pLayer->GetTileIndex(TilePath);
+								m_TileSelection.get_clamp(i, j).SetIndex(Index);
+								m_TileSelection.get_clamp(i, j).SetBrush(Index);
 							}
 						}
+						
+						const array2d<int>& Data = pLayer->GetDataIntArray();
+						if(Data.get_depth())
+						{
+							m_IntDataSelection.resize(X1-X0, Y1-Y0, Data.get_depth());
+							
+							for(int j=0; j<m_TileSelection.get_height(); j++)
+							{
+								for(int i=0; i<m_TileSelection.get_width(); i++)
+								{
+									for(int d=0; d<Data.get_depth(); d++)
+									{
+										m_IntDataSelection.get_clamp(i, j, d) = Data.get_clamp(clamp(X0+i, 0, pLayer->GetTileWidth()-1), clamp(Y0+j, 0, pLayer->GetTileHeight()-1), d);
+									}
+								}
+							}
+						}
+						else
+						{
+							m_IntDataSelection.resize(X1-X0, Y1-Y0, 1);
+							
+							for(int j=0; j<m_TileSelection.get_height(); j++)
+							{
+								for(int i=0; i<m_TileSelection.get_width(); i++)
+								{
+									m_IntDataSelection.set_clamp(i, j, 0, 0);
+								}
+							}
+						}
+						
+						m_SelectionEnabled = true;
 					}
-					
-					m_SelectionEnabled = true;
 				}
 			}
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)

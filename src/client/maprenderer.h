@@ -20,6 +20,7 @@
 #define __CLIENT_MAPRENDERER__
 
 #include <shared/components/assetsmanager.h>
+#include <client/kernel.h>
 #include <client/gui/rect.h>
 
 class CMapRenderer : public CClientKernel::CGuest

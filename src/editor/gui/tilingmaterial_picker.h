@@ -16,30 +16,25 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_FILL__
-#define __CLIENT_ASSETSEDITOR_VIEWMAP_FILL__
+#ifndef __EDITOR_TILINGMATERIALPICKER__
+#define __EDITOR_TILINGMATERIALPICKER__
 
-#include <editor/gui/view_map.h>
-#include <generated/assets/maplayertiles.h>
+#include <client/gui/listlayout.h>
+#include <client/gui/label.h>
 
-class CCursorTool_MapFill : public CViewMap::CCursorTool
+class CTilingMaterialPicker : public gui::CVListLayout
 {	
 protected:
-	bool m_DragEnabled;
-	vec2 m_Pivot;
-	int m_Index;
-	CAssetPath m_SelectedStyle;
-	
+	class CGuiEditor* m_pAssetsEditor;
+	CAssetPath m_MaterialPath;
+	gui::CLabel* m_pIndexTitle;
+
 public:
-	CCursorTool_MapFill(CViewMap* pViewMap);
+	CTilingMaterialPicker(CGuiEditor* pAssetsEditor, CAssetPath MaterialPath);
 	
-	virtual void OnViewButtonClick(int Button);
-	virtual void OnViewButtonRelease(int Button);
-	virtual void RenderView();
-	virtual void Update(bool ParentEnabled);
-	virtual void OnMouseMove();
+	inline gui::CLabel* GetTitleLabel() { return m_pIndexTitle; }
 	
-	void SetIndex(int Index) { m_Index = Index; }
+	virtual void OnBrushPicked(CSubPath IndexPath) {}
 };
 
 #endif
