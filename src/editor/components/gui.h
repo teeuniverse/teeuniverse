@@ -71,6 +71,10 @@ public:
 	int m_BindCall_ZoomIn;
 	int m_BindCall_ZoomOut;
 	int m_BindCall_Zoom11;
+	int m_BindCall_ToolStamp;
+	int m_BindCall_ToolFill;
+	int m_BindCall_ToolTransform;
+	int m_BindCall_ToolVertex;
 	
 public:
 	CAssetPath m_Path_Image_Checker;

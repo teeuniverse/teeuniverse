@@ -1486,27 +1486,36 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 			m_pOptions->Disable();
 	}
 	
-	if(ParentEnabled && IsEnabled())
+	if(ParentEnabled && IsEnabled() && IsEditable())
 	{
-		while(AssetsEditor()->m_BindCall_ApplyHFlip > 0)
+		if(AssetsEditor()->m_BindCall_ToolStamp > 0)
 		{
-			AssetsEditor()->m_BindCall_ApplyHFlip--;
-			HFlipSelection();
+			AssetsEditor()->m_BindCall_ToolStamp = 0;
+			ViewMap()->SetCursorTool(this);
 		}
-		while(AssetsEditor()->m_BindCall_ApplyVFlip > 0)
+		
+		if(IsUsed())
 		{
-			AssetsEditor()->m_BindCall_ApplyVFlip--;
-			VFlipSelection();
-		}
-		while(AssetsEditor()->m_BindCall_ApplyCWRotation > 0)
-		{
-			AssetsEditor()->m_BindCall_ApplyCWRotation--;
-			RotateCWSelection();
-		}
-		while(AssetsEditor()->m_BindCall_ApplyCCWRotation > 0)
-		{
-			AssetsEditor()->m_BindCall_ApplyCCWRotation--;
-			RotateCCWSelection();
+			while(AssetsEditor()->m_BindCall_ApplyHFlip > 0)
+			{
+				AssetsEditor()->m_BindCall_ApplyHFlip--;
+				HFlipSelection();
+			}
+			while(AssetsEditor()->m_BindCall_ApplyVFlip > 0)
+			{
+				AssetsEditor()->m_BindCall_ApplyVFlip--;
+				VFlipSelection();
+			}
+			while(AssetsEditor()->m_BindCall_ApplyCWRotation > 0)
+			{
+				AssetsEditor()->m_BindCall_ApplyCWRotation--;
+				RotateCWSelection();
+			}
+			while(AssetsEditor()->m_BindCall_ApplyCCWRotation > 0)
+			{
+				AssetsEditor()->m_BindCall_ApplyCCWRotation--;
+				RotateCCWSelection();
+			}
 		}
 	}
 	

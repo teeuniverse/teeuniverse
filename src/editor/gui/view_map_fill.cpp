@@ -179,6 +179,15 @@ void CCursorTool_MapFill::Update(bool ParentEnabled)
 			Disable();
 	}
 	
+	if(ParentEnabled && IsEnabled() && IsEditable())
+	{
+		if(AssetsEditor()->m_BindCall_ToolFill > 0)
+		{
+			AssetsEditor()->m_BindCall_ToolFill = 0;
+			ViewMap()->SetCursorTool(this);
+		}
+	}
+	
 	CCursorTool::Update(ParentEnabled);
 }
 

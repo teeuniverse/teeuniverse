@@ -123,6 +123,32 @@ CPreferences::CPreferences(CGuiEditor* pAssetsEditor) :
 			pLayout->Add(pHList, false);
 		}
 		
+		pLayout->Add(new gui::CLabelHeader(Context(), "Tools"), false);
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Stamp tool"), AssetsEditor()->m_Path_Sprite_IconStamp), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_tool_stamp", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Filling tool"), AssetsEditor()->m_Path_Sprite_IconFill), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_tool_fill", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Transform tool"), AssetsEditor()->m_Path_Sprite_IconMove), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_tool_transform", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+			pHList->Add(new gui::CLabel(Context(), _LSTRING("Vertex editor"), AssetsEditor()->m_Path_Sprite_IconMoveVertex), true);
+			pHList->Add(new gui::CBindEdit(Context(), "editor_tool_vertex", 0, true), true);
+			pLayout->Add(pHList, false);
+		}
+		
 		pLayout->Add(new gui::CLabelHeader(Context(), "View"), false);
 		{
 			gui::CHListLayout* pHList = new gui::CHListLayout(Context());

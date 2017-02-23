@@ -514,6 +514,15 @@ void CCursorTool_MapTransform::Update(bool ParentEnabled)
 			Disable();
 	}
 	
+	if(ParentEnabled && IsEnabled() && IsEditable())
+	{
+		if(AssetsEditor()->m_BindCall_ToolTransform > 0)
+		{
+			AssetsEditor()->m_BindCall_ToolTransform = 0;
+			ViewMap()->SetCursorTool(this);
+		}
+	}
+	
 	CCursorTool::Update(ParentEnabled);
 }
 
@@ -775,6 +784,15 @@ void CCursorTool_MapEdit::Update(bool ParentEnabled)
 			break;
 		default:
 			Disable();
+	}
+	
+	if(ParentEnabled && IsEnabled() && IsEditable())
+	{
+		if(AssetsEditor()->m_BindCall_ToolVertex > 0)
+		{
+			AssetsEditor()->m_BindCall_ToolVertex = 0;
+			ViewMap()->SetCursorTool(this);
+		}
 	}
 	
 	CCursorTool::Update(ParentEnabled);

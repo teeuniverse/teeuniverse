@@ -195,6 +195,10 @@ DEFINE_CMD_BINDCALL(CCommand_CCWRotation, m_BindCall_ApplyCCWRotation, "ccwrotat
 DEFINE_CMD_BINDCALL(CCommand_ZoomIn, m_BindCall_ZoomIn, "editor_zoomin", "Zoom-in in the view")
 DEFINE_CMD_BINDCALL(CCommand_ZoomOut, m_BindCall_ZoomOut, "editor_zoomout", "Zoom-out in the view")
 DEFINE_CMD_BINDCALL(CCommand_Zoom11, m_BindCall_Zoom11, "editor_zoom11", "Set the zoom to 1:1 in the view")
+DEFINE_CMD_BINDCALL(CCommand_ToolStamp, m_BindCall_ToolStamp, "editor_tool_stamp", "Select the stamp tool")
+DEFINE_CMD_BINDCALL(CCommand_ToolFill, m_BindCall_ToolFill, "editor_tool_fill", "Select the filling tool")
+DEFINE_CMD_BINDCALL(CCommand_ToolTransform, m_BindCall_ToolTransform, "editor_tool_transform", "Select the transform tool")
+DEFINE_CMD_BINDCALL(CCommand_ToolVertex, m_BindCall_ToolVertex, "editor_tool_vertex", "Select the vertex editor")
 
 /* CONTEXT MENU *******************************************************/
 
@@ -1828,6 +1832,10 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	CLI()->Register("editor_zoomin", new CCommand_ZoomIn(this));
 	CLI()->Register("editor_zoomout", new CCommand_ZoomOut(this));
 	CLI()->Register("editor_zoom11", new CCommand_Zoom11(this));
+	CLI()->Register("editor_tool_stamp", new CCommand_ToolStamp(this));
+	CLI()->Register("editor_tool_fill", new CCommand_ToolFill(this));
+	CLI()->Register("editor_tool_transform", new CCommand_ToolTransform(this));
+	CLI()->Register("editor_tool_vertex", new CCommand_ToolVertex(this));
 	
 	BindsManager()->Bind(KEY_O, CBindsManager::MODIFIER_CTRL, "editor_open");
 	BindsManager()->Bind(KEY_S, CBindsManager::MODIFIER_CTRL, "editor_save");
@@ -1837,6 +1845,11 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	BindsManager()->Bind(KEY_KP_PLUS, CBindsManager::MODIFIER_NONE, "editor_zoomin");
 	BindsManager()->Bind(KEY_KP_MINUS, CBindsManager::MODIFIER_NONE, "editor_zoomout");
 	BindsManager()->Bind(KEY_KP_0, CBindsManager::MODIFIER_NONE, "editor_zoom11");
+	
+	BindsManager()->Bind(KEY_F1, CBindsManager::MODIFIER_NONE, "editor_tool_stamp");
+	BindsManager()->Bind(KEY_F2, CBindsManager::MODIFIER_NONE, "editor_tool_fill");
+	BindsManager()->Bind(KEY_F3, CBindsManager::MODIFIER_NONE, "editor_tool_transform");
+	BindsManager()->Bind(KEY_F4, CBindsManager::MODIFIER_NONE, "editor_tool_vertex");
 	
 	BindsManager()->Bind(KEY_N, CBindsManager::MODIFIER_NONE, "vflip");
 	BindsManager()->Bind(KEY_M, CBindsManager::MODIFIER_NONE, "hflip");
@@ -1855,6 +1868,10 @@ void CGuiEditor::ResetBindCalls()
 	m_BindCall_ZoomIn = 0;
 	m_BindCall_ZoomOut = 0;
 	m_BindCall_Zoom11 = 0;
+	m_BindCall_ToolStamp = 0;
+	m_BindCall_ToolFill = 0;
+	m_BindCall_ToolTransform = 0;
+	m_BindCall_ToolVertex = 0;
 }
 
 bool CGuiEditor::Init()
