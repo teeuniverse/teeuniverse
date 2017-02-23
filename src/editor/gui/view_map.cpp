@@ -19,6 +19,7 @@
 #include <editor/gui/view_map.h>
 
 #include <editor/gui/view_map_stamp.h>
+#include <editor/gui/view_map_fill.h>
 #include <editor/gui/view_map_transform.h>
 #include <editor/gui/view_map_crop.h>
 #include <editor/gui/view_map_object.h>
@@ -341,6 +342,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_ZoomLockedToUnit(false),
 	m_LoD(1),
 	m_pCursorTool_MapStamp(NULL),
+	m_pCursorTool_MapFill(NULL),
 	m_pCursorTool_MapTransform(NULL),
 	m_pCursorTool_MapEdit(NULL),
 	m_pCursorTool_MapEraser(NULL),
@@ -351,6 +353,9 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 {
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
 	m_pToolbar->Add(m_pCursorTool_MapStamp);
+	
+	m_pCursorTool_MapFill = new CCursorTool_MapFill(this);
+	m_pToolbar->Add(m_pCursorTool_MapFill);
 	
 	m_pCursorTool_MapTransform = new CCursorTool_MapTransform(this);
 	m_pToolbar->Add(m_pCursorTool_MapTransform);
@@ -374,6 +379,7 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pToolbar->Add(m_pCursorTool_MapWeightVertex);
 	
 	m_pCursorTool_MapStamp->UpdateToolbar();
+	m_pCursorTool_MapFill->UpdateToolbar();
 	m_pCursorTool_MapTransform->UpdateToolbar();
 	m_pCursorTool_MapEdit->UpdateToolbar();
 	m_pCursorTool_MapEraser->UpdateToolbar();

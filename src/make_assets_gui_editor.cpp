@@ -199,6 +199,7 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE(PackageId, "iconScript", ImageEditorPath, 22*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconTileStyle", ImageEditorPath, 31*2, 3*2, 2, 2);
 		
+		CREATE_SPRITE(PackageId, "iconFill", ImageEditorPath, 49, 17, 3, 3);
 		CREATE_SPRITE(PackageId, "iconEntityRatio0", ImageEditorPath, 52, 17, 3, 3);
 		CREATE_SPRITE(PackageId, "iconEntityRatio1", ImageEditorPath, 55, 17, 3, 3);
 		CREATE_SPRITE(PackageId, "iconEntityRatio2", ImageEditorPath, 58, 17, 3, 3);

@@ -243,6 +243,7 @@ public:
 	CAssetPath m_Path_Sprite_IconEntityRatio2;
 	CAssetPath m_Path_Sprite_IconEntityRatio3;
 	CAssetPath m_Path_Sprite_IconZoomUnit;
+	CAssetPath m_Path_Sprite_IconFill;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
