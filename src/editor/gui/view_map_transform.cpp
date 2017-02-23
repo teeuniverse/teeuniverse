@@ -178,7 +178,7 @@ void CCursorTool_MapTransform::OnViewButtonClick(int Button)
 		float GizmoSize = 16.0f;
 		vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 		
-		CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+		CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 		if(SelectedQuad.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pMapLayer->IsValidQuad(SelectedQuad))
 		{
 			vec2 Position;
@@ -314,7 +314,7 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(pMapLayer)
 	{
-		CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+		CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 		if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))
 			return;
 		
@@ -410,7 +410,7 @@ void CCursorTool_MapTransform::OnViewMouseMove()
 	const CAsset_MapEntities* pEntities = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
 	if(pEntities)
 	{
-		CSubPath SelectedEntity = AssetsEditor()->GetEditedSubPath();
+		CSubPath SelectedEntity = AssetsEditor()->GetFirstEditedSubPath();
 		if(SelectedEntity.GetType() != CAsset_MapEntities::TYPE_ENTITY || !pEntities->IsValidEntity(SelectedEntity))
 			return;
 		
@@ -458,7 +458,7 @@ void CCursorTool_MapTransform::RenderView()
 	
 	RenderPivots();
 	
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+	CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 	if(SelectedQuad.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pMapLayer->IsValidQuad(SelectedQuad))
 	{
 		ViewMap()->MapRenderer()->RenderQuads_Mesh(&pMapLayer->GetQuad(SelectedQuad), 1);
@@ -562,7 +562,7 @@ void CCursorTool_MapEdit::OnViewButtonClick(int Button)
 	float GizmoSize = 16.0f;
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+	CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 	if(SelectedQuad.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pMapLayer->IsValidQuad(SelectedQuad))
 	{
 		vec2 Position;
@@ -657,7 +657,7 @@ void CCursorTool_MapEdit::OnViewMouseMove()
 	if(!pMapLayer)
 		return;
 	
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+	CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 	if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))
 		return;
 	
@@ -722,7 +722,7 @@ void CCursorTool_MapEdit::RenderView()
 	
 	RenderPivots();
 	
-	CSubPath SelectedQuad = AssetsEditor()->GetEditedSubPath();
+	CSubPath SelectedQuad = AssetsEditor()->GetFirstEditedSubPath();
 	if(SelectedQuad.GetType() != CAsset_MapLayerQuads::TYPE_QUAD || !pMapLayer->IsValidQuad(SelectedQuad))
 		return;
 	

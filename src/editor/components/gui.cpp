@@ -1797,7 +1797,6 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateStatusbar()
 CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	CGui(pEditorKernel),
 	m_pEditorKernel(pEditorKernel),
-	m_EditedSubPath(CSubPath::Null()),
 	m_pAssetsTree(NULL),
 	m_pPackagesTree(NULL),
 	m_pHintLabel(NULL),
@@ -2244,13 +2243,19 @@ void CGuiEditor::SetEditedPackage(int PackageId)
 {
 	m_EditedPackageId = PackageId;
 	m_EditedAssetPath = CAssetPath::Null();
-	m_EditedSubPath = CSubPath::Null();
+	m_EditedSubPathes.clear();
 }
 
 void CGuiEditor::SetEditedAsset(const CAssetPath& Path, const CSubPath& SubPath)
 {
 	m_EditedAssetPath = Path;
-	m_EditedSubPath = SubPath;
+	m_EditedSubPathes.clear();
+	AddEditedSubPath(SubPath);
+}
+
+void CGuiEditor::AddEditedSubPath(const CSubPath& SubPath)
+{
+	m_EditedSubPathes.emplace_back(SubPath);
 }
 
 void CGuiEditor::RefreshPackageTree()

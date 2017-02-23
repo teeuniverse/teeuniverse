@@ -47,7 +47,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		);
@@ -55,12 +55,17 @@ protected:
 	
 	virtual void SetValue(int Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -105,7 +110,7 @@ public:
 	{
 		if(ParentEnabled)
 		{
-			bool Condition = AssetsManager()->GetAssetValue<bool>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), m_Member, false);
+			bool Condition = AssetsManager()->GetAssetValue<bool>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetFirstEditedSubPath(), m_Member, false);
 			if(Condition)
 				Enable();
 			else
@@ -146,9 +151,20 @@ public:
 	{
 		if(ParentEnabled)
 		{
-			if(m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType)
-				Enable();
-			else if(m_SubPathType2 >= 0 && m_pAssetsEditor->GetEditedSubPath().GetType() == m_SubPathType2)
+			bool SubPathFound = false;
+			bool AllValidType = true;
+			
+			for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+			{
+				if(m_pAssetsEditor->GetEditedSubPathes()[i].GetType() == m_SubPathType)
+					SubPathFound = true;
+				else if(m_SubPathType2 > 0 && m_pAssetsEditor->GetEditedSubPathes()[i].GetType() == m_SubPathType2)
+					SubPathFound = true;
+				else
+					AllValidType = false;
+			}
+			
+			if(SubPathFound && AllValidType)
 				Enable();
 			else
 				Disable();
@@ -170,7 +186,12 @@ protected:
 	protected:
 		virtual void MouseClickAction()
 		{
-			AssetsManager()->DeleteSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath());
+			int Token = AssetsManager()->GenerateToken();
+			for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+			{
+				AssetsManager()->DeleteSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPathes()[i], Token);
+			}
+			
 			m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), CSubPath::Null());
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
@@ -200,7 +221,7 @@ protected:
 	protected:
 		virtual void MouseClickAction()
 		{
-			AssetsManager()->RelMoveSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), m_Shift);
+			AssetsManager()->RelMoveSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetUniqueEditedSubPath(), m_Shift);
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;
@@ -228,7 +249,10 @@ protected:
 	
 	void Action()
 	{
-		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
+		if(Input()->KeyIsPressed(KEY_LCTRL))
+			m_pAssetsEditor->AddEditedSubPath(m_SubPath);
+		else
+			m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
 	}
 
 public:
@@ -250,7 +274,17 @@ public:
 	
 	virtual void Update(bool ParentEnabled)
 	{
-		if(m_pAssetsEditor->GetEditedSubPath() == m_SubPath)
+		bool Found = false;
+		for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			if(m_pAssetsEditor->GetEditedSubPathes()[i] == m_SubPath)
+			{
+				Found = true;
+				break;
+			}
+		}
+		
+		if(Found)
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItemHL);
 		else
 			SetButtonStyle(m_pAssetsEditor->m_Path_Button_ListItem);
@@ -829,8 +863,8 @@ public:
 		if(ParentEnabled)
 		{
 			if(
-				m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
-				m_pAssetsEditor->GetEditedSubPath().GetId2() < CAsset_MapLayerQuads::VERTEX0
+				m_pAssetsEditor->GetFirstEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
+				m_pAssetsEditor->GetFirstEditedSubPath().GetId2() < CAsset_MapLayerQuads::VERTEX0
 			)
 				Enable();
 			else
@@ -861,8 +895,8 @@ public:
 		if(ParentEnabled)
 		{
 			if(
-				m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
-				m_pAssetsEditor->GetEditedSubPath().GetId2() == m_Vertex
+				m_pAssetsEditor->GetFirstEditedSubPath().GetType() == CAsset_MapLayerQuads::TYPE_QUAD &&
+				m_pAssetsEditor->GetFirstEditedSubPath().GetId2() == m_Vertex
 			)
 				Enable();
 			else
@@ -1071,19 +1105,19 @@ public:
 			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == ASSET::TypeId)
 			{
 				if(
-					m_pAssetsEditor->GetEditedSubPath().GetType() == ASSET::TYPE_OBJECT ||
-					m_pAssetsEditor->GetEditedSubPath().GetType() == ASSET::TYPE_OBJECT_VERTEX
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == ASSET::TYPE_OBJECT ||
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == ASSET::TYPE_OBJECT_VERTEX
 				)
 				{
 					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 					if(
 						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
-						(m_ObjectId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(m_ObjectId != m_pAssetsEditor->GetUniqueEditedSubPath().GetId()) ||
 						(pState && m_AssetVersion != pState->m_NumUpdates)
 					)
 					{
 						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
-						m_ObjectId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_ObjectId = m_pAssetsEditor->GetUniqueEditedSubPath().GetId();
 						m_AssetVersion = pState->m_NumUpdates;
 						m_UpdateNeeded = true;
 					}
@@ -1121,7 +1155,7 @@ public:
 						for(int i=0; i<Object.GetVertexArraySize(); i++)
 						{
 							str_format(aBuf, sizeof(aBuf), "Vertex %d", i+1);
-							CSubPath VertexPath = ASSET::SubPath_ObjectVertex(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
+							CSubPath VertexPath = ASSET::SubPath_ObjectVertex(m_pAssetsEditor->GetUniqueEditedSubPath().GetId(), i);
 							
 							Add(new CVertexItem(m_pAssetsEditor, VertexPath, aBuf), false);
 						}
@@ -1481,10 +1515,10 @@ protected:
 	virtual void MouseClickAction()
 	{
 		const CAsset_PathMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_PathMaterial>(m_pAssetsEditor->GetEditedAssetPath());
-		if(pMaterial && pMaterial->IsValidLayer(m_pAssetsEditor->GetEditedSubPath()))
+		if(pMaterial && pMaterial->IsValidLayer(m_pAssetsEditor->GetUniqueEditedSubPath()))
 		{
 			int Token = AssetsManager()->GenerateToken();
-			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_PathMaterial::TYPE_LAYER_SPRITE, Token);
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetUniqueEditedSubPath(), CAsset_PathMaterial::TYPE_LAYER_SPRITE, Token);
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;
@@ -1588,10 +1622,10 @@ public:
 		if(!pMaterial)
 			return;
 		
-		if(m_pAssetsEditor->GetEditedSubPath().GetType() != CAsset_PathMaterial::TYPE_LAYER_SPRITE || !pMaterial->IsValidLayerSprite(m_pAssetsEditor->GetEditedSubPath()))
+		if(m_pAssetsEditor->GetFirstEditedSubPath().GetType() != CAsset_PathMaterial::TYPE_LAYER_SPRITE || !pMaterial->IsValidLayerSprite(m_pAssetsEditor->GetFirstEditedSubPath()))
 			return;
 		
-		const CAsset_PathMaterial::CSprite& Sprite = pMaterial->GetLayerSprite(m_pAssetsEditor->GetEditedSubPath());
+		const CAsset_PathMaterial::CSprite& Sprite = pMaterial->GetLayerSprite(m_pAssetsEditor->GetFirstEditedSubPath());
 		
 		CSpriteInfo SpriteInfo;
 		GenerateMaterialQuads_GetSpriteInfo(AssetsManager(), &Sprite, SpriteInfo);
@@ -1962,7 +1996,17 @@ public:
 		virtual void OnImagePicked(int MinX, int MinY, int MaxX, int MaxY)
 		{
 			int Index = MinY*16 + MinX;
-			AssetsManager()->SetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, Index);
+			int Token = AssetsManager()->GenerateToken();
+			for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+			{
+				AssetsManager()->SetAssetValue<int>(
+					m_pAssetsEditor->GetEditedAssetPath(),
+					m_pAssetsEditor->GetEditedSubPathes()[i],
+					CAsset_TilingMaterial::RULE_TILEINDEX,
+					Index,
+					Token
+				);
+			}
 			m_pPopup->Close();
 		}
 		
@@ -2023,7 +2067,7 @@ public:
 				Editable(true);
 		}
 		
-		int NewIndex = AssetsManager()->GetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, -1);
+		int NewIndex = AssetsManager()->GetAssetValue<int>(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetFirstEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, -1);
 		
 		if(NewIndex != m_Index)
 		{
@@ -2151,19 +2195,19 @@ public:
 			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_TilingMaterial::TypeId)
 			{
 				if(
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL ||
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL_INDEX
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL ||
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_LABEL_INDEX
 				)
 				{
 					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 					if(
 						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
-						(m_LabelId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(m_LabelId != m_pAssetsEditor->GetUniqueEditedSubPath().GetId()) ||
 						(pState && m_AssetVersion != pState->m_NumUpdates)
 					)
 					{
 						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
-						m_LabelId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_LabelId = m_pAssetsEditor->GetUniqueEditedSubPath().GetId();
 						m_AssetVersion = pState->m_NumUpdates;
 						m_UpdateNeeded = true;
 					}
@@ -2250,19 +2294,19 @@ public:
 			if(m_pAssetsEditor->GetEditedAssetPath().GetType() == CAsset_TilingMaterial::TypeId)
 			{
 				if(
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
-					m_pAssetsEditor->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
+					m_pAssetsEditor->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
 				)
 				{
 					CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 					if(
 						(m_AssetPath != m_pAssetsEditor->GetEditedAssetPath()) ||
-						(m_RuleId != m_pAssetsEditor->GetEditedSubPath().GetId()) ||
+						(m_RuleId != m_pAssetsEditor->GetUniqueEditedSubPath().GetId()) ||
 						(pState && m_AssetVersion != pState->m_NumUpdates)
 					)
 					{
 						m_AssetPath = m_pAssetsEditor->GetEditedAssetPath();
-						m_RuleId = m_pAssetsEditor->GetEditedSubPath().GetId();
+						m_RuleId = m_pAssetsEditor->GetUniqueEditedSubPath().GetId();
 						m_AssetVersion = pState->m_NumUpdates;
 						m_UpdateNeeded = true;
 					}
@@ -2301,7 +2345,7 @@ public:
 						{
 							LString_Condition.ClearParameters();
 							LString_Condition.AddInteger("Id", i+1);
-							CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(m_pAssetsEditor->GetEditedSubPath().GetId(), i);
+							CSubPath CondPath = CAsset_TilingMaterial::SubPath_RuleCondition(m_pAssetsEditor->GetUniqueEditedSubPath().GetId(), i);
 							
 							Add(new CSubItem(m_pAssetsEditor, CondPath, LString_Condition, m_pAssetsEditor->m_Path_Sprite_IconNone), false);
 						}
@@ -2330,10 +2374,10 @@ protected:
 	virtual void MouseClickAction()
 	{
 		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
-		if(pMaterial && pMaterial->IsValidLabel(m_pAssetsEditor->GetEditedSubPath()))
+		if(pMaterial && pMaterial->IsValidLabel(m_pAssetsEditor->GetUniqueEditedSubPath()))
 		{
 			int Token = AssetsManager()->GenerateToken();
-			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::TYPE_LABEL_INDEX, Token);
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetUniqueEditedSubPath(), CAsset_TilingMaterial::TYPE_LABEL_INDEX, Token);
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;
@@ -2358,10 +2402,10 @@ protected:
 	virtual void MouseClickAction()
 	{
 		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_pAssetsEditor->GetEditedAssetPath());
-		if(pMaterial && pMaterial->IsValidRule(m_pAssetsEditor->GetEditedSubPath()))
+		if(pMaterial && pMaterial->IsValidRule(m_pAssetsEditor->GetUniqueEditedSubPath()))
 		{
 			int Token = AssetsManager()->GenerateToken();
-			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetEditedSubPath(), CAsset_TilingMaterial::TYPE_RULE_CONDITION, Token);
+			AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetUniqueEditedSubPath(), CAsset_TilingMaterial::TYPE_RULE_CONDITION, Token);
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;
@@ -2681,19 +2725,24 @@ protected:
 	
 	virtual void SaveFromTextBuffer()
 	{
-		AssetsManager()->SetAssetValue<const char*>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			GetText()
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			AssetsManager()->SetAssetValue<const char*>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				GetText(),
+				Token
+			);
+		}
 	}
 	
 	virtual void CopyToTextBuffer()
 	{
 		const char* pName = AssetsManager()->GetAssetValue<const char*>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			NULL
 		);
@@ -2751,7 +2800,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		);
@@ -2759,12 +2808,17 @@ protected:
 	
 	virtual void SetValue(int Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -2871,12 +2925,17 @@ public:
 	protected:
 		virtual void MouseClickAction()
 		{
-			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
-				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
-				m_Member,
-				rand()
-			);
+			int Token = AssetsManager()->GenerateToken();
+			for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+			{
+				m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+					m_pAssetsEditor->GetEditedAssetPath(),
+					m_pAssetsEditor->GetEditedSubPathes()[i],
+					m_Member,
+					rand(),
+					Token
+				);
+			}
 		}
 		
 	public:
@@ -2902,19 +2961,25 @@ public:
 			pText = str_skip_whitespaces((char*) pText);
 			
 			uint32 Value = str_to_int_base(pText, 16);
-			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
-				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
-				m_Member,
-				Value
-			);
+			
+			int Token = AssetsManager()->GenerateToken();
+			for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+			{
+				m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+					m_pAssetsEditor->GetEditedAssetPath(),
+					m_pAssetsEditor->GetEditedSubPathes()[i],
+					m_Member,
+					Value,
+					Token
+				);
+			}
 		}
 		
 		virtual void CopyToTextBuffer()
 		{
 			uint32 Value = m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
 				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
+				m_pAssetsEditor->GetFirstEditedSubPath(),
 				m_Member,
 				0
 			);
@@ -2980,7 +3045,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<bool>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		);
@@ -2988,12 +3053,17 @@ protected:
 	
 	virtual void SetValue(bool Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<bool>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<bool>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -3027,7 +3097,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		) & m_Mask;
@@ -3035,24 +3105,29 @@ protected:
 	
 	virtual void SetValue(bool Value)
 	{
-		int Flags = m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			0
-		);
-		
-		if(Value)
-			Flags |= m_Mask;
-		else
-			Flags &= ~m_Mask;
-		
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Flags
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			int Flags = m_pAssetsEditor->AssetsManager()->GetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				0x0
+			);
+			
+			if(Value)
+				Flags |= m_Mask;
+			else
+				Flags &= ~m_Mask;
+			
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Flags,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -3087,7 +3162,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<float>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		);
@@ -3095,12 +3170,17 @@ protected:
 	
 	virtual void SetValue(float Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<float>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<float>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -3162,7 +3242,7 @@ protected:
 	{
 		return 180.0f*m_pAssetsEditor->AssetsManager()->GetAssetValue<float>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			0
 		)/Pi;
@@ -3170,12 +3250,17 @@ protected:
 	
 	virtual void SetValue(float Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<float>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value * Pi/180.0f
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<float>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value * Pi/180.0f,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -3208,7 +3293,7 @@ protected:
 	{
 		return m_pAssetsEditor->AssetsManager()->GetAssetValue<vec4>(
 			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
 			m_Member,
 			vec4(1.0f, 1.0f, 1.0f, 1.0f)
 		);
@@ -3216,12 +3301,17 @@ protected:
 	
 	virtual void SetValue(vec4 Value)
 	{
-		m_pAssetsEditor->AssetsManager()->SetAssetValue<vec4>(
-			m_pAssetsEditor->GetEditedAssetPath(),
-			m_pAssetsEditor->GetEditedSubPath(),
-			m_Member,
-			Value
-		);
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<vec4>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
 	}
 	
 public:
@@ -3373,7 +3463,7 @@ public:
 		{
 			return AssetsManager()->GetAssetValue<CAssetPath>(
 				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
+				m_pAssetsEditor->GetFirstEditedSubPath(),
 				m_Member,
 				CAssetPath::Null()
 			);
@@ -3381,58 +3471,68 @@ public:
 		
 		void SetValue(CAssetPath Value)
 		{
+			int Token = AssetsManager()->GenerateToken();
 			if(m_Mode == MODE_MAPGROUP_PARENT)
 			{
-				CAssetPath OldValue = AssetsManager()->GetAssetValue<CAssetPath>(
-					m_pAssetsEditor->GetEditedAssetPath(),
-					m_pAssetsEditor->GetEditedSubPath(),
-					m_Member,
-					CAssetPath::Null()
-				);
-				
-				if(OldValue != Value)
+				bool Changes = false;
+				for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
 				{
-					int Token = AssetsManager()->GenerateToken();
-					
-					//Search the layer in the group
-					const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(OldValue);
-					if(pGroup)
-					{
-						CAsset_MapGroup::CIteratorLayer Iter;
-						for(Iter = pGroup->ReverseBeginLayer(); Iter != pGroup->ReverseEndLayer(); ++Iter)
-						{
-							if(pGroup->GetLayer(*Iter) == m_pAssetsEditor->GetEditedAssetPath())
-							{
-								AssetsManager()->DeleteSubItem(OldValue, *Iter, Token);
-								
-								//We don't use a break here so all instance of the layer will be removed.
-								//This can be used to cleanup corrupted maps
-							}
-						}
-					}
-					
-					CSubPath LayerSubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(Value, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
-					AssetsManager()->SetAssetValue<CAssetPath>(Value, LayerSubPath, CAsset_MapGroup::LAYER, m_pAssetsEditor->GetEditedAssetPath(), Token);
-					
-					AssetsManager()->SetAssetValue<CAssetPath>(
+					CAssetPath OldValue = AssetsManager()->GetAssetValue<CAssetPath>(
 						m_pAssetsEditor->GetEditedAssetPath(),
-						m_pAssetsEditor->GetEditedSubPath(),
+						m_pAssetsEditor->GetEditedSubPathes()[i],
 						m_Member,
-						Value,
-						Token
+						CAssetPath::Null()
 					);
 					
-					m_pAssetsEditor->RefreshAssetsTree();
+					if(OldValue != Value)
+					{
+						
+						//Search the layer in the group
+						const CAsset_MapGroup* pGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(OldValue);
+						if(pGroup)
+						{
+							CAsset_MapGroup::CIteratorLayer Iter;
+							for(Iter = pGroup->ReverseBeginLayer(); Iter != pGroup->ReverseEndLayer(); ++Iter)
+							{
+								if(pGroup->GetLayer(*Iter) == m_pAssetsEditor->GetEditedAssetPath())
+								{
+									AssetsManager()->DeleteSubItem(OldValue, *Iter, Token);
+									
+									//We don't use a break here so all instance of the layer will be removed.
+									//This can be used to cleanup corrupted maps
+								}
+							}
+						}
+						
+						CSubPath LayerSubPath = CAsset_MapGroup::SubPath_Layer(AssetsManager()->AddSubItem(Value, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token));
+						AssetsManager()->SetAssetValue<CAssetPath>(Value, LayerSubPath, CAsset_MapGroup::LAYER, m_pAssetsEditor->GetEditedAssetPath(), Token);
+						
+						AssetsManager()->SetAssetValue<CAssetPath>(
+							m_pAssetsEditor->GetEditedAssetPath(),
+							m_pAssetsEditor->GetEditedSubPathes()[i],
+							m_Member,
+							Value,
+							Token
+						);
+						
+						Changes = true;
+					}
 				}
+				
+				if(Changes)
+					m_pAssetsEditor->RefreshAssetsTree();
 			}
 			else
 			{
-				AssetsManager()->SetAssetValue<CAssetPath>(
-					m_pAssetsEditor->GetEditedAssetPath(),
-					m_pAssetsEditor->GetEditedSubPath(),
-					m_Member,
-					Value
-				);
+				for(unsigned int i=0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+				{
+					AssetsManager()->SetAssetValue<CAssetPath>(
+						m_pAssetsEditor->GetEditedAssetPath(),
+						m_pAssetsEditor->GetEditedSubPathes()[i],
+						m_Member,
+						Value
+					);
+				}
 			}
 		}
 	
@@ -3473,7 +3573,7 @@ public:
 				
 			CAssetPath Value = m_pAssetsEditor->AssetsManager()->GetAssetValue<CAssetPath>(
 				m_pAssetsEditor->GetEditedAssetPath(),
-				m_pAssetsEditor->GetEditedSubPath(),
+				m_pAssetsEditor->GetFirstEditedSubPath(),
 				m_Member,
 				CAssetPath::Null()
 			);

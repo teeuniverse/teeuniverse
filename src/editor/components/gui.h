@@ -51,7 +51,7 @@ private:
 	
 	int m_EditedPackageId;
 	CAssetPath m_EditedAssetPath;
-	CSubPath m_EditedSubPath;
+	std::vector<CSubPath> m_EditedSubPathes;
 	
 public:
 	class CAssetsTree* m_pAssetsTree;
@@ -280,11 +280,14 @@ public:
 	
 	void SetEditedPackage(int PackageId);
 	void SetEditedAsset(const CAssetPath& Path, const CSubPath& SubPath);
+	void AddEditedSubPath(const CSubPath& SubPath);
 	
 	inline int GetEditedPackageId() const { return m_EditedPackageId; }
 	inline CAssetPath GetEditedAssetPath() const { return m_EditedAssetPath; }
-	inline CSubPath GetEditedSubPath() const { return m_EditedSubPath; }
-	
+	inline CSubPath GetFirstEditedSubPath() const { return (m_EditedSubPathes.size() > 0 ? m_EditedSubPathes[0] : CSubPath::Null()); }
+	inline CSubPath GetUniqueEditedSubPath() const { return (m_EditedSubPathes.size() == 1 ? m_EditedSubPathes[0] : CSubPath::Null()); }
+	inline const std::vector<CSubPath>& GetEditedSubPathes() const { return m_EditedSubPathes; }
+		
 	void RefreshPackageTree();
 	void RefreshAssetsTree();
 	

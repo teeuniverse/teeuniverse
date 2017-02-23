@@ -117,14 +117,14 @@ void CViewTilingMaterial::OnButtonClick(int Button)
 	if(m_VisibilityRect.IsInside(Context()->GetMousePos()))
 	{
 		if(
-			AssetsEditor()->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
-			AssetsEditor()->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
+			AssetsEditor()->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
+			AssetsEditor()->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
 		)
 		{
 			vec2 LayerShift = vec2(-3*16.0f, -3*16.0f);
 			
 			const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(AssetsEditor()->GetEditedAssetPath());
-			CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(AssetsEditor()->GetEditedSubPath().GetId());
+			CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(AssetsEditor()->GetUniqueEditedSubPath().GetId());
 			if(pMaterial && pMaterial->IsValidRule(RulePath))
 			{
 				vec2 CursorMapPos = MapRenderer()->ScreenPosToMapPos(vec2(Context()->GetMousePos().x,Context()->GetMousePos().y));
@@ -203,19 +203,19 @@ void CViewTilingMaterial::RenderView()
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 	
 	if(
-		AssetsEditor()->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
-		AssetsEditor()->GetEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
+		AssetsEditor()->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE ||
+		AssetsEditor()->GetUniqueEditedSubPath().GetType() == CAsset_TilingMaterial::TYPE_RULE_CONDITION
 	)
 	{
 		const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(AssetsEditor()->GetEditedAssetPath());
-		CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(AssetsEditor()->GetEditedSubPath().GetId());
+		CSubPath RulePath = CAsset_TilingMaterial::SubPath_Rule(AssetsEditor()->GetUniqueEditedSubPath().GetId());
 		if(pMaterial && pMaterial->IsValidRule(RulePath))
 		{
 			vec2 LayerShift = vec2(-3*16.0f, -3*16.0f);
 			MapRenderer()->SetCamera(0.0f, 2.0f);
 			
-			int Index = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), AssetsEditor()->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, 0);
-			int Flags = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), AssetsEditor()->GetEditedSubPath(), CAsset_TilingMaterial::RULE_TILEFLAGS, 0x0);
+			int Index = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), AssetsEditor()->GetUniqueEditedSubPath(), CAsset_TilingMaterial::RULE_TILEINDEX, 0);
+			int Flags = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), AssetsEditor()->GetUniqueEditedSubPath(), CAsset_TilingMaterial::RULE_TILEFLAGS, 0x0);
 			
 			array2d<CAsset_MapLayerTiles::CTile> Tiles;
 			Tiles.resize(3, 3);

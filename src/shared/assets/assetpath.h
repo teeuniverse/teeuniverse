@@ -65,8 +65,8 @@ public:
 	inline bool IsNull() const { return m_Type == 0; }
 	inline bool IsNotNull() const { return m_Type != 0; }
 	
-	inline bool operator==(const CAssetPath& Path) { return (m_PackageId == Path.m_PackageId && m_Id == Path.m_Id && m_Type == Path.m_Type); }
-	inline bool operator!=(const CAssetPath& Path) { return !(*this == Path); }
+	inline bool operator==(const CAssetPath& Path) const { return (m_PackageId == Path.m_PackageId && m_Id == Path.m_Id && m_Type == Path.m_Type); }
+	inline bool operator!=(const CAssetPath& Path) const { return !(*this == Path); }
 	
 	static inline CAssetPath Null() { return CAssetPath(); }
 
@@ -185,8 +185,8 @@ public:
 	inline bool IsNull() const { return m_Type == 0; }
 	inline bool IsNotNull() const { return m_Type != 0; }
 	
-	inline bool operator==(const CSubPath& Path) { return (mem_comp(this, &Path, sizeof(CSubPath)) == 0); }
-	inline bool operator!=(const CSubPath& Path) { return (mem_comp(this, &Path, sizeof(CSubPath)) != 0); }
+	inline bool operator==(const CSubPath& Path) const { return (mem_comp(this, &Path, sizeof(CSubPath)) == 0); }
+	inline bool operator!=(const CSubPath& Path) const { return (mem_comp(this, &Path, sizeof(CSubPath)) != 0); }
 	
 	static inline CSubPath Null() { return CSubPath(); }
 	
