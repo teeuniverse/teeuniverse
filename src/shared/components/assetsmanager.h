@@ -118,10 +118,13 @@ public:
 	int m_PackageId_EnvGeneric;
 	CAssetPath m_Path_Image_GenericUnhookable;
 	CAssetPath m_Path_Image_GenericSpikes;
+	CAssetPath m_Path_Mat_Unhookable;
 	
 	int m_PackageId_EnvGrass;
 	CAssetPath m_Path_Image_GrassMain;
 	CAssetPath m_Path_Image_GrassDoodads;
+	CAssetPath m_Path_Mat_GrassAndDirt;
+	CAssetPath m_Path_Mat_Cave;
 	
 	int m_PackageId_EnvJungle;
 	CAssetPath m_Path_Image_JungleMain;

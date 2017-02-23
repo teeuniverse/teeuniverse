@@ -1449,27 +1449,31 @@ protected:
 			case CAsset_Map::TypeId:
 			{
 				AssetsManager()->Load_UnivTeeWorlds();
+				AssetsManager()->Load_EnvGrass();
+				AssetsManager()->Load_EnvGeneric();
 				
-				int Tokken = AssetsManager()->GenerateToken();
-				CAsset_Map* pMap = AssetsManager()->NewAsset<CAsset_Map>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_Map* pMap = AssetsManager()->NewAsset<CAsset_Map>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
 				if(!pMap)
 					break;
-				AssetsManager()->TryChangeAssetName(AssetPath, "map", Tokken);
+				AssetsManager()->TryChangeAssetName(AssetPath, "map", Token);
 				pMap->SetCameraPosition(vec2(64*32.0f, 64*32.0f)/2.0f);
 				
 				CAssetPath GroupPath;
+				CAssetPath ZonePath;
 				CAssetPath SubAssetPath;
 				CAsset_MapGroup* pMapGroup;
 				CAsset_MapLayerQuads* pMapLayerQuads;
+				CAsset_MapLayerTiles* pMapLayerTiles;
 				CAsset_MapZoneTiles* pMapZoneTiles;
 				CAsset_MapEntities* pMapEntities;
 				CSubPath SubPath;
 				
 				//Zone, Physics
-				pMapZoneTiles = AssetsManager()->NewAsset<CAsset_MapZoneTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "teeworlds", Tokken);
+				pMapZoneTiles = AssetsManager()->NewAsset<CAsset_MapZoneTiles>(&ZonePath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(ZonePath, "teeworlds", Token);
 				SubPath = CAsset_Map::SubPath_ZoneLayer(pMap->AddZoneLayer());
-				pMap->SetZoneLayer(SubPath, SubAssetPath);
+				pMap->SetZoneLayer(SubPath, ZonePath);
 				
 				{
 					array2d<CAsset_MapZoneTiles::CTile>& Data = pMapZoneTiles->GetTileArray();
@@ -1480,23 +1484,23 @@ protected:
 				}
 				
 				//Entites
-				pMapEntities = AssetsManager()->NewAsset<CAsset_MapEntities>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "entities", Tokken);
+				pMapEntities = AssetsManager()->NewAsset<CAsset_MapEntities>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "entities", Token);
 				SubPath = CAsset_Map::SubPath_EntityLayer(pMap->AddEntityLayer());
 				pMap->SetEntityLayer(SubPath, SubAssetPath);
 				pMapEntities->SetParentPath(AssetPath);
 				
-				//Background
-				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(GroupPath, "background", Tokken);
+				//Static
+				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(GroupPath, "static", Token);
 				SubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
 				pMap->SetBgGroup(SubPath, GroupPath);
 				pMapGroup->SetHardParallax(vec2(0.0f, 0.0f));
 				pMapGroup->SetParentPath(AssetPath);
 				
 					//Sky
-				pMapLayerQuads = AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
-				AssetsManager()->TryChangeAssetName(SubAssetPath, "sky", Tokken);
+				pMapLayerQuads = AssetsManager()->NewAsset<CAsset_MapLayerQuads>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "sky", Token);
 				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
 				pMapGroup->SetLayer(SubPath, SubAssetPath);
 				pMapLayerQuads->SetParentPath(GroupPath);
@@ -1522,24 +1526,80 @@ protected:
 				pMapLayerQuads->SetQuadColor1(SubPath, ColorTop);
 				pMapLayerQuads->SetQuadColor2(SubPath, ColorBottom);
 				pMapLayerQuads->SetQuadColor3(SubPath, ColorBottom);
+				
+				//Background
+				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(GroupPath, "background", Token);
+				SubPath = CAsset_Map::SubPath_BgGroup(pMap->AddBgGroup());
+				pMap->SetBgGroup(SubPath, GroupPath);
+				pMapGroup->SetParentPath(AssetPath);
+				
+					//Cave
+				pMapLayerTiles = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "cave", Token);
+				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
+				pMapGroup->SetLayer(SubPath, SubAssetPath);
+				pMapLayerTiles->SetParentPath(GroupPath);
+				pMapLayerTiles->SetStylePath(AssetsManager()->m_Path_Mat_Cave);
+				
+				{
+					array2d<CAsset_MapLayerTiles::CTile>& Data = pMapLayerTiles->GetTileArray();
+					Data.resize(64, 64);
+				}
+				
+				//Foreground
+				pMapGroup = AssetsManager()->NewAsset<CAsset_MapGroup>(&GroupPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(GroupPath, "playground", Token);
+				SubPath = CAsset_Map::SubPath_FgGroup(pMap->AddFgGroup());
+				pMap->SetFgGroup(SubPath, GroupPath);
+				pMapGroup->SetParentPath(AssetPath);
+				
+					//Grass
+				pMapLayerTiles = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "grass", Token);
+				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
+				pMapGroup->SetLayer(SubPath, SubAssetPath);
+				pMapLayerTiles->SetParentPath(GroupPath);
+				pMapLayerTiles->SetSourcePath(ZonePath);
+				pMapLayerTiles->SetStylePath(AssetsManager()->m_Path_Mat_GrassAndDirt);
+				
+				{
+					array2d<CAsset_MapLayerTiles::CTile>& Data = pMapLayerTiles->GetTileArray();
+					Data.resize(64, 64);
+				}
+				
+					//Unhookable
+				pMapLayerTiles = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&SubAssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				AssetsManager()->TryChangeAssetName(SubAssetPath, "unhookable", Token);
+				SubPath = CAsset_MapGroup::SubPath_Layer(pMapGroup->AddLayer());
+				pMapGroup->SetLayer(SubPath, SubAssetPath);
+				pMapLayerTiles->SetParentPath(GroupPath);
+				pMapLayerTiles->SetSourcePath(ZonePath);
+				pMapLayerTiles->SetStylePath(AssetsManager()->m_Path_Mat_Unhookable);
+				
+				{
+					array2d<CAsset_MapLayerTiles::CTile>& Data = pMapLayerTiles->GetTileArray();
+					Data.resize(64, 64);
+				}
+				
 				break;
 			}
 			case CAsset_PathMaterial::TypeId:
 			{
-				int Tokken = AssetsManager()->GenerateToken();
-				CAsset_PathMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_PathMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_PathMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_PathMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
 				if(!pMaterial)
 					break;
-				AssetsManager()->TryChangeAssetName(AssetPath, "pathMaterial", Tokken);
+				AssetsManager()->TryChangeAssetName(AssetPath, "pathMaterial", Token);
 				break;
 			}
 			case CAsset_TilingMaterial::TypeId:
 			{
-				int Tokken = AssetsManager()->GenerateToken();
-				CAsset_TilingMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_TilingMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Tokken);
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_TilingMaterial* pMaterial = AssetsManager()->NewAsset<CAsset_TilingMaterial>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
 				if(!pMaterial)
 					break;
-				AssetsManager()->TryChangeAssetName(AssetPath, "tilingMaterial", Tokken);
+				AssetsManager()->TryChangeAssetName(AssetPath, "tilingMaterial", Token);
 				break;
 			}
 		}

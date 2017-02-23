@@ -549,6 +549,7 @@ void CAssetsManager::Load_EnvGeneric()
 		{
 			m_Path_Image_GenericSpikes = FindAsset<CAsset_Image>(m_PackageId_EnvGeneric, "genericSpikes");
 			m_Path_Image_GenericUnhookable = FindAsset<CAsset_Image>(m_PackageId_EnvGeneric, "genericUnhookable");
+			m_Path_Mat_Unhookable = FindAsset<CAsset_TilingMaterial>(m_PackageId_EnvGeneric, "smallBlueUnhookable");
 		}
 	}
 }
@@ -562,6 +563,8 @@ void CAssetsManager::Load_EnvGrass()
 		{
 			m_Path_Image_GrassMain = FindAsset<CAsset_Image>(m_PackageId_EnvGrass, "grassMain");
 			m_Path_Image_GrassDoodads = FindAsset<CAsset_Image>(m_PackageId_EnvGrass, "grassDoodads");
+			m_Path_Mat_GrassAndDirt = FindAsset<CAsset_TilingMaterial>(m_PackageId_EnvGrass, "grassAndDirt");
+			m_Path_Mat_Cave = FindAsset<CAsset_TilingMaterial>(m_PackageId_EnvGrass, "cave");
 		}
 	}
 }
