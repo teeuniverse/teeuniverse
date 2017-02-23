@@ -909,7 +909,19 @@ protected:
 			pText++;
 		pText = str_skip_whitespaces((char*) pText);
 		
+		//Count number character
+		char* pEnd = str_skip_to_whitespace((char*) pText);
+		int CharCount = pEnd - pText;
+		
 		uint32 Value = str_to_int_base(pText, 16);
+		
+		if(CharCount == 6)
+		{
+			Value = ((Value << 8) + 255);
+		}
+		else if(CharCount != 8)
+			Value = 255 + (255 << 8) + (255 << 16) + (255 << 24);
+		
 		m_pColorEdit->SetValue(vec4(
 			static_cast<float>((Value>>24) & 255)/255.0f,
 			static_cast<float>((Value>>16) & 255)/255.0f,
