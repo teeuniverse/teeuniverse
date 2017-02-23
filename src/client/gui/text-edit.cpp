@@ -418,6 +418,7 @@ void CAbstractTextEdit::Clear()
 
 void CAbstractTextEdit::OnFocusStart()
 {
+	debug::DebugStream() << "+OnFocusStart" << std::endl;
 	m_Localize = false;
 	Input()->StartTextEditing(GetClipRect().x, GetClipRect().y, GetClipRect().w, GetClipRect().h);
 	m_TextCursor = TextRenderer()->GetTextCursorFromTextIter(&m_TextCache, GetTextPosition(), str_length(GetText()));
@@ -425,6 +426,7 @@ void CAbstractTextEdit::OnFocusStart()
 
 void CAbstractTextEdit::OnFocusStop()
 {
+	debug::DebugStream() << "-OnFocusStop" << std::endl;
 	if(m_Changes)
 	{
 		SaveFromTextBuffer();

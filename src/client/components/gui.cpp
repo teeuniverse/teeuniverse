@@ -98,16 +98,19 @@ bool CGui::PreUpdate()
 	{
 		if(m_pPopups[i]->IsClosed())
 		{
-			delete m_pPopups[i];
+			m_pPopups[i]->Destroy();
 			m_pPopups.erase(m_pPopups.begin()+i);
 		}
 	}
 	for(unsigned int i=0; i<m_DestructionList.size(); i++)
 	{
-		delete m_DestructionList[i];
-		
 		if(m_pFocusedWidget == m_DestructionList[i])
-			m_pFocusedWidget = 0;
+		{
+			StopFocus(m_pFocusedWidget);
+			m_pFocusedWidget = nullptr;
+		}
+		
+		delete m_DestructionList[i];
 	}
 	m_DestructionList.clear();
 	

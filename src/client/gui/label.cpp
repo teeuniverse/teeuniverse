@@ -47,6 +47,8 @@ void CAbstractLabel::Destroy()
 {
 	if(m_pIconWidget)
 		m_pIconWidget->Destroy();
+	
+	gui::CWidget::Destroy();
 }
 
 void CAbstractLabel::OnTextUpdated()
