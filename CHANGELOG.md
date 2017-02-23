@@ -4,13 +4,24 @@
 ### Added
 - Position parameter for zone layers
 - Seed parameter for layers that use a material
+- Pressing shift with the stamp tool fill the selection with the first tile
+- Filling tool
+- Multiple items can be selected and edited together in the asset inspector
+- Shortcuts for tools
 
 ## Changed
 - Faster update of tiles for layers that use materials
 - Crop tool can resize zone layers in all directions
+- New quads are two times smaller to keep the same size than tiles
+- New maps contain a background with caves and a playground with grass and unhookable ready
 
 ### Fixed
 - Wrong TeleID in exported maps
+- Alpha channel in env_infclass is not dilated
+- Inversed diagonal in imported and exported quads
+- Lost color change when the focus is released outside the color popup
+- Better parsing of hexadecimal color code
+- Inserting "0", "-" or "+" in a text field trigger the zoom change 
 
 ## [0.2.3]
 ### Added
