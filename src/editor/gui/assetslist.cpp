@@ -182,8 +182,8 @@ public:
 				pMenu->List()->AddSeparator();
 				pMenu->List()->Add(new CCloseButton(m_pAssetsEditor, pMenu, m_PackageId));
 				
-				Action();
 				m_pAssetsEditor->DisplayPopup(pMenu);
+				Action();
 				return;
 			}
 		}
