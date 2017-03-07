@@ -1195,7 +1195,7 @@ protected:
 		int PackageId = AssetsManager()->NewPackage("mypackage");
 		AssetsManager()->SetPackageReadOnly(PackageId, false);
 		AssetsManager()->SetPackageAuthor(PackageId, m_pAssetsEditor->m_Cfg_DefaultAuthor.buffer());
-		AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
+		AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 4.0");
 		m_pAssetsEditor->SetEditedPackage(PackageId);
 		m_pAssetsEditor->RefreshPackageTree();
 		m_pAssetsEditor->RefreshAssetsTree();
