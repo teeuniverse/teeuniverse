@@ -1765,6 +1765,99 @@ public:
 	}
 };
 
+class CHelpButton : public gui::CButton
+{
+public:
+	class AboutDialog : public CMessageDialog
+	{	
+	public:
+		AboutDialog(CGuiEditor* pAssetsEditor) :
+			CMessageDialog(pAssetsEditor)
+		{	
+			gui::CVListLayout* pLayout = new gui::CVListLayout(Context());
+			pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+			Add(pLayout);
+			
+			pLayout->Add(new gui::CLabelHeader(Context(), _LSTRING("TeeUniverse")), false);
+			
+			{
+				gui::CHListLayout* pList = new gui::CHListLayout(Context());
+				pLayout->Add(pList, true);
+				pList->Add(new gui::CLabel(Context(), _LSTRING("Version:")), true);
+				pList->Add(new gui::CLabel(Context(), "0.2.5-alpha"), true); //TAG_ASSETSVERSION
+			}
+			{
+				gui::CHListLayout* pList = new gui::CHListLayout(Context());
+				pLayout->Add(pList, true);
+				pList->Add(new gui::CLabel(Context(), _LSTRING("Website:")), true);
+				pList->Add(new gui::CLabel(Context(), "https://teeuniverse.net"), true);
+			}
+			{
+				gui::CHListLayout* pList = new gui::CHListLayout(Context());
+				pLayout->Add(pList, true);
+				pList->Add(new gui::CLabel(Context(), _LSTRING("Copyright ©:")), true);
+				pList->Add(new gui::CLabel(Context(), "2017 necropotame"), true);
+			}
+			
+			pLayout->AddSeparator();
+			
+			//Buttonlist
+			{
+				gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+				pLayout->Add(pHList, false);
+				
+				pHList->Add(new gui::CFiller(Context()), true);
+				pHList->Add(new CClose(this), false);
+			}
+		}
+	};
+	
+	class CAboutButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CPopup_Menu* m_pPopupMenu;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			m_pAssetsEditor->DisplayPopup(new AboutDialog(m_pAssetsEditor));
+			m_pPopupMenu->Close();
+		}
+
+	public:
+		CAboutButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
+			gui::CButton(pAssetsEditor, _LSTRING("About")),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pPopupMenu(pPopupMenu)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		}
+	};
+	
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		CPopup_Menu* pMenu = new CPopup_Menu(m_pAssetsEditor, m_DrawRect);
+		
+		pMenu->List()->Add(new CAboutButton(m_pAssetsEditor, pMenu));
+		
+		m_pAssetsEditor->DisplayPopup(pMenu);
+	}
+
+public:
+	CHelpButton(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Help")),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		NoTextClipping();
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+	}
+};
+
 /* MAIN WIDGET ********************************************************/
 
 CGuiEditor::CMainWidget::CMainWidget(CGuiEditor* pAssetsEditor) :
@@ -1829,6 +1922,7 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateToolbar()
 	pMenuBar->Add(new CFileButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CEditButton(m_pAssetsEditor), false);
 	pMenuBar->Add(new CViewButton(m_pAssetsEditor), false);
+	pMenuBar->Add(new CHelpButton(m_pAssetsEditor), false);
 	
 	return pMenuBar;
 }
