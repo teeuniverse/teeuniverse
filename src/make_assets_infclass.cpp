@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 			pAsset->SetGizmoPath(GizmoPath);
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		pKernel->Shutdown();
 	}

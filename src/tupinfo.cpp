@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 		
 		for(int i=1; i<argc; i++)
 		{
-			int PackageId = pKernel->AssetsManager()->Load_AssetsFile(argv[i], CStorage::TYPE_ABSOLUTE);
+			int PackageId = pKernel->AssetsManager()->Load_AssetsFile(argv[i]);
 			if(PackageId >= 0)
 			{
 				std::cout << "Author: " << pKernel->AssetsManager()->GetPackageAuthor(PackageId) << std::endl;

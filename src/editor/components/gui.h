@@ -49,6 +49,7 @@ private:
 	CMainWidget* m_pAssetsEditorWidget;
 	CEditorKernel* m_pEditorKernel;
 	
+	std::vector<dynamic_string> m_PackagesToOpen;
 	int m_EditedPackageId;
 	CAssetPath m_EditedAssetPath;
 	std::vector<CSubPath> m_EditedSubPathes;
@@ -340,6 +341,7 @@ public:
 	int m_Mode;
 	bool m_RefreshList;
 	bool m_ReadOnly;
+	bool m_ShowHiddenFiles;
 	
 public:
 	COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format);

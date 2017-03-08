@@ -1906,7 +1906,7 @@ int main(int argc, char* argv[])
 		//~ CREATE_SPRITE(PackageId, "gizmoDirMove", ImageEditorPath, 4, 12, 4, 4);
 		//~ CREATE_SPRITE(PackageId, "gizmoDirHook", ImageEditorPath, 8, 12, 4, 4);
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		pKernel->Shutdown();
 	}

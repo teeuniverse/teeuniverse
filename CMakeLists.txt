@@ -229,7 +229,7 @@ target_link_libraries (teeuniverse_shared
 )
 add_custom_command(TARGET teeuniverse_shared POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${DATA_OUTPUT_DIRECTORY})
 install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/languages" DESTINATION "share/teeuniverse")
-install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/assets" DESTINATION "share/teeuniverse")
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/packages" DESTINATION "share/teeuniverse")
 
 ########################################################################
 # CLIENT
@@ -262,7 +262,10 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	target_link_libraries (teeuniverse_client ${teeuniverse_client_libraries})
 	install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/countryflags" DESTINATION "share/teeuniverse")
 	install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/fonts" DESTINATION "share/teeuniverse")
-
+	if(${PLATFORM} STREQUAL "linux")
+		install(FILES "datasrc/share/pixmaps/teeuniverse.png" DESTINATION "share/pixmaps")
+	endif()
+	
 	########################################################################
 	# GAME
 	########################################################################
@@ -306,6 +309,10 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	add_executable(${TU_EXECNAME_EDITOR} "${PROJECT_SOURCE_DIR}/src/editor.cpp" ${teeuniverse_editor_src})
 	target_link_libraries (${TU_EXECNAME_EDITOR} ${teeuniverse_editor_libraries})
 	install(TARGETS ${TU_EXECNAME_EDITOR} DESTINATION bin)
+	if(${PLATFORM} STREQUAL "linux")
+		install(FILES "datasrc/share/mime/packages/teeuniverse_editor.xml" DESTINATION "share/mime/packages")
+		install(FILES "datasrc/share/applications/teeuniverse_editor.desktop" DESTINATION "share/applications" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	endif()
 	message(STATUS " * editor ready for compilation")
 	
 else()
@@ -393,7 +400,7 @@ function(make_assets progname)
 		make_assets_${progname}
 		teeuniverse_tools
 	)
-	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${DATA_OUTPUT_DIRECTORY}/assets")
+	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND ${CMAKE_COMMAND} -E make_directory "${DATA_OUTPUT_DIRECTORY}/packages")
 	add_custom_command(TARGET make_assets_${progname} POST_BUILD COMMAND make_assets_${progname} --data-dir "${CMAKE_SOURCE_DIR}/datasrc" --data-dir "${CMAKE_SOURCE_DIR}/data" --save-dir "${DATA_OUTPUT_DIRECTORY}" --save-dir-noinit)
 
 endfunction()

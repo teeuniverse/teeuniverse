@@ -223,6 +223,17 @@ IOHANDLE io_stderr();
 bool fs_makedir(const char *path);
 
 /*
+	Function: fs_home_path
+		Fetches per user home directory.
+
+	Remarks:
+		- Returns ~/.appname on UNIX based systems
+		- Returns ~/Library/Applications Support/appname on Mac OS X
+		- Returns %APPDATA%/Appname on Windows based systems
+*/
+bool fs_home_path(dynamic_string& result);
+
+/*
 	Function: fs_storage_path
 		Fetches per user configuration directory.
 

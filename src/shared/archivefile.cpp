@@ -221,15 +221,15 @@ bool CArchiveFile::Write(CStorage* pStorage, fs_stream_wb* pFileStream)
 	return true;
 }
 
-bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename)
+bool CArchiveFile::Write(CStorage* pStorage, const char* pFilename, int Type)
 {
 	dynamic_string Buffer;
-	pStorage->GetCompletePath(CStorage::TYPE_SAVE, pFilename, Buffer);
+	pStorage->GetCompletePath(Type, pFilename, Buffer);
 	
 	fs_filestream_wb FileStream(Buffer.buffer());
 	if(!FileStream.is_valid())
 	{
-		debug::WarningStream("ArchiveFile") << "could not open '" << pFilename << "'" << std::endl;
+		debug::WarningStream("ArchiveFile") << "could not open '" << pFilename << "' for writing" << std::endl;
 		return false;
 	}
 	

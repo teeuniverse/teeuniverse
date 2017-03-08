@@ -276,6 +276,18 @@ fs_listdir_iterator* fs_create_listdir_iterator(const char *pDir)
 	return pIter;
 }
 
+bool fs_home_path(dynamic_string& result)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	result.append(getenv("HOMEDRIVE"));	
+	result.append(getenv("HOMEPATH"));	
+#else
+	result.append(getenv("HOME"));	
+#endif
+	
+	return true;
+}
+
 bool fs_storage_path(const char *appname, dynamic_string& result)
 {
 #if defined(CONF_FAMILY_WINDOWS)

@@ -76,6 +76,7 @@ public:
 	
 private:
 	dynamic_string m_Name;
+	dynamic_string m_Directory;
 	uint32 m_Crc;
 	int m_State;
 	std::vector<int> Dependencies;
@@ -118,12 +119,9 @@ public:
 	inline void SetEdited(bool Value) { m_Edited = Value; }
 	
 	inline const char* GetName() const { return m_Name.buffer(); }
-	inline bool Identify(const char* pName, uint32 Crc) const { return (Crc == 0 || Crc == m_Crc) && (m_Name == pName); }
-	inline void SetIdentity(const char* pName, uint32 Crc = 0)
-	{
-		m_Name = pName;
-		m_Crc = Crc;
-	}
+	inline void SetName(const char* pName) { m_Name = pName; }
+	inline const char* GetDirectory() const { return m_Directory.buffer(); }
+	inline void SetDirectory(const char* pDirectory) { m_Directory = pDirectory; }
 	
 	inline const char* GetAuthor() const { return m_Author.buffer(); }
 	inline const char* GetCredits() const { return m_Credits.buffer(); }

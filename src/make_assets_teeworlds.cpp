@@ -281,7 +281,7 @@ int main(int argc, char* argv[])
 		pAsset->SetGizmoPath(GizmoPath);
 	}
 	
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV CLOUDS */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_clouds");
@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
 	CreateNewImage(pKernel, PackageId, "cloud1", "images/env_clouds/bg_cloud1.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "cloud2", "images/env_clouds/bg_cloud2.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "cloud3", "images/env_clouds/bg_cloud3.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV DESERT */
 	{
@@ -468,7 +468,7 @@ int main(int argc, char* argv[])
 			}
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	}
 	
 	/* ENV GENERIC */
@@ -689,7 +689,7 @@ int main(int argc, char* argv[])
 			}
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	}
 	
 	/* ENV GRASS */
@@ -1326,7 +1326,7 @@ int main(int argc, char* argv[])
 			pKernel->AssetsManager()->SetAssetValue_Hard<int>(MaterialPath, SpritePath, CAsset_PathMaterial::LAYER_SPRITE_FLAGS, CAsset_PathMaterial::SPRITEFLAG_ROTATION);
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	}
 	
 	/* ENV JUNGLE */
@@ -1655,7 +1655,7 @@ int main(int argc, char* argv[])
 			}
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	}
 	
 	/* ENV MOON */
@@ -1665,7 +1665,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	CreateNewImage(pKernel, PackageId, "moon", "images/env_moon/moon.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV MOUNTAINS */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_mountains");
@@ -1674,7 +1674,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	CreateNewImage(pKernel, PackageId, "mountains", "images/env_mountains/mountains.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV SNOW */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_snow");
@@ -1683,7 +1683,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	CreateNewImage(pKernel, PackageId, "snow", "images/env_snow/snow.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV STARS */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_stars");
@@ -1692,7 +1692,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	CreateNewImage(pKernel, PackageId, "stars", "images/env_stars/stars.png", CStorage::TYPE_ALL, 2, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV SUN */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_sun");
@@ -1701,7 +1701,7 @@ int main(int argc, char* argv[])
 	pKernel->AssetsManager()->SetPackageLicense(PackageId, "CC-BY-SA 3.0");
 	pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 	CreateNewImage(pKernel, PackageId, "sun", "images/env_sun/sun.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* ENV WINTER */
 	PackageId = pKernel->AssetsManager()->NewPackage("env_winter");
@@ -1714,7 +1714,7 @@ int main(int argc, char* argv[])
 	CreateNewImage(pKernel, PackageId, "winterMountains1", "images/env_winter/winter_mountains.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains2", "images/env_winter/winter_mountains2.png", CStorage::TYPE_ALL, 1, 1);
 	CreateNewImage(pKernel, PackageId, "winterMountains3", "images/env_winter/winter_mountains3.png", CStorage::TYPE_ALL, 1, 1);
-	pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+	pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 	
 	/* SHUTDOWN */
 	pKernel->Shutdown();

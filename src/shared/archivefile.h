@@ -23,6 +23,7 @@
 #include <shared/system/memory.h>
 #include <shared/system/fs.h>
 #include <shared/math/vector.h>
+#include <shared/components/storage.h>
 
 #include <vector>
 
@@ -178,7 +179,7 @@ public:
 	~CArchiveFile();
 	
 	bool Open(class CStorage* pStorage, const char* pFilename, int StorageType);
-	bool Write(class CStorage* pStorage, const char* pFilename);
+	bool Write(class CStorage* pStorage, const char* pFilename, int Type = CStorage::TYPE_SAVE);
 	bool Write(class CStorage* pStorage, fs_stream_wb* pFileStream);
 	void Close();
 	

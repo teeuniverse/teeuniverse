@@ -55,6 +55,7 @@ private:
 	std::unique_ptr<CAssetsHistory> m_pHistory;
 	std::vector<CAssetUpdateDesc> m_ImagesToUpdate;
 	std::vector<std::string> m_pNamesToResolved;
+	std::vector<dynamic_string> m_Directories;
 
 public:
 	int m_PackageId_UnivTeeWorlds;
@@ -171,6 +172,7 @@ private:
 public:
 	CAssetsManager(CSharedKernel* pKernel);
 	virtual ~CAssetsManager() = default;
+	virtual bool Init();
 	virtual bool PostUpdate();
 	
 	void RequestUpdate(const CAssetPath& AssetPath);
@@ -181,6 +183,8 @@ public:
 	const char* GetPackageName(int PackageId) const;
 	void SetPackageName(int PackageId, const char* pName);
 	void SetPackageName_Hard(int PackageId, const char* pName);
+	const char* GetPackageDirectory(int PackageId) const;
+	void SetPackageDirectory(int PackageId, const char* pName);
 	int GetNumPackages() const;
 	void ClosePackage(int PackageId);
 	bool IsValidPackage(int PackageId) const;
@@ -207,14 +211,16 @@ public:
 	
 	bool GetPackageSaveFilename(int PackageId, dynamic_string& Filename);
 	
-	bool Save_AssetsFile(int PackageId);
-	bool Save_AssetsFile(const char *pFileName, int StorageType, int PackageId);
-	int Load_AssetsFile_Core(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
-	int Load_AssetsFile(const char *pFileName, int StorageType, unsigned Crc = 0, CErrorStack* pErrorStack = NULL);
+	inline std::vector<dynamic_string>& GetDirectories() { return m_Directories; }
+	
+	bool Save_AssetsFile_SaveDir(int PackageId);
+	bool Save_AssetsFile(int PackageId, const char* pFilename);
+	int Load_AssetsFile_Core(const char *pFileName, CErrorStack* pErrorStack = NULL);
+	int Load_AssetsFile(const char *pFileName, CErrorStack* pErrorStack = NULL);
 	
 	void Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const CAssetPath& GroupPath, std::vector<CAssetPath>& Images, int& GroupId, int& LayerId, vec2 LayerShift);
 	bool Save_Map(const char* pFileName, int StorageType, int PackageId, int Format);
-	int Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc = 0);
+	int Load_Map(const char* pFileName, int StorageType, int Format);
 	
 	bool Save_ZipWithDependencies(const char* pFileName, int StorageType, int PackageId);
 	

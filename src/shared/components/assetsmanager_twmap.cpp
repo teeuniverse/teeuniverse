@@ -125,7 +125,7 @@ public:
 	}
 };
 
-int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format, unsigned Crc)
+int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 {
 	dynamic_string PackageName;
 	dynamic_string FullPath;
@@ -167,12 +167,6 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format,
 	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), StorageType))
 	{
 		debug::WarningStream("AssetsManager") << "can't open the file " << FullPath.buffer() << std::endl;
-		return -1;
-	}
-	
-	if(Crc != 0 && ArchiveFile.Crc() != Crc)
-	{
-		debug::WarningStream("AssetsManager") << "wrong crc for the file " << FullPath.buffer() << ", " << Crc << " != " << ArchiveFile.Crc() << std::endl;
 		return -1;
 	}
 	

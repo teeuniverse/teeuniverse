@@ -414,7 +414,7 @@ int main(int argc, char* argv[])
 			pAsset->SetGizmoPath(GizmoPath);
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		/* ENV LAB */
 		PackageId = pKernel->AssetsManager()->NewPackage("env_lab");
@@ -425,7 +425,7 @@ int main(int argc, char* argv[])
 		CreateNewImage(pKernel.get(), PackageId, "labMisc", "images/env_lab/lab_misc.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		CreateNewImage(pKernel.get(), PackageId, "labMain", "images/env_lab/lab_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		CreateNewImage(pKernel.get(), PackageId, "labBackground", "images/env_lab/lab_background.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		/* ENV FACTORY */
 		PackageId = pKernel->AssetsManager()->NewPackage("env_factory");
@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
 		pKernel->AssetsManager()->SetPackageVersion(PackageId, "0.0.1");
 		CreateNewImage(pKernel.get(), PackageId, "factoryMain", "images/env_factory/factory_main.png", CStorage::TYPE_ALL, 16, 16, true, 2);
 		CreateNewImage(pKernel.get(), PackageId, "factoryBackground", "images/env_factory/factory_background.png", CStorage::TYPE_ALL, 16, 16, true, 2);
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		pKernel->Shutdown();
 	}

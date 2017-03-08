@@ -65,6 +65,19 @@ void CAssetsManager::RequestUpdate(const CAssetPath& AssetPath)
 	}
 }
 
+bool CAssetsManager::Init()
+{
+	for(int i=0; i<Storage()->GetNumPaths(); i++)
+	{
+		m_Directories.emplace_back();
+		dynamic_string& Directory = m_Directories.back();
+		Directory.clear();
+		Storage()->GetCompletePath(i, "packages", Directory);
+	}
+	
+	return true;
+}
+
 bool CAssetsManager::PostUpdate()
 {
 	for(int i=m_ImagesToUpdate.size()-1; i>=0; i--)
@@ -157,7 +170,22 @@ void CAssetsManager::SetPackageName_Hard(int PackageId, const char* pName)
 		}
 	}
 	
-	m_pPackages[PackageId]->SetIdentity(Buffer.buffer());
+	m_pPackages[PackageId]->SetName(Buffer.buffer());
+}
+
+const char* CAssetsManager::GetPackageDirectory(int PackageId) const
+{
+	if(!IsValidPackage(PackageId))
+		return "";
+	
+	return m_pPackages[PackageId]->GetDirectory();
+}
+
+void CAssetsManager::SetPackageDirectory(int PackageId, const char* pName)
+{
+	if(!IsValidPackage(PackageId) || IsReadOnlyPackage(PackageId))
+		return;
+	m_pPackages[PackageId]->SetDirectory(pName);
 }
 
 void CAssetsManager::TryChangeAssetName(CAssetPath AssetPath, const char* pName, int Token)
@@ -319,20 +347,19 @@ bool CAssetsManager::GetPackageSaveFilename(int PackageId, dynamic_string& Filen
 	if(!IsValidPackage(PackageId))
 		return false;
 	
-	Filename.append("assets/");
-	Filename.append(m_pPackages[PackageId]->GetName());
-	Filename.append(".tup");
+	Filename.clear();
+	int CharPos = 0;
+	CharPos = Filename.append_at(CharPos, m_pPackages[PackageId]->GetDirectory());
+	CharPos = Filename.append_at(CharPos, "/");
+	CharPos = Filename.append_at(CharPos, m_pPackages[PackageId]->GetName());
+	CharPos = Filename.append_at(CharPos, ".tup");
 	
 	return true;
 }
 
-bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int PackageId)
+bool CAssetsManager::Save_AssetsFile(int PackageId, const char* pFilename)
 {
 	if(!IsValidPackage(PackageId))
-		return false;
-	
-	dynamic_string FullPath;
-	if(!GetPackageSaveFilename(PackageId, FullPath))
 		return false;
 	
 	CArchiveFile ArchiveFile;
@@ -340,9 +367,9 @@ bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int
 	
 	m_pPackages[PackageId]->Save_AssetsFile(&SaveLoadContext);
 	
-	if(!ArchiveFile.Write(Storage(), FullPath.buffer()))
+	if(!ArchiveFile.Write(Storage(), pFilename, CStorage::TYPE_ABSOLUTE))
 	{
-		debug::WarningStream("AssetsManager") << "can't write the file " << FullPath.buffer() << std::endl;
+		debug::WarningStream("AssetsManager") << "can't write the file " << pFilename << std::endl;
 		return false;
 	}
 	
@@ -351,81 +378,141 @@ bool CAssetsManager::Save_AssetsFile(const char* pFilename, int StorageType, int
 	return true;
 }
 
-bool CAssetsManager::Save_AssetsFile(int PackageId)
+bool CAssetsManager::Save_AssetsFile_SaveDir(int PackageId)
 {
 	if(!IsValidPackage(PackageId))
 		return false;
 	
-	return Save_AssetsFile(m_pPackages[PackageId]->GetName(), CStorage::TYPE_SAVE, PackageId);
+	dynamic_string Buffer;
+	int CharPos = 0;
+	CharPos = Buffer.append_at(CharPos, "packages/");
+	CharPos = Buffer.append_at(CharPos, m_pPackages[PackageId]->GetName());
+	CharPos = Buffer.append_at(CharPos, ".tup");
+	
+	dynamic_string Filename;
+	Storage()->GetCompletePath(CStorage::TYPE_SAVE, Buffer.buffer(), Filename);
+	
+	return Save_AssetsFile(PackageId, Filename.buffer());
 }
 
-int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType, unsigned Crc, CErrorStack* pErrorStack)
+int CAssetsManager::Load_AssetsFile_Core(const char* pPackageName, CErrorStack* pErrorStack)
 {
-	dynamic_string PackageName;
-	dynamic_string FullPath;
+	// The input filename can be one of the following format:
+	// * packagename
+	// * packagename.tup
+	// * some/path/packagename
+	// * some/path/packagename.tup
+	//
+	// The system must find those packages in the list of accepted directories and add the extension if needed
 	
-	if(StorageType == CStorage::TYPE_ABSOLUTE)
+	dynamic_string Filename;
+	Filename.clear();
+	int CharPos = 0;
+	CharPos = Filename.append_at(CharPos, pPackageName);
+	
+	//Add the extension if needed
+	int FilenameLength = Filename.length();
+	if(FilenameLength < 4 || str_comp(Filename.buffer()+FilenameLength-4, ".tup") != 0)
+		CharPos = Filename.append_at(CharPos, ".tup");
+	
+	//Check if the path is absolute
+	bool IsPath = false;
+	
+	for(char* pChar = Filename.buffer(); *pChar != 0; pChar++)
 	{
-		FullPath = pFileName;
-		
-		int Length = str_length(pFileName);
-		int i=Length-1;
-		int SegmentEnd = i;
-		int SegmentStart = i;
-		int SegmentLast = i;
-		bool SlashFound = false;
-		
-		for(int i=Length-1; i>=0; i--)
+		if(*pChar == '/' || *pChar == '\\')
 		{
-			if(pFileName[i] == '/' || pFileName[i] == '\\' || i==0)
+			IsPath = true;
+			break;
+		}
+	}
+	
+	//Find the name of the package
+	dynamic_string PurePackageName;
+	FilenameLength = Filename.length();
+	int PackageNamePos = -1;
+	for(int i=FilenameLength-1; i>=0; i--)
+	{
+		if(Filename.buffer()[i] == '/' || Filename.buffer()[i] == '\\')
+		{
+			PackageNamePos = i+1;
+			break;
+		}
+	}
+	if(PackageNamePos >= 0)
+		PurePackageName = Filename.buffer() + PackageNamePos;
+	else
+		PurePackageName = Filename.buffer();
+	PurePackageName.buffer()[PurePackageName.length()-4] = 0; //Remove ".tup"
+	
+	//Check if the package is already opened
+	for(unsigned int i=0; i<m_pPackages.size(); i++)
+	{
+		if(m_pPackages[i] && str_comp(m_pPackages[i]->GetName(), PurePackageName.buffer()) == 0)
+			return i;
+	}
+	
+	//Find the absolute path
+	dynamic_string FullPath;
+	if(IsPath)
+		FullPath = Filename;
+	else
+	{
+		dynamic_string Buffer;
+		bool Found = false;
+		for(int i = (int) m_Directories.size()-1; i>=0; i--)
+		{
+			Buffer.clear();
+			CharPos = 0;
+			CharPos = Buffer.append_at(CharPos, m_Directories[i].buffer());
+			CharPos = Buffer.append_at(CharPos, "/");
+			CharPos = Buffer.append_at(CharPos, Filename.buffer());
+			
+			IOHANDLE Handle = io_open(Buffer.buffer(), IOFLAG_READ);
+			if(Handle)
 			{
-				if(!SlashFound)
-				{
-					SegmentStart = i + (i > 0);
-					if(str_comp_num(pFileName+SegmentStart, "assets", SegmentEnd-SegmentStart+1) == 0)
-					{
-						PackageName.clear();
-						PackageName.append_at(0, pFileName+SegmentLast);
-						break;
-					}
-					else if(PackageName.empty())
-					{
-						PackageName.clear();
-						PackageName.append_at(0, pFileName+SegmentLast);	
-					}
-				}
-				SlashFound = true;
-				SegmentLast = SegmentStart;
-			}
-			else if(SlashFound)
-			{
-				SegmentEnd = i;
-				SlashFound = false;
+				io_close(Handle);
+				FullPath = Buffer.buffer();
+				Found = true;
+				break;
 			}
 		}
 		
-		Length = PackageName.length();
-		if(Length >= 4 && str_comp(PackageName.buffer()+Length-4, ".tup") == 0)
-			PackageName.buffer()[Length-4] = 0;
+		if(!Found)
+		{
+			if(pErrorStack)
+			{
+				CLocalizableString LString(_("Can't open package from this file: {str:Filename}"));
+				LString.AddString("Filename", Filename.buffer());
+				pErrorStack->AddError(LString);
+			}
+			else
+				debug::WarningStream("AssetsManager") << "Can't open a package with this path: " << FullPath.buffer() << std::endl;
+			
+			return -1;
+		}
 	}
-	else
+	
+	//Find package directory
+	dynamic_string Directory;
+	Directory.append_num(FullPath.buffer(), FullPath.length() - 4 - PurePackageName.length()); 
+	char* pCharSlash = Directory.buffer() + Directory.length() - 1;
+	while(pCharSlash > Directory.buffer())
 	{
-#if defined(CONF_FAMILY_WINDOWS)
-		FullPath.append("assets\\");
-#else
-		FullPath.append("assets/");
-#endif
-		FullPath.append(pFileName);
-		FullPath.append(".tup");
-		
-		PackageName = pFileName;
+		if(*pCharSlash == '/' || *pCharSlash == '\\')
+		{
+			*pCharSlash = 0;
+			pCharSlash--;
+		}
+		else
+			break;
 	}
 	
 	int PackageId = -1;
 	CAssetsPackage* pPackage = NULL;
 	
 	CArchiveFile ArchiveFile;
-	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), StorageType))
+	if(!ArchiveFile.Open(Storage(), FullPath.buffer(), CStorage::TYPE_ABSOLUTE))
 	{
 		if(pErrorStack)
 		{
@@ -437,15 +524,9 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 		return PackageId;
 	}
 	
-	if(Crc != 0 && ArchiveFile.Crc() != Crc)
-	{
-		debug::WarningStream("AssetsManager") << "wrong crc for the file " << FullPath.buffer() << ", " << Crc << "!=" << ArchiveFile.Crc() << std::endl;
-		return PackageId;
-	}
-	
 	for(unsigned int i=0; i<m_pPackages.size(); i++)
 	{
-		if(m_pPackages[i] && m_pPackages[i]->Identify(PackageName.buffer(), Crc))
+		if(m_pPackages[i] && str_comp(m_pPackages[i]->GetName(), PurePackageName.buffer()) == 0)
 		{
 			pPackage = m_pPackages[i].get();
 			PackageId = i;
@@ -459,7 +540,24 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	{
 		PackageId = NewPackage(NULL);
 		pPackage = m_pPackages[PackageId].get();
-		pPackage->SetIdentity(PackageName.buffer(), ArchiveFile.Crc());
+		pPackage->SetName(PurePackageName.buffer());
+		pPackage->SetDirectory(Directory.buffer());
+	}
+	
+	//Add this directory to the list of accepted directories
+	{
+		bool Found = false;
+		for(unsigned int i=0; i<m_Directories.size(); i++)
+		{
+			if(str_comp(m_Directories[i].buffer(), Directory.buffer()) == 0)
+			{
+				Found = true;
+				break;
+			}
+		}
+		
+		if(!Found)
+			m_Directories.emplace_back(Directory.buffer());
 	}
 	
 	CAssetsSaveLoadContext SaveLoadContext(this, &ArchiveFile, PackageId);
@@ -469,10 +567,9 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	{
 		CAssetsPackage::CTuaType_Dependency* pItem = (CAssetsPackage::CTuaType_Dependency*) ArchiveFile.GetItem(1, i);
 		const char* pPackageName = ArchiveFile.GetString(pItem->m_PackageName);
-		uint32 PackageCrc = ArchiveFile.ReadUInt32(pItem->m_PackageCrc);
 		if(pPackageName != NULL)
 		{
-			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, CStorage::TYPE_ALL, PackageCrc, pErrorStack));
+			SaveLoadContext.AddDependency(Load_AssetsFile_Core(pPackageName, pErrorStack));
 		}
 	}
 	
@@ -490,10 +587,10 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pFileName, int StorageType,
 	return PackageId;
 }
 
-int CAssetsManager::Load_AssetsFile(const char* pFileName, int StorageType, unsigned Crc, CErrorStack* pErrorStack)
+int CAssetsManager::Load_AssetsFile(const char* pFileName, CErrorStack* pErrorStack)
 {	
 	//Load all dependencies
-	int PackageId = Load_AssetsFile_Core(pFileName, StorageType, Crc, pErrorStack);
+	int PackageId = Load_AssetsFile_Core(pFileName, pErrorStack);
 	
 	//Then resolve assets name and finalize
 	for(unsigned int i=0; i<m_pPackages.size(); i++)
@@ -514,7 +611,7 @@ void CAssetsManager::Load_EnvClouds()
 {
 	if(m_PackageId_EnvClouds < 0)
 	{
-		m_PackageId_EnvClouds = Load_AssetsFile("env_clouds", CStorage::TYPE_ALL);
+		m_PackageId_EnvClouds = Load_AssetsFile("env_clouds");
 		if(m_PackageId_EnvClouds >= 0)
 		{
 			m_Path_Image_Cloud1 = FindAsset<CAsset_Image>(m_PackageId_EnvClouds, "cloud1");
@@ -528,7 +625,7 @@ void CAssetsManager::Load_EnvDesert()
 {
 	if(m_PackageId_EnvDesert < 0)
 	{
-		m_PackageId_EnvDesert = Load_AssetsFile("env_desert", CStorage::TYPE_ALL);
+		m_PackageId_EnvDesert = Load_AssetsFile("env_desert");
 		if(m_PackageId_EnvDesert >= 0)
 		{
 			m_Path_Image_DesertMain = FindAsset<CAsset_Image>(m_PackageId_EnvDesert, "desertMain");
@@ -544,7 +641,7 @@ void CAssetsManager::Load_EnvGeneric()
 {
 	if(m_PackageId_EnvGeneric < 0)
 	{
-		m_PackageId_EnvGeneric = Load_AssetsFile("env_generic", CStorage::TYPE_ALL);
+		m_PackageId_EnvGeneric = Load_AssetsFile("env_generic");
 		if(m_PackageId_EnvGeneric >= 0)
 		{
 			m_Path_Image_GenericSpikes = FindAsset<CAsset_Image>(m_PackageId_EnvGeneric, "genericSpikes");
@@ -558,7 +655,7 @@ void CAssetsManager::Load_EnvGrass()
 {
 	if(m_PackageId_EnvGrass < 0)
 	{
-		m_PackageId_EnvGrass = Load_AssetsFile("env_grass", CStorage::TYPE_ALL);
+		m_PackageId_EnvGrass = Load_AssetsFile("env_grass");
 		if(m_PackageId_EnvGrass >= 0)
 		{
 			m_Path_Image_GrassMain = FindAsset<CAsset_Image>(m_PackageId_EnvGrass, "grassMain");
@@ -573,7 +670,7 @@ void CAssetsManager::Load_EnvJungle()
 {
 	if(m_PackageId_EnvJungle < 0)
 	{
-		m_PackageId_EnvJungle = Load_AssetsFile("env_jungle", CStorage::TYPE_ALL);
+		m_PackageId_EnvJungle = Load_AssetsFile("env_jungle");
 		if(m_PackageId_EnvJungle >= 0)
 		{
 			m_Path_Image_JungleMain = FindAsset<CAsset_Image>(m_PackageId_EnvJungle, "jungleMain");
@@ -590,7 +687,7 @@ void CAssetsManager::Load_EnvMoon()
 {
 	if(m_PackageId_EnvMoon < 0)
 	{
-		m_PackageId_EnvMoon = Load_AssetsFile("env_moon", CStorage::TYPE_ALL);
+		m_PackageId_EnvMoon = Load_AssetsFile("env_moon");
 		if(m_PackageId_EnvMoon >= 0)
 		{
 			m_Path_Image_Moon = FindAsset<CAsset_Image>(m_PackageId_EnvMoon, "moon");
@@ -602,7 +699,7 @@ void CAssetsManager::Load_EnvMountains()
 {
 	if(m_PackageId_EnvMountains < 0)
 	{
-		m_PackageId_EnvMountains = Load_AssetsFile("env_mountains", CStorage::TYPE_ALL);
+		m_PackageId_EnvMountains = Load_AssetsFile("env_mountains");
 		if(m_PackageId_EnvMountains >= 0)
 		{
 			m_Path_Image_Mountains = FindAsset<CAsset_Image>(m_PackageId_EnvMountains, "mountains");
@@ -614,7 +711,7 @@ void CAssetsManager::Load_EnvSnow()
 {
 	if(m_PackageId_EnvSnow < 0)
 	{
-		m_PackageId_EnvSnow = Load_AssetsFile("env_snow", CStorage::TYPE_ALL);
+		m_PackageId_EnvSnow = Load_AssetsFile("env_snow");
 		if(m_PackageId_EnvSnow >= 0)
 		{
 			m_Path_Image_Snow = FindAsset<CAsset_Image>(m_PackageId_EnvSnow, "snow");
@@ -626,7 +723,7 @@ void CAssetsManager::Load_EnvStars()
 {
 	if(m_PackageId_EnvStars < 0)
 	{
-		m_PackageId_EnvStars = Load_AssetsFile("env_stars", CStorage::TYPE_ALL);
+		m_PackageId_EnvStars = Load_AssetsFile("env_stars");
 		if(m_PackageId_EnvStars >= 0)
 		{
 			m_Path_Image_Stars = FindAsset<CAsset_Image>(m_PackageId_EnvStars, "stars");
@@ -638,7 +735,7 @@ void CAssetsManager::Load_EnvSun()
 {
 	if(m_PackageId_EnvSun < 0)
 	{
-		m_PackageId_EnvSun = Load_AssetsFile("env_sun", CStorage::TYPE_ALL);
+		m_PackageId_EnvSun = Load_AssetsFile("env_sun");
 		if(m_PackageId_EnvSun >= 0)
 		{
 			m_Path_Image_Sun = FindAsset<CAsset_Image>(m_PackageId_EnvSun, "sun");
@@ -650,7 +747,7 @@ void CAssetsManager::Load_EnvWinter()
 {
 	if(m_PackageId_EnvWinter < 0)
 	{
-		m_PackageId_EnvWinter = Load_AssetsFile("env_winter", CStorage::TYPE_ALL);
+		m_PackageId_EnvWinter = Load_AssetsFile("env_winter");
 		if(m_PackageId_EnvWinter >= 0)
 		{
 			m_Path_Image_WinterMain = FindAsset<CAsset_Image>(m_PackageId_EnvWinter, "winterMain");
@@ -666,7 +763,7 @@ void CAssetsManager::Load_EnvLab()
 {
 	if(m_PackageId_EnvLab < 0)
 	{
-		m_PackageId_EnvLab = Load_AssetsFile("env_lab", CStorage::TYPE_ALL);
+		m_PackageId_EnvLab = Load_AssetsFile("env_lab");
 		if(m_PackageId_EnvLab >= 0)
 		{
 			m_Path_Image_LabMisc = FindAsset<CAsset_Image>(m_PackageId_EnvLab, "labMisc");
@@ -680,7 +777,7 @@ void CAssetsManager::Load_EnvFactory()
 {
 	if(m_PackageId_EnvFactory < 0)
 	{
-		m_PackageId_EnvFactory = Load_AssetsFile("env_factory", CStorage::TYPE_ALL);
+		m_PackageId_EnvFactory = Load_AssetsFile("env_factory");
 		if(m_PackageId_EnvFactory >= 0)
 		{
 			m_Path_Image_FactoryMain = FindAsset<CAsset_Image>(m_PackageId_EnvFactory, "factoryMain");
@@ -693,7 +790,7 @@ void CAssetsManager::Load_UnivTeeWorlds()
 {
 	if(m_PackageId_UnivTeeWorlds < 0)
 	{
-		m_PackageId_UnivTeeWorlds = Load_AssetsFile("teeworlds", CStorage::TYPE_ALL);
+		m_PackageId_UnivTeeWorlds = Load_AssetsFile("teeworlds");
 		if(m_PackageId_UnivTeeWorlds >= 0)
 		{
 			m_Path_ZoneType_TeeWorlds = FindAsset<CAsset_ZoneType>(m_PackageId_UnivTeeWorlds, "teeworlds");
@@ -717,7 +814,7 @@ void CAssetsManager::Load_UnivDDNet()
 {
 	if(m_PackageId_UnivDDNet < 0)
 	{
-		m_PackageId_UnivDDNet = Load_AssetsFile("ddnet", CStorage::TYPE_ALL);
+		m_PackageId_UnivDDNet = Load_AssetsFile("ddnet");
 		if(m_PackageId_UnivDDNet >= 0)
 		{
 			m_Path_ZoneType_DDGame = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddGame");
@@ -733,7 +830,7 @@ void CAssetsManager::Load_UnivOpenFNG()
 {
 	if(m_PackageId_UnivOpenFNG < 0)
 	{
-		m_PackageId_UnivOpenFNG = Load_AssetsFile("openfng", CStorage::TYPE_ALL);
+		m_PackageId_UnivOpenFNG = Load_AssetsFile("openfng");
 		if(m_PackageId_UnivOpenFNG >= 0)
 		{
 			m_Path_ZoneType_OpenFNG = FindAsset<CAsset_ZoneType>(m_PackageId_UnivOpenFNG, "openfng");
@@ -745,7 +842,7 @@ void CAssetsManager::Load_UnivNinslash()
 {
 	if(m_PackageId_UnivNinslash < 0)
 	{
-		m_PackageId_UnivNinslash = Load_AssetsFile("ninslash", CStorage::TYPE_ALL);
+		m_PackageId_UnivNinslash = Load_AssetsFile("ninslash");
 		if(m_PackageId_UnivNinslash >= 0)
 		{
 			m_Path_ZoneType_Ninslash = FindAsset<CAsset_ZoneType>(m_PackageId_UnivNinslash, "ninslash");
@@ -771,7 +868,7 @@ void CAssetsManager::Load_UnivSport()
 {
 	if(m_PackageId_UnivSport < 0)
 	{
-		m_PackageId_UnivSport = Load_AssetsFile("sport", CStorage::TYPE_ALL);
+		m_PackageId_UnivSport = Load_AssetsFile("sport");
 		if(m_PackageId_UnivSport >= 0)
 		{
 			m_Path_ZoneType_Sport = FindAsset<CAsset_ZoneType>(m_PackageId_UnivSport, "sport");

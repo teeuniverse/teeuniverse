@@ -606,7 +606,7 @@ int main(int argc, char* argv[])
 			CREATE_ZONEINDEX(-1, "Tune zone", "Area where tuning parameters are different")
 		}
 		
-		pKernel->AssetsManager()->Save_AssetsFile(PackageId);
+		pKernel->AssetsManager()->Save_AssetsFile_SaveDir(PackageId);
 		
 		pKernel->Shutdown();
 	}

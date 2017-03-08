@@ -45,15 +45,21 @@
 class CSaveConfirmationDialog : public CConfirmationDialog
 {
 protected:
+	int m_PackageId;
+	dynamic_string m_Filename;
+	
+protected:
 	virtual void OnConfirmation()
 	{
-		if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(m_pAssetsEditor->GetEditedPackageId()))
+		if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(m_PackageId, m_Filename.buffer()))
 			m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
 	}
 
 public:
-	CSaveConfirmationDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString) :
-		CConfirmationDialog(pAssetsEditor, LString)
+	CSaveConfirmationDialog(CGuiEditor* pAssetsEditor, const CLocalizableString& LString, int PackageId, const char* pFilename) :
+		CConfirmationDialog(pAssetsEditor, LString),
+		m_PackageId(PackageId),
+		m_Filename(pFilename)
 	{ }
 };
 
@@ -120,23 +126,27 @@ public:
 	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
 	{
 		dynamic_string Filename;
-		if(!m_pAssetsEditor->AssetsManager()->GetPackageSaveFilename(m_pAssetsEditor->GetEditedPackageId(), Filename))
-			return CLI_SUCCESS;
 		
-		int Type = CStorage::TYPE_SAVE;
-			
-		if(m_pAssetsEditor->Storage()->FileExists(Filename.buffer(), Type))
+		if(str_length(m_pAssetsEditor->AssetsManager()->GetPackageDirectory(m_pAssetsEditor->GetEditedPackageId())) > 0)
 		{
-			CLocalizableString LString(_("Do you want to overwrite \"{str:Filename}\"?"));
-			LString.AddString("Filename", Filename.buffer());
+			if(!m_pAssetsEditor->AssetsManager()->GetPackageSaveFilename(m_pAssetsEditor->GetEditedPackageId(), Filename))
+				return CLI_SUCCESS;
 			
-			m_pAssetsEditor->DisplayPopup(new CSaveConfirmationDialog(m_pAssetsEditor, LString));
+			if(m_pAssetsEditor->Storage()->FileExists(Filename.buffer(), CStorage::TYPE_ABSOLUTE))
+			{
+				CLocalizableString LString(_("Do you want to overwrite \"{str:Filename}\"?"));
+				LString.AddString("Filename", Filename.buffer());
+				
+				m_pAssetsEditor->DisplayPopup(new CSaveConfirmationDialog(m_pAssetsEditor, LString, m_pAssetsEditor->GetEditedPackageId(), Filename.buffer()));
+			}
+			else
+			{
+				if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(m_pAssetsEditor->GetEditedPackageId(), Filename.buffer()))
+					m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
+			}
 		}
 		else
-		{
-			if(!m_pAssetsEditor->AssetsManager()->Save_AssetsFile(Filename.buffer(), Type, m_pAssetsEditor->GetEditedPackageId()))
-				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
-		}
+			m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_SAVE, COpenSavePackageDialog::FORMAT_PACKAGE));
 		
 		return CLI_SUCCESS;
 	}
@@ -235,6 +245,25 @@ public:
 		gui::CAbstractTextEdit(pAssetsEditor),
 		m_PackageId(PackageId)
 	{ }
+};
+
+class CPackageDirectoryLabel : public gui::CLabel
+{
+protected:
+	int m_PackageId;
+
+public:
+	CPackageDirectoryLabel(CGuiEditor* pAssetsEditor, int PackageId) :
+		gui::CLabel(pAssetsEditor, ""),
+		m_PackageId(PackageId)
+	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		SetText(AssetsManager()->GetPackageDirectory(m_PackageId));
+		
+		gui::CLabel::Update(ParentEnabled);
+	}
 };
 
 class CPackageAuthorEntry : public gui::CAbstractTextEdit
@@ -342,7 +371,7 @@ public:
 };
 
 CMessageDialog::CMessageDialog(CGuiEditor* pAssetsEditor) :
-	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 400, 300, gui::CPopup::ALIGNMENT_INNER),
+	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 550, 300, gui::CPopup::ALIGNMENT_INNER),
 	m_pAssetsEditor(pAssetsEditor)
 {
 	
@@ -391,35 +420,42 @@ PackagePropertiesDialog::PackagePropertiesDialog(CGuiEditor* pAssetsEditor, int 
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _LSTRING("Name")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Name:")), false, 150);
 		pHList->Add(new CPackageNameEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _LSTRING("Version")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Location:")), false, 150);
+		pHList->Add(new CPackageDirectoryLabel(m_pAssetsEditor, m_PackageId), true);
+	}
+	{
+		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
+		pLayout->Add(pHList, false);
+		
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Version:")), false, 150);
 		pHList->Add(new CPackageVersionEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _LSTRING("Author")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Author:")), false, 150);
 		pHList->Add(new CPackageAuthorEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _LSTRING("Credits")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("Credits:")), false, 150);
 		pHList->Add(new CPackageCreditsEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	{
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		pHList->Add(new gui::CLabel(Context(), _LSTRING("License")), true);
+		pHList->Add(new gui::CLabel(Context(), _LSTRING("License:")), false, 150);
 		pHList->Add(new CPackageLicenseEntry(m_pAssetsEditor, m_PackageId), true);
 	}
 	
@@ -681,6 +717,34 @@ public:
 	}
 };
 
+class COpenSavePackageDialog_ShowHiddenFiles : public gui::CAbstractToggle
+{
+protected:
+	COpenSavePackageDialog* m_pDialog;
+	bool* m_pValueContainer;
+	
+protected:
+	virtual bool GetValue()
+	{
+		return *m_pValueContainer;
+	}
+	
+	virtual void SetValue(bool Value)
+	{
+		*m_pValueContainer = Value;
+		m_pDialog->ListFiles();
+	}
+	
+public:
+	COpenSavePackageDialog_ShowHiddenFiles(CGui* pContext, COpenSavePackageDialog* pDialog, bool* pValueContainer) :
+		gui::CAbstractToggle(pContext),
+		m_pDialog(pDialog),
+		m_pValueContainer(pValueContainer)
+	{
+		SetText(_LSTRING("Show hidden files"));
+	}
+};
+
 COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format) :
 	gui::CPopup(pAssetsEditor, pAssetsEditor->GetDrawRect(), 600, 450, gui::CPopup::ALIGNMENT_INNER),
 	m_pAssetsEditor(pAssetsEditor),
@@ -688,7 +752,8 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 	m_Format(Format),
 	m_Mode(Mode),
 	m_RefreshList(true),
-	m_ReadOnly(false)
+	m_ReadOnly(false),
+	m_ShowHiddenFiles(false)
 {
 	gui::CVScrollLayout* pLayout = new gui::CVScrollLayout(Context());
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
@@ -724,11 +789,13 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		gui::CHListLayout* pHList = new gui::CHListLayout(Context());
 		pLayout->Add(pHList, false);
 		
-		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory"));
+		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory:"));
 		pLabel->NoTextClipping();
-		pHList->Add(pLabel, false);
+		pHList->Add(pLabel, false, 200);
 		pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
 		
+		gui::CAbstractToggle* pShowHiddenFilesToggle = new COpenSavePackageDialog_ShowHiddenFiles(Context(), this, &m_ShowHiddenFiles);
+		pLayout->Add(pShowHiddenFilesToggle, false);
 	}
 	
 	{
@@ -740,25 +807,32 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		pPlaces->SetBoxStyle(m_pAssetsEditor->m_Path_Box_SubList);
 		
 		dynamic_string Buffer;
+		
+		const std::vector<dynamic_string>& Directories = AssetsManager()->GetDirectories();
+		
 		{
 			Buffer.clear();
-			Storage()->GetCompletePath(CStorage::TYPE_SAVE, "assets", Buffer);
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("My packages"), Buffer.buffer(), false), false);			
+			fs_home_path(Buffer);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Home"), Buffer.buffer(), false), false);			
 		}
+		if(Directories.size() > 0)
 		{
 			Buffer.clear();
-			Storage()->GetCompletePath(CStorage::TYPE_DATA, "assets", Buffer);
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Default packages"), Buffer.buffer(), true), false);			
+			Storage()->GetCompletePath(CStorage::TYPE_SAVE, "packages", Buffer);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("User packages"), Buffer.buffer(), false), false);			
 		}
-		for(int i=2; i<Storage()->GetNumPaths(); i++)
+		if(Directories.size() > 1)
 		{
 			Buffer.clear();
-			Storage()->GetCompletePath(i, "assets", Buffer);
-			
-			CLocalizableString LString(_("Alternative Data Directory {int:Id}"));
+			Storage()->GetCompletePath(CStorage::TYPE_DATA, "packages", Buffer);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Global packages"), Buffer.buffer(), true), false);			
+		}
+		for(unsigned int i=2; i<Directories.size(); i++)
+		{
+			CLocalizableString LString(_("Other packages {int:Id}"));
 			LString.AddInteger("Id", i-1);
 			
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Buffer.buffer(), false), false);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Directories[i].buffer(), false), false);
 		}
 		pPlaces->AddSeparator();
 		{
@@ -837,8 +911,19 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 			SelectDirectory("maps", CStorage::TYPE_SAVE);
 			break;
 		default:
-			SelectDirectory("assets", CStorage::TYPE_SAVE);
-			break;
+		{
+			int PackageId = m_pAssetsEditor->GetEditedPackageId();
+			if(AssetsManager()->IsValidPackage(PackageId) && str_length(AssetsManager()->GetPackageDirectory(PackageId)) > 0)
+			{
+				SelectDirectory(AssetsManager()->GetPackageDirectory(PackageId));
+			}
+			else
+			{
+				dynamic_string HomePath;
+				fs_home_path(HomePath);
+				SelectDirectory(HomePath.buffer());
+			}
+		}
 	}
 }
 	
@@ -881,13 +966,15 @@ void COpenSavePackageDialog::ListFiles()
 		int Length = Buffer.length();
 		if(Length > 0 && Buffer.buffer()[0] == '.')
 		{
-			if(Buffer.buffer()[1] == 0)
-				continue;
 			if(Length > 1 && Buffer.buffer()[1] == '.' && (Buffer.buffer()[2] == 0))
 			{
 				ParentFolder = true;
 				continue;
 			}
+			if(!m_ShowHiddenFiles)
+				continue;
+			else if(Buffer.buffer()[1] == 0)
+				continue;
 		}
 		
 		if(fs_is_dir(pFilename))
@@ -1040,6 +1127,24 @@ void COpenSavePackageDialog::Save()
 			}
 			break;
 		}
+		case FORMAT_PACKAGE:
+		{
+			TextIter = Buffer.append_at(TextIter, m_Directory.buffer());
+			TextIter = Buffer.append_at(TextIter, "/");
+			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
+			TextIter = Buffer.append_at(TextIter, ".tup");
+			
+			if(!AssetsManager()->Save_AssetsFile(m_pAssetsEditor->GetEditedPackageId(), Buffer.buffer()))
+			{
+				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be saved")));
+			}
+			else
+			{
+				AssetsManager()->SetPackageName_Hard(m_pAssetsEditor->GetEditedPackageId(), m_Filename.buffer());
+				AssetsManager()->SetPackageDirectory(m_pAssetsEditor->GetEditedPackageId(), m_Directory.buffer());
+			}
+			break;
+		}
 	}
 		
 	m_pAssetsEditor->RefreshPackageTree();
@@ -1116,7 +1221,7 @@ void COpenSavePackageDialog::Open()
 			TextIter = Buffer.append_at(TextIter, "/");
 			TextIter = Buffer.append_at(TextIter, m_Filename.buffer());
 			TextIter = Buffer.append_at(TextIter, ".tup");
-			int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), CStorage::TYPE_ABSOLUTE, 0, &ErrorStack);
+			int PackageId = AssetsManager()->Load_AssetsFile(Buffer.buffer(), &ErrorStack);
 			
 			if(PackageId < 0 || ErrorStack.Size())
 				m_pAssetsEditor->DisplayPopup(new CErrorDialog(m_pAssetsEditor, _LSTRING("The package can't be loaded properly"), ErrorStack));
@@ -1345,6 +1450,36 @@ protected:
 public:
 	CSavePackageButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
 		gui::CButton(pAssetsEditor, _LSTRING("Save Package")),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pPopupMenu(pPopupMenu)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSave);
+	}
+};
+
+class CSavePackageAsButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CPopup_Menu* m_pPopupMenu;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		dynamic_string Filename;
+		if(AssetsManager()->GetPackageSaveFilename(m_pAssetsEditor->GetEditedPackageId(), Filename))
+		{
+			m_pAssetsEditor->DisplayPopup(new COpenSavePackageDialog(m_pAssetsEditor, COpenSavePackageDialog::MODE_SAVE, COpenSavePackageDialog::FORMAT_PACKAGE));
+			m_pPopupMenu->Close();
+		}
+		
+		m_pPopupMenu->Close();
+	}
+
+public:
+	CSavePackageAsButton(CGuiEditor* pAssetsEditor, CPopup_Menu* pPopupMenu) :
+		gui::CButton(pAssetsEditor, _LSTRING("Save Package As...")),
 		m_pAssetsEditor(pAssetsEditor),
 		m_pPopupMenu(pPopupMenu)
 	{
@@ -1688,6 +1823,7 @@ protected:
 		pMenu->List()->Add(new CNewPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new COpenPackageButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CSavePackageButton(m_pAssetsEditor, pMenu));
+		pMenu->List()->Add(new CSavePackageAsButton(m_pAssetsEditor, pMenu));
 		pMenu->List()->Add(new CExportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_ZIP));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CImportButton(m_pAssetsEditor, pMenu, COpenSavePackageDialog::FORMAT_MAP_TW));
@@ -2009,6 +2145,23 @@ bool CGuiEditor::InitConfig(int argc, const char** argv)
 	BindsManager()->Bind(KEY_R, CBindsManager::MODIFIER_NONE, "ccwrotation");
 	BindsManager()->Bind(KEY_T, CBindsManager::MODIFIER_NONE, "cwrotation");
 	
+	// search for package to open
+	{
+		for(int i=1; i<argc; i++)
+		{
+			if(str_comp(argv[i], "--open-package") == 0)
+			{
+				if(i+1<argc)
+				{
+					//Open package
+					m_PackagesToOpen.emplace_back(argv[i+1]);
+				}
+				else
+					debug::ErrorStream("Editor") << "Missing value for --open-package parameter" << std::endl;
+			}
+		}
+	}
+	
 	return true;
 }
 
@@ -2060,7 +2213,7 @@ void CGuiEditor::LoadAssets()
 {
 	int PackageId;
 	
-	PackageId = AssetsManager()->Load_AssetsFile("gui_editor", CStorage::TYPE_ALL);
+	PackageId = AssetsManager()->Load_AssetsFile("gui_editor");
 	if(PackageId >= 0)
 	{
 		m_Path_Image_Checker = AssetsManager()->FindAsset<CAsset_Image>(PackageId, "checker");
@@ -2266,10 +2419,15 @@ void CGuiEditor::LoadAssets()
 	m_ComboBoxStyle = m_Path_ComboBox_Default;
 	m_SeparatorStyle = m_Path_Line_Separator;
 	
-	//~ PackageId = AssetsManager()->NewPackage("mypackage");
-	//~ AssetsManager()->SetPackageReadOnly(PackageId, false);
-	
 	SetEditedPackage(-1);
+	
+	for(unsigned int i=0; i<m_PackagesToOpen.size(); i++)
+	{
+		PackageId = AssetsManager()->Load_AssetsFile(m_PackagesToOpen[i].buffer());
+		AssetsManager()->SetPackageReadOnly(PackageId, false);
+	}
+	
+	m_PackagesToOpen.clear();
 }
 
 gui::CWidget* CGuiEditor::CreateMainWidget()

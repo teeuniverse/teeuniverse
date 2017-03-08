@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=TeeUniverse Editor
+GenericName=Game Editor
+Categories=Game;
+Comment=Editor of the TeeUniverse gaming environment
+Comment[de]=Editor der TeeUniverse-Spielumgebung
+Comment[es]=Editor del entorno del juegos TeeUniverse
+Comment[la]=Editor ambientis ludicri TeeUniverse
+Comment[ru]=Редактор игровой среды TeeUniverse
+Comment[bs]=Uređivač igračke okoline TeeUniverse
+Comment[hr]=Uređivač igračke okoline TeeUniverse
+Comment[sr@latin]=Uređivač igračke okoline TeeUniverse
+Comment[sr]=Уређивач играчке околине TeeUniverse
+Type=Application
+MimeType=application/x-teeuniverse-package;
+Exec=teeuniverse_editor --open-package %f
+TryExec=teeuniverse_editor
+Terminal=false
+Icon=teeuniverse

@@ -70,7 +70,7 @@ bool CAssetsManager::Save_ZipWithDependencies(const char* pFilename, int Storage
 				int PackageFound = -1;
 				for(int p=0; p<static_cast<int>(m_pPackages.size()); p++)
 				{
-					if(m_pPackages[p] && m_pPackages[p]->Identify(pPackageName, 0))
+					if(m_pPackages[p] && str_comp(m_pPackages[p]->GetName(), pPackageName) == 0)
 					{
 						PackageFound = p;
 						break;

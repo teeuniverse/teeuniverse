@@ -144,7 +144,7 @@ bool CStorage::Init()
 		{
 			dynamic_string Buf;
 			
-			fs_makedir(GetPath(TYPE_SAVE, "assets", Buf).buffer());
+			fs_makedir(GetPath(TYPE_SAVE, "packages", Buf).buffer());
 			fs_makedir(GetPath(TYPE_SAVE, "config", Buf).buffer());
 			fs_makedir(GetPath(TYPE_SAVE, "maps", Buf).buffer());
 		}
@@ -218,33 +218,8 @@ void CStorage::FindDatadir(const char *pArgv0)
 		return;
 	}
 
-	// 3) check for usable path in argv[0]
-	{
-		int Pos = -1;
-		for(int i = 0; pArgv0[i]; i++)
-			if(pArgv0[i] == '/' || pArgv0[i] == '\\')
-				Pos = i;
-
-		if(Pos >= 0)
-		{
-			dynamic_string Path;
-			Path.append_num(pArgv0, Pos+1);
-			Path.append("/data");
-			
-			dynamic_string TestPath;
-			TestPath.append(Path);
-			TestPath.append("/languages");
-			
-			if(fs_is_dir(TestPath.buffer()))
-			{
-				m_DataDirs.emplace_back(Path);
-				return;
-			}
-		}
-	}
-
 #if defined(CONF_FAMILY_UNIX)
-	// 4) check for all default locations
+	// 3) check for all default locations
 	{
 		const char *aDirs[] = {
 			"/usr/share/teeuniverse",
