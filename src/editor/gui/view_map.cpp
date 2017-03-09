@@ -765,11 +765,27 @@ void CViewMap::OnButtonClick(int Button)
 		{
 			CameraZoom *= 1.1f;
 			SetCameraZoom(CameraZoom);
+			
+			vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+			vec2 MouseMapPos = MapRenderer()->ScreenPosToMapPos(MousePos);
+			
+			CAssetPath MapPath = GetMapPath();
+			vec2 CameraPos = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
+			CameraPos = MouseMapPos + (CameraPos - MouseMapPos)/1.1f;
+			AssetsManager()->SetAssetValue_Hard<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, CameraPos);
 		}
 		if(Button == KEY_MOUSE_WHEEL_DOWN)
 		{
 			CameraZoom /= 1.1f;
 			SetCameraZoom(CameraZoom);
+			
+			vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+			vec2 MouseMapPos = MapRenderer()->ScreenPosToMapPos(MousePos);
+			
+			CAssetPath MapPath = GetMapPath();
+			vec2 CameraPos = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
+			CameraPos = MouseMapPos + (CameraPos - MouseMapPos)*1.1f;
+			AssetsManager()->SetAssetValue_Hard<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, CameraPos);
 		}
 		else if(Button == KEY_MOUSE_3 || (Button == KEY_MOUSE_1 && Input()->KeyIsPressed(KEY_LCTRL)))
 		{
