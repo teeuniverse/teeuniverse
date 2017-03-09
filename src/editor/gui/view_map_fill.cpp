@@ -78,6 +78,17 @@ public:
 		
 		gui::CPopup::OnButtonClick(Button);
 	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
+	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
@@ -134,6 +145,17 @@ public:
 		
 		gui::CPopup::OnButtonClick(Button);
 	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
+	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
@@ -166,22 +188,38 @@ void CCursorTool_MapFill::OnViewButtonClick(int Button)
 	}
 	else if(Button == KEY_MOUSE_2)
 	{
-		m_DragEnabled = false;
-		
-		if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
-		{
-			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-			if(pLayer && pLayer->GetSourcePath().IsNull())
-			{
-				if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
-					Context()->DisplayPopup(new CPopup_TilePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
-				else if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
-					Context()->DisplayPopup(new CPopup_MaterialPalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
-			}
-		}
+		AltButtonAction();
 	}
 	
 	ViewMap()->MapRenderer()->UnsetGroup();
+}
+
+void CCursorTool_MapFill::OnViewInputEvent(const CInput::CEvent& Event)
+{
+	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+	{
+		AltButtonAction();
+		return;
+	}
+	else
+		CCursorTool::OnViewInputEvent(Event);
+}
+
+void CCursorTool_MapFill::AltButtonAction()
+{
+	m_DragEnabled = false;
+	
+	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
+	{
+		const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+		if(pLayer && pLayer->GetSourcePath().IsNull())
+		{
+			if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
+				Context()->DisplayPopup(new CPopup_TilePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
+			else if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+				Context()->DisplayPopup(new CPopup_MaterialPalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
+		}
+	}
 }
 	
 void CCursorTool_MapFill::OnViewButtonRelease(int Button)

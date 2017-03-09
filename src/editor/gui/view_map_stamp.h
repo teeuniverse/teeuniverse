@@ -37,6 +37,9 @@ protected:
 	int m_Token;
 	gui::CHListLayout* m_pOptions;
 	
+protected:
+	void AltButtonAction();
+	
 public:
 	CCursorTool_MapStamp(CViewMap* pViewMap);
 	virtual void UpdateToolbar();
@@ -46,6 +49,7 @@ public:
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
+	virtual void OnViewInputEvent(const CInput::CEvent& Event);
 	void PaletteCallback_SelectImage(CAssetPath ImagePath, int MinX, int MinY, int MaxX, int MaxY);
 	void PaletteCallback_SelectZoneType(CAssetPath ZoneTypePath, CSubPath Index, const std::vector<int>& DataInt);
 	void PaletteCallback_SelectBrushType(CAssetPath MaterialPath, CSubPath Index);

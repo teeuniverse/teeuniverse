@@ -132,6 +132,17 @@ public:
 		
 		gui::CPopup::OnButtonClick(Button);
 	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
+	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
@@ -398,6 +409,17 @@ public:
 		
 		gui::CPopup::OnButtonClick(Button);
 	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
+	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
 };
@@ -450,6 +472,17 @@ public:
 			Close();
 		
 		gui::CPopup::OnButtonClick(Button);
+	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
 	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
@@ -506,6 +539,17 @@ public:
 			Close();
 		
 		gui::CPopup::OnButtonClick(Button);
+	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
 	}
 	
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
@@ -758,67 +802,83 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 	}
 	else if(Button == KEY_MOUSE_2)
 	{
-		if(m_SelectionEnabled)
-			m_SelectionEnabled = false;
-		else
+		AltButtonAction();
+	}
+	
+	ViewMap()->MapRenderer()->UnsetGroup();
+}
+
+void CCursorTool_MapStamp::OnViewInputEvent(const CInput::CEvent& Event)
+{
+	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+	{
+		AltButtonAction();
+		return;
+	}
+	else
+		CCursorTool::OnViewInputEvent(Event);
+}
+
+void CCursorTool_MapStamp::AltButtonAction()
+{
+	if(m_SelectionEnabled)
+		m_SelectionEnabled = false;
+	else
+	{
+		if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
 		{
-			if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
+			const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				Context()->DisplayPopup(new CPopup_ZonePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetZoneTypePath()));
+		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+		{
+			const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
+				Context()->DisplayPopup(new CPopup_EntityPalette(AssetsEditor(), this, ViewMap()->GetViewRect()));
+		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
+		{
+			const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer && pLayer->GetSourcePath().IsNull())
 			{
-				const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer)
-					Context()->DisplayPopup(new CPopup_ZonePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetZoneTypePath()));
+				if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+					Context()->DisplayPopup(new CPopup_MaterialPalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
+				else if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
+					Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
 			}
-			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
+		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
+		{
+			const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
+			if(pLayer)
 			{
-				const CAsset_MapEntities* pLayer = AssetsManager()->GetAsset<CAsset_MapEntities>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer)
-					Context()->DisplayPopup(new CPopup_EntityPalette(AssetsEditor(), this, ViewMap()->GetViewRect()));
-			}
-			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerTiles::TypeId)
-			{
-				const CAsset_MapLayerTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerTiles>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer && pLayer->GetSourcePath().IsNull())
+				const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pLayer->GetImagePath());
+				if(pImage)
+					Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
+				else
 				{
-					if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
-						Context()->DisplayPopup(new CPopup_MaterialPalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
-					else if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
-						Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
-				}
-			}
-			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
-			{
-				const CAsset_MapLayerQuads* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
-				if(pLayer)
-				{
-					const CAsset_Image* pImage = AssetsManager()->GetAsset<CAsset_Image>(pLayer->GetImagePath());
-					if(pImage)
-						Context()->DisplayPopup(new CPopup_ImagePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetImagePath()));
-					else
-					{
-						m_QuadSelection.clear();
-						
-						m_QuadSelection.emplace_back();
-						CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
-						Quad.SetPivot(0.0f);
-						
-						Quad.SetVertex0(vec2(-128.0f, -128.0f));
-						Quad.SetVertex1(vec2(128.0f, -128.0f));
-						Quad.SetVertex2(vec2(-128.0f, 128.0f));
-						Quad.SetVertex3(vec2(128.0f, 128.0f));
-						
-						Quad.SetUV0(vec2(0.0f, 0.0f));
-						Quad.SetUV1(vec2(1.0f, 0.0f));
-						Quad.SetUV2(vec2(0.0f, 1.0f));
-						Quad.SetUV3(vec2(1.0f, 1.0f));
-						
-						m_SelectionEnabled = true;
-					}
+					m_QuadSelection.clear();
+					
+					m_QuadSelection.emplace_back();
+					CAsset_MapLayerQuads::CQuad& Quad = m_QuadSelection.back();
+					Quad.SetPivot(0.0f);
+					
+					Quad.SetVertex0(vec2(-128.0f, -128.0f));
+					Quad.SetVertex1(vec2(128.0f, -128.0f));
+					Quad.SetVertex2(vec2(-128.0f, 128.0f));
+					Quad.SetVertex3(vec2(128.0f, 128.0f));
+					
+					Quad.SetUV0(vec2(0.0f, 0.0f));
+					Quad.SetUV1(vec2(1.0f, 0.0f));
+					Quad.SetUV2(vec2(0.0f, 1.0f));
+					Quad.SetUV3(vec2(1.0f, 1.0f));
+					
+					m_SelectionEnabled = true;
 				}
 			}
 		}
 	}
-	
-	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
 void CCursorTool_MapStamp::OnViewButtonRelease(int Button)

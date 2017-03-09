@@ -30,6 +30,9 @@ protected:
 	int m_Index;
 	CAssetPath m_SelectedStyle;
 	
+protected:
+	void AltButtonAction();
+	
 public:
 	CCursorTool_MapFill(CViewMap* pViewMap);
 	
@@ -38,6 +41,7 @@ public:
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
+	virtual void OnViewInputEvent(const CInput::CEvent& Event);
 	
 	void SetIndex(int Index) { m_Index = Index; }
 };
