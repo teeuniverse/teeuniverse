@@ -18,6 +18,7 @@
 
 #include "autolayer.h"
 
+#include <algorithm>
 #include <random>
 
 void ApplyTilingMaterials_FullLayer(CAssetsManager* pAssetsManager, CAssetPath LayerPath, int Token)
