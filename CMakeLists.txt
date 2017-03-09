@@ -16,7 +16,7 @@
 # along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.10)
 cmake_policy(SET CMP0012 NEW)
 
 project(TeeUniverse)
@@ -92,7 +92,15 @@ else()
 	endforeach(CONFIG_TYPE)
 endif()
 
-set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PLATFORM}/data)
+if(CMAKE_VERSION VERSION_LESS 3)
+	foreach(CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
+		string(TOLOWER ${CONFIG_TYPE} CONFIG_TYPE_DIR)
+		set(CONFIG_DIR ${CONFIG_DIR}$<$<CONFIG:${CONFIG_TYPE}>:${CONFIG_TYPE_DIR}>)
+	endforeach(CONFIG_TYPE)
+	set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${CONFIG_DIR}/${PLATFORM}/data)
+else()
+	set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PLATFORM}/data)
+endif()
 
 set(TU_EXECNAME_GAME teeuniverse)
 set(TU_EXECNAME_EDITOR teeuniverse_editor)
