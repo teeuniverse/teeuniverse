@@ -39,11 +39,15 @@ find_package(ICU COMPONENTS i18n)
 # BUILD_TYPE, PLATFORM
 ########################################################################
 
-if(NOT(CMAKE_BUILD_TYPE))
-	set(CMAKE_BUILD_TYPE Release)
+if(CMAKE_CONFIGURATION_TYPES) # multiconfig generator
+	set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+else()
+	if(NOT CMAKE_BUILD_TYPE)
+		set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+	endif()
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release")
+	string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 endif()
-
-string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 
 if(NOT(PLATFORM))
 	if(WIN32)
@@ -74,10 +78,21 @@ endif()
 # OPTIONS
 ########################################################################
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM})
-set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/data)
+if(BUILD_TYPE)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM}/lib)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${BUILD_TYPE}/${PLATFORM})
+else()
+	foreach(CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
+		string(TOLOWER ${CONFIG_TYPE} CONFIG_TYPE_DIR)
+		string(TOUPPER ${CONFIG_TYPE} CONFIG_TYPE)
+		set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR}/build/${CONFIG_TYPE_DIR}/${PLATFORM}/lib)
+		set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR}/build/${CONFIG_TYPE_DIR}/${PLATFORM}/lib)
+		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_TYPE} ${CMAKE_BINARY_DIR}/build/${CONFIG_TYPE_DIR}/${PLATFORM})
+	endforeach(CONFIG_TYPE)
+endif()
+
+set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PLATFORM}/data)
 
 set(TU_EXECNAME_GAME teeuniverse)
 set(TU_EXECNAME_EDITOR teeuniverse_editor)
@@ -107,7 +122,11 @@ if(ICU_FOUND)
 endif()
 
 message(STATUS "******** TeeUniverse ********")
+if(BUILD_TYPE)
 message(STATUS "Build type: ${BUILD_TYPE}")
+else()
+message(STATUS "Build configuration: ${CMAKE_CONFIGURATION_TYPES}")
+endif()
 message(STATUS "Platform: ${PLATFORM}")
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 
@@ -167,6 +186,11 @@ endif()
 if(MINGW)
 	SET(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE} --static -static-libgcc")
 	SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} --static -static-libgcc -static-libstdc++")
+endif()
+
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /EHsc /GS")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244 /wd4267 /wd4800 /wd4996")
 endif()
 
 ########################################################################
@@ -315,6 +339,29 @@ message(STATUS " * server not yet implemented")
 # TOOLS
 ########################################################################
 
+function(set_target_output target dir)
+	if(BUILD_TYPE)
+		set_target_properties(
+			${target}
+			PROPERTIES
+			ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/${dir}"
+			LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${dir}"
+			RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${dir}"
+		)
+	else()
+		foreach(CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
+			string(TOUPPER ${CONFIG_TYPE} CONFIG_TYPE)
+			set_target_properties(
+				${target}
+				PROPERTIES
+				ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_TYPE} "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_TYPE}}/${dir}"
+				LIBRARY_OUTPUT_DIRECTORY_${CONFIG_TYPE} "${CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_TYPE}}/${dir}"
+				RUNTIME_OUTPUT_DIRECTORY_${CONFIG_TYPE} "${CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_TYPE}}/${dir}"
+			)
+		endforeach(CONFIG_TYPE)
+	endif()
+endfunction()
+
 # Sources
 file(GLOB teeuniverse_tools_src
 	"${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
@@ -332,13 +379,7 @@ target_link_libraries (teeuniverse_tools ${teeuniverse_tools_libraries})
 
 # TUP Info
 add_executable(tupinfo ${PROJECT_SOURCE_DIR}/src/tupinfo.cpp)
-set_target_properties(
-	tupinfo
-	PROPERTIES
-	ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/tupinfo"
-	LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/tupinfo"
-	RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tupinfo"
-)
+set_target_output(tupinfo "tupinfo")
 target_link_libraries(
 	tupinfo
 	teeuniverse_tools
@@ -347,13 +388,7 @@ target_link_libraries(
 # Make Assets
 function(make_assets progname)
 	add_executable(make_assets_${progname} ${PROJECT_SOURCE_DIR}/src/make_assets_${progname}.cpp)
-	set_target_properties(
-		make_assets_${progname}
-		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/make_assets"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/make_assets"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/make_assets"
-	)
+	set_target_output(make_assets_${progname} "make_assets")
 	target_link_libraries(
 		make_assets_${progname}
 		teeuniverse_tools
@@ -381,13 +416,7 @@ enable_testing()
 
 function(make_test testname)
 	add_executable(test_${testname} src/unittest/${testname}.cpp)
-	set_target_properties(
-		test_${testname}
-		PROPERTIES
-		ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/test"
-		LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/test"
-		RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test"
-	)
+	set_target_output(test_${testname} "test")
 	target_link_libraries(
 		test_${testname}
 		teeuniverse_shared

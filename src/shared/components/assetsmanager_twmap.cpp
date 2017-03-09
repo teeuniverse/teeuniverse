@@ -24,6 +24,8 @@
 
 #include "assetsmanager.h"
 
+#include <algorithm>
+
 /* ASSETS MANAGER *****************************************************/
 
 class CLoadMap_ZoneList
