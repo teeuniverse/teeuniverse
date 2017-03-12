@@ -1802,12 +1802,13 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 		
 	vec2 LayerShift = vec2(0.0f, 0.0f);
 	
+	int GameX = 0;
+	int GameY = 0;
+	int GameWidth = 0;
+	int GameHeight = 0;
+	
 	{		
 		//Get game layer size
-		int GameX = 0;
-		int GameY = 0;
-		int GameWidth = 0;
-		int GameHeight = 0;
 		bool FrontEnabled = false;
 		bool TeleEnabled = false;
 		bool SwitchEnabled = false;
@@ -1820,85 +1821,21 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				const CAsset_MapZoneTiles* pZone = GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
 				if(pZone)
 				{
-					if(Format == MAPFORMAT_NINSLASH)
+					GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
+					GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
+					GameX = std::min(GameX, pZone->GetPositionX());
+					GameY = std::min(GameY, pZone->GetPositionY());
+					
+					if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0)
 					{
-						if(pZone->GetZoneTypePath() == m_Path_ZoneType_Ninslash)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-					}
-					else
-					{
-						if(pZone->GetZoneTypePath() == m_Path_ZoneType_TeeWorlds)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-						else if(Format == MAPFORMAT_DUMMYCAPTURE && m_PackageId_UnivSport >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_Sport)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-						else if(Format == MAPFORMAT_FOOT && m_PackageId_UnivSport >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_Sport)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-						else if(Format == MAPFORMAT_OPENFNG && m_PackageId_UnivOpenFNG >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_OpenFNG)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
-						}
-						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
+						if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 							FrontEnabled = true;
-						}
-						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
+						else if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 							TeleEnabled = true;
-						}
-						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
+						else if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 							SwitchEnabled = true;
-						}
-						else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
-						{
-							GameWidth = std::max(GameX + GameWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(GameX, pZone->GetPositionX());
-							GameHeight = std::max(GameY + GameHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(GameY, pZone->GetPositionY());
-							GameX = std::min(GameX, pZone->GetPositionX());
-							GameY = std::min(GameY, pZone->GetPositionY());
+						else if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
 							TuneEnabled = true;
-						}
 					}
 				}
 				
@@ -2253,8 +2190,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			{
 				CSubPath SubPath = CAsset_MapEntities::SubPath_Entity(i);
 				CAssetPath EntityTypePath = pEntities->GetEntityTypePath(SubPath);
-				int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f;
-				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f;
+				int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f - GameX;
+				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f - GameY;
 				
 				if(X < 0 || X >= GameWidth || Y < 0 || Y >= GameHeight)
 				{
@@ -2511,19 +2448,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				if(!pZone)
 					continue;
 				
-				int Width = pZone->GetTileWidth();
-				int Height = pZone->GetTileHeight();
-		
-				ddnet::CTile* pTiles = new ddnet::CTile[Width*Height];
+				ddnet::CTile* pTiles = new ddnet::CTile[GameWidth*GameHeight];
 				
-				for(int j=0; j<Height; j++)
+				for(int j=0; j<GameHeight; j++)
 				{
-					for(int i=0; i<Width; i++)
+					for(int i=0; i<GameWidth; i++)
 					{
-						pTiles[j*Width+i].m_Index = 0;
-						pTiles[j*Width+i].m_Flags = 0;
-						pTiles[j*Width+i].m_Skip = 0;
-						pTiles[j*Width+i].m_Reserved = 0;
+						pTiles[j*GameWidth+i].m_Index = 0;
+						pTiles[j*GameWidth+i].m_Flags = 0;
+						pTiles[j*GameWidth+i].m_Skip = 0;
+						pTiles[j*GameWidth+i].m_Reserved = 0;
 					}
 				}
 				
@@ -2532,7 +2466,10 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					for(int i=0; i<pZone->GetTileWidth(); i++)
 					{
 						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						pTiles[j*Width+i].m_Index = pZone->GetTileIndex(TilePath);
+						int I =  i + pZone->GetPositionX() - GameX;
+						int J =  j + pZone->GetPositionY() - GameY;
+						
+						pTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
 					}
 				}
 		
@@ -2542,8 +2479,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				LItem.m_Flags = 0;
 				LItem.m_Layer.m_Type = ddnet::LAYERTYPE_TILES;
 				LItem.m_Layer.m_Flags = ddnet::LAYERFLAG_DETAIL;
-				LItem.m_Width = Width;
-				LItem.m_Height = Height;
+				LItem.m_Width = GameWidth;
+				LItem.m_Height = GameHeight;
 				LItem.m_Color.r = 255;
 				LItem.m_Color.g = 255;
 				LItem.m_Color.b = 255;
@@ -2551,7 +2488,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				LItem.m_ColorEnv = -1;
 				LItem.m_ColorEnvOffset = 0;
 				LItem.m_Image = -1;
-				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
+				LItem.m_Data = ArchiveFile.AddData(GameWidth*GameHeight*sizeof(ddnet::CTile), pTiles);
 				
 				{
 					const char* pZoneName = GetAssetValue<const char*>(pZone->GetZoneTypePath(), CSubPath::Null(), CAsset_ZoneType::NAME, NULL);
@@ -2567,7 +2504,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			}
 			else if(ZoneLayers[i].GetType() == CAsset_MapZoneObjects::TypeId)
 			{
-				const CAsset_MapZoneObjects* pZone = GetAsset<CAsset_MapZoneObjects>(pMap->GetZoneLayer(*ZoneIter));
+				const CAsset_MapZoneObjects* pZone = GetAsset<CAsset_MapZoneObjects>(ZoneLayers[i]);
 				if(!pZone)
 					continue;
 				
@@ -2581,6 +2518,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					vec2 ObjPosition;
 					matrix2x2 Transform;
 					Object.GetTransform(this, 0.0f, &Transform, &ObjPosition);
+					ObjPosition -= LayerShift;
 					
 					std::vector<CLineVertex> LineVertices;
 					std::vector<CQuad> ObjectQuads;
@@ -2682,16 +2620,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 			EntityQuads[eId].emplace_back();
 			ddnet::CQuad& Quad = EntityQuads[eId].back();
 			
-			Quad.m_aPoints[1].x = f2fx(Entity.GetPositionX()-16.0f);
-			Quad.m_aPoints[1].y = f2fx(Entity.GetPositionY()-16.0f);
-			Quad.m_aPoints[0].x = f2fx(Entity.GetPositionX()+16.0f);
-			Quad.m_aPoints[0].y = f2fx(Entity.GetPositionY()-16.0f);
-			Quad.m_aPoints[3].x = f2fx(Entity.GetPositionX()-16.0f);
-			Quad.m_aPoints[3].y = f2fx(Entity.GetPositionY()+16.0f);
-			Quad.m_aPoints[2].x = f2fx(Entity.GetPositionX()+16.0f);
-			Quad.m_aPoints[2].y = f2fx(Entity.GetPositionY()+16.0f);
-			Quad.m_aPoints[4].x = f2fx(Entity.GetPositionX());
-			Quad.m_aPoints[4].y = f2fx(Entity.GetPositionY());
+			Quad.m_aPoints[1].x = f2fx(Entity.GetPositionX()-16.0f-LayerShift.x);
+			Quad.m_aPoints[1].y = f2fx(Entity.GetPositionY()-16.0f-LayerShift.y);
+			Quad.m_aPoints[0].x = f2fx(Entity.GetPositionX()+16.0f-LayerShift.x);
+			Quad.m_aPoints[0].y = f2fx(Entity.GetPositionY()-16.0f-LayerShift.y);
+			Quad.m_aPoints[3].x = f2fx(Entity.GetPositionX()-16.0f-LayerShift.x);
+			Quad.m_aPoints[3].y = f2fx(Entity.GetPositionY()+16.0f-LayerShift.y);
+			Quad.m_aPoints[2].x = f2fx(Entity.GetPositionX()+16.0f-LayerShift.x);
+			Quad.m_aPoints[2].y = f2fx(Entity.GetPositionY()+16.0f-LayerShift.y);
+			Quad.m_aPoints[4].x = f2fx(Entity.GetPositionX()-LayerShift.x);
+			Quad.m_aPoints[4].y = f2fx(Entity.GetPositionY()-LayerShift.y);
 			
 			for(int j=0; j<4; j++)
 			{
