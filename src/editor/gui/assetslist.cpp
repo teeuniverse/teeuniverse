@@ -586,9 +586,42 @@ protected:
 				{
 					AssetsManager()->TryChangeAssetName(ZoneLayerPath, "zone", Token);
 					pLayer->SetTileDepth(1);
-					pLayer->SetTileWidth(64);
-					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
+					
+					int ZoneX = 0;
+					int ZoneY = 0;
+					int ZoneWidth = 0;
+					int ZoneHeight = 0;
+					
+					{
+						CAsset_Map::CIteratorZoneLayer ZoneIter;
+						for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+						{
+							const CAsset_MapZoneTiles* pZone = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+							if(pZone)
+							{
+								ZoneWidth = std::max(ZoneX + ZoneWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(ZoneX, pZone->GetPositionX());
+								ZoneHeight = std::max(ZoneY + ZoneHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(ZoneY, pZone->GetPositionY());
+								ZoneX = std::min(ZoneX, pZone->GetPositionX());
+								ZoneY = std::min(ZoneY, pZone->GetPositionY());
+								
+							}
+						}
+					}
+					if(ZoneWidth > 0 && ZoneHeight > 0)
+					{
+						pLayer->SetPositionX(ZoneX);
+						pLayer->SetPositionY(ZoneY);
+						pLayer->SetTileWidth(ZoneWidth);
+						pLayer->SetTileHeight(ZoneHeight);
+					}
+					else
+					{
+						pLayer->SetPositionX(0);
+						pLayer->SetPositionY(0);
+						pLayer->SetTileWidth(64);
+						pLayer->SetTileHeight(64);
+					}
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_Map::TYPE_ZONELAYER, Token);
 					if(Id >= 0)
@@ -1119,14 +1152,49 @@ protected:
 			const CAsset_MapGroup* pMapGroup = AssetsManager()->GetAsset<CAsset_MapGroup>(m_AssetPath);
 			if(pMapGroup)
 			{
+				const CAsset_Map* pMap = AssetsManager()->GetAsset<CAsset_Map>(pMapGroup->GetParentPath());
 				CAsset_MapLayerTiles* pLayer = AssetsManager()->NewAsset<CAsset_MapLayerTiles>(&LayerPath, m_AssetPath.GetPackageId(), Token);
 				if(pLayer)
 				{
 					AssetsManager()->TryChangeAssetName(LayerPath, "tiles", Token);
 					pLayer->SetTileDepth(1);
-					pLayer->SetTileWidth(64);
-					pLayer->SetTileHeight(64);
 					pLayer->SetParentPath(m_AssetPath);
+					
+					int ZoneX = 0;
+					int ZoneY = 0;
+					int ZoneWidth = 0;
+					int ZoneHeight = 0;
+					
+					if(pMap)
+					{
+						CAsset_Map::CIteratorZoneLayer ZoneIter;
+						for(ZoneIter = pMap->BeginZoneLayer(); ZoneIter != pMap->EndZoneLayer(); ++ZoneIter)
+						{
+							const CAsset_MapZoneTiles* pZone = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(pMap->GetZoneLayer(*ZoneIter));
+							if(pZone)
+							{
+								ZoneWidth = std::max(ZoneX + ZoneWidth, pZone->GetPositionX() + pZone->GetTileWidth()) - std::min(ZoneX, pZone->GetPositionX());
+								ZoneHeight = std::max(ZoneY + ZoneHeight, pZone->GetPositionY() + pZone->GetTileHeight()) - std::min(ZoneY, pZone->GetPositionY());
+								ZoneX = std::min(ZoneX, pZone->GetPositionX());
+								ZoneY = std::min(ZoneY, pZone->GetPositionY());
+								
+							}
+						}
+					}
+					if(ZoneWidth > 0 && ZoneHeight > 0)
+					{
+						pLayer->SetPositionX(ZoneX);
+						pLayer->SetPositionY(ZoneY);
+						pLayer->SetTileWidth(ZoneWidth);
+						pLayer->SetTileHeight(ZoneHeight);
+					}
+					else
+					{
+						pLayer->SetPositionX(0);
+						pLayer->SetPositionY(0);
+						pLayer->SetTileWidth(64);
+						pLayer->SetTileHeight(64);
+					}
 					
 					int Id = AssetsManager()->AddSubItem(m_AssetPath, CSubPath::Null(), CAsset_MapGroup::TYPE_LAYER, Token);
 					if(Id >= 0)
