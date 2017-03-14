@@ -17,10 +17,45 @@
  */
 
 #include <shared/components/storage.h>
+#include <shared/components/cli.h>
 #include <shared/assets/assetssaveloadcontext.h>
 #include <shared/archivefile.h>
 
 #include "assetsmanager.h"
+
+/* COMMANDS ***********************************************************/
+
+	//add_package_dir
+class CCommand_AddPackageDir : public CCommandLineInterpreter::CCommand
+{
+protected:
+	CAssetsManager* m_pAssetsManager;
+	
+public:
+	CCommand_AddPackageDir(CAssetsManager* pAssetsManager) :
+		CCommandLineInterpreter::CCommand(),
+		m_pAssetsManager(pAssetsManager)
+	{ }
+
+	virtual int Execute(const char* pArgs, CCLI_Output* pOutput)
+	{
+		dynamic_string Buffer;
+		if(!GetString(&pArgs, Buffer))
+		{
+			if(pOutput)
+				pOutput->Print("Missing \"Directory\" parameter", CLI_LINETYPE_ERROR);
+			Help(pOutput);
+			return CLI_FAILURE_WRONG_PARAMETER;
+		}
+		
+		m_pAssetsManager->AddDirectory(Buffer.buffer());
+		
+		return CLI_SUCCESS;
+	}
+	
+	virtual const char* Usage() { return "add_package_dir \"Directory\""; }
+	virtual const char* Description() { return "Add \"Directory\" as a source of package"; }
+};
 
 /* ASSETS MANAGER *****************************************************/
 	
@@ -65,6 +100,13 @@ void CAssetsManager::RequestUpdate(const CAssetPath& AssetPath)
 	}
 }
 
+bool CAssetsManager::InitConfig(int argc, const char** argv)
+{
+	CLI()->Register("add_package_dir", new CCommand_AddPackageDir(this));
+	
+	return true;
+}
+
 bool CAssetsManager::Init()
 {
 	for(int i=0; i<Storage()->GetNumPaths(); i++)
@@ -87,6 +129,17 @@ bool CAssetsManager::PostUpdate()
 	}
 	
 	return true;
+}
+
+void CAssetsManager::SaveConfig(CCLI_Output* pOutput)
+{
+	dynamic_string Buffer;
+	
+	for(unsigned int i=2; i<m_Directories.size(); i++)
+	{
+		str_format(Buffer.buffer(), Buffer.maxsize(), "add_package_dir %s", m_Directories[i].buffer());
+		pOutput->Print(Buffer.buffer());
+	}
 }
 
 int CAssetsManager::NewPackage(const char* pName)
@@ -395,6 +448,18 @@ bool CAssetsManager::Save_AssetsFile_SaveDir(int PackageId)
 	return Save_AssetsFile(PackageId, Filename.buffer());
 }
 
+bool CAssetsManager::AddDirectory(const char* pDirectory)
+{
+	for(unsigned int i=0; i<m_Directories.size(); i++)
+	{
+		if(str_comp(m_Directories[i].buffer(), pDirectory) == 0)
+			return false;
+	}
+	
+	m_Directories.emplace_back(pDirectory);
+	return true;
+}
+
 int CAssetsManager::Load_AssetsFile_Core(const char* pPackageName, CErrorStack* pErrorStack)
 {
 	// The input filename can be one of the following format:
@@ -544,21 +609,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pPackageName, CErrorStack* 
 		pPackage->SetDirectory(Directory.buffer());
 	}
 	
-	//Add this directory to the list of accepted directories
-	{
-		bool Found = false;
-		for(unsigned int i=0; i<m_Directories.size(); i++)
-		{
-			if(str_comp(m_Directories[i].buffer(), Directory.buffer()) == 0)
-			{
-				Found = true;
-				break;
-			}
-		}
-		
-		if(!Found)
-			m_Directories.emplace_back(Directory.buffer());
-	}
+	AddDirectory(Directory.buffer());
 	
 	CAssetsSaveLoadContext SaveLoadContext(this, &ArchiveFile, PackageId);
 	

@@ -172,8 +172,10 @@ private:
 public:
 	CAssetsManager(CSharedKernel* pKernel);
 	virtual ~CAssetsManager() = default;
+	virtual bool InitConfig(int argc, const char** argv);
 	virtual bool Init();
 	virtual bool PostUpdate();
+	virtual void SaveConfig(CCLI_Output* pOutput);
 	
 	void RequestUpdate(const CAssetPath& AssetPath);
 	const std::vector<CAssetUpdateDesc>& GetImagesToUpdate() const { return m_ImagesToUpdate; }
@@ -212,6 +214,7 @@ public:
 	bool GetPackageSaveFilename(int PackageId, dynamic_string& Filename);
 	
 	inline std::vector<dynamic_string>& GetDirectories() { return m_Directories; }
+	bool AddDirectory(const char* pDirectory);
 	
 	bool Save_AssetsFile_SaveDir(int PackageId);
 	bool Save_AssetsFile(int PackageId, const char* pFilename);

@@ -857,6 +857,23 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 			Storage()->GetCompletePath(CStorage::TYPE_DATA, "packages", Buffer);
 			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("Global packages"), Buffer.buffer(), true), false);			
 		}
+		if(m_Format == FORMAT_MAP_TW)
+		{
+			pPlaces->AddSeparator();
+			{
+				Buffer.clear();
+				fs_storage_path("teeworlds", Buffer);
+				Buffer.append("/maps");
+				pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer(), false), false);
+			}
+			{
+				Buffer.clear();
+				fs_storage_path("teeworlds", Buffer);
+				Buffer.append("/downloadedmaps");
+				pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer(), false), false);
+			}
+		}
+		pPlaces->AddSeparator();
 		for(unsigned int i=2; i<Directories.size(); i++)
 		{
 			const char* pDirName = Directories[i].buffer() + Directories[i].length();
@@ -871,19 +888,6 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 			}
 			
 			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, pDirName, Directories[i].buffer(), false), false);
-		}
-		pPlaces->AddSeparator();
-		{
-			Buffer.clear();
-			fs_storage_path("teeworlds", Buffer);
-			Buffer.append("/maps");
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Maps"), Buffer.buffer(), false), false);
-		}
-		{
-			Buffer.clear();
-			fs_storage_path("teeworlds", Buffer);
-			Buffer.append("/downloadedmaps");
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, _LSTRING("TeeWorlds Downloaded Maps"), Buffer.buffer(), false), false);
 		}
 		
 		m_pFilelist = new gui::CVScrollLayout(Context());
