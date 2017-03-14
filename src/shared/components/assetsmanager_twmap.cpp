@@ -1734,8 +1734,8 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 		GItem.m_StartLayer = StartLayer;
 		GItem.m_NumLayers = LayerId-StartLayer;
 		GItem.m_UseClipping = pGroup->GetClipping();
-		GItem.m_ClipX = pGroup->GetClipPositionX();
-		GItem.m_ClipY = pGroup->GetClipPositionY();
+		GItem.m_ClipX = pGroup->GetClipPositionX()-LayerShift.x;
+		GItem.m_ClipY = pGroup->GetClipPositionY()-LayerShift.y;
 		GItem.m_ClipW = pGroup->GetClipSizeX();
 		GItem.m_ClipH = pGroup->GetClipSizeY();
 		StrToInts(GItem.m_aName, sizeof(GItem.m_aName)/sizeof(int), pGroup->GetName());
