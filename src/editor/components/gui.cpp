@@ -859,10 +859,18 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		}
 		for(unsigned int i=2; i<Directories.size(); i++)
 		{
-			CLocalizableString LString(_("Other packages {int:Id}"));
-			LString.AddInteger("Id", i-1);
+			const char* pDirName = Directories[i].buffer() + Directories[i].length();
+			while(pDirName > Directories[i].buffer())
+			{
+				pDirName--;
+				if(*pDirName == '/' || *pDirName == '\\')
+				{
+					pDirName++;
+					break;
+				}
+			}
 			
-			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, LString, Directories[i].buffer(), false), false);
+			pPlaces->Add(new COpenSavePackageDialog_Item_Directory(this, pDirName, Directories[i].buffer(), false), false);
 		}
 		pPlaces->AddSeparator();
 		{
