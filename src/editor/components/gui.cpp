@@ -759,6 +759,36 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 	pLayout->SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
 	Add(pLayout);
 	
+	if(Mode == MODE_SAVE)
+	{
+		switch(m_Format)
+		{
+			case FORMAT_PACKAGE:
+			case FORMAT_MAP_TW:
+			case FORMAT_ZIP:
+			{
+				const char* pName = AssetsManager()->GetPackageName(m_pAssetsEditor->GetEditedPackageId());
+				if(pName && str_length(pName) > 0)
+					m_Filename = pName;
+				else
+					m_Filename = (m_Format == FORMAT_MAP_TW ? "mymap" : "mypackage");
+				break;
+			}
+			case FORMAT_IMAGE:
+			{
+				const char* pName = AssetsManager()->GetAssetValue<const char*>(m_pAssetsEditor->GetEditedAssetPath(), CSubPath::Null(), CAsset_Image::NAME, nullptr);
+				if(pName && str_length(pName) > 0)
+					m_Filename = pName;
+				else
+					m_Filename = "myimage";
+				break;
+			}
+			default:
+				m_Filename = "myfile";
+				break;
+		}
+	}
+	
 	switch(m_Format)
 	{
 		case FORMAT_IMAGE:
