@@ -1503,7 +1503,7 @@ void CAsset_SkeletonAnimation::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_SkeletonAnimation::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_SkeletonAnimation::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

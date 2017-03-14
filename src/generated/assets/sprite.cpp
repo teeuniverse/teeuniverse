@@ -254,7 +254,7 @@ void CAsset_Sprite::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_Sprite::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_Sprite::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

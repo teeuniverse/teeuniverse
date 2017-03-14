@@ -201,7 +201,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiLabelStyle();
 	inline int GetMinWidth() const { return m_MinWidth; }

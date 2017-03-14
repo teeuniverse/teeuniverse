@@ -277,7 +277,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_Map();
 	inline int GetBgGroupArraySize() const { return m_BgGroup.size(); }
@@ -448,13 +448,29 @@ public:
 	
 	inline void DeleteEntityLayer(const CSubPath& SubPath) { m_EntityLayer.erase(m_EntityLayer.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveBgGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_BgGroup, SubPath.GetId(), RelMove); }
+	inline void RelMoveBgGroup(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_BgGroup, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveFgGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_FgGroup, SubPath.GetId(), RelMove); }
+	inline void RelMoveFgGroup(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_FgGroup, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveZoneLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_ZoneLayer, SubPath.GetId(), RelMove); }
+	inline void RelMoveZoneLayer(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_ZoneLayer, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveEntityLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_EntityLayer, SubPath.GetId(), RelMove); }
+	inline void RelMoveEntityLayer(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_EntityLayer, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidBgGroup(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_BgGroup.size()); }
 	

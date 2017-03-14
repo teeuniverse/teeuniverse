@@ -273,7 +273,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiRectStyle();
 	inline int GetFlags() const { return m_Flags; }

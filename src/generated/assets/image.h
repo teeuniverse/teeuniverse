@@ -176,7 +176,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_Image();
 	inline int GetGridWidth() const { return m_GridWidth; }

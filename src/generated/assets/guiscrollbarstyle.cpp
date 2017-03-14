@@ -269,7 +269,7 @@ void CAsset_GuiScrollbarStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiScrollbarStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiScrollbarStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

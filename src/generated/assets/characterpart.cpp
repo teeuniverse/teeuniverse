@@ -213,7 +213,7 @@ void CAsset_CharacterPart::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_CharacterPart::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_CharacterPart::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

@@ -22,10 +22,10 @@
 #define __SHARED_TL_ALGORITHM__
 
 template<typename T>
-void relative_move(std::vector<T>& v, int id, int shift)
+int relative_move(std::vector<T>& v, int id, int shift)
 {
 	if(id < 0 || id >= static_cast<int>(v.size()))
-		return;
+		return id;
 	
 	if(id + shift >= static_cast<int>(v.size()))
 		shift = static_cast<int>(v.size())-id-1;
@@ -33,7 +33,7 @@ void relative_move(std::vector<T>& v, int id, int shift)
 		shift = -id;
 	
 	if(shift == 0)
-		return;
+		return id;
 	
 	T Tmp = std::move(v[id]);
 	if(shift < 0)
@@ -47,5 +47,7 @@ void relative_move(std::vector<T>& v, int id, int shift)
 			v[i] = std::move(v[i+1]);
 	}
 	v[id+shift] = std::move(Tmp);
+	
+	return id+shift;
 }
 #endif

@@ -370,7 +370,7 @@ void CAsset_Image::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_Image::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_Image::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

@@ -349,7 +349,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetSkeletonPath() const { return m_SkeletonPath; }
 	
@@ -560,7 +560,11 @@ public:
 	
 	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { relative_move(m_Sprite, SubPath.GetId(), RelMove); }
+	inline void RelMoveSprite(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Sprite, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 	

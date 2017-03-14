@@ -932,7 +932,7 @@ void CAsset_TilingMaterial::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_TilingMaterial::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_TilingMaterial::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

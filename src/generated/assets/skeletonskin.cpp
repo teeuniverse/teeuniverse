@@ -654,7 +654,7 @@ void CAsset_SkeletonSkin::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_SkeletonSkin::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_SkeletonSkin::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

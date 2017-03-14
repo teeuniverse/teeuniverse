@@ -606,7 +606,7 @@ void CAsset_MapLayerTiles::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_MapLayerTiles::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_MapLayerTiles::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

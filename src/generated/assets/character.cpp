@@ -478,7 +478,7 @@ void CAsset_Character::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_Character::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_Character::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

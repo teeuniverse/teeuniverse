@@ -481,7 +481,7 @@ void CAsset_GuiRectStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiRectStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiRectStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

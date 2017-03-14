@@ -498,7 +498,11 @@ public:
 		
 		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.erase(m_KeyFrame.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { relative_move(m_KeyFrame, SubPath.GetId(), RelMove); }
+		inline void RelMoveKeyFrame(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_KeyFrame, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_KeyFrame.size()); }
 		
@@ -786,7 +790,11 @@ public:
 		
 		inline void DeleteKeyFrame(const CSubPath& SubPath) { m_KeyFrame.erase(m_KeyFrame.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveKeyFrame(const CSubPath& SubPath, int RelMove) { relative_move(m_KeyFrame, SubPath.GetId(), RelMove); }
+		inline void RelMoveKeyFrame(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_KeyFrame, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_KeyFrame.size()); }
 		
@@ -896,7 +904,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetSkeletonPath() const { return m_SkeletonPath; }
 	
@@ -1274,17 +1282,44 @@ public:
 	
 	inline void DeleteLayerAnimationKeyFrame(const CSubPath& SubPath) { m_LayerAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
-	inline void RelMoveLocalBoneAnim(const CSubPath& SubPath, int RelMove) { relative_move(m_LocalBoneAnim, SubPath.GetId(), RelMove); }
+	inline void RelMoveLocalBoneAnim(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_LocalBoneAnim, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLocalBoneAnimKeyFrame(const CSubPath& SubPath, int RelMove) { m_LocalBoneAnim[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
+	inline void RelMoveLocalBoneAnimKeyFrame(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_LocalBoneAnim[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
-	inline void RelMoveParentBoneAnim(const CSubPath& SubPath, int RelMove) { relative_move(m_ParentBoneAnim, SubPath.GetId(), RelMove); }
+	inline void RelMoveParentBoneAnim(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_ParentBoneAnim, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveParentBoneAnimKeyFrame(const CSubPath& SubPath, int RelMove) { m_ParentBoneAnim[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
+	inline void RelMoveParentBoneAnimKeyFrame(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_ParentBoneAnim[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
-	inline void RelMoveLayerAnimation(const CSubPath& SubPath, int RelMove) { relative_move(m_LayerAnimation, SubPath.GetId(), RelMove); }
+	inline void RelMoveLayerAnimation(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_LayerAnimation, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLayerAnimationKeyFrame(const CSubPath& SubPath, int RelMove) { m_LayerAnimation[SubPath.GetId()].RelMoveKeyFrame(SubPath.PopId(), RelMove); }
+	inline void RelMoveLayerAnimationKeyFrame(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_LayerAnimation[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
 	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LocalBoneAnim.size()); }
 	

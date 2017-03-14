@@ -252,7 +252,7 @@ void CAsset_GuiSliderStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiSliderStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiSliderStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

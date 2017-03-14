@@ -550,7 +550,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerQuads();
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
@@ -1086,7 +1086,11 @@ public:
 	
 	inline void DeleteQuad(const CSubPath& SubPath) { m_Quad.erase(m_Quad.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveQuad(const CSubPath& SubPath, int RelMove) { relative_move(m_Quad, SubPath.GetId(), RelMove); }
+	inline void RelMoveQuad(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Quad, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidQuad(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Quad.size()); }
 	

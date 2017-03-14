@@ -286,7 +286,7 @@ void CAsset_GuiTabsStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiTabsStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiTabsStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

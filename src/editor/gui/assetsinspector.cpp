@@ -221,7 +221,12 @@ protected:
 	protected:
 		virtual void MouseClickAction()
 		{
-			AssetsManager()->RelMoveSubItem(m_pAssetsEditor->GetEditedAssetPath(), m_pAssetsEditor->GetUniqueEditedSubPath(), m_Shift);
+			CSubPath NewSubPath = m_pAssetsEditor->GetUniqueEditedSubPath();
+			AssetsManager()->RelMoveSubItem(m_pAssetsEditor->GetEditedAssetPath(), NewSubPath, m_Shift);
+			if(NewSubPath != m_pAssetsEditor->GetUniqueEditedSubPath())
+			{
+				m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), NewSubPath);
+			}
 			
 			CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
 			pState->m_NumUpdates++;

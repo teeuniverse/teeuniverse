@@ -686,7 +686,11 @@ public:
 		
 		inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveSprite(const CSubPath& SubPath, int RelMove) { relative_move(m_Sprite, SubPath.GetId(), RelMove); }
+		inline void RelMoveSprite(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_Sprite, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidSprite(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Sprite.size()); }
 		
@@ -813,7 +817,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_PathMaterial();
 	inline int GetLabelArraySize() const { return m_Label.size(); }
@@ -1190,11 +1194,24 @@ public:
 	
 	inline void DeleteLayerSprite(const CSubPath& SubPath) { m_Layer[SubPath.GetId()].DeleteSprite(SubPath.PopId()); }
 	
-	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { relative_move(m_Label, SubPath.GetId(), RelMove); }
+	inline void RelMoveLabel(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Label, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_Layer, SubPath.GetId(), RelMove); }
+	inline void RelMoveLayer(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Layer, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLayerSprite(const CSubPath& SubPath, int RelMove) { m_Layer[SubPath.GetId()].RelMoveSprite(SubPath.PopId(), RelMove); }
+	inline void RelMoveLayerSprite(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_Layer[SubPath.GetId()].RelMoveSprite(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
 	inline bool IsValidLabel(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Label.size()); }
 	

@@ -212,7 +212,7 @@ void CAsset_Weapon::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_Weapon::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_Weapon::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

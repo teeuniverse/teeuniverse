@@ -474,7 +474,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline int GetIndexArraySize() const { return m_Index.size(); }
 	
@@ -783,11 +783,23 @@ public:
 	
 	inline void DeleteGroup(const CSubPath& SubPath) { m_Group.erase(m_Group.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
+	inline void RelMoveIndex(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Index, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveDataInt(const CSubPath& SubPath, int RelMove) { relative_move(m_DataInt, SubPath.GetId(), RelMove); }
+	inline void RelMoveDataInt(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_DataInt, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveGroup(const CSubPath& SubPath, int RelMove) { relative_move(m_Group, SubPath.GetId(), RelMove); }
+	inline void RelMoveGroup(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Group, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
 	

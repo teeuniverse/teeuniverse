@@ -1018,7 +1018,7 @@ void CAsset_MapLayerQuads::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_MapLayerQuads::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_MapLayerQuads::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

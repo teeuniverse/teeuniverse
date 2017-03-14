@@ -246,7 +246,7 @@ void CAsset_GuiColorEditStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiColorEditStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiColorEditStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

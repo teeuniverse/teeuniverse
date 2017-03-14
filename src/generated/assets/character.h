@@ -262,7 +262,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetIdlePath() const { return m_IdlePath; }
 	
@@ -342,7 +342,11 @@ public:
 	
 	inline void DeletePart(const CSubPath& SubPath) { m_Part.erase(m_Part.begin() + SubPath.GetId()); }
 	
-	inline void RelMovePart(const CSubPath& SubPath, int RelMove) { relative_move(m_Part, SubPath.GetId(), RelMove); }
+	inline void RelMovePart(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Part, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidPart(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Part.size()); }
 	

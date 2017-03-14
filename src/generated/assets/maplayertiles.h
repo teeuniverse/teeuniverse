@@ -283,7 +283,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapLayerTiles();
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }

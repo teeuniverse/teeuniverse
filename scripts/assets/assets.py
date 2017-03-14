@@ -418,7 +418,8 @@ class AddInterface_Array(GetSetInterface):
 		return [ var + ".erase("+var+".begin() + SubPath.GetId());" ]
 	def generateRelMove(self, var):
 		return [
-			"relative_move(" + var + ", SubPath.GetId(), RelMove);"
+			"int NewId = relative_move(" + var + ", SubPath.GetId(), RelMove);",
+			"SubPath.SetId(NewId);"
 		]
 	def generateValid(self, var):
 		return [ 
@@ -438,7 +439,11 @@ class AddInterface_ArrayChild(GetSetInterface):
 	def generateDelete(self, var):
 		return [ var + "[SubPath.GetId()].Delete" + self.interface.name + "(SubPath.PopId());" ]
 	def generateRelMove(self, var):
-		return [ var + "[SubPath.GetId()].RelMove" + self.interface.name + "(SubPath.PopId(), RelMove);" ]
+		return [
+			"CSubPath ChildSubPath = SubPath.PopId();",
+			var + "[SubPath.GetId()].RelMove" + self.interface.name + "(ChildSubPath, RelMove);",
+			"SubPath.SetId2(ChildSubPath.GetId());"
+		]
 	def generateValid(self, var):
 		return [ "return (SubPath.IsNotNull() && SubPath.GetId() < "+var+".size() && " + var + "[SubPath.GetId()].IsValid" + self.interface.name + "(SubPath.PopId()));" ]
 	
@@ -595,7 +600,11 @@ class AddInterface_Array2dChild(GetSetInterface):
 	def generateDelete(self, var):
 		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).Delete" + self.interface.name + "(SubPath.DoublePopId());" ]
 	def generateRelMove(self, var):
-		return [ var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).RelMove" + self.interface.name + "(SubPath.DoublePopId(), RelMove);" ]
+		return [
+			"CSubPath ChildSubPath = SubPath.DoublePopId();",
+			var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).RelMove" + self.interface.name + "(ChildSubPath, RelMove);",
+			"SubPath.SetId3(ChildSubPath.GetId());"
+		]
 	def generateValid(self, var):
 		return [ "return (SubPath.IsNotNull() && " + var + ".get_clamp(SubPath.GetId(), SubPath.GetId2()).IsValid" + self.interface.name + "(SubPath.DoublePopId()));" ]
 		
@@ -879,13 +888,13 @@ class Member:
 		for i in self.t.addInterfaces():
 			
 			if len(i.generateRelMove(self.memberName())) > 1:
-				res.append("inline void RelMove"+self.name+i.name+"(const CSubPath& SubPath, int RelMove)")
+				res.append("inline void RelMove"+self.name+i.name+"(CSubPath& SubPath, int RelMove)")
 				res.append("{")
 				for l in i.generateRelMove(self.memberName()):
 					res.append("	"+l)
 				res.append("}")
 			else:
-				res.append("inline void RelMove"+self.name+i.name+"(const CSubPath& SubPath, int RelMove) { "+i.generateRelMove(self.memberName())[0]+" }")
+				res.append("inline void RelMove"+self.name+i.name+"(CSubPath& SubPath, int RelMove) { "+i.generateRelMove(self.memberName())[0]+" }")
 				
 			res.append("")
 		return res
@@ -1414,7 +1423,7 @@ class ClassAsset(Class):
 				counter = counter+1
 		
 		res = []
-		res.append("void "+self.fullType()+"::RelMoveSubItem(const CSubPath& SubPath, int RelMove)")
+		res.append("void "+self.fullType()+"::RelMoveSubItem(CSubPath& SubPath, int RelMove)")
 		res.append("{")
 		if counter > 0:
 			res.append("	switch(SubPath.GetType())")
@@ -1465,7 +1474,7 @@ class ClassAsset(Class):
 		self.addPublicFunc(["int AddSubItem(int Type, const CSubPath& SubPath);", ""])
 		self.addPublicFunc(["int AddSubItemAt(int Type, const CSubPath& SubPath, int Index);", ""])
 		self.addPublicFunc(["void DeleteSubItem(const CSubPath& SubPath);", ""])
-		self.addPublicFunc(["void RelMoveSubItem(const CSubPath& SubPath, int RelMove);", ""])
+		self.addPublicFunc(["void RelMoveSubItem(CSubPath& SubPath, int RelMove);", ""])
 		
 		return Class.generateClassDefinition(self)
 

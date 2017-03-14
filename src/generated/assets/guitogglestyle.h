@@ -167,7 +167,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiToggleStyle();
 	inline CAssetPath GetIdleTrueStylePath() const { return m_IdleTrueStylePath; }

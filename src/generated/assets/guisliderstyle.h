@@ -151,7 +151,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_GuiSliderStyle();
 	inline CAssetPath GetRectPath() const { return m_RectPath; }

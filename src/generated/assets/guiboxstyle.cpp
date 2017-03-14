@@ -272,7 +272,7 @@ void CAsset_GuiBoxStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiBoxStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiBoxStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

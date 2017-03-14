@@ -579,7 +579,7 @@ void CAsset_MapGroup::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_MapGroup::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_MapGroup::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

@@ -952,7 +952,7 @@ void CAsset_MapLayerObjects::DeleteSubItem(const CSubPath& SubPath)
 	}
 }
 
-void CAsset_MapLayerObjects::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_MapLayerObjects::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{

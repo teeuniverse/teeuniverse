@@ -189,7 +189,7 @@ void CAsset_GuiComboBoxStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiComboBoxStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiComboBoxStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

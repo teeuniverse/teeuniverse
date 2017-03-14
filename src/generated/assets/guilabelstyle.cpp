@@ -361,7 +361,7 @@ void CAsset_GuiLabelStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiLabelStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiLabelStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

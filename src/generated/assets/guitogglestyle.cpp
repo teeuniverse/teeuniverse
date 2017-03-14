@@ -285,7 +285,7 @@ void CAsset_GuiToggleStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiToggleStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiToggleStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

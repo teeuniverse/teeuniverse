@@ -270,7 +270,7 @@ void CAsset_GuiLineStyle::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_GuiLineStyle::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_GuiLineStyle::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

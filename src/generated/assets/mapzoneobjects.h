@@ -545,7 +545,11 @@ public:
 		
 		inline void DeleteVertex(const CSubPath& SubPath) { m_Vertex.erase(m_Vertex.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveVertex(const CSubPath& SubPath, int RelMove) { relative_move(m_Vertex, SubPath.GetId(), RelMove); }
+		inline void RelMoveVertex(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_Vertex, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidVertex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Vertex.size()); }
 		
@@ -642,7 +646,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapZoneObjects();
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
@@ -1028,9 +1032,18 @@ public:
 	
 	inline void DeleteObjectVertex(const CSubPath& SubPath) { m_Object[SubPath.GetId()].DeleteVertex(SubPath.PopId()); }
 	
-	inline void RelMoveObject(const CSubPath& SubPath, int RelMove) { relative_move(m_Object, SubPath.GetId(), RelMove); }
+	inline void RelMoveObject(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Object, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveObjectVertex(const CSubPath& SubPath, int RelMove) { m_Object[SubPath.GetId()].RelMoveVertex(SubPath.PopId(), RelMove); }
+	inline void RelMoveObjectVertex(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_Object[SubPath.GetId()].RelMoveVertex(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
 	inline bool IsValidObject(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Object.size()); }
 	

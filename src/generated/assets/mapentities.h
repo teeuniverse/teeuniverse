@@ -257,7 +257,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	CAsset_MapEntities();
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
@@ -356,7 +356,11 @@ public:
 	
 	inline void DeleteEntity(const CSubPath& SubPath) { m_Entity.erase(m_Entity.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveEntity(const CSubPath& SubPath, int RelMove) { relative_move(m_Entity, SubPath.GetId(), RelMove); }
+	inline void RelMoveEntity(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Entity, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidEntity(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Entity.size()); }
 	

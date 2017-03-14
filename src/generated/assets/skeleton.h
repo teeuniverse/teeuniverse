@@ -424,7 +424,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetParentPath() const { return m_ParentPath; }
 	
@@ -662,9 +662,17 @@ public:
 	
 	inline void DeleteLayer(const CSubPath& SubPath) { m_Layer.erase(m_Layer.begin() + SubPath.GetId()); }
 	
-	inline void RelMoveBone(const CSubPath& SubPath, int RelMove) { relative_move(m_Bone, SubPath.GetId(), RelMove); }
+	inline void RelMoveBone(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Bone, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLayer(const CSubPath& SubPath, int RelMove) { relative_move(m_Layer, SubPath.GetId(), RelMove); }
+	inline void RelMoveLayer(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Layer, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
 	inline bool IsValidBone(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Bone.size()); }
 	

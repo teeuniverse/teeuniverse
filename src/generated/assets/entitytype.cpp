@@ -196,7 +196,7 @@ void CAsset_EntityType::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_EntityType::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_EntityType::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

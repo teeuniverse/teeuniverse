@@ -633,7 +633,7 @@ void CAsset_MapZoneTiles::DeleteSubItem(const CSubPath& SubPath)
 {
 }
 
-void CAsset_MapZoneTiles::RelMoveSubItem(const CSubPath& SubPath, int RelMove)
+void CAsset_MapZoneTiles::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 }
 

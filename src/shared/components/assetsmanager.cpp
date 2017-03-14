@@ -975,7 +975,7 @@ bool CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int T
 	return true;
 }
 
-bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath SubPath, int RelMove, int Token)
+bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath& SubPath, int RelMove, int Token)
 {
 	if(!IsValidPackage(AssetPath.GetPackageId()) || IsReadOnlyPackage(AssetPath.GetPackageId()))
 		return false;

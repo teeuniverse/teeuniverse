@@ -509,7 +509,11 @@ public:
 		
 		inline void DeleteCondition(const CSubPath& SubPath) { m_Condition.erase(m_Condition.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveCondition(const CSubPath& SubPath, int RelMove) { relative_move(m_Condition, SubPath.GetId(), RelMove); }
+		inline void RelMoveCondition(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_Condition, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidCondition(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Condition.size()); }
 		
@@ -678,7 +682,11 @@ public:
 		
 		inline void DeleteIndex(const CSubPath& SubPath) { m_Index.erase(m_Index.begin() + SubPath.GetId()); }
 		
-		inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
+		inline void RelMoveIndex(CSubPath& SubPath, int RelMove)
+		{
+			int NewId = relative_move(m_Index, SubPath.GetId(), RelMove);
+			SubPath.SetId(NewId);
+		}
 		
 		inline bool IsValidIndex(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_Index.size()); }
 		
@@ -768,7 +776,7 @@ public:
 	
 	void DeleteSubItem(const CSubPath& SubPath);
 	
-	void RelMoveSubItem(const CSubPath& SubPath, int RelMove);
+	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
 	inline CAssetPath GetImagePath() const { return m_ImagePath; }
 	
@@ -1173,17 +1181,43 @@ public:
 	
 	inline void DeleteLabelIndex(const CSubPath& SubPath) { m_Label[SubPath.GetId()].DeleteIndex(SubPath.PopId()); }
 	
-	inline void RelMoveZoneConverter(const CSubPath& SubPath, int RelMove) { relative_move(m_ZoneConverter, SubPath.GetId(), RelMove); }
+	inline void RelMoveZoneConverter(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_ZoneConverter, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveRule(const CSubPath& SubPath, int RelMove) { relative_move(m_Rule, SubPath.GetId(), RelMove); }
+	inline void RelMoveRule(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Rule, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveRuleCondition(const CSubPath& SubPath, int RelMove) { m_Rule[SubPath.GetId()].RelMoveCondition(SubPath.PopId(), RelMove); }
+	inline void RelMoveRuleCondition(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_Rule[SubPath.GetId()].RelMoveCondition(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
-	inline void RelMoveIndex(const CSubPath& SubPath, int RelMove) { relative_move(m_Index, SubPath.GetId(), RelMove); }
+	inline void RelMoveIndex(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Index, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLabel(const CSubPath& SubPath, int RelMove) { relative_move(m_Label, SubPath.GetId(), RelMove); }
+	inline void RelMoveLabel(CSubPath& SubPath, int RelMove)
+	{
+		int NewId = relative_move(m_Label, SubPath.GetId(), RelMove);
+		SubPath.SetId(NewId);
+	}
 	
-	inline void RelMoveLabelIndex(const CSubPath& SubPath, int RelMove) { m_Label[SubPath.GetId()].RelMoveIndex(SubPath.PopId(), RelMove); }
+	inline void RelMoveLabelIndex(CSubPath& SubPath, int RelMove)
+	{
+		CSubPath ChildSubPath = SubPath.PopId();
+		m_Label[SubPath.GetId()].RelMoveIndex(ChildSubPath, RelMove);
+		SubPath.SetId2(ChildSubPath.GetId());
+	}
 	
 	inline bool IsValidZoneConverter(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ZoneConverter.size()); }
 	
