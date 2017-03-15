@@ -280,49 +280,6 @@ public:
 	virtual void Update(bool ParentEnabled);
 };
 
-class CCursorTool_MapObjectAddVertex : public CCursorTool_MapObjectVertexPicker
-{
-protected:
-	CSubPath m_CurrentObject;
-	CAssetPath m_CurrentAssetPath;
-
-protected:
-	void UpdateBarycenter(int Token);
-	
-	template<typename ASSET> void OnViewButtonClick_Impl(int Button);
-	template<typename ASSET> void RenderView_Impl();
-
-public:
-	CCursorTool_MapObjectAddVertex(CViewMap* pViewMap);
-	virtual void Reset();
-	virtual void OnViewButtonClick(int Button);
-	virtual void OnViewButtonRelease(int Button);
-	virtual void OnViewMouseMove();
-	virtual void RenderView();
-	virtual void OnMouseMove();
-	virtual void OnInputEvent(const CInput::CEvent& Event);
-};
-
-class CCursorTool_MapObjectEditVertex : public CCursorTool_MapObjectVertexPicker
-{
-protected:
-	vec2 ClickDiff;
-	int m_DragType;
-	int m_Token;
-	
-	template<typename ASSET> void OnViewButtonClick_Impl(int Button);
-	template<typename ASSET> void OnViewMouseMove_Impl();
-	template<typename ASSET> void RenderView_Impl();
-	
-public:
-	CCursorTool_MapObjectEditVertex(CViewMap* pViewMap);
-	virtual void RenderView();
-	virtual void OnViewButtonClick(int Button);
-	virtual void OnViewButtonRelease(int Button);
-	virtual void OnViewMouseMove();
-	virtual void OnMouseMove();
-};
-
 class CCursorTool_MapObjectWeightVertex : public CCursorTool_MapObjectVertexPicker
 {
 protected:

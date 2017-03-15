@@ -16,51 +16,36 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
-#define __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_LINEDRAWER__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_LINEDRAWER__
 
 #include <editor/gui/view_map.h>
 #include <editor/gui/view_map_picker.h>
+#include <shared/components/assetsmanager.h>
+#include <client/components/assetsrenderer.h>
+#include <editor/components/gui.h>
+#include <client/maprenderer.h>
 
-class CCursorTool_MapTransform : public CCursorTool_MapPicker
+class CCursorTool_MapLineDrawer : public CCursorTool_MapPicker
 {
-public:
-	enum
-	{
-		GIZMOTYPE_NONE=0,
-		GIZMOTYPE_ROTATION,
-		GIZMOTYPE_SCALE,
-	};
-	
-	enum
-	{
-		DRAGTYPE_NONE=0,
-		DRAGTYPE_GIZMO,
-		DRAGTYPE_TRANSLATION,
-	};
-	
 protected:
-	int m_SelectedGizmo;
-	int m_GizmoType;
-	int m_DragType;
-	vec2 m_ClickDiff;
-	bool m_Transformed;
-	bool m_FrameTransform;
-	int m_Token;
-	
+	CSubPath m_CurrentObject;
+	CAssetPath m_CurrentAssetPath;
+
 protected:
+	template<typename ASSET> void UpdateBarycenter_Objects_Impl(int Token);
 	template<typename ASSET> void OnViewButtonClick_Objects_Impl(int Button);
-	template<typename ASSET> void OnViewMouseMove_Objects_Impl();
 	template<typename ASSET> void RenderView_Objects_Impl();
 	
+	void Reset();
+	
 public:
-	CCursorTool_MapTransform(CViewMap* pViewMap);
+	CCursorTool_MapLineDrawer(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
-	virtual void OnViewButtonRelease(int Button);
-	virtual void OnViewMouseMove();
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
+	virtual void OnInputEvent(const CInput::CEvent& Event);
 };
 
 #endif

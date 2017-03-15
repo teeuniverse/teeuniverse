@@ -60,7 +60,6 @@ protected:
 	CView::CCursorTool* m_pCursorTool_MapEraser;
 	CView::CCursorTool* m_pCursorTool_MapCrop;
 	CView::CCursorTool* m_pCursorTool_MapAddVertex;
-	CView::CCursorTool* m_pCursorTool_MapEditVertex;
 	CView::CCursorTool* m_pCursorTool_MapWeightVertex;
 
 public:

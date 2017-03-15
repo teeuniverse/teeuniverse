@@ -21,6 +21,9 @@
 #include <editor/gui/view_map_stamp.h>
 #include <editor/gui/view_map_fill.h>
 #include <editor/gui/view_map_transform.h>
+#include <editor/gui/view_map_vertexeditor.h>
+#include <editor/gui/view_map_linedrawer.h>
+#include <editor/gui/view_map_eraser.h>
 #include <editor/gui/view_map_crop.h>
 #include <editor/gui/view_map_object.h>
 #include <editor/components/gui.h>
@@ -348,7 +351,6 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapEraser(NULL),
 	m_pCursorTool_MapCrop(NULL),
 	m_pCursorTool_MapAddVertex(NULL),
-	m_pCursorTool_MapEditVertex(NULL),
 	m_pCursorTool_MapWeightVertex(NULL)
 {
 	m_pCursorTool_MapStamp = new CCursorTool_MapStamp(this);
@@ -360,7 +362,10 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapTransform = new CCursorTool_MapTransform(this);
 	m_pToolbar->Add(m_pCursorTool_MapTransform);
 	
-	m_pCursorTool_MapEdit = new CCursorTool_MapEdit(this);
+	m_pCursorTool_MapAddVertex = new CCursorTool_MapLineDrawer(this);
+	m_pToolbar->Add(m_pCursorTool_MapAddVertex);
+	
+	m_pCursorTool_MapEdit = new CCursorTool_MapVertexEditor(this);
 	m_pToolbar->Add(m_pCursorTool_MapEdit);
 	
 	m_pCursorTool_MapEraser = new CCursorTool_MapEraser(this);
@@ -368,12 +373,6 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	
 	m_pCursorTool_MapCrop = new CCursorTool_MapCrop(this);
 	m_pToolbar->Add(m_pCursorTool_MapCrop);
-	
-	m_pCursorTool_MapAddVertex = new CCursorTool_MapObjectAddVertex(this);
-	m_pToolbar->Add(m_pCursorTool_MapAddVertex);
-	
-	m_pCursorTool_MapEditVertex = new CCursorTool_MapObjectEditVertex(this);
-	m_pToolbar->Add(m_pCursorTool_MapEditVertex);
 	
 	m_pCursorTool_MapWeightVertex = new CCursorTool_MapObjectWeightVertex(this);
 	m_pToolbar->Add(m_pCursorTool_MapWeightVertex);
@@ -385,7 +384,6 @@ CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :
 	m_pCursorTool_MapEraser->UpdateToolbar();
 	m_pCursorTool_MapCrop->UpdateToolbar();
 	m_pCursorTool_MapAddVertex->UpdateToolbar();
-	m_pCursorTool_MapEditVertex->UpdateToolbar();
 	m_pCursorTool_MapWeightVertex->UpdateToolbar();
 	
 	m_pToolbar->Add(new gui::CFiller(Context()), true);
@@ -520,7 +518,7 @@ void CViewMap::Update(bool ParentEnabled)
 				break;
 			case CAsset_MapZoneObjects::TypeId:
 			case CAsset_MapLayerObjects::TypeId:
-				SetCursorTool(m_pCursorTool_MapEditVertex);
+				SetCursorTool(m_pCursorTool_MapEdit);
 				break;
 			case CAsset_MapGroup::TypeId:
 				SetCursorTool(m_pCursorTool_MapTransform);

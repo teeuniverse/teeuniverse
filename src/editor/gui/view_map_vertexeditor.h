@@ -16,45 +16,34 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
-#define __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_VERTEXEDITOR__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_VERTEXEDITOR__
 
 #include <editor/gui/view_map.h>
 #include <editor/gui/view_map_picker.h>
+#include <shared/components/assetsmanager.h>
+#include <client/components/assetsrenderer.h>
+#include <editor/components/gui.h>
+#include <client/maprenderer.h>
 
-class CCursorTool_MapTransform : public CCursorTool_MapPicker
+class CCursorTool_MapVertexEditor : public CCursorTool_MapPicker
 {
-public:
-	enum
-	{
-		GIZMOTYPE_NONE=0,
-		GIZMOTYPE_ROTATION,
-		GIZMOTYPE_SCALE,
-	};
-	
-	enum
-	{
-		DRAGTYPE_NONE=0,
-		DRAGTYPE_GIZMO,
-		DRAGTYPE_TRANSLATION,
-	};
-	
 protected:
-	int m_SelectedGizmo;
-	int m_GizmoType;
-	int m_DragType;
+	CSubPath m_CurrentVertex;
 	vec2 m_ClickDiff;
-	bool m_Transformed;
-	bool m_FrameTransform;
+	int m_DragType;
+	int m_Vertex;
 	int m_Token;
-	
-protected:
-	template<typename ASSET> void OnViewButtonClick_Objects_Impl(int Button);
-	template<typename ASSET> void OnViewMouseMove_Objects_Impl();
+
+protected:	
+	template<typename ASSET> vec2 PickVertex_Objects_Impl(vec2 PickPosition);
+	template<typename ASSET> bool PickNewVertex_Objects_Impl(vec2 PickPosition, vec2& VertexPosition, CSubPath& PreviousVertex, CSubPath& NextVertex);	
 	template<typename ASSET> void RenderView_Objects_Impl();
+	template<typename ASSET> void OnViewMouseMove_Objects_Impl();
+	template<typename ASSET> void OnViewButtonClick_Objects_Impl(int Button);
 	
 public:
-	CCursorTool_MapTransform(CViewMap* pViewMap);
+	CCursorTool_MapVertexEditor(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
 	virtual void OnViewButtonRelease(int Button);
 	virtual void OnViewMouseMove();

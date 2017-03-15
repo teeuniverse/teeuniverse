@@ -16,48 +16,17 @@
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
-#define __CLIENT_ASSETSEDITOR_VIEWMAP_TRANSFORM__
+#ifndef __CLIENT_ASSETSEDITOR_VIEWMAP_ERASER__
+#define __CLIENT_ASSETSEDITOR_VIEWMAP_ERASER__
 
 #include <editor/gui/view_map.h>
 #include <editor/gui/view_map_picker.h>
 
-class CCursorTool_MapTransform : public CCursorTool_MapPicker
-{
+class CCursorTool_MapEraser : public CCursorTool_MapPicker
+{	
 public:
-	enum
-	{
-		GIZMOTYPE_NONE=0,
-		GIZMOTYPE_ROTATION,
-		GIZMOTYPE_SCALE,
-	};
-	
-	enum
-	{
-		DRAGTYPE_NONE=0,
-		DRAGTYPE_GIZMO,
-		DRAGTYPE_TRANSLATION,
-	};
-	
-protected:
-	int m_SelectedGizmo;
-	int m_GizmoType;
-	int m_DragType;
-	vec2 m_ClickDiff;
-	bool m_Transformed;
-	bool m_FrameTransform;
-	int m_Token;
-	
-protected:
-	template<typename ASSET> void OnViewButtonClick_Objects_Impl(int Button);
-	template<typename ASSET> void OnViewMouseMove_Objects_Impl();
-	template<typename ASSET> void RenderView_Objects_Impl();
-	
-public:
-	CCursorTool_MapTransform(CViewMap* pViewMap);
+	CCursorTool_MapEraser(CViewMap* pViewMap);
 	virtual void OnViewButtonClick(int Button);
-	virtual void OnViewButtonRelease(int Button);
-	virtual void OnViewMouseMove();
 	virtual void RenderView();
 	virtual void Update(bool ParentEnabled);
 	virtual void OnMouseMove();
