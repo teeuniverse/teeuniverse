@@ -518,6 +518,7 @@ void CViewMap::Update(bool ParentEnabled)
 			case CAsset_MapLayerQuads::TypeId:
 				SetCursorTool(m_pCursorTool_MapStamp);
 				break;
+			case CAsset_MapZoneObjects::TypeId:
 			case CAsset_MapLayerObjects::TypeId:
 				SetCursorTool(m_pCursorTool_MapEditVertex);
 				break;

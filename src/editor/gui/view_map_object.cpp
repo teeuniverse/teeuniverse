@@ -311,74 +311,82 @@ template<typename ASSET>
 void CCursorTool_MapObjectEditVertex::RenderView_Impl()
 {	
 	const ASSET* pMapLayer = AssetsManager()->template GetAsset<ASSET>(AssetsEditor()->GetEditedAssetPath());
-	if(!pMapLayer || !pMapLayer->IsValidObjectVertex(m_CurrentVertex))
+	if(!pMapLayer)
 		return;
-		
-	const typename ASSET::CObject& Object = pMapLayer->GetObject(ASSET::SubPath_Object(m_CurrentVertex.GetId()));
-	vec2 Position;
-	matrix2x2 Transform;
-	Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
-	RenderPivots<ASSET>();
-	RenderVertices<ASSET>();
-	
-	//Render control points
-	vec2 VertexPos = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_POSITION, 0.0f);
-	vec2 VertexControlPoint0 = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_CONTROLPOINT0, 0.0f);
-	vec2 VertexControlPoint1 = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_CONTROLPOINT1, 0.0f);
-	int VertexType = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_SMOOTHNESS, CBezierVertex::TYPE_CORNER);
-		
-	if(VertexType != CBezierVertex::TYPE_CORNER && VertexType != CBezierVertex::TYPE_AUTOSMOOTH)
+	if(pMapLayer->IsValidObjectVertex(m_CurrentVertex))
 	{
-		if(VertexType == CBezierVertex::TYPE_CONTROLLED_SYMETRIC)
-		{
-			VertexControlPoint0 = (VertexControlPoint0 - VertexControlPoint1)/2.0f;
-			VertexControlPoint1 = -VertexControlPoint0;
-		}
-		else if(VertexType == CBezierVertex::TYPE_CONTROLLED_ALIGNED)
-		{
-			float Length0 = length(VertexControlPoint0);
-			float Length1 = length(VertexControlPoint1);
-			vec2 Dir = normalize(VertexControlPoint0 - VertexControlPoint1);
-			VertexControlPoint0 = Dir * Length0;
-			VertexControlPoint1 = -Dir * Length1;
-		}
+		const typename ASSET::CObject& Object = pMapLayer->GetObject(ASSET::SubPath_Object(m_CurrentVertex.GetId()));
+		vec2 Position;
+		matrix2x2 Transform;
+		Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
 		
-		VertexControlPoint0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint0 + VertexPos) + Position);
-		VertexControlPoint1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint1 + VertexPos) + Position);
-		VertexPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPos + Position);
+		ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 		
-		if(Object.GetPathType() == ASSET::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() > 0)
-		{
-			Graphics()->TextureClear();
-			Graphics()->LinesBegin();
-			CGraphics::CLineItem LineItem(VertexControlPoint0.x, VertexControlPoint0.y, VertexPos.x, VertexPos.y);
-			Graphics()->LinesDraw(&LineItem, 1);
-			Graphics()->LinesEnd();
+		RenderPivots<ASSET>();
+		RenderVertices<ASSET>();
+		
+		//Render control points
+		vec2 VertexPos = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_POSITION, 0.0f);
+		vec2 VertexControlPoint0 = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_CONTROLPOINT0, 0.0f);
+		vec2 VertexControlPoint1 = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_CONTROLPOINT1, 0.0f);
+		int VertexType = AssetsManager()->GetAssetValue<int>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_SMOOTHNESS, CBezierVertex::TYPE_CORNER);
 			
-			AssetsRenderer()->DrawSprite(
-				AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
-				VertexControlPoint0,
-				1.0f, angle(VertexControlPoint0 - VertexPos), 0x0, 1.0f
-			);
-		}
-		
-		if(Object.GetPathType() == ASSET::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() < Object.GetVertexArraySize()-1)
+		if(VertexType != CBezierVertex::TYPE_CORNER && VertexType != CBezierVertex::TYPE_AUTOSMOOTH)
 		{
-			Graphics()->TextureClear();
-			Graphics()->LinesBegin();
-			CGraphics::CLineItem LineItem(VertexPos.x, VertexPos.y, VertexControlPoint1.x, VertexControlPoint1.y);
-			Graphics()->LinesDraw(&LineItem, 1);
-			Graphics()->LinesEnd();
+			if(VertexType == CBezierVertex::TYPE_CONTROLLED_SYMETRIC)
+			{
+				VertexControlPoint0 = (VertexControlPoint0 - VertexControlPoint1)/2.0f;
+				VertexControlPoint1 = -VertexControlPoint0;
+			}
+			else if(VertexType == CBezierVertex::TYPE_CONTROLLED_ALIGNED)
+			{
+				float Length0 = length(VertexControlPoint0);
+				float Length1 = length(VertexControlPoint1);
+				vec2 Dir = normalize(VertexControlPoint0 - VertexControlPoint1);
+				VertexControlPoint0 = Dir * Length0;
+				VertexControlPoint1 = -Dir * Length1;
+			}
 			
-			AssetsRenderer()->DrawSprite(
-				AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
-				VertexControlPoint1,
-				1.0f, angle(VertexControlPoint1 - VertexPos), 0x0, 1.0f
-			);
+			VertexControlPoint0 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint0 + VertexPos) + Position);
+			VertexControlPoint1 = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*(VertexControlPoint1 + VertexPos) + Position);
+			VertexPos = ViewMap()->MapRenderer()->MapPosToScreenPos(Transform*VertexPos + Position);
+			
+			if(Object.GetPathType() == ASSET::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() > 0)
+			{
+				Graphics()->TextureClear();
+				Graphics()->LinesBegin();
+				CGraphics::CLineItem LineItem(VertexControlPoint0.x, VertexControlPoint0.y, VertexPos.x, VertexPos.y);
+				Graphics()->LinesDraw(&LineItem, 1);
+				Graphics()->LinesEnd();
+				
+				AssetsRenderer()->DrawSprite(
+					AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
+					VertexControlPoint0,
+					1.0f, angle(VertexControlPoint0 - VertexPos), 0x0, 1.0f
+				);
+			}
+			
+			if(Object.GetPathType() == ASSET::PATHTYPE_CLOSED || m_CurrentVertex.GetId2() < Object.GetVertexArraySize()-1)
+			{
+				Graphics()->TextureClear();
+				Graphics()->LinesBegin();
+				CGraphics::CLineItem LineItem(VertexPos.x, VertexPos.y, VertexControlPoint1.x, VertexControlPoint1.y);
+				Graphics()->LinesDraw(&LineItem, 1);
+				Graphics()->LinesEnd();
+				
+				AssetsRenderer()->DrawSprite(
+					AssetsEditor()->m_Path_Sprite_GizmoVertexControl,
+					VertexControlPoint1,
+					1.0f, angle(VertexControlPoint1 - VertexPos), 0x0, 1.0f
+				);
+			}
 		}
+	}
+	else
+	{
+		RenderPivots<ASSET>();
+		RenderVertices<ASSET>();
 	}
 	
 	//Render new vertex ghost
@@ -391,6 +399,11 @@ void CCursorTool_MapObjectEditVertex::RenderView_Impl()
 		
 		if(PickNewVertex<ASSET>(MousePos, NewVertexPos, PrevVertexPath, NextVertexPath))
 		{
+			const typename ASSET::CObject& Object = pMapLayer->GetObject(ASSET::SubPath_Object(NextVertexPath.GetId()));
+			vec2 Position;
+			matrix2x2 Transform;
+			Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+			
 			vec2 Vertex0Pos = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), PrevVertexPath, ASSET::OBJECT_VERTEX_POSITION, 0.0f);
 			vec2 Vertex1Pos = AssetsManager()->GetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), NextVertexPath, ASSET::OBJECT_VERTEX_POSITION, 0.0f);
 			
