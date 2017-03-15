@@ -304,7 +304,7 @@ public:
 			CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
 			
 			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move to the back"), m_pAssetsEditor->m_Path_Sprite_IconMoveBack, -99999999), false);
-			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move backard"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1), false);
+			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move backward"), m_pAssetsEditor->m_Path_Sprite_IconUp, -1), false);
 			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1), false);
 			pMenu->List()->Add(new CRelMoveButton(m_pAssetsEditor, pMenu, _LSTRING("Move to the front"), m_pAssetsEditor->m_Path_Sprite_IconMoveFront, 99999999), false);
 			pMenu->List()->AddSeparator();
