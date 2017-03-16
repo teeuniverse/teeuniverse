@@ -2193,6 +2193,74 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				int X = (pEntities->GetEntityPositionX(SubPath)-16.0f)/32.0f - GameX;
 				int Y = (pEntities->GetEntityPositionY(SubPath)-16.0f)/32.0f - GameY;
 				
+				int Index = -1;
+				
+				if(Format == MAPFORMAT_NINSLASH)
+				{
+					if(EntityTypePath == m_Path_EntityType_NSSpawn)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN;
+					else if(EntityTypePath == m_Path_EntityType_NSSpawnRed)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_RED;
+					else if(EntityTypePath == m_Path_EntityType_NSSpawnBlue)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_NSShotgun)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_SHOTGUN;
+					else if(EntityTypePath == m_Path_EntityType_NSGrenade)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_GRENADE;
+					else if(EntityTypePath == m_Path_EntityType_NSLaser)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_LASER;
+					else if(EntityTypePath == m_Path_EntityType_NSRifle)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_RIFLE;
+					else if(EntityTypePath == m_Path_EntityType_NSChainsaw)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_CHAINSAW;
+					else if(EntityTypePath == m_Path_EntityType_NSElectric)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_ELECTRIC;
+					else if(EntityTypePath == m_Path_EntityType_NSFlamer)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_FLAMER;
+					else if(EntityTypePath == m_Path_EntityType_NSHeart)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_HEALTH_1;
+					else if(EntityTypePath == m_Path_EntityType_NSFlagBlue)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_NSFlagRed)
+						Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_RED;
+					else
+						EntityGroupNeeded = true;
+				}
+				else
+				{
+					if(EntityTypePath == m_Path_EntityType_TWSpawn)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
+					else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWShotgun)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
+					else if(EntityTypePath == m_Path_EntityType_TWGrenade)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
+					else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
+					else if(EntityTypePath == m_Path_EntityType_TWNinja)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
+					else if(EntityTypePath == m_Path_EntityType_TWHeart)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
+					else if(EntityTypePath == m_Path_EntityType_TWArmor)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
+					else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
+					else if(Format == MAPFORMAT_DUMMYCAPTURE && m_PackageId_UnivSport >= 0 && EntityTypePath == m_Path_EntityType_SportBall)
+						Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
+					else if(Format == MAPFORMAT_FOOT && m_PackageId_UnivSport >= 0 && EntityTypePath == m_Path_EntityType_SportBall)
+						Index = ddnet::ENTITY_OFFSET + 12;
+					else
+						EntityGroupNeeded = true;
+				}
+				
+				if(Index < 0)
+					continue;
+					
 				if(X < 0 || X >= GameWidth || Y < 0 || Y >= GameHeight)
 				{
 					EntityGroupNeeded = true;
@@ -2212,68 +2280,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					continue;
 				}
 				
-				if(Format == MAPFORMAT_NINSLASH)
-				{
-					if(EntityTypePath == m_Path_EntityType_NSSpawn)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN;
-					else if(EntityTypePath == m_Path_EntityType_NSSpawnRed)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_RED;
-					else if(EntityTypePath == m_Path_EntityType_NSSpawnBlue)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_SPAWN_BLUE;
-					else if(EntityTypePath == m_Path_EntityType_NSShotgun)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_SHOTGUN;
-					else if(EntityTypePath == m_Path_EntityType_NSGrenade)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_GRENADE;
-					else if(EntityTypePath == m_Path_EntityType_NSLaser)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_LASER;
-					else if(EntityTypePath == m_Path_EntityType_NSRifle)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_RIFLE;
-					else if(EntityTypePath == m_Path_EntityType_NSChainsaw)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_CHAINSAW;
-					else if(EntityTypePath == m_Path_EntityType_NSElectric)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_ELECTRIC;
-					else if(EntityTypePath == m_Path_EntityType_NSFlamer)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_WEAPON_FLAMER;
-					else if(EntityTypePath == m_Path_EntityType_NSHeart)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_HEALTH_1;
-					else if(EntityTypePath == m_Path_EntityType_NSFlagBlue)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_BLUE;
-					else if(EntityTypePath == m_Path_EntityType_NSFlagRed)
-						pGameTiles[Y*GameWidth+X].m_Index = ninslash::ENTITY_OFFSET + ninslash::ENTITY_FLAGSTAND_RED;
-					else
-						EntityGroupNeeded = true;
-				}
-				else
-				{
-					if(EntityTypePath == m_Path_EntityType_TWSpawn)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
-					else if(EntityTypePath == m_Path_EntityType_TWSpawnRed)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_RED;
-					else if(EntityTypePath == m_Path_EntityType_TWSpawnBlue)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN_BLUE;
-					else if(EntityTypePath == m_Path_EntityType_TWShotgun)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_SHOTGUN;
-					else if(EntityTypePath == m_Path_EntityType_TWGrenade)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_GRENADE;
-					else if(EntityTypePath == m_Path_EntityType_TWLaserRifle)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_WEAPON_RIFLE;
-					else if(EntityTypePath == m_Path_EntityType_TWNinja)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_POWERUP_NINJA;
-					else if(EntityTypePath == m_Path_EntityType_TWHeart)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_HEALTH_1;
-					else if(EntityTypePath == m_Path_EntityType_TWArmor)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_ARMOR_1;
-					else if(EntityTypePath == m_Path_EntityType_TWFlagBlue)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_BLUE;
-					else if(EntityTypePath == m_Path_EntityType_TWFlagRed)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_FLAGSTAND_RED;
-					else if(Format == MAPFORMAT_DUMMYCAPTURE && m_PackageId_UnivSport >= 0 && EntityTypePath == m_Path_EntityType_SportBall)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + ddnet::ENTITY_SPAWN;
-					else if(Format == MAPFORMAT_FOOT && m_PackageId_UnivSport >= 0 && EntityTypePath == m_Path_EntityType_SportBall)
-						pGameTiles[Y*GameWidth+X].m_Index = ddnet::ENTITY_OFFSET + 12;
-					else
-						EntityGroupNeeded = true;
-				}
+				pGameTiles[Y*GameWidth+X].m_Index = Index;
 			}
 		}
 		
@@ -2698,16 +2705,16 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 				EntityQuads[eId].emplace_back();
 				ddnet::CQuad& Quad = EntityQuads[eId].back();
 				
-				Quad.m_aPoints[1].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f);
-				Quad.m_aPoints[1].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f);
-				Quad.m_aPoints[0].x = f2fx(pEntities->GetEntityPositionX(SubPath)+16.0f);
-				Quad.m_aPoints[0].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f);
-				Quad.m_aPoints[3].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f);
-				Quad.m_aPoints[3].y = f2fx(pEntities->GetEntityPositionY(SubPath)+16.0f);
-				Quad.m_aPoints[2].x = f2fx(pEntities->GetEntityPositionX(SubPath)+16.0f);
-				Quad.m_aPoints[2].y = f2fx(pEntities->GetEntityPositionY(SubPath)+16.0f);
-				Quad.m_aPoints[4].x = f2fx(pEntities->GetEntityPositionX(SubPath));
-				Quad.m_aPoints[4].y = f2fx(pEntities->GetEntityPositionY(SubPath));
+				Quad.m_aPoints[1].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f-LayerShift.x);
+				Quad.m_aPoints[1].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f-LayerShift.y);
+				Quad.m_aPoints[0].x = f2fx(pEntities->GetEntityPositionX(SubPath)+16.0f-LayerShift.x);
+				Quad.m_aPoints[0].y = f2fx(pEntities->GetEntityPositionY(SubPath)-16.0f-LayerShift.y);
+				Quad.m_aPoints[3].x = f2fx(pEntities->GetEntityPositionX(SubPath)-16.0f-LayerShift.x);
+				Quad.m_aPoints[3].y = f2fx(pEntities->GetEntityPositionY(SubPath)+16.0f-LayerShift.y);
+				Quad.m_aPoints[2].x = f2fx(pEntities->GetEntityPositionX(SubPath)+16.0f-LayerShift.x);
+				Quad.m_aPoints[2].y = f2fx(pEntities->GetEntityPositionY(SubPath)+16.0f-LayerShift.y);
+				Quad.m_aPoints[4].x = f2fx(pEntities->GetEntityPositionX(SubPath)-LayerShift.x);
+				Quad.m_aPoints[4].y = f2fx(pEntities->GetEntityPositionY(SubPath)-LayerShift.y);
 				
 				for(int j=0; j<4; j++)
 				{
