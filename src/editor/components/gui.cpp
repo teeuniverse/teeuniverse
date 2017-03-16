@@ -1962,7 +1962,7 @@ public:
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());
 				pLayout->Add(pList, true);
 				pList->Add(new gui::CLabel(Context(), _LSTRING("Version:")), true);
-				pList->Add(new gui::CLabel(Context(), "0.2.5-alpha"), true); //TAG_ASSETSVERSION
+				pList->Add(new gui::CLabel(Context(), "0.2.5"), true); //TAG_ASSETSVERSION
 			}
 			{
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());

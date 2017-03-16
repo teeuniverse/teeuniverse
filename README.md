@@ -30,6 +30,24 @@ cd ./build/release/linux
 ./teeuniverse_editor
 ```
 
+## Desktop integration ##
+
+By default, all files will be installed in /usr/local, but you can change this path by running cmake and make in this way:
+```
+cmake . -DINSTALL_PREFIX=/my/custom/path
+make
+```
+
+Install all files in your system with this command:
+```
+sudo make install
+```
+
+To be able to open .tup packages in TeeUniverse from your file browser, you have to execute this last command (replace /usr/local by your custom path if you decided to change it):
+```
+sudo ./scripts/postinstall/postinstall_linux.sh /usr/local
+```
+
 # Compilation (OSX) #
 
 ## Installation of needed libraries ##

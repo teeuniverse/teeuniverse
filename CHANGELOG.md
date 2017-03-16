@@ -1,5 +1,27 @@
 # Change Log
 
+## [0.2.5]
+### Added
+- Transform and stamp tools for object layers
+- Spacebar to open or close the stamp palette
+- Desktop integration for Linux
+- About dialog
+
+### Changed
+- Package dependencies are searched in all directories where a package is opened
+- File dialog list all directories where a package have been opened in current or previous sessions
+- Zoom in map view is now relative to cursor position
+- Default layer size set to the global size of all zones
+- Context menu to create new element for map sections (background layers, zones, ...)
+- Default license set to CC-BY-SA 4.0
+
+### Fixed
+- Crash after right clicking on a package
+- Wrong map export when a zone layer position is negative
+- Moving an element in the asset inspector change the current selection
+- No vertices are shown when the vertex editor is used on an object layer for the first time
+- Some debug message stay visible in the terminal
+
 ## [0.2.4]
 ### Added
 - Position parameter for zone layers
@@ -9,7 +31,7 @@
 - Multiple items can be selected and edited together in the asset inspector
 - Shortcuts for tools
 
-## Changed
+### Changed
 - Faster update of tiles for layers that use materials
 - Crop tool can resize zone layers in all directions
 - New quads are two times smaller to keep the same size than tiles
@@ -45,7 +67,7 @@
 - Button to apply dilate and border_add to images
 - Each quad get its own global color in addition of the color set for each vertex
 
-## Changed
+### Changed
 - View background changed for a checkerboard
 - Pressing the 1:1 zoom button two times get back the old zoom value
 - The last selected tab in the color picker is always the default tab, even after restarting the editor
