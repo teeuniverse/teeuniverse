@@ -845,7 +845,7 @@ enum
 	VERTEXFLAG_BEZIER = 1,
 };
 
-void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh)
+void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, vec4 Color, bool DrawMesh)
 {
 	std::vector<CTexturedQuad> Quads;
 	GenerateMaterialQuads_Object(AssetsManager(), GetTime(), Quads, Object);
@@ -863,10 +863,10 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 		}
 		
 		Graphics()->SetColor4(
-			Quads[i].m_Color[0],
-			Quads[i].m_Color[1],
-			Quads[i].m_Color[2],
-			Quads[i].m_Color[3],
+			Quads[i].m_Color[0]*Color,
+			Quads[i].m_Color[1]*Color,
+			Quads[i].m_Color[2]*Color,
+			Quads[i].m_Color[3]*Color,
 			true
 		);
 		
@@ -878,10 +878,10 @@ void CMapRenderer::RenderObject(const CAsset_MapLayerObjects::CObject& Object, v
 		);
 		
 		CGraphics::CFreeformItem Freeform(
-			MapPosToScreenPos(Quads[i].m_Position[0]),
-			MapPosToScreenPos(Quads[i].m_Position[1]),
-			MapPosToScreenPos(Quads[i].m_Position[2]),
-			MapPosToScreenPos(Quads[i].m_Position[3])
+			MapPosToScreenPos(Quads[i].m_Position[0] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[1] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[2] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[3] + Pos)
 		);
 		Graphics()->QuadsDrawFreeform(&Freeform, 1);
 	}
@@ -943,7 +943,7 @@ void CMapRenderer::RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh)
 	
 	CAsset_MapLayerObjects::CIteratorObject Iter;
 	for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
-		RenderObject(pLayer->GetObject(*Iter), Pos, DrawMesh);
+		RenderObject(pLayer->GetObject(*Iter), Pos, 1.0f, DrawMesh);
 }
 
 void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color)
@@ -984,10 +984,10 @@ void CMapRenderer::RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector
 		);
 		
 		CGraphics::CFreeformItem Freeform(
-			MapPosToScreenPos(Quads[i].m_Position[0]),
-			MapPosToScreenPos(Quads[i].m_Position[1]),
-			MapPosToScreenPos(Quads[i].m_Position[2]),
-			MapPosToScreenPos(Quads[i].m_Position[3])
+			MapPosToScreenPos(Quads[i].m_Position[0] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[1] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[2] + Pos),
+			MapPosToScreenPos(Quads[i].m_Position[3] + Pos)
 		);
 		Graphics()->QuadsDrawFreeform(&Freeform, 1);
 	}

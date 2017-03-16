@@ -22,6 +22,8 @@
 #include <editor/gui/view_map.h>
 #include <generated/assets/maplayertiles.h>
 #include <generated/assets/maplayerquads.h>
+#include <generated/assets/maplayerobjects.h>
+#include <generated/assets/mapzoneobjects.h>
 #include <generated/assets/mapentities.h>
 
 class CCursorTool_MapStamp : public CViewMap::CCursorTool
@@ -32,6 +34,8 @@ protected:
 	array2d<int> m_IntDataSelection;
 	array2d<CAsset_MapLayerTiles::CTile> m_TileSelection;
 	std::vector<CAsset_MapLayerQuads::CQuad> m_QuadSelection;
+	std::vector<CAsset_MapLayerObjects::CObject> m_LayerObjectsSelection;
+	std::vector<CAsset_MapZoneObjects::CObject> m_ZoneObjectsSelection;
 	std::vector<CAsset_MapEntities::CEntity> m_EntitySelection;
 	vec2 m_Pivot;
 	int m_Token;

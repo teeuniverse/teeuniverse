@@ -752,6 +752,82 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 				m_Pivot = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
 			}
 		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
+		{
+			if(m_SelectionEnabled)
+			{
+				CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset_Hard<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					if(ViewMap()->GetGridAlign())
+					{
+						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
+						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
+					}
+					
+					m_Token = AssetsManager()->GenerateToken();
+					
+					AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token);
+					for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+					{
+						CSubPath ObjectPath = CAsset_MapLayerObjects::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapLayerObjects::TYPE_OBJECT, m_Token));
+						pLayer->SetObject(ObjectPath, m_LayerObjectsSelection[i]);
+						pLayer->SetObjectPosition(ObjectPath, m_LayerObjectsSelection[i].GetPosition() + CursorMapPos);
+					}
+					
+					m_Token = CAssetsHistory::NEW_TOKEN;
+		
+					CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+					pState->m_NumUpdates++;
+				}
+			}	
+			else
+			{
+				m_DragEnabled = true;
+				vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+				m_Pivot = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+			}		
+		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
+		{
+			if(m_SelectionEnabled)
+			{
+				CAsset_MapZoneObjects* pLayer = AssetsManager()->GetAsset_Hard<CAsset_MapZoneObjects>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					if(ViewMap()->GetGridAlign())
+					{
+						CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
+						CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y))) + vec2(16.0f, 16.0f);
+					}
+					
+					m_Token = AssetsManager()->GenerateToken();
+					
+					AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), m_Token);
+					for(unsigned int i=0; i<m_ZoneObjectsSelection.size(); i++)
+					{
+						CSubPath ObjectPath = CAsset_MapZoneObjects::SubPath_Object(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_MapZoneObjects::TYPE_OBJECT, m_Token));
+						pLayer->SetObject(ObjectPath, m_ZoneObjectsSelection[i]);
+						pLayer->SetObjectPosition(ObjectPath, m_ZoneObjectsSelection[i].GetPosition() + CursorMapPos);
+					}
+					
+					m_Token = CAssetsHistory::NEW_TOKEN;
+		
+					CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+					pState->m_NumUpdates++;
+				}
+			}	
+			else
+			{
+				m_DragEnabled = true;
+				vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+				m_Pivot = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+			}		
+		}
 		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
 		{
 			if(m_SelectionEnabled)
@@ -1132,6 +1208,86 @@ void CCursorTool_MapStamp::OnViewButtonRelease(int Button)
 					}
 				}
 			}
+			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
+			{
+				m_LayerObjectsSelection.clear();
+				
+				const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					
+					float X0 = min(m_Pivot.x, CursorMapPos.x);
+					float Y0 = min(m_Pivot.y, CursorMapPos.y);
+					float X1 = max(m_Pivot.x, CursorMapPos.x);
+					float Y1 = max(m_Pivot.y, CursorMapPos.y);
+					
+					bool ObjectFound = false;
+					
+					CAsset_MapLayerObjects::CIteratorObject Iter;
+					for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
+					{
+						const typename CAsset_MapLayerObjects::CObject& Object = pLayer->GetObject(*Iter);
+						vec2 Position;
+						matrix2x2 Transform;
+						Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+						
+						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
+						{
+							m_LayerObjectsSelection.emplace_back();
+							CAsset_MapLayerObjects::CObject& NewObject = m_LayerObjectsSelection.back();
+							NewObject = Object;
+							NewObject.SetPosition(Object.GetPosition() - vec2(X0 + X1, Y0 + Y1)/2.0f);
+							ObjectFound = true;
+						}
+					}
+					
+					if(ObjectFound)
+					{
+						m_SelectionEnabled = true;
+					}
+				}
+			}
+			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
+			{
+				m_ZoneObjectsSelection.clear();
+				
+				const CAsset_MapZoneObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneObjects>(AssetsEditor()->GetEditedAssetPath());
+				if(pLayer)
+				{
+					vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos);
+					
+					float X0 = min(m_Pivot.x, CursorMapPos.x);
+					float Y0 = min(m_Pivot.y, CursorMapPos.y);
+					float X1 = max(m_Pivot.x, CursorMapPos.x);
+					float Y1 = max(m_Pivot.y, CursorMapPos.y);
+					
+					bool ObjectFound = false;
+					
+					CAsset_MapZoneObjects::CIteratorObject Iter;
+					for(Iter = pLayer->BeginObject(); Iter != pLayer->EndObject(); ++Iter)
+					{
+						const typename CAsset_MapZoneObjects::CObject& Object = pLayer->GetObject(*Iter);
+						vec2 Position;
+						matrix2x2 Transform;
+						Object.GetTransform(AssetsManager(), ViewMap()->MapRenderer()->GetTime(), &Transform, &Position);
+						
+						if(Position.x >= X0 && Position.x <= X1 && Position.y >= Y0 && Position.y <= Y1)
+						{
+							m_ZoneObjectsSelection.emplace_back();
+							CAsset_MapZoneObjects::CObject& NewObject = m_ZoneObjectsSelection.back();
+							NewObject = Object;
+							NewObject.SetPosition(Object.GetPosition() - vec2(X0 + X1, Y0 + Y1)/2.0f);
+							ObjectFound = true;
+						}
+					}
+					
+					if(ObjectFound)
+					{
+						m_SelectionEnabled = true;
+					}
+				}
+			}
 			else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
 			{
 				m_EntitySelection.clear();
@@ -1393,6 +1549,54 @@ void CCursorTool_MapStamp::RenderView()
 				);
 			}
 		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
+		{
+			vec2 RenderPos = CursorMapPos;
+			if(ViewMap()->GetGridAlign())
+			{
+				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
+				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);
+			}
+			
+			const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+			if(!pLayer)
+			{
+				ViewMap()->MapRenderer()->UnsetGroup();
+				return;
+			}
+			
+			if(m_LayerObjectsSelection.size())
+			{
+				for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+				{
+					ViewMap()->MapRenderer()->RenderObject(
+						m_LayerObjectsSelection[i],
+						RenderPos,
+						Color,
+						false
+					);
+				}
+			}
+		}
+		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
+		{
+			vec2 RenderPos = CursorMapPos;
+			if(ViewMap()->GetGridAlign())
+			{
+				RenderPos = ViewMap()->MapRenderer()->ScreenPosToTilePos(CursorPos);
+				RenderPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(RenderPos.x), floor(RenderPos.y))) + vec2(16.0f, 16.0f);
+			}
+			
+			const CAsset_MapZoneObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneObjects>(AssetsEditor()->GetEditedAssetPath());
+			if(!pLayer)
+			{
+				ViewMap()->MapRenderer()->UnsetGroup();
+				return;
+			}
+			
+			if(m_ZoneObjectsSelection.size())
+				ViewMap()->MapRenderer()->RenderObjects_Zone(pLayer->GetZoneTypePath(), m_ZoneObjectsSelection, RenderPos, Color);
+		}
 		else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId)
 		{
 			vec2 RenderPos = CursorMapPos;
@@ -1430,6 +1634,8 @@ void CCursorTool_MapStamp::RenderView()
 	{
 		if(
 			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId ||
+			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId ||
+			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId ||
 			AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapEntities::TypeId
 		)
 		{
@@ -1496,6 +1702,8 @@ void CCursorTool_MapStamp::Update(bool ParentEnabled)
 			break;
 		case CAsset_MapEntities::TypeId:
 		case CAsset_MapZoneTiles::TypeId:
+		case CAsset_MapZoneObjects::TypeId:
+		case CAsset_MapLayerObjects::TypeId:
 		case CAsset_MapLayerQuads::TypeId:
 			Enable();
 			Editable(true);
@@ -1725,6 +1933,26 @@ void CCursorTool_MapStamp::VFlipSelection()
 			}
 			break;
 		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+			{
+				m_LayerObjectsSelection[i].SetPositionX(-m_LayerObjectsSelection[i].GetPositionX());
+				m_LayerObjectsSelection[i].SetSizeX(-m_LayerObjectsSelection[i].GetSizeX());
+				m_LayerObjectsSelection[i].SetAngle(-m_LayerObjectsSelection[i].GetAngle());
+			}
+			break;
+		}
+		case CAsset_MapZoneObjects::TypeId:
+		{
+			for(unsigned int i=0; i<m_ZoneObjectsSelection.size(); i++)
+			{
+				m_ZoneObjectsSelection[i].SetPositionX(-m_ZoneObjectsSelection[i].GetPositionX());
+				m_ZoneObjectsSelection[i].SetSizeX(-m_ZoneObjectsSelection[i].GetSizeX());
+				m_ZoneObjectsSelection[i].SetAngle(-m_ZoneObjectsSelection[i].GetAngle());
+			}
+			break;
+		}
 		case CAsset_MapEntities::TypeId:
 		{
 			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
@@ -1792,6 +2020,26 @@ void CCursorTool_MapStamp::HFlipSelection()
 			}
 			break;
 		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+			{
+				m_LayerObjectsSelection[i].SetPositionY(-m_LayerObjectsSelection[i].GetPositionY());
+				m_LayerObjectsSelection[i].SetSizeY(-m_LayerObjectsSelection[i].GetSizeY());
+				m_LayerObjectsSelection[i].SetAngle(-m_LayerObjectsSelection[i].GetAngle());
+			}
+			break;
+		}
+		case CAsset_MapZoneObjects::TypeId:
+		{
+			for(unsigned int i=0; i<m_ZoneObjectsSelection.size(); i++)
+			{
+				m_ZoneObjectsSelection[i].SetPositionY(-m_ZoneObjectsSelection[i].GetPositionY());
+				m_ZoneObjectsSelection[i].SetSizeY(-m_ZoneObjectsSelection[i].GetSizeY());
+				m_ZoneObjectsSelection[i].SetAngle(-m_ZoneObjectsSelection[i].GetAngle());
+			}
+			break;
+		}
 		case CAsset_MapEntities::TypeId:
 		{
 			for(unsigned int i=0; i<m_EntitySelection.size(); i++)
@@ -1844,6 +2092,26 @@ void CCursorTool_MapStamp::RotateCCWSelection()
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
 				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			float Angle = -Pi/4.0f;
+			for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+			{
+				m_LayerObjectsSelection[i].SetPosition(rotate(m_LayerObjectsSelection[i].GetPosition(), Angle));
+				m_LayerObjectsSelection[i].SetAngle(m_LayerObjectsSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapZoneObjects::TypeId:
+		{
+			float Angle = -Pi/4.0f;
+			for(unsigned int i=0; i<m_ZoneObjectsSelection.size(); i++)
+			{
+				m_ZoneObjectsSelection[i].SetPosition(rotate(m_ZoneObjectsSelection[i].GetPosition(), Angle));
+				m_ZoneObjectsSelection[i].SetAngle(m_ZoneObjectsSelection[i].GetAngle() + Angle);
 			}
 			break;
 		}
@@ -1902,6 +2170,26 @@ void CCursorTool_MapStamp::RotateCWSelection()
 			{
 				m_QuadSelection[i].SetPivot(rotate(m_QuadSelection[i].GetPivot(), Angle));
 				m_QuadSelection[i].SetAngle(m_QuadSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapLayerObjects::TypeId:
+		{
+			float Angle = Pi/4.0f;
+			for(unsigned int i=0; i<m_LayerObjectsSelection.size(); i++)
+			{
+				m_LayerObjectsSelection[i].SetPosition(rotate(m_LayerObjectsSelection[i].GetPosition(), Angle));
+				m_LayerObjectsSelection[i].SetAngle(m_LayerObjectsSelection[i].GetAngle() + Angle);
+			}
+			break;
+		}
+		case CAsset_MapZoneObjects::TypeId:
+		{
+			float Angle = Pi/4.0f;
+			for(unsigned int i=0; i<m_ZoneObjectsSelection.size(); i++)
+			{
+				m_ZoneObjectsSelection[i].SetPosition(rotate(m_ZoneObjectsSelection[i].GetPosition(), Angle));
+				m_ZoneObjectsSelection[i].SetAngle(m_ZoneObjectsSelection[i].GetAngle() + Angle);
 			}
 			break;
 		}

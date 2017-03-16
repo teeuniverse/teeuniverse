@@ -69,7 +69,7 @@ public:
 	void RenderTiles_Zone(CAssetPath ZoneTypePath, const array2d<CAsset_MapZoneTiles::CTile>& Tiles, vec2 Pos, vec4 Color, bool Repeat);
 	void RenderQuads(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads, vec2 Pos, CAssetPath ImagePath, vec4 Color);
 	void RenderQuads_Mesh(const CAsset_MapLayerQuads::CQuad* pQuads, int NbQuads);
-	void RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, bool DrawMesh);
+	void RenderObject(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos, vec4 Color, bool DrawMesh);
 	void RenderObjectCurve(const CAsset_MapLayerObjects::CObject& Object, vec2 Pos);
 	void RenderObjects(CAssetPath LayerPath, vec2 Pos, bool DrawMesh = false);
 	void RenderObjects_Zone(CAssetPath ZoneTypePath, const std::vector<CAsset_MapZoneObjects::CObject>& Objects, vec2 Pos, vec4 Color);
