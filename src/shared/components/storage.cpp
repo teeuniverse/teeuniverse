@@ -219,7 +219,22 @@ void CStorage::FindDatadir(const char *pArgv0)
 	}
 
 #if defined(CONF_FAMILY_UNIX)
-	// 3) check for all default locations
+	// 3) check for local locations
+	{
+		dynamic_string LocalPath;
+		fs_home_path(LocalPath);
+		LocalPath.append("/.local/share/teeuniverse");
+		
+		dynamic_string TestPath = LocalPath;
+		TestPath.append("/languages");
+		if(fs_is_dir(TestPath.buffer()))
+		{
+			m_DataDirs.emplace_back(LocalPath.buffer());
+			return;
+		}
+	}
+	
+	// 4) check for all default locations
 	{
 		const char *aDirs[] = {
 			"/usr/share/teeuniverse",
