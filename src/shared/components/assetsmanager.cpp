@@ -137,7 +137,7 @@ void CAssetsManager::SaveConfig(CCLI_Output* pOutput)
 	
 	for(unsigned int i=2; i<m_Directories.size(); i++)
 	{
-		str_format(Buffer.buffer(), Buffer.maxsize(), "add_package_dir %s", m_Directories[i].buffer());
+		str_format(Buffer.buffer(), Buffer.maxsize(), "add_package_dir \"%s\"", m_Directories[i].buffer());
 		pOutput->Print(Buffer.buffer());
 	}
 }
