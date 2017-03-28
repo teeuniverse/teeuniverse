@@ -1489,13 +1489,25 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 				LItem.m_Image = -1;
 				LItem.m_Data = ArchiveFile.AddData(Width*Height*sizeof(ddnet::CTile), pTiles);
 				StrToInts(LItem.m_aName, sizeof(LItem.m_aName)/sizeof(int), pLayer->GetName());
-			
-				const CAsset_Image* pImage = GetAsset<CAsset_Image>(pLayer->GetStylePath());
+				
+				CAssetPath ImagePath;
+				if(pLayer->GetStylePath().GetType() == CAsset_Image::TypeId)
+				{
+					ImagePath = pLayer->GetStylePath();
+				}
+				else if(pLayer->GetStylePath().GetType() == CAsset_TilingMaterial::TypeId)
+				{
+					const CAsset_TilingMaterial* pStyle = GetAsset<CAsset_TilingMaterial>(pLayer->GetStylePath());
+					if(pStyle)
+						ImagePath = pStyle->GetImagePath();
+				}
+				
+				const CAsset_Image* pImage = GetAsset<CAsset_Image>(ImagePath);
 				if(pImage)
 				{
 					for(unsigned int i=0; i<Images.size(); i++)
 					{
-						if(Images[i] == pLayer->GetStylePath())
+						if(Images[i] == ImagePath)
 						{
 							LItem.m_Image = static_cast<int>(i);
 							break;
@@ -1505,7 +1517,7 @@ void CAssetsManager::Save_Map_Group(ddnet::CDataFileWriter& ArchiveFile, const C
 					if(LItem.m_Image == -1)
 					{
 						LItem.m_Image = Images.size();
-						Images.push_back(pLayer->GetStylePath());
+						Images.push_back(ImagePath);
 					}
 				}
 				

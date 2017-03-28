@@ -4,6 +4,7 @@
 ### Fixed
 - Vertex list outdated after vertex insertion
 - Pressing spacebar in text field open map palette
+- Layers using tiling materials are not exported correctly
 
 ## [0.2.5]
 ### Added
