@@ -254,8 +254,70 @@ protected:
 	
 	void Action()
 	{
-		if(Input()->KeyIsPressed(KEY_LCTRL))
-			m_pAssetsEditor->AddEditedSubPath(m_SubPath);
+		if(Input()->KeyIsPressed(KEY_LSHIFT))
+		{
+			CSubPath LastSelection;
+			for(int i=m_pAssetsEditor->GetEditedSubPathes().size()-1; i>=0; i--)
+			{
+				if(m_pAssetsEditor->GetEditedSubPathes()[i].GetType() == m_SubPath.GetType())
+				{
+					LastSelection = m_pAssetsEditor->GetEditedSubPathes()[i];
+					break;
+				}
+			}
+			
+			if(LastSelection.IsNull())
+			{
+				m_pAssetsEditor->AddEditedSubPath(m_SubPath);
+			}
+			else
+			{
+				int Start = LastSelection.GetId();
+				int End = m_SubPath.GetId();
+				if(Start < End)
+					Start++;
+				else
+				{
+					int Tmp = Start-1;
+					Start = End;
+					End = Tmp;
+				}
+				for(int i=Start; i<=End; i++)
+				{
+					CSubPath SubItem = m_SubPath;
+					SubItem.SetId(i);
+					bool Found = false;
+					for(unsigned int j=0; j<m_pAssetsEditor->GetEditedSubPathes().size(); j++)
+					{
+						if(m_pAssetsEditor->GetEditedSubPathes()[j] == SubItem)
+						{
+							Found = true;
+							break;
+						}
+					}
+					
+					if(!Found)
+						m_pAssetsEditor->AddEditedSubPath(SubItem);
+				}
+			}
+		}
+		else if(Input()->KeyIsPressed(KEY_LCTRL))
+		{
+			bool Found = false;
+			for(unsigned int j=0; j<m_pAssetsEditor->GetEditedSubPathes().size(); j++)
+			{
+				if(m_pAssetsEditor->GetEditedSubPathes()[j] == m_SubPath)
+				{
+					Found = true;
+					break;
+				}
+			}
+			
+			if(Found)
+				m_pAssetsEditor->RemoveEditedSubPath(m_SubPath);
+			else
+				m_pAssetsEditor->AddEditedSubPath(m_SubPath);
+		}
 		else
 			m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), m_SubPath);
 	}

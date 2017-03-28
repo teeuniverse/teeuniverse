@@ -282,6 +282,7 @@ public:
 	void SetEditedPackage(int PackageId);
 	void SetEditedAsset(const CAssetPath& Path, const CSubPath& SubPath);
 	void AddEditedSubPath(const CSubPath& SubPath);
+	void RemoveEditedSubPath(const CSubPath& SubPath);
 	
 	inline int GetEditedPackageId() const { return m_EditedPackageId; }
 	inline CAssetPath GetEditedAssetPath() const { return m_EditedAssetPath; }

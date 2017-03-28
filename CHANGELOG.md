@@ -4,6 +4,10 @@
 ### Added
 - Add zone palette for filling tool
 
+### Changed
+- Select range of subitem with Shift key
+- Unselect single subitem with Control key
+
 ### Fixed
 - Vertex list outdated after vertex insertion
 - Pressing spacebar in text field open map palette

@@ -2612,6 +2612,18 @@ void CGuiEditor::AddEditedSubPath(const CSubPath& SubPath)
 	m_EditedSubPathes.emplace_back(SubPath);
 }
 
+void CGuiEditor::RemoveEditedSubPath(const CSubPath& SubPath)
+{
+	auto Iter = m_EditedSubPathes.begin();
+	while(Iter != m_EditedSubPathes.end())
+	{
+		if(*Iter == SubPath)
+			Iter = m_EditedSubPathes.erase(Iter);
+		else
+			Iter++;
+	}
+}
+
 void CGuiEditor::RefreshPackageTree()
 {
 	if(m_pPackagesTree)
