@@ -3,6 +3,7 @@
 ## [0.2.6]
 ### Fixed
 - Vertex list outdated after vertex insertion
+- Pressing spacebar in text field open map palette
 
 ## [0.2.5]
 ### Added

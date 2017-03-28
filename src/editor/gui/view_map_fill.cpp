@@ -81,7 +81,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -148,7 +148,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -196,7 +196,7 @@ void CCursorTool_MapFill::OnViewButtonClick(int Button)
 
 void CCursorTool_MapFill::OnViewInputEvent(const CInput::CEvent& Event)
 {
-	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 	{
 		AltButtonAction();
 		return;

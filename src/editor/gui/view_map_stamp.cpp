@@ -135,7 +135,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -412,7 +412,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -476,7 +476,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -543,7 +543,7 @@ public:
 
 	virtual void OnInputEvent(const CInput::CEvent& Event)
 	{
-		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 		{
 			Close();
 			return;
@@ -886,7 +886,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 
 void CCursorTool_MapStamp::OnViewInputEvent(const CInput::CEvent& Event)
 {
-	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS))
+	if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
 	{
 		AltButtonAction();
 		return;
