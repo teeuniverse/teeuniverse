@@ -61,6 +61,8 @@ protected:
 	CView::CCursorTool* m_pCursorTool_MapCrop;
 	CView::CCursorTool* m_pCursorTool_MapAddVertex;
 	CView::CCursorTool* m_pCursorTool_MapWeightVertex;
+	
+	std::vector< std::pair<CAssetPath, std::vector<int> > > m_ZoneDataMemory;
 
 public:
 	CViewMap(CGuiEditor* pAssetsEditor);
@@ -90,6 +92,9 @@ public:
 	float GetCameraZoom();
 	void SetCameraZoom(float Value);
 	void SetCameraZoomToUnit();
+	
+	void MemorizeZoneData(const CAssetPath& AssetPath, const std::vector<int>& DataInt);
+	const std::vector<int>* GetMemorizedZoneData(const CAssetPath& AssetPath);
 };
 
 #endif

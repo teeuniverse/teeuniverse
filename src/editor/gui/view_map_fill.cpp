@@ -20,16 +20,80 @@
 #include <editor/gui/view_map_fill.h>
 #include <editor/gui/image_picker.h>
 #include <editor/gui/tilingmaterial_picker.h>
+#include <editor/gui/zone_picker.h>
 #include <editor/components/gui.h>
 #include <client/maprenderer.h>
 #include <client/components/assetsrenderer.h>
 #include <shared/autolayer.h>
 
-
-/* MATERIAL PALETTE ***************************************************/
-
 namespace
 {
+
+/* ZONE PALETTE *******************************************************/
+
+class CPopup_ZonePalette : public gui::CPopup
+{
+protected:
+	class CPaletteZonePicker : public CZonePicker
+	{
+	protected:
+		CPopup_ZonePalette* m_pPopup;
+		CCursorTool_MapFill* m_pCursorTool;
+		
+	protected:
+		virtual void OnZonePicked(CSubPath IndexPath)
+		{
+			m_pCursorTool->SetZoneIndex(m_ZoneTypePath, IndexPath.GetId(), m_DataInt);
+			m_pPopup->Close();
+		}
+	
+	public:
+		CPaletteZonePicker(CCursorTool_MapFill* pCursorTool, CPopup_ZonePalette* pPopup, CAssetPath ZoneTypePath) :
+			CZonePicker(pCursorTool->AssetsEditor(), ZoneTypePath, pCursorTool->ViewMap()->GetMemorizedZoneData(ZoneTypePath)),
+			m_pPopup(pPopup),
+			m_pCursorTool(pCursorTool)
+		{
+			
+		}
+	};
+	
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+public:
+	CPopup_ZonePalette(CGuiEditor* pAssetsEditor, CCursorTool_MapFill* pCursorTool, const gui::CRect& CreatorRect, CAssetPath ZonePath) :
+		gui::CPopup(pAssetsEditor, CreatorRect, CreatorRect.w-16, CreatorRect.h-16, gui::CPopup::ALIGNMENT_INNER),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		SetBoxStyle(m_pAssetsEditor->m_Path_Box_Dialog);
+		
+		CPaletteZonePicker* pImagePicker = new CPaletteZonePicker(pCursorTool, this, ZonePath);
+		Add(pImagePicker);
+	}
+	
+	virtual void OnButtonClick(int Button)
+	{
+		if(m_DrawRect.IsInside(Context()->GetMousePos()) && m_VisibilityRect.IsInside(Context()->GetMousePos()) && Button == KEY_MOUSE_2)
+			Close();
+		
+		gui::CPopup::OnButtonClick(Button);
+	}
+
+	virtual void OnInputEvent(const CInput::CEvent& Event)
+	{
+		if((Event.m_Key == KEY_SPACE) && (Event.m_Flags & CInput::FLAG_PRESS) && !Input()->IsTextEdited())
+		{
+			Close();
+			return;
+		}
+		else
+			CPopup::OnInputEvent(Event);
+	}
+	
+	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+};
+
+/* MATERIAL PALETTE ***************************************************/
 
 class CPopup_MaterialPalette : public gui::CPopup
 {
@@ -220,6 +284,14 @@ void CCursorTool_MapFill::AltButtonAction()
 				Context()->DisplayPopup(new CPopup_MaterialPalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetStylePath()));
 		}
 	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneTiles::TypeId)
+	{
+		const CAsset_MapZoneTiles* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+		if(pLayer)
+		{
+			Context()->DisplayPopup(new CPopup_ZonePalette(AssetsEditor(), this, ViewMap()->GetViewRect(), pLayer->GetZoneTypePath()));
+		}
+	}
 }
 	
 void CCursorTool_MapFill::OnViewButtonRelease(int Button)
@@ -350,6 +422,32 @@ void CCursorTool_MapFill::OnViewButtonRelease(int Button)
 							0x0,
 							Token
 						);
+					}
+				}
+				
+				const CAsset_ZoneType* pZoneType = AssetsManager()->GetAsset<CAsset_ZoneType>(pLayer->GetZoneTypePath());
+				if(pZoneType && pZoneType->GetDataIntArraySize() > 0)
+				{
+					CAsset_MapZoneTiles* pLayerEditable = AssetsManager()->GetAsset_Hard<CAsset_MapZoneTiles>(AssetsEditor()->GetEditedAssetPath());
+					array2d<int>& Data = pLayerEditable->GetDataIntArray();
+					
+					AssetsManager()->SaveAssetInHistory(AssetsEditor()->GetEditedAssetPath(), Token);
+					
+					if(Data.get_width() != pLayer->GetTileWidth() || Data.get_height() != pLayer->GetTileHeight() || Data.get_depth() != pZoneType->GetDataIntArraySize())
+					{
+						Data.resize(pLayer->GetTileWidth(), pLayer->GetTileHeight(), pZoneType->GetDataIntArraySize());
+					}
+					
+					for(int j=Y0; j<Y1; j++)
+					{
+						for(int i=X0; i<X1; i++)
+						{
+							for(int d=0; d<Data.get_depth(); d++)
+							{
+								int DataIndex = clamp(d, 0, (int) m_ZoneDataInt.size()-1);
+								Data.get_clamp(i, j, d) = m_ZoneDataInt[DataIndex];
+							}
+						}
 					}
 				}
 	
@@ -485,4 +583,11 @@ void CCursorTool_MapFill::OnMouseMove()
 		ViewMap()->AssetsEditor()->SetHint(_LSTRING("Filling Tool: Fill area of the map."));
 	
 	CViewMap::CCursorTool::OnMouseMove();
+}
+
+void CCursorTool_MapFill::SetZoneIndex(CAssetPath ZoneTypePath, int Index, const std::vector<int>& DataInt)
+{
+	SetIndex(Index);
+	m_ZoneDataInt = DataInt;
+	ViewMap()->MemorizeZoneData(ZoneTypePath, DataInt);
 }

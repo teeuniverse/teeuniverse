@@ -1,6 +1,9 @@
 # Change Log
 
 ## [0.2.6]
+### Added
+- Add zone palette for filling tool
+
 ### Fixed
 - Vertex list outdated after vertex insertion
 - Pressing spacebar in text field open map palette

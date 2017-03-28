@@ -28,6 +28,7 @@ protected:
 	bool m_DragEnabled;
 	vec2 m_Pivot;
 	int m_Index;
+	std::vector<int> m_ZoneDataInt;
 	CAssetPath m_SelectedStyle;
 	
 protected:
@@ -44,6 +45,7 @@ public:
 	virtual void OnViewInputEvent(const CInput::CEvent& Event);
 	
 	void SetIndex(int Index) { m_Index = Index; }
+	void SetZoneIndex(CAssetPath ZoneTypePath, int Index, const std::vector<int>& DataInt);
 };
 
 #endif

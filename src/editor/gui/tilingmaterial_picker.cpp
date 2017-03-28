@@ -86,7 +86,6 @@ public:
 		CMapRenderer MapRenderer(ClientKernel());
 		
 		MapRenderer.SetTime(0.0f);
-		MapRenderer.SetLocalTime(time_get()/(float)time_freq());
 		MapRenderer.SetCanvas(m_DrawRect, vec2(m_DrawRect.x + m_DrawRect.w/2, m_DrawRect.y + m_DrawRect.h/2));
 		MapRenderer.SetCamera(0.0f, 1.0f);
 		
@@ -99,14 +98,14 @@ public:
 class CBrushButton : public gui::CButton
 {
 protected:
-	CTilingMaterialPicker* m_Picker;
+	CTilingMaterialPicker* m_pPicker;
 	CAssetPath m_MaterialPath;
 	CSubPath m_IndexSubPath;
 	
 public:
-	CBrushButton(CGuiEditor *pAssetsEditor, CTilingMaterialPicker* Picker, CAssetPath MaterialPath, CSubPath IndexSubPath) :
+	CBrushButton(CGuiEditor *pAssetsEditor, CTilingMaterialPicker* pPicker, CAssetPath MaterialPath, CSubPath IndexSubPath) :
 		gui::CButton(pAssetsEditor, ""),
-		m_Picker(Picker),
+		m_pPicker(pPicker),
 		m_MaterialPath(MaterialPath),
 		m_IndexSubPath(IndexSubPath)
 	{
@@ -116,21 +115,21 @@ public:
 	
 	virtual void MouseClickAction()
 	{
-		m_Picker->OnBrushPicked(m_IndexSubPath);
+		m_pPicker->OnBrushPicked(m_IndexSubPath);
 	}
 	
 	virtual void OnMouseMove()
 	{
-		if(m_Picker->GetTitleLabel() && m_VisibilityRect.IsInside(Context()->GetMousePos()))
+		if(m_pPicker->GetTitleLabel() && m_VisibilityRect.IsInside(Context()->GetMousePos()))
 		{
 			const CAsset_TilingMaterial* pMaterial = AssetsManager()->GetAsset<CAsset_TilingMaterial>(m_MaterialPath);
 			if(pMaterial && pMaterial->IsValidIndex(m_IndexSubPath))
 			{
-				m_Picker->GetTitleLabel()->SetText(pMaterial->GetIndexTitle(m_IndexSubPath));
+				m_pPicker->GetTitleLabel()->SetText(pMaterial->GetIndexTitle(m_IndexSubPath));
 			}
 			else
 			{
-				m_Picker->GetTitleLabel()->SetText(_LSTRING("Empty"));
+				m_pPicker->GetTitleLabel()->SetText(_LSTRING("Empty"));
 			}
 		}
 		

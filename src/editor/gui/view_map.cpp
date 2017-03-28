@@ -852,3 +852,30 @@ void CViewMap::SetCameraZoomToUnit()
 {
 	m_ZoomLockedToUnit = !m_ZoomLockedToUnit;
 }
+
+void CViewMap::MemorizeZoneData(const CAssetPath& AssetPath, const std::vector<int>& DataInt)
+{
+	for(unsigned int i=0; i<m_ZoneDataMemory.size(); i++)
+	{
+		if(m_ZoneDataMemory[i].first == AssetPath)
+		{
+			m_ZoneDataMemory[i].second = DataInt;
+			break;
+		}
+	}
+	
+	m_ZoneDataMemory.emplace_back();
+	m_ZoneDataMemory.back().first = AssetPath;
+	m_ZoneDataMemory.back().second = DataInt;
+}
+
+const std::vector<int>* CViewMap::GetMemorizedZoneData(const CAssetPath& AssetPath)
+{
+	for(unsigned int i=0; i<m_ZoneDataMemory.size(); i++)
+	{
+		if(m_ZoneDataMemory[i].first == AssetPath)
+			return &m_ZoneDataMemory[i].second;
+	}
+	
+	return nullptr;
+}
