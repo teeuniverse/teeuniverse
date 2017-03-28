@@ -12,6 +12,7 @@
 - Vertex list outdated after vertex insertion
 - Pressing spacebar in text field open map palette
 - Layers using tiling materials are not exported correctly
+- Undo doesn't work for bezier controllers
 
 ## [0.2.5]
 ### Added

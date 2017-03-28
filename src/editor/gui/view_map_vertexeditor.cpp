@@ -197,9 +197,15 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Objects_Impl(int Button)
 			float GizmoSize = 8.0f;
 			
 			if(distance(MousePos, VertexControlPoint0) <= GizmoSize)
+			{
+				m_Token = AssetsManager()->GenerateToken();
 				m_DragType = 2;
+			}
 			else if(distance(MousePos, VertexControlPoint1) <= GizmoSize)
+			{
+				m_Token = AssetsManager()->GenerateToken();
 				m_DragType = 3;
+			}
 			else
 				m_DragType = 0;
 		}
