@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.2.6]
+### Fixed
+- Vertex list outdated after vertex insertion
+
 ## [0.2.5]
 ### Added
 - Transform and stamp tools for object layers

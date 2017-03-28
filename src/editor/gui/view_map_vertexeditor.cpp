@@ -242,6 +242,9 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Objects_Impl(int Button)
 			m_CurrentVertex = ASSET::SubPath_ObjectVertex(NextVertexPath.GetId(), Index);
 			AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_POSITION, NewVertexPos, m_Token);
 			
+			CAssetState* pState = AssetsManager()->GetAssetState(AssetsEditor()->GetEditedAssetPath());
+			pState->m_NumUpdates++;
+			
 			AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex);
 			m_ClickDiff = 0.0f;
 			m_DragType = 1;
