@@ -72,8 +72,7 @@ CInput::CInput(CClientKernel* pKernel) :
 	m_InputCounter = 1;
 	m_RelativeMode = false;
 
-	m_LastRelease = 0;
-	m_ReleaseDelta = -1;
+	m_LastRelease = GetCurrentTimePoint();
 	m_WantedCursor = -1;
 	m_CurrentCursor = CURSOR_DEFAULT;
 
@@ -162,17 +161,6 @@ void CInput::MouseModeRelative()
 	SDL_GetRelativeMouseState(NULL, NULL);
 }
 
-int CInput::MouseDoubleClick()
-{
-	if(m_ReleaseDelta >= 0 && m_ReleaseDelta < (time_freq() >> 2))
-	{
-		m_LastRelease = 0;
-		m_ReleaseDelta = -1;
-		return 1;
-	}
-	return 0;
-}
-
 void CInput::Clear()
 {
 	mem_zero(m_aInputState, sizeof(m_aInputState));
@@ -252,8 +240,8 @@ bool CInput::PreUpdate()
 
 					if(Event.button.button == 1) // ignore_convention
 					{
-						m_ReleaseDelta = time_get() - m_LastRelease;
-						m_LastRelease = time_get();
+						m_ReleaseDelta = GetTimePointDiff(m_LastRelease, GetCurrentTimePoint());
+						m_LastRelease = GetCurrentTimePoint();
 					}
 
 					// fall through

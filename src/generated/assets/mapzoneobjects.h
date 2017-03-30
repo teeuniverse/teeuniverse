@@ -123,13 +123,6 @@ public:
 	class CVertex
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects::CVertex& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -178,6 +171,18 @@ public:
 			tua_float m_Weight;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneObjects::CVertex& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_2_4& TuaType);
+		};
+		
+		class CTuaType_0_3_0
+		{
+		public:
+			CTuaVec2 m_Position;
+			tua_int32 m_Smoothness;
+			CTuaVec2 m_ControlPoint0;
+			CTuaVec2 m_ControlPoint1;
+			tua_float m_Weight;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects::CVertex& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_3_0& TuaType);
 		};
 		
 	
@@ -242,13 +247,6 @@ public:
 	class CObject
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects::CObject& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -305,6 +303,21 @@ public:
 			tua_uint32 m_ZoneFlags;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_2_4& TuaType);
+		};
+		
+		class CTuaType_0_3_0
+		{
+		public:
+			CTuaVec2 m_Position;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CTuaArray m_Vertex;
+			tua_int32 m_PathType;
+			tua_int32 m_FillType;
+			tua_uint8 m_ZoneIndex;
+			tua_uint32 m_ZoneFlags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects::CObject& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_3_0& TuaType);
 		};
 		
 	
@@ -562,13 +575,6 @@ public:
 		}
 		
 	};
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -614,6 +620,17 @@ public:
 		tua_uint8 m_Visibility;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneObjects& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ZoneTypePath;
+		CTuaArray m_Object;
+		tua_uint8 m_Visibility;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

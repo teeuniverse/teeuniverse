@@ -66,6 +66,22 @@ public:
 	CExternalFloatEdit(class CGui *pConfig, float* m_pFloat);
 };
 
+class CAbstractDoubleEdit : public CAbstractTextEdit
+{
+protected:
+	double m_DoubleValue;
+	bool m_Percent;
+	
+	virtual void SaveFromTextBuffer();
+	virtual void CopyToTextBuffer();
+	
+	virtual double GetValue() const = 0;
+	virtual void SetValue(double Value) = 0;
+	
+public:
+	CAbstractDoubleEdit(class CGui *pConfig);
+};
+
 }
 
 #endif

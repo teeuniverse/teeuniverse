@@ -185,4 +185,24 @@ inline vec3 RgbToHsv(vec3 rgb)
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
 
+/*
+ * Generate a color with a hue that is that farthest possible from the N previous ones
+ */
+inline vec4 ColorSequence(int N, float Saturation, float Lightness, float Alpha)
+{
+	float Hue = 0.0f;
+	float Power = 0.5f;
+	while(N != 0)
+	{
+		if(N%2)
+			Hue += Power;
+		Power /= 2.0f;
+		N /= 2;
+	}
+	
+	vec3 Rbg = HsvToRgb(vec3(Hue, Saturation, Lightness));
+	
+	return vec4(Rbg.r, Rbg.g, Rbg.b, Alpha);
+}
+
 #endif

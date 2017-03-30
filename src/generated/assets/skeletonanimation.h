@@ -43,7 +43,15 @@ class CAsset_SkeletonAnimation : public CAsset
 public:
 	enum
 	{
-		TIMESTEP = 30,
+		GRAPHTYPE_FREE = 0,
+		GRAPHTYPE_STEPSTART,
+		GRAPHTYPE_STEPEND,
+		GRAPHTYPE_STEPMIDDLE,
+		GRAPHTYPE_LINEAR,
+		GRAPHTYPE_ACCELERATION,
+		GRAPHTYPE_DECELERATION,
+		GRAPHTYPE_SMOOTH,
+		NUM_GRAPHS,
 	};
 	
 	enum
@@ -64,9 +72,6 @@ public:
 	{
 		BONEALIGN_PARENTBONE = 0,
 		BONEALIGN_WORLD,
-		BONEALIGN_AIM,
-		BONEALIGN_MOTION,
-		BONEALIGN_HOOK,
 		NUM_BONEALIGNS,
 	};
 	
@@ -74,18 +79,14 @@ public:
 	
 	enum
 	{
-		TYPE_LOCALBONEANIM_KEYFRAME,
-		TYPE_LOCALBONEANIM,
-		TYPE_PARENTBONEANIM_KEYFRAME,
-		TYPE_PARENTBONEANIM,
+		TYPE_BONEANIMATION_KEYFRAME,
+		TYPE_BONEANIMATION,
 		TYPE_LAYERANIMATION_KEYFRAME,
 		TYPE_LAYERANIMATION,
 	};
 	
-	static inline CSubPath SubPath_LocalBoneAnimKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_LOCALBONEANIM_KEYFRAME, Id0, Id1, 0); }
-	static inline CSubPath SubPath_LocalBoneAnim(int Id0) { return CSubPath(TYPE_LOCALBONEANIM, Id0, 0, 0); }
-	static inline CSubPath SubPath_ParentBoneAnimKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_PARENTBONEANIM_KEYFRAME, Id0, Id1, 0); }
-	static inline CSubPath SubPath_ParentBoneAnim(int Id0) { return CSubPath(TYPE_PARENTBONEANIM, Id0, 0, 0); }
+	static inline CSubPath SubPath_BoneAnimationKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_BONEANIMATION_KEYFRAME, Id0, Id1, 0); }
+	static inline CSubPath SubPath_BoneAnimation(int Id0) { return CSubPath(TYPE_BONEANIMATION, Id0, 0, 0); }
 	static inline CSubPath SubPath_LayerAnimationKeyFrame(int Id0, int Id1) { return CSubPath(TYPE_LAYERANIMATION_KEYFRAME, Id0, Id1, 0); }
 	static inline CSubPath SubPath_LayerAnimation(int Id0) { return CSubPath(TYPE_LAYERANIMATION, Id0, 0, 0); }
 	
@@ -93,28 +94,26 @@ public:
 	{
 		NAME = CAsset::NAME,
 		SKELETONPATH,
-		LOCALBONEANIM_ARRAYSIZE,
-		LOCALBONEANIM_PTR,
-		LOCALBONEANIM_ARRAY,
-		LOCALBONEANIM_KEYFRAME_ARRAYSIZE,
-		LOCALBONEANIM_KEYFRAME_PTR,
-		LOCALBONEANIM_KEYFRAME_ARRAY,
-		LOCALBONEANIM_KEYFRAME,
-		LOCALBONEANIM_KEYFRAME_TIME,
-		LOCALBONEANIM_BONEPATH,
-		LOCALBONEANIM_CYCLETYPE,
-		LOCALBONEANIM,
-		PARENTBONEANIM_ARRAYSIZE,
-		PARENTBONEANIM_PTR,
-		PARENTBONEANIM_ARRAY,
-		PARENTBONEANIM_KEYFRAME_ARRAYSIZE,
-		PARENTBONEANIM_KEYFRAME_PTR,
-		PARENTBONEANIM_KEYFRAME_ARRAY,
-		PARENTBONEANIM_KEYFRAME,
-		PARENTBONEANIM_KEYFRAME_TIME,
-		PARENTBONEANIM_BONEPATH,
-		PARENTBONEANIM_CYCLETYPE,
-		PARENTBONEANIM,
+		BONEANIMATION_ARRAYSIZE,
+		BONEANIMATION_PTR,
+		BONEANIMATION_ARRAY,
+		BONEANIMATION_KEYFRAME_ARRAYSIZE,
+		BONEANIMATION_KEYFRAME_PTR,
+		BONEANIMATION_KEYFRAME_ARRAY,
+		BONEANIMATION_KEYFRAME,
+		BONEANIMATION_KEYFRAME_TRANSLATION,
+		BONEANIMATION_KEYFRAME_TRANSLATION_X,
+		BONEANIMATION_KEYFRAME_TRANSLATION_Y,
+		BONEANIMATION_KEYFRAME_SCALE,
+		BONEANIMATION_KEYFRAME_SCALE_X,
+		BONEANIMATION_KEYFRAME_SCALE_Y,
+		BONEANIMATION_KEYFRAME_ANGLE,
+		BONEANIMATION_KEYFRAME_ALIGNMENT,
+		BONEANIMATION_KEYFRAME_TIME,
+		BONEANIMATION_KEYFRAME_GRAPHTYPE,
+		BONEANIMATION_BONEPATH,
+		BONEANIMATION_CYCLETYPE,
+		BONEANIMATION,
 		LAYERANIMATION_ARRAYSIZE,
 		LAYERANIMATION_PTR,
 		LAYERANIMATION_ARRAY,
@@ -122,49 +121,33 @@ public:
 		LAYERANIMATION_KEYFRAME_PTR,
 		LAYERANIMATION_KEYFRAME_ARRAY,
 		LAYERANIMATION_KEYFRAME,
+		LAYERANIMATION_KEYFRAME_COLOR,
+		LAYERANIMATION_KEYFRAME_STATE,
 		LAYERANIMATION_KEYFRAME_TIME,
+		LAYERANIMATION_KEYFRAME_GRAPHTYPE,
 		LAYERANIMATION_LAYERPATH,
 		LAYERANIMATION_CYCLETYPE,
 		LAYERANIMATION,
 	};
 	
-	class CIteratorLocalBoneAnim
+	class CIteratorBoneAnimation
 	{
 	protected:
 		int m_Index;
 		bool m_Reverse;
 	public:
-		CIteratorLocalBoneAnim() : m_Index(0), m_Reverse(false) {}
-		CIteratorLocalBoneAnim(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
-		CIteratorLocalBoneAnim& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
-		CSubPath operator*() { return SubPath_LocalBoneAnim(m_Index); }
-		bool operator==(const CIteratorLocalBoneAnim& Iter2) { return Iter2.m_Index == m_Index; }
-		bool operator!=(const CIteratorLocalBoneAnim& Iter2) { return Iter2.m_Index != m_Index; }
+		CIteratorBoneAnimation() : m_Index(0), m_Reverse(false) {}
+		CIteratorBoneAnimation(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
+		CIteratorBoneAnimation& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
+		CSubPath operator*() { return SubPath_BoneAnimation(m_Index); }
+		bool operator==(const CIteratorBoneAnimation& Iter2) { return Iter2.m_Index == m_Index; }
+		bool operator!=(const CIteratorBoneAnimation& Iter2) { return Iter2.m_Index != m_Index; }
 	};
 	
-	CIteratorLocalBoneAnim BeginLocalBoneAnim() const { return CIteratorLocalBoneAnim(0, false); }
-	CIteratorLocalBoneAnim EndLocalBoneAnim() const { return CIteratorLocalBoneAnim(m_LocalBoneAnim.size(), false); }
-	CIteratorLocalBoneAnim ReverseBeginLocalBoneAnim() const { return CIteratorLocalBoneAnim(m_LocalBoneAnim.size()-1, true); }
-	CIteratorLocalBoneAnim ReverseEndLocalBoneAnim() const { return CIteratorLocalBoneAnim(-1, true); }
-	
-	class CIteratorParentBoneAnim
-	{
-	protected:
-		int m_Index;
-		bool m_Reverse;
-	public:
-		CIteratorParentBoneAnim() : m_Index(0), m_Reverse(false) {}
-		CIteratorParentBoneAnim(int Index, bool Reverse) : m_Index(Index), m_Reverse(Reverse) {}
-		CIteratorParentBoneAnim& operator++() { if(m_Reverse) m_Index--; else m_Index++; return *this; }
-		CSubPath operator*() { return SubPath_ParentBoneAnim(m_Index); }
-		bool operator==(const CIteratorParentBoneAnim& Iter2) { return Iter2.m_Index == m_Index; }
-		bool operator!=(const CIteratorParentBoneAnim& Iter2) { return Iter2.m_Index != m_Index; }
-	};
-	
-	CIteratorParentBoneAnim BeginParentBoneAnim() const { return CIteratorParentBoneAnim(0, false); }
-	CIteratorParentBoneAnim EndParentBoneAnim() const { return CIteratorParentBoneAnim(m_ParentBoneAnim.size(), false); }
-	CIteratorParentBoneAnim ReverseBeginParentBoneAnim() const { return CIteratorParentBoneAnim(m_ParentBoneAnim.size()-1, true); }
-	CIteratorParentBoneAnim ReverseEndParentBoneAnim() const { return CIteratorParentBoneAnim(-1, true); }
+	CIteratorBoneAnimation BeginBoneAnimation() const { return CIteratorBoneAnimation(0, false); }
+	CIteratorBoneAnimation EndBoneAnimation() const { return CIteratorBoneAnimation(m_BoneAnimation.size(), false); }
+	CIteratorBoneAnimation ReverseBeginBoneAnimation() const { return CIteratorBoneAnimation(m_BoneAnimation.size()-1, true); }
+	CIteratorBoneAnimation ReverseEndBoneAnimation() const { return CIteratorBoneAnimation(-1, true); }
 	
 	class CIteratorLayerAnimation
 	{
@@ -191,17 +174,6 @@ public:
 		class CFrame
 		{
 		public:
-			class CTuaType_0_1_0
-			{
-			public:
-				CTuaVec2 m_Translation;
-				CTuaVec2 m_Scale;
-				tua_float m_Angle;
-				tua_int32 m_Alignment;
-				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType);
-				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType, CTuaType_0_1_0& TuaType);
-			};
-			
 			class CTuaType_0_2_0
 			{
 			public:
@@ -257,6 +229,17 @@ public:
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType, CTuaType_0_2_4& TuaType);
 			};
 			
+			class CTuaType_0_3_0
+			{
+			public:
+				CTuaVec2 m_Translation;
+				CTuaVec2 m_Scale;
+				tua_float m_Angle;
+				tua_int32 m_Alignment;
+				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType);
+				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType, CTuaType_0_3_0& TuaType);
+			};
+			
 		
 		private:
 			vec2 m_Translation;
@@ -306,18 +289,11 @@ public:
 		class CKeyFrame : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame
 		{
 		public:
-			class CTuaType_0_1_0 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_1_0
-			{
-			public:
-				tua_int32 m_Time;
-				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
-				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_1_0& TuaType);
-			};
-			
 			class CTuaType_0_2_0 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_0
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_2_0& TuaType);
 			};
@@ -325,7 +301,8 @@ public:
 			class CTuaType_0_2_1 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_1
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_2_1& TuaType);
 			};
@@ -333,7 +310,8 @@ public:
 			class CTuaType_0_2_2 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_2
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_2_2& TuaType);
 			};
@@ -341,7 +319,8 @@ public:
 			class CTuaType_0_2_3 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_3
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_2_3& TuaType);
 			};
@@ -349,36 +328,42 @@ public:
 			class CTuaType_0_2_4 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_4
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_2_4& TuaType);
 			};
 			
+			class CTuaType_0_3_0 : public CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_3_0
+			{
+			public:
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
+				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType);
+				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_3_0& TuaType);
+			};
+			
 		
 		private:
-			int m_Time;
+			int64 m_Time;
+			int m_GraphType;
 		
 		public:
+			CKeyFrame& operator=(const CFrame& Frame);
 			CKeyFrame();
-			inline int GetTime() const { return m_Time; }
+			inline int64 GetTime() const { return m_Time; }
 			
-			inline void SetTime(int Value) { m_Time = Value; }
+			inline int GetGraphType() const { return m_GraphType; }
+			
+			inline void SetTime(int64 Value) { m_Time = Value; }
+			
+			inline void SetGraphType(int Value) { m_GraphType = Value; }
 			
 			void AssetPathOperation(const CAssetPath::COperation& Operation)
 			{
 			}
 			
 		};
-		class CTuaType_0_1_0
-		{
-		public:
-			CTuaArray m_KeyFrame;
-			CSubPath::CTuaType m_BonePath;
-			tua_int32 m_CycleType;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -429,6 +414,16 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			CTuaArray m_KeyFrame;
+			CSubPath::CTuaType m_BonePath;
+			tua_int32 m_CycleType;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
 		std::vector<CBoneAnimation::CKeyFrame> m_KeyFrame;
@@ -436,10 +431,10 @@ public:
 		int m_CycleType;
 	
 	public:
-		float GetDuration() const;
-		int IntTimeToKeyFrame(int IntTime) const;
-		int TimeToKeyFrame(float Time) const;
-		bool GetFrame(float Time, CFrame& Frame) const;
+		int64 GetDuration() const;
+		int TimeToKeyFrame(int64 Time) const;
+		bool GetFrame(int64 Time, CFrame& Frame) const;
+		
 		CBoneAnimation();
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
 		
@@ -456,10 +451,73 @@ public:
 			}
 		}
 		
-		inline int GetKeyFrameTime(const CSubPath& SubPath) const
+		inline vec2 GetKeyFrameTranslation(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetTranslation();
+			else return 0.0f;
+		}
+		
+		inline float GetKeyFrameTranslationX(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetTranslationX();
+			else return 0.0f;
+		}
+		
+		inline float GetKeyFrameTranslationY(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetTranslationY();
+			else return 0.0f;
+		}
+		
+		inline vec2 GetKeyFrameScale(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetScale();
+			else return 0.0f;
+		}
+		
+		inline float GetKeyFrameScaleX(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetScaleX();
+			else return 0.0f;
+		}
+		
+		inline float GetKeyFrameScaleY(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetScaleY();
+			else return 0.0f;
+		}
+		
+		inline float GetKeyFrameAngle(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetAngle();
+			else return 0.0f;
+		}
+		
+		inline int GetKeyFrameAlignment(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetAlignment();
+			else return 0;
+		}
+		
+		inline int64 GetKeyFrameTime(const CSubPath& SubPath) const
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 				return m_KeyFrame[SubPath.GetId()].GetTime();
+			else return 0;
+		}
+		
+		inline int GetKeyFrameGraphType(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetGraphType();
 			else return 0;
 		}
 		
@@ -477,10 +535,64 @@ public:
 			}
 		}
 		
-		inline void SetKeyFrameTime(const CSubPath& SubPath, int Value)
+		inline void SetKeyFrameTranslation(const CSubPath& SubPath, vec2 Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetTranslation(Value);
+		}
+		
+		inline void SetKeyFrameTranslationX(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetTranslationX(Value);
+		}
+		
+		inline void SetKeyFrameTranslationY(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetTranslationY(Value);
+		}
+		
+		inline void SetKeyFrameScale(const CSubPath& SubPath, vec2 Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetScale(Value);
+		}
+		
+		inline void SetKeyFrameScaleX(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetScaleX(Value);
+		}
+		
+		inline void SetKeyFrameScaleY(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetScaleY(Value);
+		}
+		
+		inline void SetKeyFrameAngle(const CSubPath& SubPath, float Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetAngle(Value);
+		}
+		
+		inline void SetKeyFrameAlignment(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetAlignment(Value);
+		}
+		
+		inline void SetKeyFrameTime(const CSubPath& SubPath, int64 Value)
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 				m_KeyFrame[SubPath.GetId()].SetTime(Value);
+		}
+		
+		inline void SetKeyFrameGraphType(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetGraphType(Value);
 		}
 		
 		inline void SetBonePath(const CSubPath& Value) { m_BonePath = Value; }
@@ -521,15 +633,6 @@ public:
 		class CFrame
 		{
 		public:
-			class CTuaType_0_1_0
-			{
-			public:
-				tua_uint32 m_Color;
-				tua_int32 m_State;
-				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType);
-				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType, CTuaType_0_1_0& TuaType);
-			};
-			
 			class CTuaType_0_2_0
 			{
 			public:
@@ -575,6 +678,15 @@ public:
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType, CTuaType_0_2_4& TuaType);
 			};
 			
+			class CTuaType_0_3_0
+			{
+			public:
+				tua_uint32 m_Color;
+				tua_int32 m_State;
+				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType);
+				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType, CTuaType_0_3_0& TuaType);
+			};
+			
 		
 		private:
 			vec4 m_Color;
@@ -598,18 +710,11 @@ public:
 		class CKeyFrame : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame
 		{
 		public:
-			class CTuaType_0_1_0 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_1_0
-			{
-			public:
-				tua_int32 m_Time;
-				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
-				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_1_0& TuaType);
-			};
-			
 			class CTuaType_0_2_0 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_0
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_2_0& TuaType);
 			};
@@ -617,7 +722,8 @@ public:
 			class CTuaType_0_2_1 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_1
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_2_1& TuaType);
 			};
@@ -625,7 +731,8 @@ public:
 			class CTuaType_0_2_2 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_2
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_2_2& TuaType);
 			};
@@ -633,7 +740,8 @@ public:
 			class CTuaType_0_2_3 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_3
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_2_3& TuaType);
 			};
@@ -641,36 +749,42 @@ public:
 			class CTuaType_0_2_4 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_4
 			{
 			public:
-				tua_int32 m_Time;
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
 				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
 				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_2_4& TuaType);
 			};
 			
+			class CTuaType_0_3_0 : public CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_3_0
+			{
+			public:
+				tua_int64 m_Time;
+				tua_int32 m_GraphType;
+				static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType);
+				static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_3_0& TuaType);
+			};
+			
 		
 		private:
-			int m_Time;
+			int64 m_Time;
+			int m_GraphType;
 		
 		public:
+			CKeyFrame& operator=(const CFrame& Frame);
 			CKeyFrame();
-			inline int GetTime() const { return m_Time; }
+			inline int64 GetTime() const { return m_Time; }
 			
-			inline void SetTime(int Value) { m_Time = Value; }
+			inline int GetGraphType() const { return m_GraphType; }
+			
+			inline void SetTime(int64 Value) { m_Time = Value; }
+			
+			inline void SetGraphType(int Value) { m_GraphType = Value; }
 			
 			void AssetPathOperation(const CAssetPath::COperation& Operation)
 			{
 			}
 			
 		};
-		class CTuaType_0_1_0
-		{
-		public:
-			CTuaArray m_KeyFrame;
-			CSubPath::CTuaType m_LayerPath;
-			tua_int32 m_CycleType;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -721,6 +835,16 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			CTuaArray m_KeyFrame;
+			CSubPath::CTuaType m_LayerPath;
+			tua_int32 m_CycleType;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
 		std::vector<CLayerAnimation::CKeyFrame> m_KeyFrame;
@@ -728,10 +852,10 @@ public:
 		int m_CycleType;
 	
 	public:
-		float GetDuration() const;
-		int IntTimeToKeyFrame(int IntTime) const;
-		int TimeToKeyFrame(float Time) const;
-		bool GetFrame(float Time, CFrame& Frame) const;
+		int64 GetDuration() const;
+		int TimeToKeyFrame(int64 Time) const;
+		bool GetFrame(int64 Time, CFrame& Frame) const;
+		
 		CLayerAnimation();
 		inline int GetKeyFrameArraySize() const { return m_KeyFrame.size(); }
 		
@@ -748,10 +872,31 @@ public:
 			}
 		}
 		
-		inline int GetKeyFrameTime(const CSubPath& SubPath) const
+		inline vec4 GetKeyFrameColor(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetColor();
+			else return 1.0f;
+		}
+		
+		inline int GetKeyFrameState(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetState();
+			else return 0;
+		}
+		
+		inline int64 GetKeyFrameTime(const CSubPath& SubPath) const
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 				return m_KeyFrame[SubPath.GetId()].GetTime();
+			else return 0;
+		}
+		
+		inline int GetKeyFrameGraphType(const CSubPath& SubPath) const
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				return m_KeyFrame[SubPath.GetId()].GetGraphType();
 			else return 0;
 		}
 		
@@ -769,10 +914,28 @@ public:
 			}
 		}
 		
-		inline void SetKeyFrameTime(const CSubPath& SubPath, int Value)
+		inline void SetKeyFrameColor(const CSubPath& SubPath, vec4 Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetColor(Value);
+		}
+		
+		inline void SetKeyFrameState(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetState(Value);
+		}
+		
+		inline void SetKeyFrameTime(const CSubPath& SubPath, int64 Value)
 		{
 			if(SubPath.GetId() < m_KeyFrame.size())
 				m_KeyFrame[SubPath.GetId()].SetTime(Value);
+		}
+		
+		inline void SetKeyFrameGraphType(const CSubPath& SubPath, int Value)
+		{
+			if(SubPath.GetId() < m_KeyFrame.size())
+				m_KeyFrame[SubPath.GetId()].SetGraphType(Value);
 		}
 		
 		inline void SetLayerPath(const CSubPath& Value) { m_LayerPath = Value; }
@@ -807,23 +970,11 @@ public:
 		}
 		
 	};
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
-		CTuaArray m_LayerAnimation;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
+		CTuaArray m_BoneAnimation;
 		CTuaArray m_LayerAnimation;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonAnimation& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_2_0& TuaType);
@@ -833,8 +984,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
+		CTuaArray m_BoneAnimation;
 		CTuaArray m_LayerAnimation;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_SkeletonAnimation& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_2_1& TuaType);
@@ -844,8 +994,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
+		CTuaArray m_BoneAnimation;
 		CTuaArray m_LayerAnimation;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_SkeletonAnimation& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_2_2& TuaType);
@@ -855,8 +1004,7 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
+		CTuaArray m_BoneAnimation;
 		CTuaArray m_LayerAnimation;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonAnimation& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_2_3& TuaType);
@@ -866,24 +1014,34 @@ public:
 	{
 	public:
 		CAssetPath::CTuaType m_SkeletonPath;
-		CTuaArray m_LocalBoneAnim;
-		CTuaArray m_ParentBoneAnim;
+		CTuaArray m_BoneAnimation;
 		CTuaArray m_LayerAnimation;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonAnimation& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_2_4& TuaType);
 	};
 	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_SkeletonPath;
+		CTuaArray m_BoneAnimation;
+		CTuaArray m_LayerAnimation;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_3_0& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_SkeletonPath;
-	std::vector<CAsset_SkeletonAnimation::CBoneAnimation> m_LocalBoneAnim;
-	std::vector<CAsset_SkeletonAnimation::CBoneAnimation> m_ParentBoneAnim;
+	std::vector<CAsset_SkeletonAnimation::CBoneAnimation> m_BoneAnimation;
 	std::vector<CAsset_SkeletonAnimation::CLayerAnimation> m_LayerAnimation;
 
 public:
-	bool GetLocalBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const;
-	bool GetParentBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const;
-	bool GetLayerAnimFrame(int Id, float Time, CLayerAnimation::CFrame& Frame) const;
+	bool GetBoneAnimFrame(const CSubPath& SubPath, int64 Time, CBoneAnimation::CFrame& Frame) const;
+	bool GetLayerAnimFrame(const CSubPath& SubPath, int64 Time, CLayerAnimation::CFrame& Frame) const;
+	CSubPath FindBoneAnim(const CSubPath& BonePath) const;
+	CSubPath FindLayerAnim(const CSubPath& LayerPath) const;
+	
 	virtual ~CAsset_SkeletonAnimation() {}
 	
 	template<typename T>
@@ -908,137 +1066,133 @@ public:
 	
 	inline CAssetPath GetSkeletonPath() const { return m_SkeletonPath; }
 	
-	inline int GetLocalBoneAnimArraySize() const { return m_LocalBoneAnim.size(); }
+	inline int GetBoneAnimationArraySize() const { return m_BoneAnimation.size(); }
 	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation* GetLocalBoneAnimPtr() const { return &(m_LocalBoneAnim.front()); }
+	inline const CAsset_SkeletonAnimation::CBoneAnimation* GetBoneAnimationPtr() const { return &(m_BoneAnimation.front()); }
 	
-	inline const std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetLocalBoneAnimArray() const { return m_LocalBoneAnim; }
-	inline std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetLocalBoneAnimArray() { return m_LocalBoneAnim; }
+	inline const std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetBoneAnimationArray() const { return m_BoneAnimation; }
+	inline std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetBoneAnimationArray() { return m_BoneAnimation; }
 	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation& GetLocalBoneAnim(const CSubPath& SubPath) const
+	inline const CAsset_SkeletonAnimation::CBoneAnimation& GetBoneAnimation(const CSubPath& SubPath) const
 	{
-		assert(SubPath.GetId() < m_LocalBoneAnim.size());
+		assert(SubPath.GetId() < m_BoneAnimation.size());
 		{
-			return m_LocalBoneAnim[SubPath.GetId()];
+			return m_BoneAnimation[SubPath.GetId()];
 		}
 	}
 	
-	inline int GetLocalBoneAnimKeyFrameArraySize(const CSubPath& SubPath) const
+	inline int GetBoneAnimationKeyFrameArraySize(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArraySize();
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameArraySize();
 		else return 0;
 	}
 	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame* GetLocalBoneAnimKeyFramePtr(const CSubPath& SubPath) const
+	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame* GetBoneAnimationKeyFramePtr(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFramePtr();
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFramePtr();
 		else return NULL;
 	}
 	
-	inline const std::vector<CBoneAnimation::CKeyFrame>& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath) const
+	inline const std::vector<CBoneAnimation::CKeyFrame>& GetBoneAnimationKeyFrameArray(const CSubPath& SubPath) const
 	{
-		assert(SubPath.GetId() < m_LocalBoneAnim.size());
-		return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
+		assert(SubPath.GetId() < m_BoneAnimation.size());
+		return m_BoneAnimation[SubPath.GetId()].GetKeyFrameArray();
 	}
-	inline std::vector<CBoneAnimation::CKeyFrame>& GetLocalBoneAnimKeyFrameArray(const CSubPath& SubPath)
+	inline std::vector<CBoneAnimation::CKeyFrame>& GetBoneAnimationKeyFrameArray(const CSubPath& SubPath)
 	{
-		assert(SubPath.GetId() < m_LocalBoneAnim.size());
-		return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameArray();
-	}
-	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetLocalBoneAnimKeyFrame(const CSubPath& SubPath) const
-	{
-		assert(SubPath.GetId() < m_LocalBoneAnim.size());
-		return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
+		assert(SubPath.GetId() < m_BoneAnimation.size());
+		return m_BoneAnimation[SubPath.GetId()].GetKeyFrameArray();
 	}
 	
-	inline int GetLocalBoneAnimKeyFrameTime(const CSubPath& SubPath) const
+	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetBoneAnimationKeyFrame(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			return m_LocalBoneAnim[SubPath.GetId()].GetKeyFrameTime(SubPath.PopId());
+		assert(SubPath.GetId() < m_BoneAnimation.size());
+		return m_BoneAnimation[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
+	}
+	
+	inline vec2 GetBoneAnimationKeyFrameTranslation(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameTranslation(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetBoneAnimationKeyFrameTranslationX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameTranslationX(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetBoneAnimationKeyFrameTranslationY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameTranslationY(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline vec2 GetBoneAnimationKeyFrameScale(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameScale(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetBoneAnimationKeyFrameScaleX(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameScaleX(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetBoneAnimationKeyFrameScaleY(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameScaleY(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline float GetBoneAnimationKeyFrameAngle(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameAngle(SubPath.PopId());
+		else return 0.0f;
+	}
+	
+	inline int GetBoneAnimationKeyFrameAlignment(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameAlignment(SubPath.PopId());
 		else return 0;
 	}
 	
-	inline CSubPath GetLocalBoneAnimBonePath(const CSubPath& SubPath) const
+	inline int64 GetBoneAnimationKeyFrameTime(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			return m_LocalBoneAnim[SubPath.GetId()].GetBonePath();
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameTime(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int GetBoneAnimationKeyFrameGraphType(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetKeyFrameGraphType(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline CSubPath GetBoneAnimationBonePath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetBonePath();
 		else return CSubPath::Null();
 	}
 	
-	inline int GetLocalBoneAnimCycleType(const CSubPath& SubPath) const
+	inline int GetBoneAnimationCycleType(const CSubPath& SubPath) const
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			return m_LocalBoneAnim[SubPath.GetId()].GetCycleType();
-		else return 0;
-	}
-	
-	inline int GetParentBoneAnimArraySize() const { return m_ParentBoneAnim.size(); }
-	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation* GetParentBoneAnimPtr() const { return &(m_ParentBoneAnim.front()); }
-	
-	inline const std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetParentBoneAnimArray() const { return m_ParentBoneAnim; }
-	inline std::vector<CAsset_SkeletonAnimation::CBoneAnimation>& GetParentBoneAnimArray() { return m_ParentBoneAnim; }
-	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation& GetParentBoneAnim(const CSubPath& SubPath) const
-	{
-		assert(SubPath.GetId() < m_ParentBoneAnim.size());
-		{
-			return m_ParentBoneAnim[SubPath.GetId()];
-		}
-	}
-	
-	inline int GetParentBoneAnimKeyFrameArraySize(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArraySize();
-		else return 0;
-	}
-	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame* GetParentBoneAnimKeyFramePtr(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFramePtr();
-		else return NULL;
-	}
-	
-	inline const std::vector<CBoneAnimation::CKeyFrame>& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath) const
-	{
-		assert(SubPath.GetId() < m_ParentBoneAnim.size());
-		return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
-	}
-	inline std::vector<CBoneAnimation::CKeyFrame>& GetParentBoneAnimKeyFrameArray(const CSubPath& SubPath)
-	{
-		assert(SubPath.GetId() < m_ParentBoneAnim.size());
-		return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameArray();
-	}
-	
-	inline const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& GetParentBoneAnimKeyFrame(const CSubPath& SubPath) const
-	{
-		assert(SubPath.GetId() < m_ParentBoneAnim.size());
-		return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
-	}
-	
-	inline int GetParentBoneAnimKeyFrameTime(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			return m_ParentBoneAnim[SubPath.GetId()].GetKeyFrameTime(SubPath.PopId());
-		else return 0;
-	}
-	
-	inline CSubPath GetParentBoneAnimBonePath(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			return m_ParentBoneAnim[SubPath.GetId()].GetBonePath();
-		else return CSubPath::Null();
-	}
-	
-	inline int GetParentBoneAnimCycleType(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			return m_ParentBoneAnim[SubPath.GetId()].GetCycleType();
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			return m_BoneAnimation[SubPath.GetId()].GetCycleType();
 		else return 0;
 	}
 	
@@ -1088,10 +1242,31 @@ public:
 		return m_LayerAnimation[SubPath.GetId()].GetKeyFrame(SubPath.PopId());
 	}
 	
-	inline int GetLayerAnimationKeyFrameTime(const CSubPath& SubPath) const
+	inline vec4 GetLayerAnimationKeyFrameColor(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameColor(SubPath.PopId());
+		else return 1.0f;
+	}
+	
+	inline int GetLayerAnimationKeyFrameState(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameState(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int64 GetLayerAnimationKeyFrameTime(const CSubPath& SubPath) const
 	{
 		if(SubPath.GetId() < m_LayerAnimation.size())
 			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameTime(SubPath.PopId());
+		else return 0;
+	}
+	
+	inline int GetLayerAnimationKeyFrameGraphType(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			return m_LayerAnimation[SubPath.GetId()].GetKeyFrameGraphType(SubPath.PopId());
 		else return 0;
 	}
 	
@@ -1111,84 +1286,98 @@ public:
 	
 	inline void SetSkeletonPath(const CAssetPath& Value) { m_SkeletonPath = Value; }
 	
-	inline void SetLocalBoneAnimArraySize(int Value) { m_LocalBoneAnim.resize(Value); }
+	inline void SetBoneAnimationArraySize(int Value) { m_BoneAnimation.resize(Value); }
 	
-	inline void SetLocalBoneAnim(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation& Value)
+	inline void SetBoneAnimation(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation& Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
+		if(SubPath.GetId() < m_BoneAnimation.size())
 		{
-			m_LocalBoneAnim[SubPath.GetId()] = Value;
+			m_BoneAnimation[SubPath.GetId()] = Value;
 		}
 	}
 	
-	inline void SetLocalBoneAnimKeyFrameArraySize(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameArraySize(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			m_LocalBoneAnim[SubPath.GetId()].SetKeyFrameArraySize(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameArraySize(Value);
 	}
 	
-	inline void SetLocalBoneAnimKeyFrame(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Value)
+	inline void SetBoneAnimationKeyFrame(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			m_LocalBoneAnim[SubPath.GetId()].SetKeyFrame(SubPath.PopId(), Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrame(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLocalBoneAnimKeyFrameTime(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameTranslation(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			m_LocalBoneAnim[SubPath.GetId()].SetKeyFrameTime(SubPath.PopId(), Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameTranslation(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLocalBoneAnimBonePath(const CSubPath& SubPath, const CSubPath& Value)
+	inline void SetBoneAnimationKeyFrameTranslationX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			m_LocalBoneAnim[SubPath.GetId()].SetBonePath(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameTranslationX(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLocalBoneAnimCycleType(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameTranslationY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() < m_LocalBoneAnim.size())
-			m_LocalBoneAnim[SubPath.GetId()].SetCycleType(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameTranslationY(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimArraySize(int Value) { m_ParentBoneAnim.resize(Value); }
-	
-	inline void SetParentBoneAnim(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation& Value)
+	inline void SetBoneAnimationKeyFrameScale(const CSubPath& SubPath, vec2 Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-		{
-			m_ParentBoneAnim[SubPath.GetId()] = Value;
-		}
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameScale(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimKeyFrameArraySize(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameScaleX(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			m_ParentBoneAnim[SubPath.GetId()].SetKeyFrameArraySize(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameScaleX(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimKeyFrame(const CSubPath& SubPath, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& Value)
+	inline void SetBoneAnimationKeyFrameScaleY(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			m_ParentBoneAnim[SubPath.GetId()].SetKeyFrame(SubPath.PopId(), Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameScaleY(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimKeyFrameTime(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameAngle(const CSubPath& SubPath, float Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			m_ParentBoneAnim[SubPath.GetId()].SetKeyFrameTime(SubPath.PopId(), Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameAngle(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimBonePath(const CSubPath& SubPath, const CSubPath& Value)
+	inline void SetBoneAnimationKeyFrameAlignment(const CSubPath& SubPath, int Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			m_ParentBoneAnim[SubPath.GetId()].SetBonePath(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameAlignment(SubPath.PopId(), Value);
 	}
 	
-	inline void SetParentBoneAnimCycleType(const CSubPath& SubPath, int Value)
+	inline void SetBoneAnimationKeyFrameTime(const CSubPath& SubPath, int64 Value)
 	{
-		if(SubPath.GetId() < m_ParentBoneAnim.size())
-			m_ParentBoneAnim[SubPath.GetId()].SetCycleType(Value);
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameTime(SubPath.PopId(), Value);
+	}
+	
+	inline void SetBoneAnimationKeyFrameGraphType(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetKeyFrameGraphType(SubPath.PopId(), Value);
+	}
+	
+	inline void SetBoneAnimationBonePath(const CSubPath& SubPath, const CSubPath& Value)
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetBonePath(Value);
+	}
+	
+	inline void SetBoneAnimationCycleType(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_BoneAnimation.size())
+			m_BoneAnimation[SubPath.GetId()].SetCycleType(Value);
 	}
 	
 	inline void SetLayerAnimationArraySize(int Value) { m_LayerAnimation.resize(Value); }
@@ -1213,10 +1402,28 @@ public:
 			m_LayerAnimation[SubPath.GetId()].SetKeyFrame(SubPath.PopId(), Value);
 	}
 	
-	inline void SetLayerAnimationKeyFrameTime(const CSubPath& SubPath, int Value)
+	inline void SetLayerAnimationKeyFrameColor(const CSubPath& SubPath, vec4 Value)
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			m_LayerAnimation[SubPath.GetId()].SetKeyFrameColor(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerAnimationKeyFrameState(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			m_LayerAnimation[SubPath.GetId()].SetKeyFrameState(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerAnimationKeyFrameTime(const CSubPath& SubPath, int64 Value)
 	{
 		if(SubPath.GetId() < m_LayerAnimation.size())
 			m_LayerAnimation[SubPath.GetId()].SetKeyFrameTime(SubPath.PopId(), Value);
+	}
+	
+	inline void SetLayerAnimationKeyFrameGraphType(const CSubPath& SubPath, int Value)
+	{
+		if(SubPath.GetId() < m_LayerAnimation.size())
+			m_LayerAnimation[SubPath.GetId()].SetKeyFrameGraphType(SubPath.PopId(), Value);
 	}
 	
 	inline void SetLayerAnimationLayerPath(const CSubPath& SubPath, const CSubPath& Value)
@@ -1231,23 +1438,14 @@ public:
 			m_LayerAnimation[SubPath.GetId()].SetCycleType(Value);
 	}
 	
-	inline int AddLocalBoneAnim()
+	inline int AddBoneAnimation()
 	{
-		int Id = m_LocalBoneAnim.size();
-		m_LocalBoneAnim.emplace_back();
+		int Id = m_BoneAnimation.size();
+		m_BoneAnimation.emplace_back();
 		return Id;
 	}
 	
-	inline int AddLocalBoneAnimKeyFrame(const CSubPath& SubPath) { return m_LocalBoneAnim[SubPath.GetId()].AddKeyFrame(); }
-	
-	inline int AddParentBoneAnim()
-	{
-		int Id = m_ParentBoneAnim.size();
-		m_ParentBoneAnim.emplace_back();
-		return Id;
-	}
-	
-	inline int AddParentBoneAnimKeyFrame(const CSubPath& SubPath) { return m_ParentBoneAnim[SubPath.GetId()].AddKeyFrame(); }
+	inline int AddBoneAnimationKeyFrame(const CSubPath& SubPath) { return m_BoneAnimation[SubPath.GetId()].AddKeyFrame(); }
 	
 	inline int AddLayerAnimation()
 	{
@@ -1258,53 +1456,32 @@ public:
 	
 	inline int AddLayerAnimationKeyFrame(const CSubPath& SubPath) { return m_LayerAnimation[SubPath.GetId()].AddKeyFrame(); }
 	
-	inline void AddAtLocalBoneAnim(int Index) { m_LocalBoneAnim.insert(m_LocalBoneAnim.begin() + Index, CAsset_SkeletonAnimation::CBoneAnimation()); }
+	inline void AddAtBoneAnimation(int Index) { m_BoneAnimation.insert(m_BoneAnimation.begin() + Index, CAsset_SkeletonAnimation::CBoneAnimation()); }
 	
-	inline void AddAtLocalBoneAnimKeyFrame(const CSubPath& SubPath, int Index) { m_LocalBoneAnim[SubPath.GetId()].AddAtKeyFrame(Index); }
-	
-	inline void AddAtParentBoneAnim(int Index) { m_ParentBoneAnim.insert(m_ParentBoneAnim.begin() + Index, CAsset_SkeletonAnimation::CBoneAnimation()); }
-	
-	inline void AddAtParentBoneAnimKeyFrame(const CSubPath& SubPath, int Index) { m_ParentBoneAnim[SubPath.GetId()].AddAtKeyFrame(Index); }
+	inline void AddAtBoneAnimationKeyFrame(const CSubPath& SubPath, int Index) { m_BoneAnimation[SubPath.GetId()].AddAtKeyFrame(Index); }
 	
 	inline void AddAtLayerAnimation(int Index) { m_LayerAnimation.insert(m_LayerAnimation.begin() + Index, CAsset_SkeletonAnimation::CLayerAnimation()); }
 	
 	inline void AddAtLayerAnimationKeyFrame(const CSubPath& SubPath, int Index) { m_LayerAnimation[SubPath.GetId()].AddAtKeyFrame(Index); }
 	
-	inline void DeleteLocalBoneAnim(const CSubPath& SubPath) { m_LocalBoneAnim.erase(m_LocalBoneAnim.begin() + SubPath.GetId()); }
+	inline void DeleteBoneAnimation(const CSubPath& SubPath) { m_BoneAnimation.erase(m_BoneAnimation.begin() + SubPath.GetId()); }
 	
-	inline void DeleteLocalBoneAnimKeyFrame(const CSubPath& SubPath) { m_LocalBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
-	
-	inline void DeleteParentBoneAnim(const CSubPath& SubPath) { m_ParentBoneAnim.erase(m_ParentBoneAnim.begin() + SubPath.GetId()); }
-	
-	inline void DeleteParentBoneAnimKeyFrame(const CSubPath& SubPath) { m_ParentBoneAnim[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
+	inline void DeleteBoneAnimationKeyFrame(const CSubPath& SubPath) { m_BoneAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
 	inline void DeleteLayerAnimation(const CSubPath& SubPath) { m_LayerAnimation.erase(m_LayerAnimation.begin() + SubPath.GetId()); }
 	
 	inline void DeleteLayerAnimationKeyFrame(const CSubPath& SubPath) { m_LayerAnimation[SubPath.GetId()].DeleteKeyFrame(SubPath.PopId()); }
 	
-	inline void RelMoveLocalBoneAnim(CSubPath& SubPath, int RelMove)
+	inline void RelMoveBoneAnimation(CSubPath& SubPath, int RelMove)
 	{
-		int NewId = relative_move(m_LocalBoneAnim, SubPath.GetId(), RelMove);
+		int NewId = relative_move(m_BoneAnimation, SubPath.GetId(), RelMove);
 		SubPath.SetId(NewId);
 	}
 	
-	inline void RelMoveLocalBoneAnimKeyFrame(CSubPath& SubPath, int RelMove)
+	inline void RelMoveBoneAnimationKeyFrame(CSubPath& SubPath, int RelMove)
 	{
 		CSubPath ChildSubPath = SubPath.PopId();
-		m_LocalBoneAnim[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
-		SubPath.SetId2(ChildSubPath.GetId());
-	}
-	
-	inline void RelMoveParentBoneAnim(CSubPath& SubPath, int RelMove)
-	{
-		int NewId = relative_move(m_ParentBoneAnim, SubPath.GetId(), RelMove);
-		SubPath.SetId(NewId);
-	}
-	
-	inline void RelMoveParentBoneAnimKeyFrame(CSubPath& SubPath, int RelMove)
-	{
-		CSubPath ChildSubPath = SubPath.PopId();
-		m_ParentBoneAnim[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
+		m_BoneAnimation[SubPath.GetId()].RelMoveKeyFrame(ChildSubPath, RelMove);
 		SubPath.SetId2(ChildSubPath.GetId());
 	}
 	
@@ -1321,13 +1498,9 @@ public:
 		SubPath.SetId2(ChildSubPath.GetId());
 	}
 	
-	inline bool IsValidLocalBoneAnim(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LocalBoneAnim.size()); }
+	inline bool IsValidBoneAnimation(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_BoneAnimation.size()); }
 	
-	inline bool IsValidLocalBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LocalBoneAnim.size() && m_LocalBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
-	
-	inline bool IsValidParentBoneAnim(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ParentBoneAnim.size()); }
-	
-	inline bool IsValidParentBoneAnimKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_ParentBoneAnim.size() && m_ParentBoneAnim[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
+	inline bool IsValidBoneAnimationKeyFrame(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_BoneAnimation.size() && m_BoneAnimation[SubPath.GetId()].IsValidKeyFrame(SubPath.PopId())); }
 	
 	inline bool IsValidLayerAnimation(const CSubPath& SubPath) const { return (SubPath.IsNotNull() && SubPath.GetId() < m_LayerAnimation.size()); }
 	
@@ -1336,13 +1509,9 @@ public:
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
 		Operation.Apply(m_SkeletonPath);
-		for(unsigned int i=0; i<m_LocalBoneAnim.size(); i++)
+		for(unsigned int i=0; i<m_BoneAnimation.size(); i++)
 		{
-			m_LocalBoneAnim[i].AssetPathOperation(Operation);
-		}
-		for(unsigned int i=0; i<m_ParentBoneAnim.size(); i++)
-		{
-			m_ParentBoneAnim[i].AssetPathOperation(Operation);
+			m_BoneAnimation[i].AssetPathOperation(Operation);
 		}
 		for(unsigned int i=0; i<m_LayerAnimation.size(); i++)
 		{
@@ -1354,6 +1523,14 @@ public:
 
 template<> int CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> int64 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, int64 Value);
+template<> float CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, float Value);
+template<> vec2 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
+template<> vec4 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
+template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
 template<> CAssetPath CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
 template<> bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
 template<> CSubPath CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, CSubPath DefaultValue) const;

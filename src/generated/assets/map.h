@@ -159,17 +159,6 @@ public:
 	CIteratorEntityLayer ReverseBeginEntityLayer() const { return CIteratorEntityLayer(m_EntityLayer.size()-1, true); }
 	CIteratorEntityLayer ReverseEndEntityLayer() const { return CIteratorEntityLayer(-1, true); }
 	
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CTuaArray m_BgGroup;
-		CTuaArray m_FgGroup;
-		CTuaArray m_ZoneLayer;
-		CTuaArray m_EntityLayer;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Map& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -243,6 +232,21 @@ public:
 		tua_uint8 m_ShowZones;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_Map& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CTuaArray m_BgGroup;
+		CTuaArray m_FgGroup;
+		CTuaArray m_ZoneLayer;
+		CTuaArray m_EntityLayer;
+		CTuaVec2 m_CameraPosition;
+		tua_float m_CameraZoom;
+		tua_uint8 m_ShowEntities;
+		tua_uint8 m_ShowZones;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_Map& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

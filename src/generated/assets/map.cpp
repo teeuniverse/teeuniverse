@@ -40,99 +40,6 @@ CAsset_Map::CAsset_Map()
 	m_ShowZones = true;
 }
 
-void CAsset_Map::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Map& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	{
-		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BgGroup.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BgGroup.m_Size);
-		SysType.m_BgGroup.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			pLoadingContext->ReadAssetPath(pData[i], SysType.m_BgGroup[i]);
-		}
-	}
-	
-	{
-		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_FgGroup.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_FgGroup.m_Size);
-		SysType.m_FgGroup.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			pLoadingContext->ReadAssetPath(pData[i], SysType.m_FgGroup[i]);
-		}
-	}
-	
-	{
-		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ZoneLayer.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ZoneLayer.m_Size);
-		SysType.m_ZoneLayer.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			pLoadingContext->ReadAssetPath(pData[i], SysType.m_ZoneLayer[i]);
-		}
-	}
-	
-	{
-		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_EntityLayer.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_EntityLayer.m_Size);
-		SysType.m_EntityLayer.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			pLoadingContext->ReadAssetPath(pData[i], SysType.m_EntityLayer[i]);
-		}
-	}
-	
-}
-
-
-void CAsset_Map::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	{
-		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
-		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
-		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
-		{
-			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
-		}
-		TuaType.m_BgGroup.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_BgGroup.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
-		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
-		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
-		{
-			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
-		}
-		TuaType.m_FgGroup.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_FgGroup.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
-		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
-		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
-		{
-			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
-		}
-		TuaType.m_ZoneLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_ZoneLayer.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
-		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
-		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
-		{
-			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
-		}
-		TuaType.m_EntityLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_EntityLayer.size());
-		delete[] pData;
-	}
-}
-
 void CAsset_Map::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Map& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -600,6 +507,109 @@ void CAsset_Map::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingContext, c
 void CAsset_Map::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_2_4& TuaType)
 {
 	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	{
+		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_BgGroup.size()];
+		for(unsigned int i=0; i<SysType.m_BgGroup.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_BgGroup[i], pData[i]);
+		}
+		TuaType.m_BgGroup.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_BgGroup.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_FgGroup.m_Size = SysType.m_FgGroup.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_FgGroup.size()];
+		for(unsigned int i=0; i<SysType.m_FgGroup.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_FgGroup[i], pData[i]);
+		}
+		TuaType.m_FgGroup.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_FgGroup.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_ZoneLayer.m_Size = SysType.m_ZoneLayer.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_ZoneLayer.size()];
+		for(unsigned int i=0; i<SysType.m_ZoneLayer.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_ZoneLayer[i], pData[i]);
+		}
+		TuaType.m_ZoneLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_ZoneLayer.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_EntityLayer.m_Size = SysType.m_EntityLayer.size();
+		CAssetPath::CTuaType* pData = new CAssetPath::CTuaType[SysType.m_EntityLayer.size()];
+		for(unsigned int i=0; i<SysType.m_EntityLayer.size(); i++)
+		{
+			pLoadingContext->WriteAssetPath(SysType.m_EntityLayer[i], pData[i]);
+		}
+		TuaType.m_EntityLayer.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAssetPath::CTuaType)*SysType.m_EntityLayer.size());
+		delete[] pData;
+	}
+	TuaType.m_CameraPosition.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraPosition.x);
+	TuaType.m_CameraPosition.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraPosition.y);
+	TuaType.m_CameraZoom = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CameraZoom);
+	TuaType.m_ShowEntities = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowEntities);
+	TuaType.m_ShowZones = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_ShowZones);
+}
+
+void CAsset_Map::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_Map& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BgGroup.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BgGroup.m_Size);
+		SysType.m_BgGroup.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_BgGroup[i]);
+		}
+	}
+	
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_FgGroup.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_FgGroup.m_Size);
+		SysType.m_FgGroup.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_FgGroup[i]);
+		}
+	}
+	
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ZoneLayer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ZoneLayer.m_Size);
+		SysType.m_ZoneLayer.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_ZoneLayer[i]);
+		}
+	}
+	
+	{
+		const CAssetPath::CTuaType* pData = (const CAssetPath::CTuaType*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_EntityLayer.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_EntityLayer.m_Size);
+		SysType.m_EntityLayer.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			pLoadingContext->ReadAssetPath(pData[i], SysType.m_EntityLayer[i]);
+		}
+	}
+	
+	SysType.m_CameraPosition.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraPosition.m_X);
+	SysType.m_CameraPosition.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraPosition.m_Y);
+	SysType.m_CameraZoom = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CameraZoom);
+	SysType.m_ShowEntities = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowEntities);
+	SysType.m_ShowZones = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_ShowZones);
+}
+
+
+void CAsset_Map::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_Map& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
 
 	{
 		TuaType.m_BgGroup.m_Size = SysType.m_BgGroup.size();

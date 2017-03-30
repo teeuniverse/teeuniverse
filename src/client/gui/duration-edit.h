@@ -15,33 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#ifndef __SHARED_SYSTEM_TIME__
-#define __SHARED_SYSTEM_TIME__
 
-#include <chrono>
+#ifndef __CLIENT_GUI_DURATIONEDIT__
+#define __CLIENT_GUI_DURATIONEDIT__
 
-#include "types.h"
-
-typedef std::chrono::system_clock CClock;
-typedef CClock::duration CTimeDiff;
-typedef std::chrono::time_point<CClock, CTimeDiff> CTimePoint;
-
-inline CTimePoint GetCurrentTimePoint()
+#include "text-edit.h"
+	
+namespace gui
 {
-	return CClock::now();
-}
 
-inline CTimeDiff GetTimePointDiff(const CTimePoint& a, const CTimePoint& b)
+class CAbstractDurationEdit : public CAbstractTextEdit
 {
-	return b-a;
-}
+protected:
+	int64 m_Value;
+	bool m_Percent;
+	
+	virtual void SaveFromTextBuffer();
+	virtual void CopyToTextBuffer();
+	
+	virtual int64 GetValue() const = 0;
+	virtual void SetValue(int64 Value) = 0;
+	
+public:
+	CAbstractDurationEdit(class CGui *pConfig);
+};
 
-inline int64 GetTimeMsDiff(const CTimePoint& a, const CTimePoint& b)
-{
-	return std::chrono::duration_cast<std::chrono::milliseconds>(b-a).count();
 }
 
 #endif
-
-

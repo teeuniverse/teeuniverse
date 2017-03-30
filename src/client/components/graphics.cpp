@@ -911,6 +911,9 @@ bool CGraphics::Init()
 		}
 
 	m_InvalidTexture = LoadTextureRaw(32,32,1,1,CImageInfo::FORMAT_RGBA,aNullTextureData,CImageInfo::FORMAT_RGBA,TEXLOAD_NORESAMPLE|TEXLOAD_MULTI_DIMENSION);
+	
+	m_TimeStart = GetCurrentTimePoint();
+	
 	return true;
 }
 
@@ -1008,6 +1011,11 @@ void CGraphics::Shutdown()
 	// delete the command buffers
 	for(int i = 0; i < NUM_CMDBUFFERS; i++)
 		delete m_apCommandBuffers[i];
+}
+
+int64 CGraphics::GetFrameTime()
+{
+	return GetTimeMsDiff(m_TimeStart, GetCurrentTimePoint());
 }
 
 int CGraphics::GetNumScreens() const

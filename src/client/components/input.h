@@ -108,8 +108,8 @@ private:
 	int m_WantedCursor;
 	int m_CurrentCursor;
 	
-	int64 m_LastRelease;
-	int64 m_ReleaseDelta;
+	CTimePoint m_LastRelease;
+	CTimeDiff m_ReleaseDelta;
 
 	void AddEvent(char *pText, int Key, int Flags);
 

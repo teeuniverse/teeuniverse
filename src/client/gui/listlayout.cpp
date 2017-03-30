@@ -71,7 +71,7 @@ void CAbstractListLayout::Update(bool ParentEnabled)
 }
 	
 void CAbstractListLayout::Render()
-{	
+{
 	//Background
 	const CAsset_GuiBoxStyle* pBoxStyle = AssetsManager()->GetAsset<CAsset_GuiBoxStyle>(m_BoxStylePath);
 	if(pBoxStyle)

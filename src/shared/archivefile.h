@@ -73,10 +73,12 @@
  */
 
 typedef int32 tua_int32;
+typedef int64 tua_int64;
 typedef uint8 tua_uint8;
 typedef uint16 tua_uint16;
 typedef uint32 tua_uint32;
 typedef float tua_float;
+typedef double tua_double;
 
 typedef uint32 tua_stringid;
 typedef uint32 tua_dataid;
@@ -202,7 +204,9 @@ public:
 	TUA_READWRITE(uint16, tua_uint16, UInt16)
 	TUA_READWRITE(uint32, tua_uint32, UInt32)
 	TUA_READWRITE(int32, tua_int32, Int32)
+	TUA_READWRITE(int32, tua_int64, Int64)
 	TUA_READWRITE(float, tua_float, Float) //TODO: Make sure that IEEE 754 is used to store float
+	TUA_READWRITE(double, tua_double, Double) //TODO: Make sure that IEEE 754 is used to store float
 	
 	TUA_READWRITE(uint32, tua_uint32, DataId)
 	TUA_READWRITE(uint32, tua_uint32, StringId)

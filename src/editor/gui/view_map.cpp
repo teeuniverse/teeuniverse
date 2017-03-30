@@ -553,8 +553,7 @@ void CViewMap::RenderView()
 	vec2 CameraPosition = AssetsManager()->GetAssetValue<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, 0.0f);
 	float CameraZoom = GetCameraZoom();
 	
-	MapRenderer()->SetTime(0.0f);
-	MapRenderer()->SetLocalTime((double)time_get()/(double)time_freq());
+	MapRenderer()->SetTime(AssetsEditor()->GetTime());
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 	MapRenderer()->SetCamera(CameraPosition, CameraZoom);
 	
@@ -773,7 +772,7 @@ void CViewMap::OnButtonClick(int Button)
 			CameraPos = MouseMapPos + (CameraPos - MouseMapPos)/1.1f;
 			AssetsManager()->SetAssetValue_Hard<vec2>(MapPath, CSubPath::Null(), CAsset_Map::CAMERAPOSITION, CameraPos);
 		}
-		if(Button == KEY_MOUSE_WHEEL_DOWN)
+		else if(Button == KEY_MOUSE_WHEEL_DOWN)
 		{
 			CameraZoom /= 1.1f;
 			SetCameraZoom(CameraZoom);
@@ -815,8 +814,8 @@ void CViewMap::OnMouseMove()
 		vec2 MapPos = MapRenderer()->ScreenPosToMapPos(vec2(MousePos.x, MousePos.y));
 		
 		CLocalizableString LString(_("Map position: ({float:XCoord}   {float:YCoord})"));
-		LString.AddFloat("XCoord", MapPos.x);
-		LString.AddFloat("YCoord", MapPos.y);
+		LString.AddDouble("XCoord", MapPos.x);
+		LString.AddDouble("YCoord", MapPos.y);
 		AssetsEditor()->SetCoordinates(LString);
 	}
 	

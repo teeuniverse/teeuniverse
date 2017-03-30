@@ -57,18 +57,6 @@ public:
 		IMAGERPATH,
 	};
 	
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		tua_int32 m_Flags;
-		tua_uint32 m_BorderColor;
-		CAssetPath::CTuaType m_ImageLPath;
-		CAssetPath::CTuaType m_ImageMPath;
-		CAssetPath::CTuaType m_ImageRPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiLineStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -127,6 +115,18 @@ public:
 		CAssetPath::CTuaType m_ImageRPath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiLineStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		tua_int32 m_Flags;
+		tua_uint32 m_BorderColor;
+		CAssetPath::CTuaType m_ImageLPath;
+		CAssetPath::CTuaType m_ImageMPath;
+		CAssetPath::CTuaType m_ImageRPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiLineStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiLineStyle& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

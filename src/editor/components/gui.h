@@ -54,6 +54,14 @@ private:
 	CAssetPath m_EditedAssetPath;
 	std::vector<CSubPath> m_EditedSubPathes;
 	
+	//System time
+	CTimePoint m_TimeLast;
+	
+	//Editor time
+	bool m_TimePaused;
+	int64 m_Time;
+	float m_TimeSpeed;
+	
 public:
 	class CAssetsTree* m_pAssetsTree;
 	class CPackagesTree* m_pPackagesTree;
@@ -95,6 +103,7 @@ public:
 	CAssetPath m_Path_Box_PanelHeader;
 	CAssetPath m_Path_Box_SubList;
 	CAssetPath m_Path_Box_Statusbar;
+	CAssetPath m_Path_Box_FrameList;
 	
 	CAssetPath m_Path_Label_Text;
 	CAssetPath m_Path_Label_Group;
@@ -133,6 +142,12 @@ public:
 	CAssetPath m_Path_Sprite_IconAsset;
 	CAssetPath m_Path_Sprite_IconLoad;
 	CAssetPath m_Path_Sprite_IconSave;
+	CAssetPath m_Path_Sprite_IconFirstFrame;
+	CAssetPath m_Path_Sprite_IconPrevFrame;
+	CAssetPath m_Path_Sprite_IconPlay;
+	CAssetPath m_Path_Sprite_IconPause;
+	CAssetPath m_Path_Sprite_IconNextFrame;
+	CAssetPath m_Path_Sprite_IconLastFrame;
 	CAssetPath m_Path_Sprite_IconNewAsset;
 	CAssetPath m_Path_Sprite_IconFolder;
 	CAssetPath m_Path_Sprite_IconImage;
@@ -225,6 +240,20 @@ public:
 	CAssetPath m_Path_Sprite_IconLineShow;
 	CAssetPath m_Path_Sprite_IconDuplicate;
 	CAssetPath m_Path_Sprite_IconScript;
+	CAssetPath m_Path_Sprite_IconCurveFree;
+	CAssetPath m_Path_Sprite_IconCurveStepStart;
+	CAssetPath m_Path_Sprite_IconCurveStepEnd;
+	CAssetPath m_Path_Sprite_IconCurveStepMiddle;
+	CAssetPath m_Path_Sprite_IconCurveLinear;
+	CAssetPath m_Path_Sprite_IconCurveIncr;
+	CAssetPath m_Path_Sprite_IconCurveDecr;
+	CAssetPath m_Path_Sprite_IconCurveSmooth;
+	CAssetPath m_Path_Sprite_IconBone;
+	CAssetPath m_Path_Sprite_IconTime;
+	CAssetPath m_Path_Sprite_IconRotate;
+	CAssetPath m_Path_Sprite_IconTranslate;
+	CAssetPath m_Path_Sprite_IconScale;
+	CAssetPath m_Path_Sprite_IconColor;
 	
 	CAssetPath m_Path_Sprite_IconShapeStar;
 	CAssetPath m_Path_Sprite_IconShapeHexagon;
@@ -249,6 +278,7 @@ public:
 	CAssetPath m_Path_Sprite_IconEntityRatio3;
 	CAssetPath m_Path_Sprite_IconZoomUnit;
 	CAssetPath m_Path_Sprite_IconFill;
+	CAssetPath m_Path_Sprite_IconBoneCreator;
 	
 	CAssetPath m_Path_Sprite_GizmoScale;
 	CAssetPath m_Path_Sprite_GizmoRotate;
@@ -260,6 +290,13 @@ public:
 	CAssetPath m_Path_Sprite_GizmoVertexBezierBg;
 	CAssetPath m_Path_Sprite_GizmoVertexBezierFg;
 	CAssetPath m_Path_Sprite_GizmoVertexControl;
+	CAssetPath m_Path_Sprite_GizmoBoneLength;
+	
+	CAssetPath m_Path_Sprite_GizmoFrame;
+	CAssetPath m_Path_Sprite_GizmoFrameCursor;
+	CAssetPath m_Path_Sprite_GizmoFrameLayerBg;
+	CAssetPath m_Path_Sprite_GizmoFrameLayerColor;
+	CAssetPath m_Path_Sprite_GizmoFrameLayerAlpha;
 
 protected:
 	void ResetBindCalls();
@@ -271,6 +308,7 @@ public:
 	virtual bool InitConfig(int argc, const char** argv);
 	virtual bool Init();
 	virtual void SaveConfig(class CCLI_Output* pOutput);
+	virtual bool PreUpdate();
 	virtual bool PostUpdate();
 	
 	virtual void LoadAssets();
@@ -289,6 +327,15 @@ public:
 	inline CSubPath GetFirstEditedSubPath() const { return (m_EditedSubPathes.size() > 0 ? m_EditedSubPathes[0] : CSubPath::Null()); }
 	inline CSubPath GetUniqueEditedSubPath() const { return (m_EditedSubPathes.size() == 1 ? m_EditedSubPathes[0] : CSubPath::Null()); }
 	inline const std::vector<CSubPath>& GetEditedSubPathes() const { return m_EditedSubPathes; }
+	
+	inline int64 GetTime() const { return m_Time; }
+	inline void SetTime(int64 Time) { m_Time = Time; }
+	
+	inline float GetTimeSpeed() const { return m_TimeSpeed; }
+	inline void SetTimeSpeed(float TimeSpeed) { m_TimeSpeed = TimeSpeed; }
+	
+	inline bool GetTimePaused() const { return m_TimePaused; }
+	inline void SetTimePaused(bool TimePaused) { m_TimePaused = TimePaused; }
 		
 	void RefreshPackageTree();
 	void RefreshAssetsTree();

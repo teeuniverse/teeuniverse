@@ -302,12 +302,12 @@ void CAbstractLabel::UpdatePosition(const CRect& BoundingRect, const CRect& Visi
 		PosX += Spacing;
 		
 		m_IconRect.x = PosX;
-		m_IconRect.y = Rect.y;
+		m_IconRect.y = Rect.y + Rect.h/2 - m_IconRect.h/2;
 	}
 	else
 	{
 		m_IconRect.x = PosX;
-		m_IconRect.y = Rect.y;
+		m_IconRect.y = Rect.y + Rect.h/2 - m_IconRect.h/2;
 		
 		if(m_pIconWidget || pSprite)
 			PosX += m_IconRect.w;
@@ -486,7 +486,7 @@ void CAbstractLabel::OnInputEvent(const CInput::CEvent& Event)
 			{
 				dynamic_string Buffer;
 				Buffer.clear();
-				Buffer.append_num((const char*) m_Text.buffer()+Pos, Size);
+				Buffer.append((const char*) m_Text.buffer()+Pos, Size);
 				Input()->SetClipboardText(Buffer.buffer());
 			}
 		}
@@ -494,6 +494,13 @@ void CAbstractLabel::OnInputEvent(const CInput::CEvent& Event)
 }
 
 /* LABEL **************************************************************/
+
+CLabel::CLabel(CGui* pContext, CAssetPath IconPath) :
+	CAbstractLabel(pContext)
+{	
+	SetIcon(IconPath);
+	SetText("");
+}
 
 CLabel::CLabel(CGui* pContext, const char* pText, CAssetPath IconPath) :
 	CAbstractLabel(pContext)

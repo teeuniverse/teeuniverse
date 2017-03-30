@@ -199,7 +199,6 @@ void CViewTilingMaterial::OnButtonClick(int Button)
 void CViewTilingMaterial::RenderView()
 {
 	MapRenderer()->SetTime(0.0f);
-	MapRenderer()->SetLocalTime((double)time_get()/(double)time_freq());
 	MapRenderer()->SetCanvas(m_ViewRect, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 	
 	if(

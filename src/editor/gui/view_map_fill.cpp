@@ -487,7 +487,7 @@ void CCursorTool_MapFill::RenderView()
 	
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	float Time = fmod(ViewMap()->MapRenderer()->GetLocalTime(), 1.0f);
+	double Time = Graphics()->GetFrameTime()/1000.0;
 	Color.a *= 0.3f + 0.7f*(1.0f+cos(2.0f*Pi*Time))/2.0f;
 	
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);

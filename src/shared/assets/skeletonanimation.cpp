@@ -18,16 +18,30 @@
 
 #include <generated/assets/skeletonanimation.h>
 #include <shared/math/math.h>
+#include <shared/system/debug.h>
 
-float CAsset_SkeletonAnimation::CBoneAnimation::GetDuration() const
+/* BONE KEY FRAME *****************************************************/
+
+CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::operator=(const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& Frame)
 {
-	if(m_KeyFrame.size())
-		return m_KeyFrame[m_KeyFrame.size()-1].GetTime()/static_cast<float>(CAsset_SkeletonAnimation::TIMESTEP);
-	else
-		return 0.0f;
+	SetTranslation(Frame.GetTranslation());
+	SetScale(Frame.GetScale());
+	SetAngle(Frame.GetAngle());
+	SetAlignment(Frame.GetAlignment());
+	return *this;
 }
 
-inline int CAsset_SkeletonAnimation::CBoneAnimation::IntTimeToKeyFrame(int IntTime) const
+/* BONE ***************************************************************/
+
+int64 CAsset_SkeletonAnimation::CBoneAnimation::GetDuration() const
+{
+	if(m_KeyFrame.size())
+		return m_KeyFrame[m_KeyFrame.size()-1].GetTime();
+	else
+		return 0.0;
+}
+
+int CAsset_SkeletonAnimation::CBoneAnimation::TimeToKeyFrame(int64 Time) const
 {
 	if(m_KeyFrame.size() == 0)
 		return 0;
@@ -35,23 +49,18 @@ inline int CAsset_SkeletonAnimation::CBoneAnimation::IntTimeToKeyFrame(int IntTi
 	int i;
 	for(i=0; i<static_cast<int>(m_KeyFrame.size()); i++)
 	{
-		if(m_KeyFrame[i].GetTime() > IntTime)
+		if(m_KeyFrame[i].GetTime() > Time)
 			break;
 	}
 	
 	return i;
 }
 
-int CAsset_SkeletonAnimation::CBoneAnimation::TimeToKeyFrame(float Time) const
+bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(int64 Time, CBoneAnimation::CFrame& Frame) const
 {
-	return IntTimeToKeyFrame(Time*CAsset_SkeletonAnimation::TIMESTEP);
-}
-
-bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(float Time, CBoneAnimation::CFrame& Frame) const
-{
-	float CycleTime = Time;
+	int64 CycleTime = Time;
 	if(m_CycleType == CYCLETYPE_LOOP)
-		CycleTime = fmod(Time, GetDuration());
+		CycleTime = Time % GetDuration();
 	
 	int i = TimeToKeyFrame(CycleTime);
 	
@@ -68,19 +77,21 @@ bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(float Time, CBoneAnimati
 	}
 	else
 	{
-		float alpha = (CAsset_SkeletonAnimation::TIMESTEP*CycleTime - m_KeyFrame[i-1].GetTime()) / (m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
-		Frame.SetTranslation(mix(m_KeyFrame[i-1].GetTranslation(), m_KeyFrame[i].GetTranslation(), alpha));
-		Frame.SetScale(mix(m_KeyFrame[i-1].GetScale(), m_KeyFrame[i].GetScale(), alpha));
-		Frame.SetAngle(mix(m_KeyFrame[i-1].GetAngle(), m_KeyFrame[i].GetAngle(), alpha)); //Need better interpolation
+		double Alpha = (double)(CycleTime - m_KeyFrame[i-1].GetTime()) / (double)(m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
+		
+		Frame.SetTranslation(mix(m_KeyFrame[i-1].GetTranslation(), m_KeyFrame[i].GetTranslation(), Alpha));
+		Frame.SetScale(mix(m_KeyFrame[i-1].GetScale(), m_KeyFrame[i].GetScale(), Alpha));
+		Frame.SetAngle(mix(m_KeyFrame[i-1].GetAngle(), m_KeyFrame[i].GetAngle(), Alpha)); //Need better interpolation
 		Frame.SetAlignment(m_KeyFrame[i-1].GetAlignment());
 	}
 	
 	return true;
 }
 
-bool CAsset_SkeletonAnimation::GetLocalBoneAnimFrame(int Id, float Time, CBoneAnimation::CFrame& Frame) const
+bool CAsset_SkeletonAnimation::GetBoneAnimFrame(const CSubPath& SubPath, int64 Time, CBoneAnimation::CFrame& Frame) const
 {
-	if(Id < 0 || Id >= static_cast<int>(m_LocalBoneAnim.size()))
+	int Id = SubPath.GetId();
+	if(Id < 0 || Id >= static_cast<int>(m_BoneAnimation.size()))
 	{
 		Frame.SetTranslation(vec2(0.0f, 0.0f));
 		Frame.SetScale(vec2(1.0f, 1.0f));
@@ -89,18 +100,42 @@ bool CAsset_SkeletonAnimation::GetLocalBoneAnimFrame(int Id, float Time, CBoneAn
 		return false;
 	}
 	
-	return m_LocalBoneAnim[Id].GetFrame(Time, Frame);
+	return m_BoneAnimation[Id].GetFrame(Time, Frame);
 }
 
-float CAsset_SkeletonAnimation::CLayerAnimation::GetDuration() const
+CSubPath CAsset_SkeletonAnimation::FindBoneAnim(const CSubPath& BonePath) const
+{
+	for(unsigned int i=0; i<m_BoneAnimation.size(); i++)
+	{
+		if(m_BoneAnimation[i].GetBonePath() == BonePath)
+		{
+			return CAsset_SkeletonAnimation::SubPath_BoneAnimation(i);
+		}
+	}
+	
+	return CSubPath::Null();
+}
+
+/* LAYER KEY FRAME ****************************************************/
+
+CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::operator=(const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& Frame)
+{
+	SetColor(Frame.GetColor());
+	SetState(Frame.GetState());
+	return *this;
+}
+
+/* LAYER **************************************************************/
+
+int64 CAsset_SkeletonAnimation::CLayerAnimation::GetDuration() const
 {
 	if(m_KeyFrame.size())
-		return m_KeyFrame[m_KeyFrame.size()-1].GetTime()/static_cast<float>(CAsset_SkeletonAnimation::TIMESTEP);
+		return m_KeyFrame[m_KeyFrame.size()-1].GetTime();
 	else
-		return 0.0f;
+		return 0;
 }
 
-int CAsset_SkeletonAnimation::CLayerAnimation::IntTimeToKeyFrame(int IntTime) const
+int CAsset_SkeletonAnimation::CLayerAnimation::TimeToKeyFrame(int64 Time) const
 {
 	if(m_KeyFrame.size() == 0)
 		return 0;
@@ -108,23 +143,18 @@ int CAsset_SkeletonAnimation::CLayerAnimation::IntTimeToKeyFrame(int IntTime) co
 	int i;
 	for(i=0; i<static_cast<int>(m_KeyFrame.size()); i++)
 	{
-		if(m_KeyFrame[i].GetTime() > IntTime)
+		if(m_KeyFrame[i].GetTime() > Time)
 			break;
 	}
 	
 	return i;
 }
 
-int CAsset_SkeletonAnimation::CLayerAnimation::TimeToKeyFrame(float Time) const
+bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(int64 Time, CLayerAnimation::CFrame& Frame) const
 {
-	return IntTimeToKeyFrame(Time*CAsset_SkeletonAnimation::TIMESTEP);
-}
-
-bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(float Time, CLayerAnimation::CFrame& Frame) const
-{
-	float CycleTime = Time;
+	int64 CycleTime = Time;
 	if(m_CycleType == CYCLETYPE_LOOP)
-		CycleTime = fmod(Time, GetDuration());
+		CycleTime = Time % GetDuration();
 	
 	int i = TimeToKeyFrame(CycleTime);
 	
@@ -141,16 +171,18 @@ bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(float Time, CLayerAnima
 	}
 	else
 	{
-		float alpha = (CAsset_SkeletonAnimation::TIMESTEP*CycleTime - m_KeyFrame[i-1].GetTime()) / (m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
-		Frame.SetColor(mix(m_KeyFrame[i-1].GetColor(), m_KeyFrame[i].GetColor(), alpha));
+		double Alpha = (double)(CycleTime - m_KeyFrame[i-1].GetTime()) / (double)(m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
+		
+		Frame.SetColor(mix(m_KeyFrame[i-1].GetColor(), m_KeyFrame[i].GetColor(), Alpha));
 		Frame.SetState(m_KeyFrame[i-1].GetState());
 	}
 	
 	return true;
 }
 
-bool CAsset_SkeletonAnimation::GetLayerAnimFrame(int Id, float Time, CLayerAnimation::CFrame& Frame) const
+bool CAsset_SkeletonAnimation::GetLayerAnimFrame(const CSubPath& SubPath, int64 Time, CLayerAnimation::CFrame& Frame) const
 {
+	int Id = SubPath.GetId();
 	if(Id < 0 || Id >= static_cast<int>(m_LayerAnimation.size()))
 	{
 		Frame.SetColor(1.0f);
@@ -159,4 +191,17 @@ bool CAsset_SkeletonAnimation::GetLayerAnimFrame(int Id, float Time, CLayerAnima
 	}
 	
 	return m_LayerAnimation[Id].GetFrame(Time, Frame);
+}
+
+CSubPath CAsset_SkeletonAnimation::FindLayerAnim(const CSubPath& LayerPath) const
+{
+	for(unsigned int i=0; i<m_LayerAnimation.size(); i++)
+	{
+		if(m_LayerAnimation[i].GetLayerPath() == LayerPath)
+		{
+			return CAsset_SkeletonAnimation::SubPath_LayerAnimation(i);
+		}
+	}
+	
+	return CSubPath::Null();
 }

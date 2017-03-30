@@ -35,7 +35,6 @@
 #include <shared/assets/asset.h>
 #include <cassert>
 #include <vector>
-#include <shared/assets/assetpath.h>
 #include <shared/tl/algorithm.h>
 
 class CAsset_Skeleton : public CAsset
@@ -55,19 +54,15 @@ public:
 	enum
 	{
 		NAME = CAsset::NAME,
-		PARENTPATH,
-		DEFAULTSKINPATH,
 		BONE_ARRAYSIZE,
 		BONE_PTR,
 		BONE_ARRAY,
+		BONE_PARENT,
 		BONE_LENGTH,
 		BONE_ANCHOR,
 		BONE_TRANSLATION,
 		BONE_TRANSLATION_X,
 		BONE_TRANSLATION_Y,
-		BONE_SCALE,
-		BONE_SCALE_X,
-		BONE_SCALE_Y,
 		BONE_ANGLE,
 		BONE_NAME,
 		BONE_COLOR,
@@ -120,27 +115,13 @@ public:
 	class CBone
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			tua_float m_Length;
-			tua_float m_Anchor;
-			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
-			tua_float m_Angle;
-			tua_stringid m_Name;
-			tua_uint32 m_Color;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
+			CSubPath::CTuaType m_Parent;
 			tua_float m_Length;
 			tua_float m_Anchor;
 			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
 			tua_float m_Angle;
 			tua_stringid m_Name;
 			tua_uint32 m_Color;
@@ -151,10 +132,10 @@ public:
 		class CTuaType_0_2_1
 		{
 		public:
+			CSubPath::CTuaType m_Parent;
 			tua_float m_Length;
 			tua_float m_Anchor;
 			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
 			tua_float m_Angle;
 			tua_stringid m_Name;
 			tua_uint32 m_Color;
@@ -165,10 +146,10 @@ public:
 		class CTuaType_0_2_2
 		{
 		public:
+			CSubPath::CTuaType m_Parent;
 			tua_float m_Length;
 			tua_float m_Anchor;
 			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
 			tua_float m_Angle;
 			tua_stringid m_Name;
 			tua_uint32 m_Color;
@@ -179,10 +160,10 @@ public:
 		class CTuaType_0_2_3
 		{
 		public:
+			CSubPath::CTuaType m_Parent;
 			tua_float m_Length;
 			tua_float m_Anchor;
 			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
 			tua_float m_Angle;
 			tua_stringid m_Name;
 			tua_uint32 m_Color;
@@ -193,10 +174,10 @@ public:
 		class CTuaType_0_2_4
 		{
 		public:
+			CSubPath::CTuaType m_Parent;
 			tua_float m_Length;
 			tua_float m_Anchor;
 			CTuaVec2 m_Translation;
-			CTuaVec2 m_Scale;
 			tua_float m_Angle;
 			tua_stringid m_Name;
 			tua_uint32 m_Color;
@@ -204,18 +185,34 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			CSubPath::CTuaType m_Parent;
+			tua_float m_Length;
+			tua_float m_Anchor;
+			CTuaVec2 m_Translation;
+			tua_float m_Angle;
+			tua_stringid m_Name;
+			tua_uint32 m_Color;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_Skeleton::CBone& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CBone& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
+		CSubPath m_Parent;
 		float m_Length;
 		float m_Anchor;
 		vec2 m_Translation;
-		vec2 m_Scale;
 		float m_Angle;
 		_dynamic_string<128> m_Name;
 		vec4 m_Color;
 	
 	public:
 		CBone();
+		inline CSubPath GetParent() const { return m_Parent; }
+		
 		inline float GetLength() const { return m_Length; }
 		
 		inline float GetAnchor() const { return m_Anchor; }
@@ -226,17 +223,13 @@ public:
 		
 		inline float GetTranslationY() const { return m_Translation.y; }
 		
-		inline vec2 GetScale() const { return m_Scale; }
-		
-		inline float GetScaleX() const { return m_Scale.x; }
-		
-		inline float GetScaleY() const { return m_Scale.y; }
-		
 		inline float GetAngle() const { return m_Angle; }
 		
 		inline const char* GetName() const { return m_Name.buffer(); }
 		
 		inline vec4 GetColor() const { return m_Color; }
+		
+		inline void SetParent(const CSubPath& Value) { m_Parent = Value; }
 		
 		inline void SetLength(float Value) { m_Length = Value; }
 		
@@ -247,12 +240,6 @@ public:
 		inline void SetTranslationX(float Value) { m_Translation.x = Value; }
 		
 		inline void SetTranslationY(float Value) { m_Translation.y = Value; }
-		
-		inline void SetScale(vec2 Value) { m_Scale = Value; }
-		
-		inline void SetScaleX(float Value) { m_Scale.x = Value; }
-		
-		inline void SetScaleY(float Value) { m_Scale.y = Value; }
 		
 		inline void SetAngle(float Value) { m_Angle = Value; }
 		
@@ -268,14 +255,6 @@ public:
 	class CLayer
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			tua_stringid m_Name;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton::CLayer& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -316,6 +295,14 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			tua_stringid m_Name;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_Skeleton::CLayer& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton::CLayer& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
 		_dynamic_string<128> m_Name;
@@ -330,22 +317,9 @@ public:
 		}
 		
 	};
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
-		CTuaArray m_Bone;
-		CTuaArray m_Layer;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_Skeleton& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
 		CTuaArray m_Bone;
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_Skeleton& SysType);
@@ -355,8 +329,6 @@ public:
 	class CTuaType_0_2_1 : public CAsset::CTuaType_0_2_1
 	{
 	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
 		CTuaArray m_Bone;
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_Skeleton& SysType);
@@ -366,8 +338,6 @@ public:
 	class CTuaType_0_2_2 : public CAsset::CTuaType_0_2_2
 	{
 	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
 		CTuaArray m_Bone;
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_Skeleton& SysType);
@@ -377,8 +347,6 @@ public:
 	class CTuaType_0_2_3 : public CAsset::CTuaType_0_2_3
 	{
 	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
 		CTuaArray m_Bone;
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_Skeleton& SysType);
@@ -388,18 +356,23 @@ public:
 	class CTuaType_0_2_4 : public CAsset::CTuaType_0_2_4
 	{
 	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_DefaultSkinPath;
 		CTuaArray m_Bone;
 		CTuaArray m_Layer;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_Skeleton& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_2_4& TuaType);
 	};
 	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CTuaArray m_Bone;
+		CTuaArray m_Layer;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_Skeleton& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_Skeleton& SysType, CTuaType_0_3_0& TuaType);
+	};
+	
 
 private:
-	CAssetPath m_ParentPath;
-	CAssetPath m_DefaultSkinPath;
 	std::vector<CAsset_Skeleton::CBone> m_Bone;
 	std::vector<CAsset_Skeleton::CLayer> m_Layer;
 
@@ -426,10 +399,6 @@ public:
 	
 	void RelMoveSubItem(CSubPath& SubPath, int RelMove);
 	
-	inline CAssetPath GetParentPath() const { return m_ParentPath; }
-	
-	inline CAssetPath GetDefaultSkinPath() const { return m_DefaultSkinPath; }
-	
 	inline int GetBoneArraySize() const { return m_Bone.size(); }
 	
 	inline const CAsset_Skeleton::CBone* GetBonePtr() const { return &(m_Bone.front()); }
@@ -443,6 +412,13 @@ public:
 		{
 			return m_Bone[SubPath.GetId()];
 		}
+	}
+	
+	inline CSubPath GetBoneParent(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Bone.size())
+			return m_Bone[SubPath.GetId()].GetParent();
+		else return CSubPath::Null();
 	}
 	
 	inline float GetBoneLength(const CSubPath& SubPath) const
@@ -477,27 +453,6 @@ public:
 	{
 		if(SubPath.GetId() < m_Bone.size())
 			return m_Bone[SubPath.GetId()].GetTranslationY();
-		else return 0.0f;
-	}
-	
-	inline vec2 GetBoneScale(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			return m_Bone[SubPath.GetId()].GetScale();
-		else return 0.0f;
-	}
-	
-	inline float GetBoneScaleX(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			return m_Bone[SubPath.GetId()].GetScaleX();
-		else return 0.0f;
-	}
-	
-	inline float GetBoneScaleY(const CSubPath& SubPath) const
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			return m_Bone[SubPath.GetId()].GetScaleY();
 		else return 0.0f;
 	}
 	
@@ -544,10 +499,6 @@ public:
 		else return NULL;
 	}
 	
-	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
-	
-	inline void SetDefaultSkinPath(const CAssetPath& Value) { m_DefaultSkinPath = Value; }
-	
 	inline void SetBoneArraySize(int Value) { m_Bone.resize(Value); }
 	
 	inline void SetBone(const CSubPath& SubPath, const CAsset_Skeleton::CBone& Value)
@@ -556,6 +507,12 @@ public:
 		{
 			m_Bone[SubPath.GetId()] = Value;
 		}
+	}
+	
+	inline void SetBoneParent(const CSubPath& SubPath, const CSubPath& Value)
+	{
+		if(SubPath.GetId() < m_Bone.size())
+			m_Bone[SubPath.GetId()].SetParent(Value);
 	}
 	
 	inline void SetBoneLength(const CSubPath& SubPath, float Value)
@@ -586,24 +543,6 @@ public:
 	{
 		if(SubPath.GetId() < m_Bone.size())
 			m_Bone[SubPath.GetId()].SetTranslationY(Value);
-	}
-	
-	inline void SetBoneScale(const CSubPath& SubPath, vec2 Value)
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			m_Bone[SubPath.GetId()].SetScale(Value);
-	}
-	
-	inline void SetBoneScaleX(const CSubPath& SubPath, float Value)
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			m_Bone[SubPath.GetId()].SetScaleX(Value);
-	}
-	
-	inline void SetBoneScaleY(const CSubPath& SubPath, float Value)
-	{
-		if(SubPath.GetId() < m_Bone.size())
-			m_Bone[SubPath.GetId()].SetScaleY(Value);
 	}
 	
 	inline void SetBoneAngle(const CSubPath& SubPath, float Value)
@@ -680,8 +619,6 @@ public:
 	
 	void AssetPathOperation(const CAssetPath::COperation& Operation)
 	{
-		Operation.Apply(m_ParentPath);
-		Operation.Apply(m_DefaultSkinPath);
 		for(unsigned int i=0; i<m_Bone.size(); i++)
 		{
 			m_Bone[i].AssetPathOperation(Operation);
@@ -704,7 +641,7 @@ template<> vec2 CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath
 template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value);
 template<> vec4 CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const;
 template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value);
-template<> CAssetPath CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, CAssetPath DefaultValue) const;
-template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, CAssetPath Value);
+template<> CSubPath CAsset_Skeleton::GetValue(int ValueType, const CSubPath& SubPath, CSubPath DefaultValue) const;
+template<> bool CAsset_Skeleton::SetValue(int ValueType, const CSubPath& SubPath, CSubPath Value);
 
 #endif

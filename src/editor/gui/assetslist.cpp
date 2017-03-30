@@ -1287,6 +1287,64 @@ protected:
 		{ }
 	};
 	
+	class CAddSkeletonSkinButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			
+			const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(m_AssetPath);
+			if(pSkeleton)
+			{
+				CAssetPath SkeletonSkinPath;
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_SkeletonSkin* pSkin = AssetsManager()->NewAsset<CAsset_SkeletonSkin>(&SkeletonSkinPath, m_AssetPath.GetPackageId(), Token);
+				if(pSkin)
+				{
+					AssetsManager()->TryChangeAssetName(SkeletonSkinPath, "skin", Token);
+					pSkin->SetSkeletonPath(m_AssetPath);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddSkeletonSkinButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Skin"), pAssetsEditor->m_Path_Sprite_IconSkeletonSkin)
+		{ }
+	};
+	
+	class CAddSkeletonAnimationButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			
+			const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(m_AssetPath);
+			if(pSkeleton)
+			{
+				CAssetPath SkeletonAnimationPath;
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_SkeletonAnimation* pAnimation = AssetsManager()->NewAsset<CAsset_SkeletonAnimation>(&SkeletonAnimationPath, m_AssetPath.GetPackageId(), Token);
+				if(pAnimation)
+				{
+					AssetsManager()->TryChangeAssetName(SkeletonAnimationPath, "animation", Token);
+					pAnimation->SetSkeletonPath(m_AssetPath);
+					m_pAssetsEditor->RefreshAssetsTree();
+				}
+			}
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CAddSkeletonAnimationButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Animation"), pAssetsEditor->m_Path_Sprite_IconSkeletonAnimation)
+		{ }
+	};
+	
 	class CVisibilityButton : public gui::CToggle
 	{
 	protected:
@@ -1505,6 +1563,11 @@ public:
 					pMenu->List()->Add(new CMoveLayerButton<CAsset_MapLayerObjects>(m_pAssetsEditor, pMenu, m_AssetPath, _LSTRING("Move forward"), m_pAssetsEditor->m_Path_Sprite_IconDown, 1));
 					pMenu->List()->AddSeparator();
 					pMenu->List()->Add(new CDuplicateButton(m_pAssetsEditor, pMenu, m_AssetPath));
+				}
+				else if(m_AssetPath.GetType() == CAsset_Skeleton::TypeId)
+				{
+					pMenu->List()->Add(new CAddSkeletonSkinButton(m_pAssetsEditor, pMenu, m_AssetPath));
+					pMenu->List()->Add(new CAddSkeletonAnimationButton(m_pAssetsEditor, pMenu, m_AssetPath));
 				}
 				
 				if(m_SubPath.IsNull())

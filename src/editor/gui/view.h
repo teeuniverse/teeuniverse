@@ -96,6 +96,7 @@ private:
 	CView* m_pViewImage;
 	CView* m_pViewSprite;
 	CView* m_pViewMap;
+	CView* m_pViewSkeleton;
 	CView* m_pViewMaterial;
 	CView* m_pViewTilingMaterial;
 	CView* m_pViewGui;

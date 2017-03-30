@@ -52,20 +52,6 @@ public:
 		SWITCHICON,
 	};
 	
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_IdleTrueStylePath;
-		CAssetPath::CTuaType m_MouseOverTrueStylePath;
-		CAssetPath::CTuaType m_IconTruePath;
-		CAssetPath::CTuaType m_IdleFalseStylePath;
-		CAssetPath::CTuaType m_MouseOverFalseStylePath;
-		CAssetPath::CTuaType m_IconFalsePath;
-		tua_uint8 m_SwitchIcon;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiToggleStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -134,6 +120,20 @@ public:
 		tua_uint8 m_SwitchIcon;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiToggleStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_IdleTrueStylePath;
+		CAssetPath::CTuaType m_MouseOverTrueStylePath;
+		CAssetPath::CTuaType m_IconTruePath;
+		CAssetPath::CTuaType m_IdleFalseStylePath;
+		CAssetPath::CTuaType m_MouseOverFalseStylePath;
+		CAssetPath::CTuaType m_IconFalsePath;
+		tua_uint8 m_SwitchIcon;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiToggleStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiToggleStyle& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

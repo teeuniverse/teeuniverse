@@ -51,112 +51,13 @@ CAsset_MapLayerQuads::CQuad::CQuad()
 	m_Color2 = 1.0f;
 	m_Color3 = 1.0f;
 	m_Color = 1.0f;
+	m_AnimationOffset = 0;
 }
 
 CAsset_MapLayerQuads::CAsset_MapLayerQuads()
 {
 	m_Visibility = true;
 	m_LevelOfDetail = 0;
-}
-
-void CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType)
-{
-	SysType.m_Pivot.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Pivot.m_X);
-	SysType.m_Pivot.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Pivot.m_Y);
-	SysType.m_Size.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_X);
-	SysType.m_Size.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_Y);
-	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Vertex0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex0.m_X);
-	SysType.m_Vertex0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex0.m_Y);
-	SysType.m_Vertex1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex1.m_X);
-	SysType.m_Vertex1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex1.m_Y);
-	SysType.m_Vertex2.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex2.m_X);
-	SysType.m_Vertex2.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex2.m_Y);
-	SysType.m_Vertex3.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex3.m_X);
-	SysType.m_Vertex3.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex3.m_Y);
-	SysType.m_UV0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV0.m_X);
-	SysType.m_UV0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV0.m_Y);
-	SysType.m_UV1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV1.m_X);
-	SysType.m_UV1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV1.m_Y);
-	SysType.m_UV2.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV2.m_X);
-	SysType.m_UV2.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV2.m_Y);
-	SysType.m_UV3.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV3.m_X);
-	SysType.m_UV3.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV3.m_Y);
-	SysType.m_Color0 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color0);
-	SysType.m_Color1 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color1);
-	SysType.m_Color2 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color2);
-	SysType.m_Color3 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color3);
-	pLoadingContext->ReadAssetPath(TuaType.m_AnimationPath, SysType.m_AnimationPath);
-}
-
-
-void CAsset_MapLayerQuads::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
-	{
-		const CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0* pData = (const CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Quad.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Quad.m_Size);
-		SysType.m_Quad.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_Quad[i]);
-		}
-	}
-	
-	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
-}
-
-
-void CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_1_0& TuaType)
-{
-	TuaType.m_Pivot.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Pivot.x);
-	TuaType.m_Pivot.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Pivot.y);
-	TuaType.m_Size.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.x);
-	TuaType.m_Size.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.y);
-	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
-	TuaType.m_Vertex0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex0.x);
-	TuaType.m_Vertex0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex0.y);
-	TuaType.m_Vertex1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex1.x);
-	TuaType.m_Vertex1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex1.y);
-	TuaType.m_Vertex2.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex2.x);
-	TuaType.m_Vertex2.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex2.y);
-	TuaType.m_Vertex3.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex3.x);
-	TuaType.m_Vertex3.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex3.y);
-	TuaType.m_UV0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV0.x);
-	TuaType.m_UV0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV0.y);
-	TuaType.m_UV1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV1.x);
-	TuaType.m_UV1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV1.y);
-	TuaType.m_UV2.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV2.x);
-	TuaType.m_UV2.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV2.y);
-	TuaType.m_UV3.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV3.x);
-	TuaType.m_UV3.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV3.y);
-	TuaType.m_Color0 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color0);
-	TuaType.m_Color1 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color1);
-	TuaType.m_Color2 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color2);
-	TuaType.m_Color3 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color3);
-	pLoadingContext->WriteAssetPath(SysType.m_AnimationPath, TuaType.m_AnimationPath);
-}
-
-void CAsset_MapLayerQuads::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
-	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
-	{
-		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
-		CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0[SysType.m_Quad.size()];
-		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
-		{
-			CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
-		}
-		TuaType.m_Quad.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_1_0)*SysType.m_Quad.size());
-		delete[] pData;
-	}
-	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
 }
 
 void CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType)
@@ -669,6 +570,112 @@ void CAsset_MapLayerQuads::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadin
 	TuaType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LevelOfDetail);
 }
 
+void CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType)
+{
+	SysType.m_Pivot.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Pivot.m_X);
+	SysType.m_Pivot.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Pivot.m_Y);
+	SysType.m_Size.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_X);
+	SysType.m_Size.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_Y);
+	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
+	SysType.m_Vertex0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex0.m_X);
+	SysType.m_Vertex0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex0.m_Y);
+	SysType.m_Vertex1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex1.m_X);
+	SysType.m_Vertex1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex1.m_Y);
+	SysType.m_Vertex2.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex2.m_X);
+	SysType.m_Vertex2.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex2.m_Y);
+	SysType.m_Vertex3.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex3.m_X);
+	SysType.m_Vertex3.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Vertex3.m_Y);
+	SysType.m_UV0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV0.m_X);
+	SysType.m_UV0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV0.m_Y);
+	SysType.m_UV1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV1.m_X);
+	SysType.m_UV1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV1.m_Y);
+	SysType.m_UV2.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV2.m_X);
+	SysType.m_UV2.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV2.m_Y);
+	SysType.m_UV3.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV3.m_X);
+	SysType.m_UV3.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_UV3.m_Y);
+	SysType.m_Color0 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color0);
+	SysType.m_Color1 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color1);
+	SysType.m_Color2 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color2);
+	SysType.m_Color3 = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color3);
+	pLoadingContext->ReadAssetPath(TuaType.m_AnimationPath, SysType.m_AnimationPath);
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_AnimationOffset = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_AnimationOffset);
+}
+
+
+void CAsset_MapLayerQuads::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapLayerQuads& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ImagePath, SysType.m_ImagePath);
+	{
+		const CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0* pData = (const CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Quad.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Quad.m_Size);
+		SysType.m_Quad.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_Quad[i]);
+		}
+	}
+	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+	SysType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_LevelOfDetail);
+}
+
+
+void CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_3_0& TuaType)
+{
+	TuaType.m_Pivot.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Pivot.x);
+	TuaType.m_Pivot.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Pivot.y);
+	TuaType.m_Size.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.x);
+	TuaType.m_Size.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.y);
+	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
+	TuaType.m_Vertex0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex0.x);
+	TuaType.m_Vertex0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex0.y);
+	TuaType.m_Vertex1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex1.x);
+	TuaType.m_Vertex1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex1.y);
+	TuaType.m_Vertex2.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex2.x);
+	TuaType.m_Vertex2.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex2.y);
+	TuaType.m_Vertex3.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex3.x);
+	TuaType.m_Vertex3.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Vertex3.y);
+	TuaType.m_UV0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV0.x);
+	TuaType.m_UV0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV0.y);
+	TuaType.m_UV1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV1.x);
+	TuaType.m_UV1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV1.y);
+	TuaType.m_UV2.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV2.x);
+	TuaType.m_UV2.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV2.y);
+	TuaType.m_UV3.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV3.x);
+	TuaType.m_UV3.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_UV3.y);
+	TuaType.m_Color0 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color0);
+	TuaType.m_Color1 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color1);
+	TuaType.m_Color2 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color2);
+	TuaType.m_Color3 = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color3);
+	pLoadingContext->WriteAssetPath(SysType.m_AnimationPath, TuaType.m_AnimationPath);
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_AnimationOffset = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_AnimationOffset);
+}
+
+void CAsset_MapLayerQuads::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ImagePath, TuaType.m_ImagePath);
+	{
+		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
+		CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0[SysType.m_Quad.size()];
+		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
+		{
+			CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
+		}
+		TuaType.m_Quad.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0)*SysType.m_Quad.size());
+		delete[] pData;
+	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+	TuaType.m_LevelOfDetail = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LevelOfDetail);
+}
+
 template<>
 int CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {
@@ -695,6 +702,29 @@ bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int 
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+int64 CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case QUAD_ANIMATIONOFFSET:
+			return GetQuadAnimationOffset(SubPath);
+	}
+	return CAsset::GetValue<int64>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int64 Value)
+{
+	switch(ValueType)
+	{
+		case QUAD_ANIMATIONOFFSET:
+			SetQuadAnimationOffset(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<int64>(ValueType, SubPath, Value);
 }
 
 template<>

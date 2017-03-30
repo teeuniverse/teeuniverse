@@ -15,33 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#ifndef __SHARED_SYSTEM_TIME__
-#define __SHARED_SYSTEM_TIME__
 
-#include <chrono>
+#include <client/components/assetsrenderer.h>
+#include <client/components/graphics.h>
 
-#include "types.h"
-
-typedef std::chrono::system_clock CClock;
-typedef CClock::duration CTimeDiff;
-typedef std::chrono::time_point<CClock, CTimeDiff> CTimePoint;
-
-inline CTimePoint GetCurrentTimePoint()
+#include "duration-edit.h"
+	
+namespace gui
 {
-	return CClock::now();
+
+/* ABSTRACT DURATION EDIT *********************************************/
+
+CAbstractDurationEdit::CAbstractDurationEdit(CGui* pContext) :
+	CAbstractTextEdit(pContext)
+{
+	SetLabelStyle(Context()->GetNumericEntryStyle());
 }
 
-inline CTimeDiff GetTimePointDiff(const CTimePoint& a, const CTimePoint& b)
+void CAbstractDurationEdit::SaveFromTextBuffer()
 {
-	return b-a;
+	SetValue(Localization()->ParseDuration(NULL, GetText()));
 }
 
-inline int64 GetTimeMsDiff(const CTimePoint& a, const CTimePoint& b)
+void CAbstractDurationEdit::CopyToTextBuffer()
 {
-	return std::chrono::duration_cast<std::chrono::milliseconds>(b-a).count();
+	CLocalizableString LString("{duration:d}");
+	LString.AddDuration("d", GetValue());
+	SetText(LString);
 }
 
-#endif
-
-
+}
