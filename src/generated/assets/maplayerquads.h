@@ -105,6 +105,7 @@ public:
 		QUAD_COLOR3,
 		QUAD_ANIMATIONPATH,
 		QUAD_COLOR,
+		QUAD_ANIMATIONOFFSET,
 		QUAD,
 		VISIBILITY,
 		LEVELOFDETAIL,
@@ -132,29 +133,6 @@ public:
 	class CQuad
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			CTuaVec2 m_Pivot;
-			CTuaVec2 m_Size;
-			tua_float m_Angle;
-			CTuaVec2 m_Vertex0;
-			CTuaVec2 m_Vertex1;
-			CTuaVec2 m_Vertex2;
-			CTuaVec2 m_Vertex3;
-			CTuaVec2 m_UV0;
-			CTuaVec2 m_UV1;
-			CTuaVec2 m_UV2;
-			CTuaVec2 m_UV3;
-			tua_uint32 m_Color0;
-			tua_uint32 m_Color1;
-			tua_uint32 m_Color2;
-			tua_uint32 m_Color3;
-			CAssetPath::CTuaType m_AnimationPath;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -273,6 +251,31 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			CTuaVec2 m_Pivot;
+			CTuaVec2 m_Size;
+			tua_float m_Angle;
+			CTuaVec2 m_Vertex0;
+			CTuaVec2 m_Vertex1;
+			CTuaVec2 m_Vertex2;
+			CTuaVec2 m_Vertex3;
+			CTuaVec2 m_UV0;
+			CTuaVec2 m_UV1;
+			CTuaVec2 m_UV2;
+			CTuaVec2 m_UV3;
+			tua_uint32 m_Color0;
+			tua_uint32 m_Color1;
+			tua_uint32 m_Color2;
+			tua_uint32 m_Color3;
+			CAssetPath::CTuaType m_AnimationPath;
+			tua_uint32 m_Color;
+			tua_int64 m_AnimationOffset;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapLayerQuads::CQuad& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads::CQuad& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
 		vec2 m_Pivot;
@@ -292,10 +295,11 @@ public:
 		vec4 m_Color3;
 		CAssetPath m_AnimationPath;
 		vec4 m_Color;
+		int64 m_AnimationOffset;
 	
 	public:
-		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
-		void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;
+		void GetTransform(CAssetsManager* pAssetsManager, int64 Time, matrix2x2* pMatrix, vec2* pPosition) const;
+		void GetDrawState(CAssetsManager* pAssetsManager, int64 Time, vec4* pColor, int* pState) const;
 		CQuad();
 		inline vec2 GetPivot() const { return m_Pivot; }
 		
@@ -371,6 +375,8 @@ public:
 		
 		inline vec4 GetColor() const { return m_Color; }
 		
+		inline int64 GetAnimationOffset() const { return m_AnimationOffset; }
+		
 		inline void SetPivot(vec2 Value) { m_Pivot = Value; }
 		
 		inline void SetPivotX(float Value) { m_Pivot.x = Value; }
@@ -445,23 +451,14 @@ public:
 		
 		inline void SetColor(vec4 Value) { m_Color = Value; }
 		
+		inline void SetAnimationOffset(int64 Value) { m_AnimationOffset = Value; }
+		
 		void AssetPathOperation(const CAssetPath::COperation& Operation)
 		{
 			Operation.Apply(m_AnimationPath);
 		}
 		
 	};
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ImagePath;
-		CTuaArray m_Quad;
-		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapLayerQuads& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -519,6 +516,18 @@ public:
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_2_4& TuaType);
 	};
 	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ImagePath;
+		CTuaArray m_Quad;
+		tua_uint8 m_Visibility;
+		tua_int32 m_LevelOfDetail;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapLayerQuads& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerQuads& SysType, CTuaType_0_3_0& TuaType);
+	};
+	
 
 private:
 	CAssetPath m_ParentPath;
@@ -528,8 +537,8 @@ private:
 	int m_LevelOfDetail;
 
 public:
-	void GetQuadTransform(const CSubPath& SubPath, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
-	void GetQuadDrawState(const CSubPath& SubPath, float Time, vec4* pColor, int* pState) const;
+	void GetQuadTransform(const CSubPath& SubPath, int64 Time, matrix2x2* pMatrix, vec2* pPosition) const;
+	void GetQuadDrawState(const CSubPath& SubPath, int64 Time, vec4* pColor, int* pState) const;
 	virtual ~CAsset_MapLayerQuads() {}
 	
 	template<typename T>
@@ -831,6 +840,13 @@ public:
 		else return 1.0f;
 	}
 	
+	inline int64 GetQuadAnimationOffset(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Quad.size())
+			return m_Quad[SubPath.GetId()].GetAnimationOffset();
+		else return 0;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline int GetLevelOfDetail() const { return m_LevelOfDetail; }
@@ -1071,6 +1087,12 @@ public:
 			m_Quad[SubPath.GetId()].SetColor(Value);
 	}
 	
+	inline void SetQuadAnimationOffset(const CSubPath& SubPath, int64 Value)
+	{
+		if(SubPath.GetId() < m_Quad.size())
+			m_Quad[SubPath.GetId()].SetAnimationOffset(Value);
+	}
+	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	
 	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
@@ -1108,6 +1130,8 @@ public:
 
 template<> int CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> int64 CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const;
+template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, int64 Value);
 template<> bool CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_MapLayerQuads::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapLayerQuads::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;

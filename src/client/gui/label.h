@@ -99,6 +99,7 @@ public:
 class CLabel : public CAbstractLabel
 {
 public:
+	CLabel(class CGui *pConfig, CAssetPath IconPath);
 	CLabel(class CGui *pConfig, const char* pText, CAssetPath IconPath = CAssetPath::Null());
 	CLabel(class CGui *pConfig, const CLocalizableString& LocalizableString, CAssetPath IconPath = CAssetPath::Null());
 	CLabel(class CGui *pConfig, const CLocalizableString& LocalizableString, gui::CWidget* pIconWidget);

@@ -512,6 +512,7 @@ void CCursorTool_MapStamp::OnViewButtonClick(int Button)
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_SIZE, m_QuadSelection[i].GetSize(), m_Token);
 						AssetsManager()->SetAssetValue<float>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_ANGLE, m_QuadSelection[i].GetAngle(), m_Token);
 						AssetsManager()->SetAssetValue<CAssetPath>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, m_QuadSelection[i].GetAnimationPath(), m_Token);
+						AssetsManager()->SetAssetValue<int64>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_ANIMATIONOFFSET, m_QuadSelection[i].GetAnimationOffset(), m_Token);
 						AssetsManager()->SetAssetValue<vec4>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_COLOR, m_QuadSelection[i].GetColor(), m_Token);
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_VERTEX0, m_QuadSelection[i].GetVertex0(), m_Token);
 						AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), QuadPath, CAsset_MapLayerQuads::QUAD_VERTEX1, m_QuadSelection[i].GetVertex1(), m_Token);
@@ -1246,7 +1247,7 @@ void CCursorTool_MapStamp::RenderView()
 	
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	float Time = fmod(ViewMap()->MapRenderer()->GetLocalTime(), 1.0f);
+	double Time = Graphics()->GetFrameTime()/1000.0;
 	Color.a *= 0.3f + 0.7f*(1.0f+cos(2.0f*Pi*Time))/2.0f;
 	
 	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);

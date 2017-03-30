@@ -20,6 +20,7 @@
 #include <editor/gui/view_image.h>
 #include <editor/gui/view_sprite.h>
 #include <editor/gui/view_map.h>
+#include <editor/gui/view_skeleton.h>
 #include <editor/gui/view_material.h>
 #include <editor/gui/view_tilingmaterial.h>
 #include <editor/gui/view_gui.h>
@@ -181,6 +182,7 @@ CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 	m_pViewImage(NULL),
 	m_pViewSprite(NULL),
 	m_pViewMap(NULL),
+	m_pViewSkeleton(NULL),
 	m_pViewMaterial(NULL),
 	m_pViewTilingMaterial(NULL),
 	m_pViewGui(NULL)
@@ -188,6 +190,7 @@ CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 	m_pViewImage = new CViewImage(AssetsEditor());
 	m_pViewSprite = new CViewSprite(AssetsEditor());
 	m_pViewMap = new CViewMap(AssetsEditor());
+	m_pViewSkeleton = new CViewSkeleton(AssetsEditor());
 	m_pViewMaterial = new CViewMaterial(AssetsEditor());
 	m_pViewTilingMaterial = new CViewTilingMaterial(AssetsEditor());
 	m_pViewGui = new CViewGui(AssetsEditor());
@@ -196,9 +199,9 @@ CViewManager::CViewManager(CGuiEditor* pAssetsEditor) :
 void CViewManager::Destroy()
 {
 	m_pViewImage->Destroy();
-	m_pViewImage->Destroy();
 	m_pViewSprite->Destroy();
 	m_pViewMap->Destroy();
+	m_pViewSkeleton->Destroy();
 	m_pViewMaterial->Destroy();
 	m_pViewTilingMaterial->Destroy();
 	m_pViewGui->Destroy();
@@ -225,6 +228,11 @@ void CViewManager::Update(bool ParentEnabled)
 		case CAsset_MapZoneObjects::TypeId:
 		case CAsset_MapEntities::TypeId:
 			m_pCurrentView = m_pViewMap;
+			break;
+		case CAsset_Skeleton::TypeId:
+		case CAsset_SkeletonSkin::TypeId:
+		case CAsset_SkeletonAnimation::TypeId:
+			m_pCurrentView = m_pViewSkeleton;
 			break;
 		case CAsset_PathMaterial::TypeId:
 			m_pCurrentView = m_pViewMaterial;

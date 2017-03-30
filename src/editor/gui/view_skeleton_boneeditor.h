@@ -15,33 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#ifndef __SHARED_SYSTEM_TIME__
-#define __SHARED_SYSTEM_TIME__
 
-#include <chrono>
+#ifndef __CLIENT_ASSETSEDITOR_VIEWSKELETON_BONEEDITOR__
+#define __CLIENT_ASSETSEDITOR_VIEWSKELETON_BONEEDITOR__
 
-#include "types.h"
+#include <editor/gui/view_skeleton.h>
 
-typedef std::chrono::system_clock CClock;
-typedef CClock::duration CTimeDiff;
-typedef std::chrono::time_point<CClock, CTimeDiff> CTimePoint;
-
-inline CTimePoint GetCurrentTimePoint()
+class CCursorTool_SkeletonBoneEditor : public CViewSkeleton::CCursorTool
 {
-	return CClock::now();
-}
-
-inline CTimeDiff GetTimePointDiff(const CTimePoint& a, const CTimePoint& b)
-{
-	return b-a;
-}
-
-inline int64 GetTimeMsDiff(const CTimePoint& a, const CTimePoint& b)
-{
-	return std::chrono::duration_cast<std::chrono::milliseconds>(b-a).count();
-}
+protected:
+	enum
+	{
+		DRAGTYPE_NONE=0,
+		DRAGTYPE_ANGLE_AND_LENGTH,
+		DRAGTYPE_TRANSLATION,
+		DRAGTYPE_LENGTH,
+		DRAGTYPE_ANGLE,
+	};
+	
+	int m_DragType;
+	int m_Token;
+	
+public:
+	CCursorTool_SkeletonBoneEditor(CViewSkeleton* pViewSkeleton);
+	virtual void RenderView();
+	virtual void OnViewButtonClick(int Button);
+	virtual void OnViewButtonRelease(int Button);
+	virtual void OnViewMouseMove();
+	virtual void OnMouseMove();
+};
 
 #endif
-
-

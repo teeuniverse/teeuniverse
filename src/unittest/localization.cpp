@@ -30,14 +30,31 @@ TEST(str_comp(pKernel->Localization()->Localize(NULL, "__something not translate
 TEST(str_comp(pKernel->Localization()->Localize("xx_XX", "__something not translated"), "__something not translated") == 0);
 
 {
+	CLocalizableString LString("A string: {str:Text}");
+	LString.AddString("Text", "Hello!");
+	
+	dynamic_string Buffer;
+	
+	pKernel->Localization()->Format(Buffer, "xx_XX", LString);
+	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "A string: Hello!") == 0, Buffer.buffer())
+}
+{
 	CLocalizableString LString("A big integer: {int:BigNumber}");
 	LString.AddInteger("BigNumber", 41652864);
 	
 	dynamic_string Buffer;
-	Buffer.clear();
 	
 	pKernel->Localization()->Format(Buffer, "xx_XX", LString);
 	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "A big integer: 41,652,864") == 0, Buffer.buffer())
+}
+{
+	CLocalizableString LString("A duration: {duration:Something}");
+	LString.AddInteger("Something", 32456);
+	
+	dynamic_string Buffer;
+	
+	pKernel->Localization()->Format(Buffer, "xx_XX", LString);
+	TEST_WITH_OUTPUT(str_comp(Buffer.buffer(), "A duration: 32.456") == 0, Buffer.buffer())
 }
 
 pKernel->Shutdown();

@@ -58,37 +58,6 @@ CAsset_MapZoneObjects::CAsset_MapZoneObjects()
 	m_Visibility = true;
 }
 
-void CAsset_MapZoneObjects::CVertex::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects::CVertex& SysType)
-{
-}
-
-
-void CAsset_MapZoneObjects::CObject::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects::CObject& SysType)
-{
-}
-
-
-void CAsset_MapZoneObjects::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneObjects& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-}
-
-
-void CAsset_MapZoneObjects::CVertex::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_1_0& TuaType)
-{
-}
-
-void CAsset_MapZoneObjects::CObject::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_1_0& TuaType)
-{
-}
-
-void CAsset_MapZoneObjects::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-}
-
 void CAsset_MapZoneObjects::CVertex::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_MapZoneObjects::CVertex& SysType)
 {
 }
@@ -477,6 +446,117 @@ void CAsset_MapZoneObjects::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadi
 			CAsset_MapZoneObjects::CObject::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
 		}
 		TuaType.m_Object.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapZoneObjects::CObject::CTuaType_0_2_4)*SysType.m_Object.size());
+		delete[] pData;
+	}
+	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);
+}
+
+void CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects::CVertex& SysType)
+{
+	SysType.m_Position.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_X);
+	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
+	SysType.m_Smoothness = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Smoothness);
+	SysType.m_ControlPoint0.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint0.m_X);
+	SysType.m_ControlPoint0.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint0.m_Y);
+	SysType.m_ControlPoint1.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint1.m_X);
+	SysType.m_ControlPoint1.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_ControlPoint1.m_Y);
+	SysType.m_Weight = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Weight);
+}
+
+
+void CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects::CObject& SysType)
+{
+	SysType.m_Position.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_X);
+	SysType.m_Position.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Position.m_Y);
+	SysType.m_Size.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_X);
+	SysType.m_Size.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Size.m_Y);
+	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
+	{
+		const CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0* pData = (const CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Vertex.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Vertex.m_Size);
+		SysType.m_Vertex.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_Vertex[i]);
+		}
+	}
+	
+	SysType.m_PathType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_PathType);
+	SysType.m_FillType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FillType);
+	SysType.m_ZoneIndex = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_ZoneIndex);
+	SysType.m_ZoneFlags = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ZoneFlags);
+}
+
+
+void CAsset_MapZoneObjects::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_ParentPath, SysType.m_ParentPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ZoneTypePath, SysType.m_ZoneTypePath);
+	{
+		const CAsset_MapZoneObjects::CObject::CTuaType_0_3_0* pData = (const CAsset_MapZoneObjects::CObject::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_Object.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_Object.m_Size);
+		SysType.m_Object.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_Object[i]);
+		}
+	}
+	
+	SysType.m_Visibility = pLoadingContext->ArchiveFile()->ReadBool(TuaType.m_Visibility);
+}
+
+
+void CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CVertex& SysType, CTuaType_0_3_0& TuaType)
+{
+	TuaType.m_Position.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.x);
+	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
+	TuaType.m_Smoothness = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Smoothness);
+	TuaType.m_ControlPoint0.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint0.x);
+	TuaType.m_ControlPoint0.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint0.y);
+	TuaType.m_ControlPoint1.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint1.x);
+	TuaType.m_ControlPoint1.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_ControlPoint1.y);
+	TuaType.m_Weight = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Weight);
+}
+
+void CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_3_0& TuaType)
+{
+	TuaType.m_Position.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.x);
+	TuaType.m_Position.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Position.y);
+	TuaType.m_Size.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.x);
+	TuaType.m_Size.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Size.y);
+	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
+	{
+		TuaType.m_Vertex.m_Size = SysType.m_Vertex.size();
+		CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0* pData = new CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0[SysType.m_Vertex.size()];
+		for(unsigned int i=0; i<SysType.m_Vertex.size(); i++)
+		{
+			CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Vertex[i], pData[i]);
+		}
+		TuaType.m_Vertex.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapZoneObjects::CVertex::CTuaType_0_3_0)*SysType.m_Vertex.size());
+		delete[] pData;
+	}
+	TuaType.m_PathType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_PathType);
+	TuaType.m_FillType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FillType);
+	TuaType.m_ZoneIndex = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_ZoneIndex);
+	TuaType.m_ZoneFlags = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_ZoneFlags);
+}
+
+void CAsset_MapZoneObjects::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_ParentPath, TuaType.m_ParentPath);
+	pLoadingContext->WriteAssetPath(SysType.m_ZoneTypePath, TuaType.m_ZoneTypePath);
+	{
+		TuaType.m_Object.m_Size = SysType.m_Object.size();
+		CAsset_MapZoneObjects::CObject::CTuaType_0_3_0* pData = new CAsset_MapZoneObjects::CObject::CTuaType_0_3_0[SysType.m_Object.size()];
+		for(unsigned int i=0; i<SysType.m_Object.size(); i++)
+		{
+			CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Object[i], pData[i]);
+		}
+		TuaType.m_Object.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_MapZoneObjects::CObject::CTuaType_0_3_0)*SysType.m_Object.size());
 		delete[] pData;
 	}
 	TuaType.m_Visibility = pLoadingContext->ArchiveFile()->WriteBool(SysType.m_Visibility);

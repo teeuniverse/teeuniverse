@@ -39,29 +39,6 @@ CAsset_GuiSliderStyle::CAsset_GuiSliderStyle()
 	m_Padding = 0;
 }
 
-void CAsset_GuiSliderStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiSliderStyle& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_DefaultRailPath, SysType.m_DefaultRailPath);
-	pLoadingContext->ReadAssetPath(TuaType.m_CursorPath, SysType.m_CursorPath);
-	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
-	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
-}
-
-
-void CAsset_GuiSliderStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
-	pLoadingContext->WriteAssetPath(SysType.m_DefaultRailPath, TuaType.m_DefaultRailPath);
-	pLoadingContext->WriteAssetPath(SysType.m_CursorPath, TuaType.m_CursorPath);
-	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
-	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
-}
-
 void CAsset_GuiSliderStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiSliderStyle& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -169,6 +146,29 @@ void CAsset_GuiSliderStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadin
 void CAsset_GuiSliderStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_2_4& TuaType)
 {
 	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
+	pLoadingContext->WriteAssetPath(SysType.m_DefaultRailPath, TuaType.m_DefaultRailPath);
+	pLoadingContext->WriteAssetPath(SysType.m_CursorPath, TuaType.m_CursorPath);
+	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
+	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
+}
+
+void CAsset_GuiSliderStyle::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiSliderStyle& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_DefaultRailPath, SysType.m_DefaultRailPath);
+	pLoadingContext->ReadAssetPath(TuaType.m_CursorPath, SysType.m_CursorPath);
+	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
+	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
+}
+
+
+void CAsset_GuiSliderStyle::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
 	pLoadingContext->WriteAssetPath(SysType.m_DefaultRailPath, TuaType.m_DefaultRailPath);

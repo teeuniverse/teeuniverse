@@ -50,18 +50,6 @@ public:
 		PADDING,
 	};
 	
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_RectPath;
-		CAssetPath::CTuaType m_DefaultRailPath;
-		CAssetPath::CTuaType m_CursorPath;
-		tua_int32 m_Margin;
-		tua_int32 m_Padding;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiSliderStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -120,6 +108,18 @@ public:
 		tua_int32 m_Padding;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiSliderStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_RectPath;
+		CAssetPath::CTuaType m_DefaultRailPath;
+		CAssetPath::CTuaType m_CursorPath;
+		tua_int32 m_Margin;
+		tua_int32 m_Padding;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiSliderStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiSliderStyle& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

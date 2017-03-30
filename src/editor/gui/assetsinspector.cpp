@@ -23,6 +23,7 @@
 #include <client/components/assetsrenderer.h>
 #include <client/gui/text-edit.h>
 #include <client/gui/integer-edit.h>
+#include <client/gui/duration-edit.h>
 #include <client/gui/float-edit.h>
 #include <client/gui/color-edit.h>
 #include <client/gui/toggle.h>
@@ -471,6 +472,9 @@ CAssetsInspector::CAssetsInspector(CGuiEditor* pAssetsEditor) :
 	m_pTabs[TAB_SPRITE_ASSET] = CreateTab_Sprite_Asset();
 	m_pTabs[TAB_PATHMATERIAL_ASSET] = CreateTab_PathMaterial_Asset();
 	m_pTabs[TAB_TILINGMATERIAL_ASSET] = CreateTab_TilingMaterial_Asset();
+	m_pTabs[TAB_SKELETON_ASSET] = CreateTab_Skeleton_Asset();
+	m_pTabs[TAB_SKELETONSKIN_ASSET] = CreateTab_SkeletonSkin_Asset();
+	m_pTabs[TAB_SKELETONANIMATION_ASSET] = CreateTab_SkeletonAnimation_Asset();
 }
 
 void CAssetsInspector::Update(bool ParentEnabled)
@@ -556,6 +560,15 @@ void CAssetsInspector::Update(bool ParentEnabled)
 				break;
 			case CAsset_TilingMaterial::TypeId:
 				m_pTabs[TAB_TILINGMATERIAL_ASSET]->Enable();
+				break;
+			case CAsset_Skeleton::TypeId:
+				m_pTabs[TAB_SKELETON_ASSET]->Enable();
+				break;
+			case CAsset_SkeletonSkin::TypeId:
+				m_pTabs[TAB_SKELETONSKIN_ASSET]->Enable();
+				break;
+			case CAsset_SkeletonAnimation::TypeId:
+				m_pTabs[TAB_SKELETONANIMATION_ASSET]->Enable();
 				break;
 			default:
 				m_pTabs[TAB_GENERIC_ASSET]->Enable();
@@ -1033,7 +1046,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerQuads_Asset()
 		AddField_Vec2(pQuadEditor, CAsset_MapLayerQuads::QUAD_SIZE_X, CAsset_MapLayerQuads::QUAD_SIZE_Y, _LSTRING("Size"));
 		AddField_Angle(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANGLE, _LSTRING("Angle"));
 		AddField_Color(pQuadEditor, CAsset_MapLayerQuads::QUAD_COLOR, _LSTRING("Color"));
-		AddField_Asset(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, CAsset_SkeletonAnimation::TypeId, _LSTRING("Animation"));
+		AddField_Animations(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONPATH, _LSTRING("Animation"));
+		AddField_Duration(pQuadEditor, CAsset_MapLayerQuads::QUAD_ANIMATIONOFFSET, _LSTRING("Animation Offset"));
 	}
 	
 	{
@@ -2570,6 +2584,202 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_TilingMaterial_Asset()
 	return pTab;
 }
 
+/* SKELETON ***********************************************************/
+
+class CNewSubItemButton_Skeleton_Bone : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), CSubPath::Null(), CAsset_Skeleton::TYPE_BONE, Token);
+		CSubPath SubPath = CAsset_Skeleton::SubPath_Bone(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		char aBuf[16];
+		str_format(aBuf, sizeof(aBuf), "bone%d", Id);
+		AssetsManager()->SetAssetValue<const char*>(m_pAssetsEditor->GetEditedAssetPath(), SubPath, CAsset_Skeleton::BONE_NAME, aBuf, Token);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_Skeleton_Bone(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add bone"), pAssetsEditor->m_Path_Sprite_IconBone),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
+class CNewSubItemButton_Skeleton_Layer : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	
+protected:
+	virtual void MouseClickAction()
+	{
+		int Token = AssetsManager()->GenerateToken();
+		int Id = AssetsManager()->AddSubItem(m_pAssetsEditor->GetEditedAssetPath(), CSubPath::Null(), CAsset_Skeleton::TYPE_LAYER, Token);
+		CSubPath SubPath = CAsset_Skeleton::SubPath_Layer(Id);
+		m_pAssetsEditor->SetEditedAsset(m_pAssetsEditor->GetEditedAssetPath(), SubPath);
+		
+		char aBuf[16];
+		str_format(aBuf, sizeof(aBuf), "layer%d", Id);
+		AssetsManager()->SetAssetValue<const char*>(m_pAssetsEditor->GetEditedAssetPath(), SubPath, CAsset_Skeleton::LAYER_NAME, aBuf, Token);
+		
+		CAssetState* pState = AssetsManager()->GetAssetState(m_pAssetsEditor->GetEditedAssetPath());
+		pState->m_NumUpdates++;
+	}
+
+public:
+	CNewSubItemButton_Skeleton_Layer(CGuiEditor* pAssetsEditor) :
+		gui::CButton(pAssetsEditor, _LSTRING("Add layer"), pAssetsEditor->m_Path_Sprite_IconLayer),
+		m_pAssetsEditor(pAssetsEditor)
+	{
+		
+	}
+};
+
+class CSubItem_Skeleton_Bone : public CSubItem
+{
+public:
+	CSubItem_Skeleton_Bone(CGuiEditor* pAssetsEditor, CSubPath SubPath) :
+		CSubItem(pAssetsEditor, SubPath, "", pAssetsEditor->m_Path_Sprite_IconBone)
+	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pSkeleton && pSkeleton->IsValidBone(m_SubPath))
+			SetText(pSkeleton->GetBoneName(m_SubPath));
+		
+		CSubItem::Update(ParentEnabled);
+	}
+};
+
+class CSubItem_Skeleton_Layer : public CSubItem
+{
+public:
+	CSubItem_Skeleton_Layer(CGuiEditor* pAssetsEditor, CSubPath SubPath) :
+		CSubItem(pAssetsEditor, SubPath, "", pAssetsEditor->m_Path_Sprite_IconLayer)
+	{ }
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pSkeleton && pSkeleton->IsValidLayer(m_SubPath))
+			SetText(pSkeleton->GetLayerName(m_SubPath));
+		
+		CSubItem::Update(ParentEnabled);
+	}
+};
+
+class CSubItemList_Skeleton : public CSubItemList
+{
+protected:
+	virtual void GenerateList()
+	{
+		Clear();
+		const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(m_pAssetsEditor->GetEditedAssetPath());
+		if(pSkeleton)
+		{
+			CAsset_Skeleton::CIteratorBone BoneIter;
+			int BoneCounter = 0;
+			for(BoneIter = pSkeleton->BeginBone(); BoneIter != pSkeleton->EndBone(); ++BoneIter)
+			{
+				Add(new CSubItem_Skeleton_Bone(m_pAssetsEditor, *BoneIter), false);
+				BoneCounter++;
+			}
+			
+			if(BoneCounter > 0)
+				AddSeparator();
+				
+			CAsset_Skeleton::CIteratorLayer LayerIter;
+			int LayerCounter = 0;
+			for(LayerIter = pSkeleton->BeginLayer(); LayerIter != pSkeleton->EndLayer(); ++LayerIter)
+			{
+				Add(new CSubItem_Skeleton_Layer(m_pAssetsEditor, *LayerIter), false);
+				LayerCounter++;
+			}
+		}
+	}
+
+public:
+	CSubItemList_Skeleton(CGuiEditor* pAssetsEditor) :
+		CSubItemList(pAssetsEditor, CAsset_Skeleton::TypeId)
+	{ }	
+};
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_Skeleton_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Skeleton"), AssetsEditor()->m_Path_Sprite_IconSkeleton);
+	
+	AddField_AssetProperties(pTab);
+	
+	pTab->Add(new CNewSubItemButton_Skeleton_Bone(AssetsEditor()), false);
+	pTab->Add(new CNewSubItemButton_Skeleton_Layer(AssetsEditor()), false);
+	pTab->Add(new CSubItemList_Skeleton(AssetsEditor()), true);
+	
+	//Bone
+	gui::CVListLayout* pBoneEditor = new CSubItemEditor(AssetsEditor(), CAsset_Skeleton::TYPE_BONE);
+	pTab->Add(pBoneEditor, false);
+	
+	AddField_Text(pBoneEditor, CAsset_Skeleton::BONE_NAME, _LSTRING("Name"));
+	AddField_Color(pBoneEditor, CAsset_Skeleton::BONE_COLOR, _LSTRING("Color"));
+	pBoneEditor->AddSeparator();
+	AddField_Float(pBoneEditor, CAsset_Skeleton::BONE_LENGTH, _LSTRING("Length"));
+	AddField_Float(pBoneEditor, CAsset_Skeleton::BONE_ANCHOR, _LSTRING("Anchor"));
+	AddField_Vec2(pBoneEditor, CAsset_Skeleton::BONE_TRANSLATION_X, CAsset_Skeleton::BONE_TRANSLATION_Y, _LSTRING("Position"));
+	AddField_Angle(pBoneEditor, CAsset_Skeleton::BONE_ANGLE, _LSTRING("Angle"));
+	
+	//Layer
+	gui::CVListLayout* pLayerEditor = new CSubItemEditor(AssetsEditor(), CAsset_Skeleton::TYPE_LAYER);
+	pTab->Add(pLayerEditor, false);
+	
+	AddField_Text(pLayerEditor, CAsset_Skeleton::LAYER_NAME, _LSTRING("Name"));
+	pBoneEditor->AddSeparator();
+	
+	return pTab;
+}
+
+/* SKELETON SKIN ******************************************************/
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_SkeletonSkin_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Skeleton Skin"), AssetsEditor()->m_Path_Sprite_IconSkeletonSkin);
+	
+	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_SkeletonSkin::SKELETONPATH, CAsset_Skeleton::TypeId, _LSTRING("Skeleton"));
+	
+	return pTab;
+}
+
+/* SKELETON ANIMATION *************************************************/
+
+gui::CVScrollLayout* CAssetsInspector::CreateTab_SkeletonAnimation_Asset()
+{
+	gui::CVScrollLayout* pTab = new gui::CVScrollLayout(Context());
+	pTab->Disable();
+	AddTab(pTab, _LSTRING("Skeleton Animation"), AssetsEditor()->m_Path_Sprite_IconSkeletonAnimation);
+	
+	AddField_AssetProperties(pTab);
+	
+	AddField_Asset(pTab, CAsset_SkeletonAnimation::SKELETONPATH, CAsset_Skeleton::TypeId, _LSTRING("Skeleton"));
+	
+	return pTab;
+}
+
 /* GUI RECT STYLE *****************************************************/
 
 gui::CVScrollLayout* CAssetsInspector::CreateTab_GuiRectStyle_Asset()
@@ -3297,7 +3507,7 @@ void CAssetsInspector::AddField_Vec2(gui::CVListLayout* pList, int Member, int M
 	AddField(pList, pLayout, Text);
 }
 
-/* FLOAT EDIT *********************************************************/
+/* ANGLE EDIT *********************************************************/
 	
 class CMemberAngleEdit : public gui::CAbstractFloatEdit
 {
@@ -3341,6 +3551,57 @@ public:
 void CAssetsInspector::AddField_Angle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
 {
 	CMemberAngleEdit* pWidget = new CMemberAngleEdit(
+		m_pAssetsEditor,
+		Member
+	);
+	
+	AddField(pList, pWidget, Text);
+}
+
+/* TIME EDIT **********************************************************/
+	
+class CMemberDurationEdit : public gui::CAbstractDurationEdit
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	int m_Member;
+	
+	virtual int64 GetValue() const
+	{
+		return m_pAssetsEditor->AssetsManager()->GetAssetValue<int64>(
+			m_pAssetsEditor->GetEditedAssetPath(),
+			m_pAssetsEditor->GetFirstEditedSubPath(),
+			m_Member,
+			0
+		);
+	}
+	
+	virtual void SetValue(int64 Value)
+	{
+		int Token = AssetsManager()->GenerateToken();
+		for(unsigned int i = 0; i<m_pAssetsEditor->GetEditedSubPathes().size(); i++)
+		{
+			m_pAssetsEditor->AssetsManager()->SetAssetValue<int64>(
+				m_pAssetsEditor->GetEditedAssetPath(),
+				m_pAssetsEditor->GetEditedSubPathes()[i],
+				m_Member,
+				Value,
+				Token
+			);
+		}
+	}
+	
+public:
+	CMemberDurationEdit(CGuiEditor* pAssetsEditor, int Member) :
+		gui::CAbstractDurationEdit(pAssetsEditor),
+		m_pAssetsEditor(pAssetsEditor),
+		m_Member(Member)
+	{ }
+};
+
+void CAssetsInspector::AddField_Duration(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
+{
+	CMemberDurationEdit* pWidget = new CMemberDurationEdit(
 		m_pAssetsEditor,
 		Member
 	);
@@ -3410,6 +3671,7 @@ public:
 		MODE_IMAGE_TILE,
 		MODE_TILELAYER_STYLE,
 		MODE_MAPGROUP_PARENT,
+		MODE_ANIMATION,
 	};
 	
 public:
@@ -3491,6 +3753,18 @@ public:
 					pExpand->Add(new CItem(this, CAssetPath(CAsset_Image::TypeId, PackageId, i), MODE_IMAGE_TILE));
 				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_TilingMaterial>(PackageId); i++)
 					pExpand->Add(new CItem(this, CAssetPath(CAsset_TilingMaterial::TypeId, PackageId, i), m_Mode));
+			}
+			else if(m_Mode == MODE_ANIMATION)
+			{
+				for(int i=0; i<AssetsManager()->GetNumAssets<CAsset_SkeletonAnimation>(PackageId); i++)
+				{
+					CAssetPath AssetPath = CAssetPath(CAsset_SkeletonAnimation::TypeId, PackageId, i);
+					const CAsset_SkeletonAnimation* pAnimation = AssetsManager()->GetAsset<CAsset_SkeletonAnimation>(AssetPath);
+					if(pAnimation && pAnimation->GetSkeletonPath().IsNull())
+					{
+						pExpand->Add(new CItem(this, AssetPath, m_Mode));
+					}
+				}
 			}
 			else
 			{
@@ -3704,6 +3978,18 @@ void CAssetsInspector::AddField_MapGroups(gui::CVListLayout* pList, int Member, 
 		Member,
 		CAsset_MapGroup::TypeId,
 		CMemberAssetEdit::MODE_MAPGROUP_PARENT
+	);
+	
+	AddField(pList, pWidget, Text);
+}
+
+void CAssetsInspector::AddField_Animations(gui::CVListLayout* pList, int Member, const CLocalizableString& Text)
+{
+	CMemberAssetEdit* pWidget = new CMemberAssetEdit(
+		m_pAssetsEditor,
+		Member,
+		CAsset_MapGroup::TypeId,
+		CMemberAssetEdit::MODE_ANIMATION
 	);
 	
 	AddField(pList, pWidget, Text);

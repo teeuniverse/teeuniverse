@@ -34,25 +34,6 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_GuiButtonStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiButtonStyle& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	pLoadingContext->ReadAssetPath(TuaType.m_IdleStylePath, SysType.m_IdleStylePath);
-	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverStylePath, SysType.m_MouseOverStylePath);
-	pLoadingContext->ReadAssetPath(TuaType.m_ReadOnlyStylePath, SysType.m_ReadOnlyStylePath);
-}
-
-
-void CAsset_GuiButtonStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	pLoadingContext->WriteAssetPath(SysType.m_IdleStylePath, TuaType.m_IdleStylePath);
-	pLoadingContext->WriteAssetPath(SysType.m_MouseOverStylePath, TuaType.m_MouseOverStylePath);
-	pLoadingContext->WriteAssetPath(SysType.m_ReadOnlyStylePath, TuaType.m_ReadOnlyStylePath);
-}
-
 void CAsset_GuiButtonStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiButtonStyle& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -151,6 +132,27 @@ void CAsset_GuiButtonStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadin
 void CAsset_GuiButtonStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_2_4& TuaType)
 {
 	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_IdleStylePath, TuaType.m_IdleStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_MouseOverStylePath, TuaType.m_MouseOverStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_ReadOnlyStylePath, TuaType.m_ReadOnlyStylePath);
+	pLoadingContext->WriteAssetPath(SysType.m_FocusStylePath, TuaType.m_FocusStylePath);
+}
+
+void CAsset_GuiButtonStyle::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiButtonStyle& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_IdleStylePath, SysType.m_IdleStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_MouseOverStylePath, SysType.m_MouseOverStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_ReadOnlyStylePath, SysType.m_ReadOnlyStylePath);
+	pLoadingContext->ReadAssetPath(TuaType.m_FocusStylePath, SysType.m_FocusStylePath);
+}
+
+
+void CAsset_GuiButtonStyle::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiButtonStyle& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_IdleStylePath, TuaType.m_IdleStylePath);
 	pLoadingContext->WriteAssetPath(SysType.m_MouseOverStylePath, TuaType.m_MouseOverStylePath);

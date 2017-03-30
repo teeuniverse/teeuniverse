@@ -44,6 +44,7 @@ CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CFrame()
 CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CKeyFrame()
 {
 	m_Time = 0;
+	m_GraphType = GRAPHTYPE_LINEAR;
 }
 
 CAsset_SkeletonAnimation::CBoneAnimation::CBoneAnimation()
@@ -60,6 +61,7 @@ CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CFrame()
 CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CKeyFrame()
 {
 	m_Time = 0;
+	m_GraphType = GRAPHTYPE_LINEAR;
 }
 
 CAsset_SkeletonAnimation::CLayerAnimation::CLayerAnimation()
@@ -67,211 +69,6 @@ CAsset_SkeletonAnimation::CLayerAnimation::CLayerAnimation()
 	m_CycleType = CYCLETYPE_CLAMP;
 }
 
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType)
-{
-	SysType.m_Translation.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_X);
-	SysType.m_Translation.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_Y);
-	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
-	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
-	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
-	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
-}
-
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType)
-{
-	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
-}
-
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation& SysType)
-{
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_KeyFrame.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_KeyFrame.m_Size);
-		SysType.m_KeyFrame.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_KeyFrame[i]);
-		}
-	}
-	
-	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_BonePath, SysType.m_BonePath);
-	SysType.m_CycleType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_CycleType);
-}
-
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType)
-{
-	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
-	SysType.m_State = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_State);
-}
-
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType)
-{
-	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
-}
-
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation& SysType)
-{
-	{
-		const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0* pData = (const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_KeyFrame.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_KeyFrame.m_Size);
-		SysType.m_KeyFrame.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_KeyFrame[i]);
-		}
-	}
-	
-	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_LayerPath, SysType.m_LayerPath);
-	SysType.m_CycleType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_CycleType);
-}
-
-
-void CAsset_SkeletonAnimation::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_SkeletonAnimation& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0* pData = (const CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LayerAnimation.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LayerAnimation.m_Size);
-		SysType.m_LayerAnimation.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Read(pLoadingContext, pData[i], SysType.m_LayerAnimation[i]);
-		}
-	}
-	
-}
-
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType, CTuaType_0_1_0& TuaType)
-{
-	TuaType.m_Translation.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.x);
-	TuaType.m_Translation.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.y);
-	TuaType.m_Scale.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.x);
-	TuaType.m_Scale.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.y);
-	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
-	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
-}
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
-}
-
-void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_1_0& TuaType)
-{
-	{
-		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0[SysType.m_KeyFrame.size()];
-		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
-		}
-		TuaType.m_KeyFrame.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_1_0)*SysType.m_KeyFrame.size());
-		delete[] pData;
-	}
-	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_BonePath, TuaType.m_BonePath);
-	TuaType.m_CycleType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_CycleType);
-}
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType, CTuaType_0_1_0& TuaType)
-{
-	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
-	TuaType.m_State = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_State);
-}
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
-}
-
-void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_1_0& TuaType)
-{
-	{
-		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
-		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0[SysType.m_KeyFrame.size()];
-		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
-		}
-		TuaType.m_KeyFrame.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_1_0)*SysType.m_KeyFrame.size());
-		delete[] pData;
-	}
-	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_LayerPath, TuaType.m_LayerPath);
-	TuaType.m_CycleType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_CycleType);
-}
-
-void CAsset_SkeletonAnimation::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
-	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
-		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_1_0)*SysType.m_ParentBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
-		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0[SysType.m_LayerAnimation.size()];
-		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
-		}
-		TuaType.m_LayerAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_1_0)*SysType.m_LayerAnimation.size());
-		delete[] pData;
-	}
-}
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType)
 {
@@ -288,7 +85,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_0::Read(C
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -320,7 +118,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_0::Read(
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -347,22 +146,12 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoa
 
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
 	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
 		}
 	}
 	
@@ -393,7 +182,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_0::Write(
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_0& TuaType)
@@ -422,7 +212,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_0::Write
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_0::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_0& TuaType)
@@ -447,23 +238,13 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLo
 
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
 	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
 		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0)*SysType.m_ParentBoneAnim.size());
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_0)*SysType.m_BoneAnimation.size());
 		delete[] pData;
 	}
 	{
@@ -493,7 +274,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_1::Read(C
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -525,7 +307,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_1::Read(
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_1::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -552,22 +335,12 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_1::Read(CAssetsSaveLoadContext* pLoa
 
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
 	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
 		}
 	}
 	
@@ -598,7 +371,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_1::Write(
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_1& TuaType)
@@ -627,7 +401,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_1::Write
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_1::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_1& TuaType)
@@ -652,23 +427,13 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLo
 
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
 	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
 		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1)*SysType.m_ParentBoneAnim.size());
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_1)*SysType.m_BoneAnimation.size());
 		delete[] pData;
 	}
 	{
@@ -698,7 +463,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_2::Read(C
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_2::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -730,7 +496,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_2::Read(
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_2::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -757,22 +524,12 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_2::Read(CAssetsSaveLoadContext* pLoa
 
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
 	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
 		}
 	}
 	
@@ -803,7 +560,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_2::Write(
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_2::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_2& TuaType)
@@ -832,7 +590,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_2::Write
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_2::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_2& TuaType)
@@ -857,23 +616,13 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLo
 
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
 	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
 		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2)*SysType.m_ParentBoneAnim.size());
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_2)*SysType.m_BoneAnimation.size());
 		delete[] pData;
 	}
 	{
@@ -903,7 +652,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_3::Read(C
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -935,7 +685,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_3::Read(
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_3::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -962,22 +713,12 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_3::Read(CAssetsSaveLoadContext* pLoa
 
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
 	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
 		}
 	}
 	
@@ -1008,7 +749,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_3::Write(
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_3& TuaType)
@@ -1037,7 +779,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_3::Write
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_3::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_3& TuaType)
@@ -1062,23 +805,13 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLo
 
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
 	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
 		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3)*SysType.m_ParentBoneAnim.size());
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_3)*SysType.m_BoneAnimation.size());
 		delete[] pData;
 	}
 	{
@@ -1108,7 +841,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_4::Read(C
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -1140,7 +874,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_4::Read(
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_4::Read(pLoadingContext, TuaType, SysType);
 
-	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Time);
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
 }
 
 
@@ -1167,22 +902,12 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoa
 
 	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
 	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LocalBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LocalBoneAnim.m_Size);
-		SysType.m_LocalBoneAnim.resize(Size);
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
 		for(uint32 i=0; i<Size; i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_LocalBoneAnim[i]);
-		}
-	}
-	
-	{
-		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_ParentBoneAnim.m_Data);
-		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ParentBoneAnim.m_Size);
-		SysType.m_ParentBoneAnim.resize(Size);
-		for(uint32 i=0; i<Size; i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_ParentBoneAnim[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
 		}
 	}
 	
@@ -1213,7 +938,8 @@ void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_2_4::Write(
 {
 	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_2_4& TuaType)
@@ -1242,7 +968,8 @@ void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_2_4::Write
 {
 	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
 
-	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Time);
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
 }
 
 void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_2_4& TuaType)
@@ -1267,23 +994,13 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLo
 
 	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
 	{
-		TuaType.m_LocalBoneAnim.m_Size = SysType.m_LocalBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4[SysType.m_LocalBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_LocalBoneAnim.size(); i++)
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
 		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_LocalBoneAnim[i], pData[i]);
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
 		}
-		TuaType.m_LocalBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4)*SysType.m_LocalBoneAnim.size());
-		delete[] pData;
-	}
-	{
-		TuaType.m_ParentBoneAnim.m_Size = SysType.m_ParentBoneAnim.size();
-		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4[SysType.m_ParentBoneAnim.size()];
-		for(unsigned int i=0; i<SysType.m_ParentBoneAnim.size(); i++)
-		{
-			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_ParentBoneAnim[i], pData[i]);
-		}
-		TuaType.m_ParentBoneAnim.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4)*SysType.m_ParentBoneAnim.size());
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_2_4)*SysType.m_BoneAnimation.size());
 		delete[] pData;
 	}
 	{
@@ -1298,33 +1015,218 @@ void CAsset_SkeletonAnimation::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLo
 	}
 }
 
+void CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType)
+{
+	SysType.m_Translation.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_X);
+	SysType.m_Translation.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Translation.m_Y);
+	SysType.m_Scale.x = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_X);
+	SysType.m_Scale.y = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Scale.m_Y);
+	SysType.m_Angle = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_Angle);
+	SysType.m_Alignment = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Alignment);
+}
+
+
+void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType)
+{
+	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
+}
+
+
+void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CBoneAnimation& SysType)
+{
+	{
+		const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_KeyFrame.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_KeyFrame.m_Size);
+		SysType.m_KeyFrame.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_KeyFrame[i]);
+		}
+	}
+	
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_BonePath, SysType.m_BonePath);
+	SysType.m_CycleType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_CycleType);
+}
+
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType)
+{
+	SysType.m_Color = pLoadingContext->ArchiveFile()->ReadColor(TuaType.m_Color);
+	SysType.m_State = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_State);
+}
+
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType)
+{
+	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_Time = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_Time);
+	SysType.m_GraphType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_GraphType);
+}
+
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation::CLayerAnimation& SysType)
+{
+	{
+		const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0* pData = (const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_KeyFrame.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_KeyFrame.m_Size);
+		SysType.m_KeyFrame.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_KeyFrame[i]);
+		}
+	}
+	
+	CSubPath::CTuaType::Read(pLoadingContext->ArchiveFile(), TuaType.m_LayerPath, SysType.m_LayerPath);
+	SysType.m_CycleType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_CycleType);
+}
+
+
+void CAsset_SkeletonAnimation::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonAnimation& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_SkeletonPath, SysType.m_SkeletonPath);
+	{
+		const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0* pData = (const CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_BoneAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_BoneAnimation.m_Size);
+		SysType.m_BoneAnimation.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_BoneAnimation[i]);
+		}
+	}
+	
+	{
+		const CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0* pData = (const CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0*) pLoadingContext->ArchiveFile()->GetData(TuaType.m_LayerAnimation.m_Data);
+		uint32 Size = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_LayerAnimation.m_Size);
+		SysType.m_LayerAnimation.resize(Size);
+		for(uint32 i=0; i<Size; i++)
+		{
+			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0::Read(pLoadingContext, pData[i], SysType.m_LayerAnimation[i]);
+		}
+	}
+	
+}
+
+
+void CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& SysType, CTuaType_0_3_0& TuaType)
+{
+	TuaType.m_Translation.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.x);
+	TuaType.m_Translation.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Translation.y);
+	TuaType.m_Scale.m_X = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.x);
+	TuaType.m_Scale.m_Y = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Scale.y);
+	TuaType.m_Angle = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_Angle);
+	TuaType.m_Alignment = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Alignment);
+}
+
+void CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset_SkeletonAnimation::CBoneAnimation::CFrame::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
+}
+
+void CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CBoneAnimation& SysType, CTuaType_0_3_0& TuaType)
+{
+	{
+		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0[SysType.m_KeyFrame.size()];
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
+		{
+			CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
+		}
+		TuaType.m_KeyFrame.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::CTuaType_0_3_0)*SysType.m_KeyFrame.size());
+		delete[] pData;
+	}
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_BonePath, TuaType.m_BonePath);
+	TuaType.m_CycleType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_CycleType);
+}
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CFrame& SysType, CTuaType_0_3_0& TuaType)
+{
+	TuaType.m_Color = pLoadingContext->ArchiveFile()->WriteColor(SysType.m_Color);
+	TuaType.m_State = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_State);
+}
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset_SkeletonAnimation::CLayerAnimation::CFrame::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_Time = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_Time);
+	TuaType.m_GraphType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_GraphType);
+}
+
+void CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation::CLayerAnimation& SysType, CTuaType_0_3_0& TuaType)
+{
+	{
+		TuaType.m_KeyFrame.m_Size = SysType.m_KeyFrame.size();
+		CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0[SysType.m_KeyFrame.size()];
+		for(unsigned int i=0; i<SysType.m_KeyFrame.size(); i++)
+		{
+			CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_KeyFrame[i], pData[i]);
+		}
+		TuaType.m_KeyFrame.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CLayerAnimation::CKeyFrame::CTuaType_0_3_0)*SysType.m_KeyFrame.size());
+		delete[] pData;
+	}
+	CSubPath::CTuaType::Write(pLoadingContext->ArchiveFile(), SysType.m_LayerPath, TuaType.m_LayerPath);
+	TuaType.m_CycleType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_CycleType);
+}
+
+void CAsset_SkeletonAnimation::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonAnimation& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_SkeletonPath, TuaType.m_SkeletonPath);
+	{
+		TuaType.m_BoneAnimation.m_Size = SysType.m_BoneAnimation.size();
+		CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0* pData = new CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0[SysType.m_BoneAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_BoneAnimation.size(); i++)
+		{
+			CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_BoneAnimation[i], pData[i]);
+		}
+		TuaType.m_BoneAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CBoneAnimation::CTuaType_0_3_0)*SysType.m_BoneAnimation.size());
+		delete[] pData;
+	}
+	{
+		TuaType.m_LayerAnimation.m_Size = SysType.m_LayerAnimation.size();
+		CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0* pData = new CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0[SysType.m_LayerAnimation.size()];
+		for(unsigned int i=0; i<SysType.m_LayerAnimation.size(); i++)
+		{
+			CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_LayerAnimation[i], pData[i]);
+		}
+		TuaType.m_LayerAnimation.m_Data = pLoadingContext->ArchiveFile()->AddData((uint8*) pData, sizeof(CAsset_SkeletonAnimation::CLayerAnimation::CTuaType_0_3_0)*SysType.m_LayerAnimation.size());
+		delete[] pData;
+	}
+}
+
 template<>
 int CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const
 {
 	switch(ValueType)
 	{
-		case LOCALBONEANIM_ARRAYSIZE:
-			return GetLocalBoneAnimArraySize();
-		case LOCALBONEANIM_KEYFRAME_ARRAYSIZE:
-			return GetLocalBoneAnimKeyFrameArraySize(SubPath);
-		case LOCALBONEANIM_KEYFRAME_TIME:
-			return GetLocalBoneAnimKeyFrameTime(SubPath);
-		case LOCALBONEANIM_CYCLETYPE:
-			return GetLocalBoneAnimCycleType(SubPath);
-		case PARENTBONEANIM_ARRAYSIZE:
-			return GetParentBoneAnimArraySize();
-		case PARENTBONEANIM_KEYFRAME_ARRAYSIZE:
-			return GetParentBoneAnimKeyFrameArraySize(SubPath);
-		case PARENTBONEANIM_KEYFRAME_TIME:
-			return GetParentBoneAnimKeyFrameTime(SubPath);
-		case PARENTBONEANIM_CYCLETYPE:
-			return GetParentBoneAnimCycleType(SubPath);
+		case BONEANIMATION_ARRAYSIZE:
+			return GetBoneAnimationArraySize();
+		case BONEANIMATION_KEYFRAME_ARRAYSIZE:
+			return GetBoneAnimationKeyFrameArraySize(SubPath);
+		case BONEANIMATION_KEYFRAME_ALIGNMENT:
+			return GetBoneAnimationKeyFrameAlignment(SubPath);
+		case BONEANIMATION_KEYFRAME_GRAPHTYPE:
+			return GetBoneAnimationKeyFrameGraphType(SubPath);
+		case BONEANIMATION_CYCLETYPE:
+			return GetBoneAnimationCycleType(SubPath);
 		case LAYERANIMATION_ARRAYSIZE:
 			return GetLayerAnimationArraySize();
 		case LAYERANIMATION_KEYFRAME_ARRAYSIZE:
 			return GetLayerAnimationKeyFrameArraySize(SubPath);
-		case LAYERANIMATION_KEYFRAME_TIME:
-			return GetLayerAnimationKeyFrameTime(SubPath);
+		case LAYERANIMATION_KEYFRAME_STATE:
+			return GetLayerAnimationKeyFrameState(SubPath);
+		case LAYERANIMATION_KEYFRAME_GRAPHTYPE:
+			return GetLayerAnimationKeyFrameGraphType(SubPath);
 		case LAYERANIMATION_CYCLETYPE:
 			return GetLayerAnimationCycleType(SubPath);
 	}
@@ -1336,29 +1238,20 @@ bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, 
 {
 	switch(ValueType)
 	{
-		case LOCALBONEANIM_ARRAYSIZE:
-			SetLocalBoneAnimArraySize(Value);
+		case BONEANIMATION_ARRAYSIZE:
+			SetBoneAnimationArraySize(Value);
 			return true;
-		case LOCALBONEANIM_KEYFRAME_ARRAYSIZE:
-			SetLocalBoneAnimKeyFrameArraySize(SubPath, Value);
+		case BONEANIMATION_KEYFRAME_ARRAYSIZE:
+			SetBoneAnimationKeyFrameArraySize(SubPath, Value);
 			return true;
-		case LOCALBONEANIM_KEYFRAME_TIME:
-			SetLocalBoneAnimKeyFrameTime(SubPath, Value);
+		case BONEANIMATION_KEYFRAME_ALIGNMENT:
+			SetBoneAnimationKeyFrameAlignment(SubPath, Value);
 			return true;
-		case LOCALBONEANIM_CYCLETYPE:
-			SetLocalBoneAnimCycleType(SubPath, Value);
+		case BONEANIMATION_KEYFRAME_GRAPHTYPE:
+			SetBoneAnimationKeyFrameGraphType(SubPath, Value);
 			return true;
-		case PARENTBONEANIM_ARRAYSIZE:
-			SetParentBoneAnimArraySize(Value);
-			return true;
-		case PARENTBONEANIM_KEYFRAME_ARRAYSIZE:
-			SetParentBoneAnimKeyFrameArraySize(SubPath, Value);
-			return true;
-		case PARENTBONEANIM_KEYFRAME_TIME:
-			SetParentBoneAnimKeyFrameTime(SubPath, Value);
-			return true;
-		case PARENTBONEANIM_CYCLETYPE:
-			SetParentBoneAnimCycleType(SubPath, Value);
+		case BONEANIMATION_CYCLETYPE:
+			SetBoneAnimationCycleType(SubPath, Value);
 			return true;
 		case LAYERANIMATION_ARRAYSIZE:
 			SetLayerAnimationArraySize(Value);
@@ -1366,14 +1259,139 @@ bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, 
 		case LAYERANIMATION_KEYFRAME_ARRAYSIZE:
 			SetLayerAnimationKeyFrameArraySize(SubPath, Value);
 			return true;
-		case LAYERANIMATION_KEYFRAME_TIME:
-			SetLayerAnimationKeyFrameTime(SubPath, Value);
+		case LAYERANIMATION_KEYFRAME_STATE:
+			SetLayerAnimationKeyFrameState(SubPath, Value);
+			return true;
+		case LAYERANIMATION_KEYFRAME_GRAPHTYPE:
+			SetLayerAnimationKeyFrameGraphType(SubPath, Value);
 			return true;
 		case LAYERANIMATION_CYCLETYPE:
 			SetLayerAnimationCycleType(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+int64 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TIME:
+			return GetBoneAnimationKeyFrameTime(SubPath);
+		case LAYERANIMATION_KEYFRAME_TIME:
+			return GetLayerAnimationKeyFrameTime(SubPath);
+	}
+	return CAsset::GetValue<int64>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, int64 Value)
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TIME:
+			SetBoneAnimationKeyFrameTime(SubPath, Value);
+			return true;
+		case LAYERANIMATION_KEYFRAME_TIME:
+			SetLayerAnimationKeyFrameTime(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<int64>(ValueType, SubPath, Value);
+}
+
+template<>
+float CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TRANSLATION_X:
+			return GetBoneAnimationKeyFrameTranslationX(SubPath);
+		case BONEANIMATION_KEYFRAME_TRANSLATION_Y:
+			return GetBoneAnimationKeyFrameTranslationY(SubPath);
+		case BONEANIMATION_KEYFRAME_SCALE_X:
+			return GetBoneAnimationKeyFrameScaleX(SubPath);
+		case BONEANIMATION_KEYFRAME_SCALE_Y:
+			return GetBoneAnimationKeyFrameScaleY(SubPath);
+		case BONEANIMATION_KEYFRAME_ANGLE:
+			return GetBoneAnimationKeyFrameAngle(SubPath);
+	}
+	return CAsset::GetValue<float>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, float Value)
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TRANSLATION_X:
+			SetBoneAnimationKeyFrameTranslationX(SubPath, Value);
+			return true;
+		case BONEANIMATION_KEYFRAME_TRANSLATION_Y:
+			SetBoneAnimationKeyFrameTranslationY(SubPath, Value);
+			return true;
+		case BONEANIMATION_KEYFRAME_SCALE_X:
+			SetBoneAnimationKeyFrameScaleX(SubPath, Value);
+			return true;
+		case BONEANIMATION_KEYFRAME_SCALE_Y:
+			SetBoneAnimationKeyFrameScaleY(SubPath, Value);
+			return true;
+		case BONEANIMATION_KEYFRAME_ANGLE:
+			SetBoneAnimationKeyFrameAngle(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<float>(ValueType, SubPath, Value);
+}
+
+template<>
+vec2 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, vec2 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TRANSLATION:
+			return GetBoneAnimationKeyFrameTranslation(SubPath);
+		case BONEANIMATION_KEYFRAME_SCALE:
+			return GetBoneAnimationKeyFrameScale(SubPath);
+	}
+	return CAsset::GetValue<vec2>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, vec2 Value)
+{
+	switch(ValueType)
+	{
+		case BONEANIMATION_KEYFRAME_TRANSLATION:
+			SetBoneAnimationKeyFrameTranslation(SubPath, Value);
+			return true;
+		case BONEANIMATION_KEYFRAME_SCALE:
+			SetBoneAnimationKeyFrameScale(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<vec2>(ValueType, SubPath, Value);
+}
+
+template<>
+vec4 CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPath, vec4 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case LAYERANIMATION_KEYFRAME_COLOR:
+			return GetLayerAnimationKeyFrameColor(SubPath);
+	}
+	return CAsset::GetValue<vec4>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, vec4 Value)
+{
+	switch(ValueType)
+	{
+		case LAYERANIMATION_KEYFRAME_COLOR:
+			SetLayerAnimationKeyFrameColor(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<vec4>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -1404,10 +1422,8 @@ CSubPath CAsset_SkeletonAnimation::GetValue(int ValueType, const CSubPath& SubPa
 {
 	switch(ValueType)
 	{
-		case LOCALBONEANIM_BONEPATH:
-			return GetLocalBoneAnimBonePath(SubPath);
-		case PARENTBONEANIM_BONEPATH:
-			return GetParentBoneAnimBonePath(SubPath);
+		case BONEANIMATION_BONEPATH:
+			return GetBoneAnimationBonePath(SubPath);
 		case LAYERANIMATION_LAYERPATH:
 			return GetLayerAnimationLayerPath(SubPath);
 	}
@@ -1419,11 +1435,8 @@ bool CAsset_SkeletonAnimation::SetValue(int ValueType, const CSubPath& SubPath, 
 {
 	switch(ValueType)
 	{
-		case LOCALBONEANIM_BONEPATH:
-			SetLocalBoneAnimBonePath(SubPath, Value);
-			return true;
-		case PARENTBONEANIM_BONEPATH:
-			SetParentBoneAnimBonePath(SubPath, Value);
+		case BONEANIMATION_BONEPATH:
+			SetBoneAnimationBonePath(SubPath, Value);
 			return true;
 		case LAYERANIMATION_LAYERPATH:
 			SetLayerAnimationLayerPath(SubPath, Value);
@@ -1436,14 +1449,10 @@ int CAsset_SkeletonAnimation::AddSubItem(int Type, const CSubPath& SubPath)
 {
 	switch(Type)
 	{
-		case TYPE_LOCALBONEANIM:
-			return AddLocalBoneAnim();
-		case TYPE_LOCALBONEANIM_KEYFRAME:
-			return AddLocalBoneAnimKeyFrame(SubPath);
-		case TYPE_PARENTBONEANIM:
-			return AddParentBoneAnim();
-		case TYPE_PARENTBONEANIM_KEYFRAME:
-			return AddParentBoneAnimKeyFrame(SubPath);
+		case TYPE_BONEANIMATION:
+			return AddBoneAnimation();
+		case TYPE_BONEANIMATION_KEYFRAME:
+			return AddBoneAnimationKeyFrame(SubPath);
 		case TYPE_LAYERANIMATION:
 			return AddLayerAnimation();
 		case TYPE_LAYERANIMATION_KEYFRAME:
@@ -1456,17 +1465,11 @@ int CAsset_SkeletonAnimation::AddSubItemAt(int Type, const CSubPath& SubPath, in
 {
 	switch(Type)
 	{
-		case TYPE_LOCALBONEANIM:
-			AddAtLocalBoneAnim(Index);
+		case TYPE_BONEANIMATION:
+			AddAtBoneAnimation(Index);
 			return Index;
-		case TYPE_LOCALBONEANIM_KEYFRAME:
-			AddAtLocalBoneAnimKeyFrame(SubPath, Index);
-			return Index;
-		case TYPE_PARENTBONEANIM:
-			AddAtParentBoneAnim(Index);
-			return Index;
-		case TYPE_PARENTBONEANIM_KEYFRAME:
-			AddAtParentBoneAnimKeyFrame(SubPath, Index);
+		case TYPE_BONEANIMATION_KEYFRAME:
+			AddAtBoneAnimationKeyFrame(SubPath, Index);
 			return Index;
 		case TYPE_LAYERANIMATION:
 			AddAtLayerAnimation(Index);
@@ -1482,17 +1485,11 @@ void CAsset_SkeletonAnimation::DeleteSubItem(const CSubPath& SubPath)
 {
 	switch(SubPath.GetType())
 	{
-		case TYPE_LOCALBONEANIM:
-			DeleteLocalBoneAnim(SubPath);
+		case TYPE_BONEANIMATION:
+			DeleteBoneAnimation(SubPath);
 			break;
-		case TYPE_LOCALBONEANIM_KEYFRAME:
-			DeleteLocalBoneAnimKeyFrame(SubPath);
-			break;
-		case TYPE_PARENTBONEANIM:
-			DeleteParentBoneAnim(SubPath);
-			break;
-		case TYPE_PARENTBONEANIM_KEYFRAME:
-			DeleteParentBoneAnimKeyFrame(SubPath);
+		case TYPE_BONEANIMATION_KEYFRAME:
+			DeleteBoneAnimationKeyFrame(SubPath);
 			break;
 		case TYPE_LAYERANIMATION:
 			DeleteLayerAnimation(SubPath);
@@ -1507,17 +1504,11 @@ void CAsset_SkeletonAnimation::RelMoveSubItem(CSubPath& SubPath, int RelMove)
 {
 	switch(SubPath.GetType())
 	{
-		case TYPE_LOCALBONEANIM:
-			RelMoveLocalBoneAnim(SubPath, RelMove);
+		case TYPE_BONEANIMATION:
+			RelMoveBoneAnimation(SubPath, RelMove);
 			break;
-		case TYPE_LOCALBONEANIM_KEYFRAME:
-			RelMoveLocalBoneAnimKeyFrame(SubPath, RelMove);
-			break;
-		case TYPE_PARENTBONEANIM:
-			RelMoveParentBoneAnim(SubPath, RelMove);
-			break;
-		case TYPE_PARENTBONEANIM_KEYFRAME:
-			RelMoveParentBoneAnimKeyFrame(SubPath, RelMove);
+		case TYPE_BONEANIMATION_KEYFRAME:
+			RelMoveBoneAnimationKeyFrame(SubPath, RelMove);
 			break;
 		case TYPE_LAYERANIMATION:
 			RelMoveLayerAnimation(SubPath, RelMove);

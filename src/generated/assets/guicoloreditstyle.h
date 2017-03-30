@@ -51,19 +51,6 @@ public:
 		WHEELICONPATH,
 	};
 	
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_ButtonStylePath;
-		CAssetPath::CTuaType m_PopupStylePath;
-		CAssetPath::CTuaType m_RGBIconPath;
-		CAssetPath::CTuaType m_HSVIconPath;
-		CAssetPath::CTuaType m_SquareIconPath;
-		CAssetPath::CTuaType m_WheelIconPath;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiColorEditStyle& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiColorEditStyle& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -127,6 +114,19 @@ public:
 		CAssetPath::CTuaType m_WheelIconPath;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_GuiColorEditStyle& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiColorEditStyle& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_ButtonStylePath;
+		CAssetPath::CTuaType m_PopupStylePath;
+		CAssetPath::CTuaType m_RGBIconPath;
+		CAssetPath::CTuaType m_HSVIconPath;
+		CAssetPath::CTuaType m_SquareIconPath;
+		CAssetPath::CTuaType m_WheelIconPath;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiColorEditStyle& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiColorEditStyle& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 

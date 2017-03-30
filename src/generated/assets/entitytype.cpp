@@ -34,23 +34,6 @@
 #include <shared/archivefile.h>
 
 
-void CAsset_EntityType::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_EntityType& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	pLoadingContext->ReadAssetPath(TuaType.m_GizmoPath, SysType.m_GizmoPath);
-	SysType.m_CollisionRadius = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CollisionRadius);
-}
-
-
-void CAsset_EntityType::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	pLoadingContext->WriteAssetPath(SysType.m_GizmoPath, TuaType.m_GizmoPath);
-	TuaType.m_CollisionRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CollisionRadius);
-}
-
 void CAsset_EntityType::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_EntityType& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -131,6 +114,23 @@ void CAsset_EntityType::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingCon
 void CAsset_EntityType::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_2_4& TuaType)
 {
 	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	pLoadingContext->WriteAssetPath(SysType.m_GizmoPath, TuaType.m_GizmoPath);
+	TuaType.m_CollisionRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CollisionRadius);
+}
+
+void CAsset_EntityType::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_EntityType& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	pLoadingContext->ReadAssetPath(TuaType.m_GizmoPath, SysType.m_GizmoPath);
+	SysType.m_CollisionRadius = pLoadingContext->ArchiveFile()->ReadFloat(TuaType.m_CollisionRadius);
+}
+
+
+void CAsset_EntityType::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_EntityType& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
 
 	pLoadingContext->WriteAssetPath(SysType.m_GizmoPath, TuaType.m_GizmoPath);
 	TuaType.m_CollisionRadius = pLoadingContext->ArchiveFile()->WriteFloat(SysType.m_CollisionRadius);

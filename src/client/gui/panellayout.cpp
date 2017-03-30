@@ -396,7 +396,7 @@ void CVPanelLayout::UpdatePosition(const CRect& BoundingRect, const CRect& Visib
 		if(m_Childs[i].m_Fill)
 			NumFill++;
 		else
-			AvailableSpace -= max(m_Childs[i].m_Size, m_Childs[i].m_pWidget->GetBS().minw);
+			AvailableSpace -= max(m_Childs[i].m_Size, m_Childs[i].m_pWidget->GetBS().minh);
 	}
 	if(NumChilds > 1)
 		AvailableSpace -= (NumChilds-1)*Spacing;
@@ -462,7 +462,10 @@ void CVPanelLayout::OnMouseMove()
 		}
 		
 		if(m_Childs[i].m_SliderRect.IsInside(Context()->GetMousePos()) || m_Childs[i].m_SliderClicked)
-			m_MouseOver = true;
+		{
+			if(i<m_Childs.size()-1)
+				m_MouseOver = true;
+		}
 		
 		m_Childs[i].m_pWidget->OnMouseMove();
 	}

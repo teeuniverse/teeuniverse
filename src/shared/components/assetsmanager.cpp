@@ -560,7 +560,7 @@ int CAssetsManager::Load_AssetsFile_Core(const char* pPackageName, CErrorStack* 
 	
 	//Find package directory
 	dynamic_string Directory;
-	Directory.append_num(FullPath.buffer(), FullPath.length() - 4 - PurePackageName.length()); 
+	Directory.append(FullPath.buffer(), FullPath.length() - 4 - PurePackageName.length()); 
 	char* pCharSlash = Directory.buffer() + Directory.length() - 1;
 	while(pCharSlash > Directory.buffer())
 	{
@@ -1082,7 +1082,7 @@ CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId,
 		}\
 		if(pCharIter >= pName)\
 		{\
-			Buffer.append_num(pName, pCharIter - pName + 1);\
+			Buffer.append(pName, pCharIter - pName + 1);\
 			DuplicateNum = str_to_int(pCharIter + 1);\
 		}\
 		else\

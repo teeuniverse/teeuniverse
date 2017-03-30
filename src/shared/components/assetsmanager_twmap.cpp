@@ -415,6 +415,132 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 	
 	bool Background = true;
 	
+	//Load animations
+	std::vector<CAssetPath> Animations;
+	{
+		int PointStart, PointNum;
+		ArchiveFile.GetType(ddnet::MAPITEMTYPE_ENVPOINTS, &PointStart, &PointNum);
+		
+		ddnet::CEnvPoint* pPoints = nullptr;
+		if(PointNum)
+			pPoints = (ddnet::CEnvPoint*) ArchiveFile.GetItem(PointStart, 0, 0);
+
+		int EnvStart, EnvNum;
+		ArchiveFile.GetType(ddnet::MAPITEMTYPE_ENVELOPE, &EnvStart, &EnvNum);
+		
+		for(int e=0; e<EnvNum; e++)
+		{
+			ddnet::CMapItemEnvelope *pEnv = (ddnet::CMapItemEnvelope *)ArchiveFile.GetItem(EnvStart+e, 0, 0);
+			
+			if(!pPoints)
+			{
+				Animations.emplace_back(CAssetPath::Null());
+			}
+			else if(pEnv->m_Channels == 3)
+			{
+				CAssetPath AnimationPath;
+				CAsset_SkeletonAnimation* pAnimation = NewAsset_Hard<CAsset_SkeletonAnimation>(&AnimationPath, PackageId);
+				Animations.emplace_back(AnimationPath);
+				
+				AssetsManager()->TryChangeAssetName_Hard(AnimationPath, "posAnim");
+				
+				CSubPath AnimSubPath = CAsset_SkeletonAnimation::SubPath_BoneAnimation(pAnimation->AddSubItem(CAsset_SkeletonAnimation::TYPE_BONEANIMATION, CSubPath::Null()));
+				pAnimation->SetBoneAnimationCycleType(AnimSubPath, CAsset_SkeletonAnimation::CYCLETYPE_LOOP);
+				
+				for(int p=0; p<pEnv->m_NumPoints; p++)
+				{
+					int pId = pEnv->m_StartPoint + p;
+					
+					int FrameId = pAnimation->AddSubItem(CAsset_SkeletonAnimation::TYPE_BONEANIMATION_KEYFRAME, AnimSubPath);
+					CSubPath FramePath = CAsset_SkeletonAnimation::SubPath_BoneAnimationKeyFrame(AnimSubPath.GetId(), FrameId);
+					
+					pAnimation->SetBoneAnimationKeyFrameTime(FramePath, pPoints[pId].m_Time);
+					switch(pPoints[pId].m_Curvetype)
+					{
+						case ddnet::CURVETYPE_STEP:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_STEPEND);
+							break;
+						case ddnet::CURVETYPE_LINEAR:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_LINEAR);
+							break;
+						case ddnet::CURVETYPE_SLOW:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_ACCELERATION);
+							break;
+						case ddnet::CURVETYPE_FAST:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_DECELERATION);
+							break;
+						case ddnet::CURVETYPE_SMOOTH:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_SMOOTH);
+							break;
+					}
+					
+					//Translate X
+					float TranslationX = fx2f(pPoints[pId].m_aValues[0]);
+					pAnimation->SetBoneAnimationKeyFrameTranslationX(FramePath, TranslationX);
+					
+					//Translate Y
+					float TranslationY = fx2f(pPoints[pId].m_aValues[1]);
+					pAnimation->SetBoneAnimationKeyFrameTranslationY(FramePath, TranslationY);
+					
+					//Angle
+					float Angle = 2.0*Pi*fx2f(pPoints[pId].m_aValues[2])/360.0;
+					pAnimation->SetBoneAnimationKeyFrameAngle(FramePath, Angle);
+				}
+			}
+			else if(pEnv->m_Channels == 4)
+			{
+				CAssetPath AnimationPath;
+				CAsset_SkeletonAnimation* pAnimation = NewAsset_Hard<CAsset_SkeletonAnimation>(&AnimationPath, PackageId);
+				Animations.emplace_back(AnimationPath);
+				
+				AssetsManager()->TryChangeAssetName_Hard(AnimationPath, "colorAnim");
+				
+				CSubPath AnimSubPath = CAsset_SkeletonAnimation::SubPath_LayerAnimation(pAnimation->AddSubItem(CAsset_SkeletonAnimation::TYPE_LAYERANIMATION, CSubPath::Null()));
+				pAnimation->SetLayerAnimationCycleType(AnimSubPath, CAsset_SkeletonAnimation::CYCLETYPE_LOOP);
+				
+				for(int p=0; p<pEnv->m_NumPoints; p++)
+				{
+					int pId = pEnv->m_StartPoint + p;
+					
+					int FrameId = pAnimation->AddSubItem(CAsset_SkeletonAnimation::TYPE_LAYERANIMATION_KEYFRAME, AnimSubPath);
+					CSubPath FramePath = CAsset_SkeletonAnimation::SubPath_LayerAnimationKeyFrame(AnimSubPath.GetId(), FrameId);
+					
+					pAnimation->SetLayerAnimationKeyFrameTime(FramePath, pPoints[pId].m_Time);
+					switch(pPoints[pId].m_Curvetype)
+					{
+						case ddnet::CURVETYPE_STEP:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_STEPEND);
+							break;
+						case ddnet::CURVETYPE_LINEAR:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_LINEAR);
+							break;
+						case ddnet::CURVETYPE_SLOW:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_ACCELERATION);
+							break;
+						case ddnet::CURVETYPE_FAST:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_DECELERATION);
+							break;
+						case ddnet::CURVETYPE_SMOOTH:
+							pAnimation->SetBoneAnimationKeyFrameGraphType(FramePath, CAsset_SkeletonAnimation::GRAPHTYPE_SMOOTH);
+							break;
+					}
+					
+					vec4 Color;
+					Color.r = fx2f(pPoints[pId].m_aValues[0]);
+					Color.g = fx2f(pPoints[pId].m_aValues[1]);
+					Color.b = fx2f(pPoints[pId].m_aValues[2]);
+					Color.a = fx2f(pPoints[pId].m_aValues[3]);
+					
+					pAnimation->SetLayerAnimationKeyFrameColor(FramePath, Color);
+				}
+			}
+			else
+			{
+				Animations.emplace_back(CAssetPath::Null());
+			}
+		}
+	}
+	
 	//Load groups
 	{
 		int LayersStart, LayersNum;
@@ -1402,6 +1528,42 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 							pMapLayer->SetQuadColor1(QuadPath, VertexColor[1]);
 							pMapLayer->SetQuadColor2(QuadPath, VertexColor[2]);
 							pMapLayer->SetQuadColor3(QuadPath, VertexColor[3]);
+							
+							bool PosEnvEnabled = pQuads[i].m_PosEnv >= 0 && pQuads[i].m_PosEnv < (int) Animations.size();
+							bool ColorEnvEnabled = pQuads[i].m_ColorEnv >= 0 && pQuads[i].m_ColorEnv < (int) Animations.size();
+							
+							//Mixed animation: we must create a new one that combine both
+							if(PosEnvEnabled && ColorEnvEnabled)
+							{
+								CAssetPath AnimationPath;
+								CAsset_SkeletonAnimation* pAnimation = NewAsset_Hard<CAsset_SkeletonAnimation>(&AnimationPath, PackageId);
+								
+								AssetsManager()->TryChangeAssetName_Hard(AnimationPath, "quadAnimation");
+								
+								//Add bone animation
+								{
+									const CAsset_SkeletonAnimation* pBoneAnimation = GetAsset<CAsset_SkeletonAnimation>(Animations[pQuads[i].m_PosEnv]);
+									if(pBoneAnimation && pBoneAnimation->GetBoneAnimationArray().size() > 0)
+										pAnimation->GetBoneAnimationArray().emplace_back(pBoneAnimation->GetBoneAnimationArray()[0]);
+								}
+								//Add layer animation
+								{
+									const CAsset_SkeletonAnimation* pLayerAnimation = GetAsset<CAsset_SkeletonAnimation>(Animations[pQuads[i].m_ColorEnv]);
+									if(pLayerAnimation && pLayerAnimation->GetLayerAnimationArray().size() > 0)
+										pAnimation->GetLayerAnimationArray().emplace_back(pLayerAnimation->GetLayerAnimationArray()[0]);
+								}
+								
+							}
+							else if(PosEnvEnabled && !ColorEnvEnabled)
+							{
+								pMapLayer->SetQuadAnimationPath(QuadPath, Animations[pQuads[i].m_PosEnv]);
+								pMapLayer->SetQuadAnimationOffset(QuadPath, pQuads[i].m_PosEnvOffset);
+							}
+							else if(ColorEnvEnabled && !PosEnvEnabled)
+							{
+								pMapLayer->SetQuadAnimationPath(QuadPath, Animations[pQuads[i].m_ColorEnv]);
+								pMapLayer->SetQuadAnimationOffset(QuadPath, pQuads[i].m_ColorEnvOffset);
+							}
 						}
 						
 						//Image

@@ -1779,6 +1779,24 @@ protected:
 				AssetsManager()->TryChangeAssetName(AssetPath, "tilingMaterial", Token);
 				break;
 			}
+			case CAsset_SkeletonAnimation::TypeId:
+			{
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_SkeletonAnimation* pAnimation = AssetsManager()->NewAsset<CAsset_SkeletonAnimation>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				if(!pAnimation)
+					break;
+				AssetsManager()->TryChangeAssetName(AssetPath, "animation", Token);
+				break;
+			}
+			case CAsset_Skeleton::TypeId:
+			{
+				int Token = AssetsManager()->GenerateToken();
+				CAsset_Skeleton* pSkeleton = AssetsManager()->NewAsset<CAsset_Skeleton>(&AssetPath, m_pAssetsEditor->GetEditedPackageId(), Token);
+				if(!pSkeleton)
+					break;
+				AssetsManager()->TryChangeAssetName(AssetPath, "skeleton", Token);
+				break;
+			}
 		}
 		
 		m_pAssetsEditor->SetEditedAsset(AssetPath, CSubPath::Null());
@@ -1807,6 +1825,12 @@ public:
 				break;
 			case CAsset_TilingMaterial::TypeId:
 				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconTileStyle);
+				break;
+			case CAsset_SkeletonAnimation::TypeId:
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSkeletonAnimation);
+				break;
+			case CAsset_Skeleton::TypeId:
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconSkeleton);
 				break;
 		}
 	}
@@ -1902,6 +1926,8 @@ protected:
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Map::TypeId, _LSTRING("New Map")));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_PathMaterial::TypeId, _LSTRING("New Path Material")));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_TilingMaterial::TypeId, _LSTRING("New Tiling Material")));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_SkeletonAnimation::TypeId, _LSTRING("New Animation")));
+		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Skeleton::TypeId, _LSTRING("New Skeleton")));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CPreferencesButton(m_pAssetsEditor, pMenu));
 		
@@ -1962,7 +1988,7 @@ public:
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());
 				pLayout->Add(pList, true);
 				pList->Add(new gui::CLabel(Context(), _LSTRING("Version:")), true);
-				pList->Add(new gui::CLabel(Context(), "0.2.5"), true); //TAG_ASSETSVERSION
+				pList->Add(new gui::CLabel(Context(), "0.3.0"), true); //TAG_ASSETSVERSION
 			}
 			{
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());
@@ -2054,7 +2080,7 @@ CGuiEditor::CMainWidget::CMainWidget(CGuiEditor* pAssetsEditor) :
 	pPanel->Add(new CAssetsOrganizer(pAssetsEditor), 280);
 	
 	pVPanel->Add(new CViewManager(pAssetsEditor), -1);
-	//pVPanel->Add(new CTimeLine(pAssetsEditor), 200);
+	pVPanel->Add(new CTimeLine(pAssetsEditor), 20);
 	pPanel->Add(pVPanel, -1);
 	
 	pPanel->Add(new CAssetsInspector(pAssetsEditor), 280);
@@ -2129,6 +2155,9 @@ gui::CWidget* CGuiEditor::CMainWidget::CreateStatusbar()
 CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	CGui(pEditorKernel),
 	m_pEditorKernel(pEditorKernel),
+	m_TimePaused(true),
+	m_Time(0),
+	m_TimeSpeed(1),
 	m_pAssetsTree(NULL),
 	m_pPackagesTree(NULL),
 	m_pHintLabel(NULL),
@@ -2229,6 +2258,8 @@ bool CGuiEditor::Init()
 	
 	ResetBindCalls();
 	
+	m_TimeLast = GetCurrentTimePoint();
+	
 	return true;
 }
 
@@ -2239,6 +2270,24 @@ void CGuiEditor::SaveConfig(class CCLI_Output* pOutput)
 	dynamic_string Buffer;
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_compatibility_mode %d", m_Cfg_DefaultCompatibilityMode); pOutput->Print(Buffer.buffer());
 	str_format(Buffer.buffer(), Buffer.maxsize(), "editor_default_author %s", m_Cfg_DefaultAuthor.buffer()); pOutput->Print(Buffer.buffer());
+}
+
+
+bool CGuiEditor::PreUpdate()
+{
+	if(!CGui::PreUpdate())
+		return false;
+	
+	CTimePoint TimeCurrent = GetCurrentTimePoint();
+	int64 ElapsedTime = GetTimeMsDiff(m_TimeLast, TimeCurrent);
+	m_TimeLast = TimeCurrent;
+	
+	if(!m_TimePaused && ElapsedTime >= 0)
+	{
+		m_Time += ElapsedTime * m_TimeSpeed;
+	}
+	
+	return true;
 }
 
 bool CGuiEditor::PostUpdate()
@@ -2275,6 +2324,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Box_PanelHeader = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "panelHeader");
 		m_Path_Box_SubList = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "subList");
 		m_Path_Box_Statusbar = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "statusbar");
+		m_Path_Box_FrameList = AssetsManager()->FindAsset<CAsset_GuiBoxStyle>(PackageId, "frameList");
 		
 		m_Path_Label_Text = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "text");
 		m_Path_Label_Group = AssetsManager()->FindAsset<CAsset_GuiLabelStyle>(PackageId, "group");
@@ -2315,6 +2365,12 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconFolderReadOnly = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFolderReadOnly");
 		m_Path_Sprite_IconLoad = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLoad");
 		m_Path_Sprite_IconSave = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconSave");
+		m_Path_Sprite_IconFirstFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFirstFrame");
+		m_Path_Sprite_IconPrevFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPrevFrame");
+		m_Path_Sprite_IconPlay = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPlay");
+		m_Path_Sprite_IconPause = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPause");
+		m_Path_Sprite_IconNextFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNextFram");
+		m_Path_Sprite_IconLastFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLastFrame");		
 		m_Path_Sprite_IconAsset = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconAsset");
 		m_Path_Sprite_IconNewAsset = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewAsset");
 		m_Path_Sprite_IconImage = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconImage");
@@ -2395,6 +2451,20 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconLineHide = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineHide");
 		m_Path_Sprite_IconLineShow = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineShow");
 		m_Path_Sprite_IconScript = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconScript");
+		m_Path_Sprite_IconCurveFree = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveFree");
+		m_Path_Sprite_IconCurveStepStart = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveStepStart");
+		m_Path_Sprite_IconCurveStepEnd = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveStepEnd");
+		m_Path_Sprite_IconCurveStepMiddle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveStepMiddle");
+		m_Path_Sprite_IconCurveLinear = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveLinear");
+		m_Path_Sprite_IconCurveIncr = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveIncr");
+		m_Path_Sprite_IconCurveDecr = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveDecr");
+		m_Path_Sprite_IconCurveSmooth = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconCurveSmooth");
+		m_Path_Sprite_IconBone = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBone");
+		m_Path_Sprite_IconTime = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTime");
+		m_Path_Sprite_IconRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconRotate");
+		m_Path_Sprite_IconTranslate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTranslate");
+		m_Path_Sprite_IconScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconScale");
+		m_Path_Sprite_IconColor = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconColor");
 	
 		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
 		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");
@@ -2430,6 +2500,7 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconEntityRatio3= AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconEntityRatio3");
 		m_Path_Sprite_IconZoomUnit = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconZoomUnit");
 		m_Path_Sprite_IconFill = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconFill");
+		m_Path_Sprite_IconBoneCreator = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconBoneCreator");
 	
 		m_Path_Sprite_GizmoScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoScale");
 		m_Path_Sprite_GizmoRotate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoRotate");
@@ -2441,6 +2512,13 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_GizmoVertexBezierBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBezierBg");
 		m_Path_Sprite_GizmoVertexBezierFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexBezierFg");
 		m_Path_Sprite_GizmoVertexControl = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoVertexControl");
+		m_Path_Sprite_GizmoBoneLength = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoBoneLength");
+		
+		m_Path_Sprite_GizmoFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoFrame");
+		m_Path_Sprite_GizmoFrameCursor = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoFrameCursor");
+		m_Path_Sprite_GizmoFrameLayerBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoFrameLayerBg");
+		m_Path_Sprite_GizmoFrameLayerColor = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoFrameLayerColor");
+		m_Path_Sprite_GizmoFrameLayerAlpha = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "gizmoFrameLayerAlpha");
 	}
 	
 	//Init default path to the GUI

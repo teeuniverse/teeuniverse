@@ -35,17 +35,14 @@ public:
 	vec2 m_GroupCameraPos;
 	float m_CameraZoom;
 	double m_Time;
-	double m_LocalTime;
 	bool m_Clipping;
 	
 public:	
 	CMapRenderer(CClientKernel* pKernel);
 	
 	inline void SetTime(double Time) { m_Time = Time; }
-	inline void SetLocalTime(double Time) { m_LocalTime = Time; }
 	
 	inline double GetTime() const { return m_Time; }
-	inline double GetLocalTime() const { return m_LocalTime; }
 	
 	void SetCanvas(const gui::CRect& Canvas, vec2 ScreenPos);
 	void SetCamera(vec2 CameraPos, float CameraZoom);

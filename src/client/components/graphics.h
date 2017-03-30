@@ -35,6 +35,7 @@
 #define __CLIENT_GRAPHICS__
 
 #include <shared/system/time.h>
+#include <shared/system/types.h>
 #include <shared/math/vector.h>
 #include <shared/graphics.h>
 #include <client/kernel.h>
@@ -435,6 +436,8 @@ public:
 	std::vector<CCommandBuffer::SClip> m_ClipStack;
 
 protected:
+	CTimePoint m_TimeStart;
+
 	CTextureHandle m_InvalidTexture;
 
 	int m_aTextureIndices[MAX_TEXTURES];
@@ -603,6 +606,8 @@ public:
 	virtual bool PreUpdate();
 	virtual bool PostUpdate();
 	virtual void Shutdown();
+	
+	int64 GetFrameTime();
 
 	void ReadBackbuffer(unsigned char **ppPixels, int x, int y, int w, int h);
 	void TakeScreenshot(const char *pFilename);

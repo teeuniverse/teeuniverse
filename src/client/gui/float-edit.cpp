@@ -40,7 +40,7 @@ void CAbstractFloatEdit::SaveFromTextBuffer()
 	if(m_Percent)
 		SetValue(Localization()->ParsePercent(NULL, GetText()));
 	else
-		SetValue(Localization()->ParseFloat(NULL, GetText()));
+		SetValue(Localization()->ParseDouble(NULL, GetText()));
 }
 
 void CAbstractFloatEdit::CopyToTextBuffer()
@@ -48,13 +48,13 @@ void CAbstractFloatEdit::CopyToTextBuffer()
 	if(m_Percent)
 	{
 		CLocalizableString LString("{percent:v}");
-		LString.AddFloat("v", GetValue());
+		LString.AddDouble("v", GetValue());
 		SetText(LString);
 	}
 	else
 	{
 		CLocalizableString LString("{float:v}");
-		LString.AddFloat("v", GetValue());
+		LString.AddDouble("v", GetValue());
 		SetText(LString);
 	}
 }
@@ -95,6 +95,27 @@ float CExternalFloatEdit::GetValue() const
 void CExternalFloatEdit::SetValue(float Value)
 {
 	*m_pFloat = Value;
+}
+
+/* ABSTRACT DOUBLE EDIT ***********************************************/
+
+CAbstractDoubleEdit::CAbstractDoubleEdit(CGui* pContext) :
+	CAbstractTextEdit(pContext),
+	m_Percent(false)
+{
+	SetLabelStyle(Context()->GetNumericEntryStyle());
+}
+
+void CAbstractDoubleEdit::SaveFromTextBuffer()
+{
+	SetValue(Localization()->ParseDouble(NULL, GetText()));
+}
+
+void CAbstractDoubleEdit::CopyToTextBuffer()
+{
+	CLocalizableString LString("{float:v}");
+	LString.AddDouble("v", GetValue());
+	SetText(LString);
 }
 
 }

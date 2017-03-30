@@ -42,31 +42,6 @@ CAsset_GuiBoxStyle::CAsset_GuiBoxStyle()
 	m_Spacing = 0;
 }
 
-void CAsset_GuiBoxStyle::CTuaType_0_1_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_GuiBoxStyle& SysType)
-{
-	CAsset::CTuaType_0_1_0::Read(pLoadingContext, TuaType, SysType);
-
-	SysType.m_MinWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinWidth);
-	SysType.m_MinHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinHeight);
-	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
-	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
-	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Spacing);
-	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
-}
-
-
-void CAsset_GuiBoxStyle::CTuaType_0_1_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_1_0& TuaType)
-{
-	CAsset::CTuaType_0_1_0::Write(pLoadingContext, SysType, TuaType);
-
-	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
-	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);
-	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
-	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
-	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Spacing);
-	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
-}
-
 void CAsset_GuiBoxStyle::CTuaType_0_2_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_GuiBoxStyle& SysType)
 {
 	CAsset::CTuaType_0_2_0::Read(pLoadingContext, TuaType, SysType);
@@ -183,6 +158,31 @@ void CAsset_GuiBoxStyle::CTuaType_0_2_4::Read(CAssetsSaveLoadContext* pLoadingCo
 void CAsset_GuiBoxStyle::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_2_4& TuaType)
 {
 	CAsset::CTuaType_0_2_4::Write(pLoadingContext, SysType, TuaType);
+
+	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
+	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);
+	TuaType.m_Margin = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Margin);
+	TuaType.m_Padding = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Padding);
+	TuaType.m_Spacing = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_Spacing);
+	pLoadingContext->WriteAssetPath(SysType.m_RectPath, TuaType.m_RectPath);
+}
+
+void CAsset_GuiBoxStyle::CTuaType_0_3_0::Read(CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_GuiBoxStyle& SysType)
+{
+	CAsset::CTuaType_0_3_0::Read(pLoadingContext, TuaType, SysType);
+
+	SysType.m_MinWidth = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinWidth);
+	SysType.m_MinHeight = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_MinHeight);
+	SysType.m_Margin = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Margin);
+	SysType.m_Padding = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Padding);
+	SysType.m_Spacing = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_Spacing);
+	pLoadingContext->ReadAssetPath(TuaType.m_RectPath, SysType.m_RectPath);
+}
+
+
+void CAsset_GuiBoxStyle::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_GuiBoxStyle& SysType, CTuaType_0_3_0& TuaType)
+{
+	CAsset::CTuaType_0_3_0::Write(pLoadingContext, SysType, TuaType);
 
 	TuaType.m_MinWidth = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinWidth);
 	TuaType.m_MinHeight = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_MinHeight);

@@ -52,6 +52,9 @@ class CAssetsInspector : public gui::CTabs
 		TAB_SPRITE_ASSET,
 		TAB_PATHMATERIAL_ASSET,
 		TAB_TILINGMATERIAL_ASSET,
+		TAB_SKELETON_ASSET,
+		TAB_SKELETONSKIN_ASSET,
+		TAB_SKELETONANIMATION_ASSET,
 		NUM_TABS
 	};
 
@@ -73,10 +76,12 @@ private:
 	void AddField_Float(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Vec2(gui::CVListLayout* pList, int Member, int Member2, const CLocalizableString& Text);
 	void AddField_Angle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
+	void AddField_Duration(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Asset(gui::CVListLayout* pList, int Member, int AssetType, const CLocalizableString& Text);
 	void AddField_ImageTiles(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_TileLayerStyle(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_MapGroups(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
+	void AddField_Animations(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
 
 	//Search Tag: TAG_NEW_ASSET
@@ -105,6 +110,9 @@ private:
 	gui::CVScrollLayout* CreateTab_Sprite_Asset();
 	gui::CVScrollLayout* CreateTab_PathMaterial_Asset();
 	gui::CVScrollLayout* CreateTab_TilingMaterial_Asset();
+	gui::CVScrollLayout* CreateTab_Skeleton_Asset();
+	gui::CVScrollLayout* CreateTab_SkeletonSkin_Asset();
+	gui::CVScrollLayout* CreateTab_SkeletonAnimation_Asset();
 
 public:
 	CAssetsInspector(CGuiEditor* pAssetsEditor);

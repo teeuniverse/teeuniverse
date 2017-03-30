@@ -77,14 +77,6 @@ public:
 	class CTile
 	{
 	public:
-		class CTuaType_0_1_0
-		{
-		public:
-			tua_uint8 m_Index;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneTiles::CTile& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_1_0& TuaType);
-		};
-		
 		class CTuaType_0_2_0
 		{
 		public:
@@ -127,6 +119,15 @@ public:
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
+		class CTuaType_0_3_0
+		{
+		public:
+			tua_uint8 m_Index;
+			tua_uint32 m_Flags;
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneTiles::CTile& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles::CTile& SysType, CTuaType_0_3_0& TuaType);
+		};
+		
 	
 	private:
 		uint8 m_Index;
@@ -147,17 +148,6 @@ public:
 		}
 		
 	};
-	class CTuaType_0_1_0 : public CAsset::CTuaType_0_1_0
-	{
-	public:
-		CAssetPath::CTuaType m_ParentPath;
-		CAssetPath::CTuaType m_ZoneTypePath;
-		CTuaArray2d m_Tile;
-		tua_uint8 m_Visibility;
-		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_1_0& TuaType, CAsset_MapZoneTiles& SysType);
-		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_1_0& TuaType);
-	};
-	
 	class CTuaType_0_2_0 : public CAsset::CTuaType_0_2_0
 	{
 	public:
@@ -216,6 +206,20 @@ public:
 		tua_int32 m_PositionY;
 		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_MapZoneTiles& SysType);
 		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_2_4& TuaType);
+	};
+	
+	class CTuaType_0_3_0 : public CAsset::CTuaType_0_3_0
+	{
+	public:
+		CAssetPath::CTuaType m_ParentPath;
+		CAssetPath::CTuaType m_ZoneTypePath;
+		CTuaArray2d m_Tile;
+		tua_uint8 m_Visibility;
+		CTuaArray2d m_DataInt;
+		tua_int32 m_PositionX;
+		tua_int32 m_PositionY;
+		static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneTiles& SysType);
+		static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneTiles& SysType, CTuaType_0_3_0& TuaType);
 	};
 	
 
