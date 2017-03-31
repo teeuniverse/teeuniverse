@@ -254,6 +254,8 @@ public:
 	CAssetPath m_Path_Sprite_IconTranslate;
 	CAssetPath m_Path_Sprite_IconScale;
 	CAssetPath m_Path_Sprite_IconColor;
+	CAssetPath m_Path_Sprite_IconTimeClamp;
+	CAssetPath m_Path_Sprite_IconTimeCycle;
 	
 	CAssetPath m_Path_Sprite_IconShapeStar;
 	CAssetPath m_Path_Sprite_IconShapeHexagon;
