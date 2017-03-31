@@ -626,6 +626,7 @@ protected:
 	int m_Mode;
 	int m_DragType;
 	int m_ClickDiff;
+	int64 m_DragTime;
 	int m_Token;
 	
 protected:
@@ -795,6 +796,8 @@ public:
 			else if(Button == KEY_MOUSE_3)
 			{
 				m_DragType = DRAGTYPE_TIMESCROLL;
+				m_ClickDiff = MousePos.x;
+				m_DragTime = m_pTimeLine->GetTimeShift();
 			}
 			else if(Button == KEY_MOUSE_2)
 			{
@@ -860,12 +863,27 @@ public:
 			}
 			else if(Button == KEY_MOUSE_WHEEL_UP)
 			{
+				ivec2 MousePos = Context()->GetMousePos();
+				int64 MouseTime = max(m_pTimeLine->ScreenPosToTime(MousePos.x - m_DrawRect.x), (int64) 0);
+				
+				int64 Time = m_pTimeLine->GetTimeShift();
+				Time = MouseTime + (Time - MouseTime)/1.1;
+				m_pTimeLine->SetTimeShift(Time);
+				
 				float Zoom = m_pTimeLine->GetPixelsPerMs();
 				Zoom *= 1.1f;
 				m_pTimeLine->SetPixelsPerMs(Zoom);
+				
 			}
 			else if(Button == KEY_MOUSE_WHEEL_DOWN)
 			{
+				ivec2 MousePos = Context()->GetMousePos();
+				int64 MouseTime = max(m_pTimeLine->ScreenPosToTime(MousePos.x - m_DrawRect.x), (int64) 0);
+				
+				int64 Time = m_pTimeLine->GetTimeShift();
+				Time = MouseTime + (Time - MouseTime)*1.1;
+				m_pTimeLine->SetTimeShift(Time);
+				
 				float Zoom = m_pTimeLine->GetPixelsPerMs();
 				Zoom /= 1.1f;
 				m_pTimeLine->SetPixelsPerMs(Zoom);
@@ -875,7 +893,7 @@ public:
 	
 	virtual void OnButtonRelease(int Button)
 	{
-		if(Button == KEY_MOUSE_1 || Button == KEY_MOUSE_3)
+		if(Button == KEY_MOUSE_1 || Button == KEY_MOUSE_2 || Button == KEY_MOUSE_3)
 		{
 			m_DragType = DRAGTYPE_NONE;
 			m_DragItemPath = CSubPath::Null();
@@ -887,7 +905,10 @@ public:
 	{		
 		if(m_DragType == DRAGTYPE_TIMESCROLL)
 		{
-			
+			int64 OldTime = max(m_pTimeLine->ScreenPosToTime(m_ClickDiff - m_DrawRect.x), (int64) 0);
+			int64 NewTime = max(m_pTimeLine->ScreenPosToTime(Context()->GetMousePos().x - m_DrawRect.x), (int64) 0);
+			int64 TimeDiff = NewTime - OldTime;
+			m_pTimeLine->SetTimeShift(m_DragTime - TimeDiff);
 		}
 		else if(m_DragType == DRAGTYPE_TIME)
 		{
@@ -1034,7 +1055,7 @@ public:
 				break;
 		}
 		
-		int64 TimeIter = TimeMin;
+		int64 TimeIter = TimeMin - TimeMin % TimeSegment;
 		while(TimeIter < TimeMax)
 		{
 			int XMin = TimelineRect.x + m_pTimeLine->TimeToScreenPos(TimeIter);
@@ -1210,7 +1231,7 @@ public:
 			}
 		}
 		
-		if(m_Mode != ANIMMODE_TIME && CanAddNewFrame)
+		if(m_Mode != ANIMMODE_TIME && CanAddNewFrame && m_DragType == DRAGTYPE_NONE)
 		{
 			if(TimelineRect.IsInside(MousePos))
 			{
