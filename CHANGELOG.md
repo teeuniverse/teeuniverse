@@ -1,7 +1,8 @@
 # Change Log
 
-## [0.2.6]
+## [0.3.0]
 ### Added
+- Quads and objects can be animated
 - Add zone palette for filling tool
 
 ### Changed
