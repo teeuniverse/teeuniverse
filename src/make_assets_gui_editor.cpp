@@ -185,12 +185,12 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE(PackageId, "iconLineHide", ImageEditorPath, 21*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconScript", ImageEditorPath, 22*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconCurveFree", ImageEditorPath, 23*2, 3*2, 2, 2);
-		CREATE_SPRITE(PackageId, "iconCurveStepStart", ImageEditorPath, 24*2, 3*2, 2, 2);
-		CREATE_SPRITE(PackageId, "iconCurveStepEnd", ImageEditorPath, 25*2, 3*2, 2, 2);
+		CREATE_SPRITE(PackageId, "iconCurveStepEnd", ImageEditorPath, 24*2, 3*2, 2, 2);
+		CREATE_SPRITE(PackageId, "iconCurveStepStart", ImageEditorPath, 25*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconCurveStepMiddle", ImageEditorPath, 26*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconCurveLinear", ImageEditorPath, 27*2, 3*2, 2, 2);
-		CREATE_SPRITE(PackageId, "iconCurveIncr", ImageEditorPath, 28*2, 3*2, 2, 2);
-		CREATE_SPRITE(PackageId, "iconCurveDecr", ImageEditorPath, 29*2, 3*2, 2, 2);
+		CREATE_SPRITE(PackageId, "iconCurveDecr", ImageEditorPath, 28*2, 3*2, 2, 2);
+		CREATE_SPRITE(PackageId, "iconCurveIncr", ImageEditorPath, 29*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconCurveSmooth", ImageEditorPath, 30*2, 3*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconTileStyle", ImageEditorPath, 31*2, 3*2, 2, 2);
 		
