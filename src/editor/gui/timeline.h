@@ -48,7 +48,7 @@ public:
 	inline bool RefreshNeeded() const { return m_NeedRefresh; }
 	
 	inline int64 GetTimeShift() const { return m_TimeShift; }
-	inline void SetTimeShift(int64 Value) { m_TimeShift = Value; }
+	inline void SetTimeShift(int64 Value) { m_TimeShift = max((int64)0, Value); }
 	
 	inline float GetPixelsPerMs() const { return (m_ZoomLockedToUnit ? 0.25f : m_PixelsPerMs); }
 	inline void SetPixelsPerMs(float Value) { m_PixelsPerMs = clamp(Value, 0.001f, 10.0f); m_ZoomLockedToUnit = false; }
