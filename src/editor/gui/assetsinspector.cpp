@@ -2779,7 +2779,7 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_SkeletonAnimation_Asset()
 	
 	AddField_AssetProperties(pTab);
 	
-	AddField_Asset(pTab, CAsset_SkeletonAnimation::SKELETONPATH, CAsset_Skeleton::TypeId, _LSTRING("Skeleton"));
+	//AddField_Asset(pTab, CAsset_SkeletonAnimation::SKELETONPATH, CAsset_Skeleton::TypeId, _LSTRING("Skeleton"));
 	
 	return pTab;
 }

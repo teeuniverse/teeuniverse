@@ -1927,7 +1927,7 @@ protected:
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_PathMaterial::TypeId, _LSTRING("New Path Material")));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_TilingMaterial::TypeId, _LSTRING("New Tiling Material")));
 		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_SkeletonAnimation::TypeId, _LSTRING("New Animation")));
-		pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Skeleton::TypeId, _LSTRING("New Skeleton")));
+		//pMenu->List()->Add(new CNewAsset(m_pAssetsEditor, pMenu, CAsset_Skeleton::TypeId, _LSTRING("New Skeleton")));
 		pMenu->List()->AddSeparator();
 		pMenu->List()->Add(new CPreferencesButton(m_pAssetsEditor, pMenu));
 		
