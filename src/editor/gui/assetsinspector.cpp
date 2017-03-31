@@ -1275,6 +1275,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapLayerObjects_Asset()
 	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_POSITION_X, CAsset_MapLayerObjects::OBJECT_POSITION_Y, _LSTRING("Position"));	
 	AddField_Vec2(pObjectEditor, CAsset_MapLayerObjects::OBJECT_SIZE_X, CAsset_MapLayerObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
 	AddField_Angle(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANGLE, _LSTRING("Angle"));
+	AddField_Animations(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANIMATIONPATH, _LSTRING("Animation"));
+	AddField_Duration(pObjectEditor, CAsset_MapLayerObjects::OBJECT_ANIMATIONOFFSET, _LSTRING("Animation Offset"));
 	
 	{
 		CMemberComboBox* pComboBox = new CMemberComboBox(AssetsEditor(), CAsset_MapLayerObjects::OBJECT_PATHTYPE);
@@ -1361,6 +1363,8 @@ gui::CVScrollLayout* CAssetsInspector::CreateTab_MapZoneObjects_Asset()
 	AddField_Vec2(pObjectEditor, CAsset_MapZoneObjects::OBJECT_SIZE_X, CAsset_MapZoneObjects::OBJECT_SIZE_Y, _LSTRING("Size"));	
 	AddField_Angle(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ANGLE, _LSTRING("Angle"));
 	AddField_Integer(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ZONEINDEX, _LSTRING("Zone Index"));
+	AddField_Animations(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ANIMATIONPATH, _LSTRING("Animation"));
+	AddField_Duration(pObjectEditor, CAsset_MapZoneObjects::OBJECT_ANIMATIONOFFSET, _LSTRING("Animation Offset"));
 	
 	gui::CVListLayout* pVertexEditor = new CSubItemEditor(AssetsEditor(), CAsset_MapZoneObjects::TYPE_OBJECT_VERTEX);
 	pTab->Add(pVertexEditor, false);

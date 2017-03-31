@@ -97,6 +97,8 @@ public:
 		OBJECT_FILLTYPE,
 		OBJECT_ZONEINDEX,
 		OBJECT_ZONEFLAGS,
+		OBJECT_ANIMATIONPATH,
+		OBJECT_ANIMATIONOFFSET,
 		OBJECT,
 		VISIBILITY,
 	};
@@ -316,6 +318,8 @@ public:
 			tua_int32 m_FillType;
 			tua_uint8 m_ZoneIndex;
 			tua_uint32 m_ZoneFlags;
+			CAssetPath::CTuaType m_AnimationPath;
+			tua_int64 m_AnimationOffset;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapZoneObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects::CObject& SysType, CTuaType_0_3_0& TuaType);
 		};
@@ -330,6 +334,8 @@ public:
 		int m_FillType;
 		uint8 m_ZoneIndex;
 		uint32 m_ZoneFlags;
+		CAssetPath m_AnimationPath;
+		int64 m_AnimationOffset;
 	
 	public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -449,6 +455,10 @@ public:
 		
 		inline uint32 GetZoneFlags() const { return m_ZoneFlags; }
 		
+		inline CAssetPath GetAnimationPath() const { return m_AnimationPath; }
+		
+		inline int64 GetAnimationOffset() const { return m_AnimationOffset; }
+		
 		inline void SetPosition(vec2 Value) { m_Position = Value; }
 		
 		inline void SetPositionX(float Value) { m_Position.x = Value; }
@@ -547,6 +557,10 @@ public:
 		
 		inline void SetZoneFlags(uint32 Value) { m_ZoneFlags = Value; }
 		
+		inline void SetAnimationPath(const CAssetPath& Value) { m_AnimationPath = Value; }
+		
+		inline void SetAnimationOffset(int64 Value) { m_AnimationOffset = Value; }
+		
 		inline int AddVertex()
 		{
 			int Id = m_Vertex.size();
@@ -572,6 +586,7 @@ public:
 			{
 				m_Vertex[i].AssetPathOperation(Operation);
 			}
+			Operation.Apply(m_AnimationPath);
 		}
 		
 	};
@@ -870,6 +885,20 @@ public:
 		else return 0;
 	}
 	
+	inline CAssetPath GetObjectAnimationPath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetAnimationPath();
+		else return CAssetPath::Null();
+	}
+	
+	inline int64 GetObjectAnimationOffset(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetAnimationOffset();
+		else return 0;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline void SetParentPath(const CAssetPath& Value) { m_ParentPath = Value; }
@@ -1030,6 +1059,18 @@ public:
 			m_Object[SubPath.GetId()].SetZoneFlags(Value);
 	}
 	
+	inline void SetObjectAnimationPath(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetAnimationPath(Value);
+	}
+	
+	inline void SetObjectAnimationOffset(const CSubPath& SubPath, int64 Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetAnimationOffset(Value);
+	}
+	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	
 	inline int AddObject()
@@ -1082,6 +1123,8 @@ template<> int CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& Su
 template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, int Value);
 template<> uint32 CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, uint32 DefaultValue) const;
 template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, uint32 Value);
+template<> int64 CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const;
+template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, int64 Value);
 template<> bool CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;
