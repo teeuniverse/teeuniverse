@@ -2465,6 +2465,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconTranslate = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTranslate");
 		m_Path_Sprite_IconScale = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconScale");
 		m_Path_Sprite_IconColor = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconColor");
+		m_Path_Sprite_IconTimeClamp = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTimeClamp");
+		m_Path_Sprite_IconTimeCycle = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconTimeCycle");
 	
 		m_Path_Sprite_IconLineTileBg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileBg");
 		m_Path_Sprite_IconLineTileFg = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLineTileFg");

@@ -20,6 +20,35 @@
 #include <shared/math/math.h>
 #include <shared/system/debug.h>
 
+namespace
+{
+
+float FloatInterpolation(int Type, int64 Time, int64 Time0, int64 Time1)
+{
+	double Alpha = (double)(Time - Time0) / (double)(Time1 - Time0);
+	
+	switch(Type)
+	{
+		case CAsset_SkeletonAnimation::GRAPHTYPE_STEPSTART:
+			return 1.0f;
+		case CAsset_SkeletonAnimation::GRAPHTYPE_STEPMIDDLE:
+			return (Alpha < 0.5f ? 0.0f : 1.0f);
+		case CAsset_SkeletonAnimation::GRAPHTYPE_LINEAR:
+			return Alpha;
+		case CAsset_SkeletonAnimation::GRAPHTYPE_ACCELERATION:
+			return Alpha*Alpha*Alpha;
+		case CAsset_SkeletonAnimation::GRAPHTYPE_DECELERATION:
+			return Alpha*(3.0f-Alpha*(3.0f-Alpha));
+		case CAsset_SkeletonAnimation::GRAPHTYPE_SMOOTH:
+			return -2.0f*Alpha*Alpha*Alpha + 3*Alpha*Alpha;
+		case CAsset_SkeletonAnimation::GRAPHTYPE_STEPEND:
+		default:
+			return 0.0f;
+	}
+}
+
+}
+
 /* BONE KEY FRAME *****************************************************/
 
 CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame& CAsset_SkeletonAnimation::CBoneAnimation::CKeyFrame::operator=(const CAsset_SkeletonAnimation::CBoneAnimation::CFrame& Frame)
@@ -58,31 +87,45 @@ int CAsset_SkeletonAnimation::CBoneAnimation::TimeToKeyFrame(int64 Time) const
 
 bool CAsset_SkeletonAnimation::CBoneAnimation::GetFrame(int64 Time, CBoneAnimation::CFrame& Frame) const
 {
+	if(!m_KeyFrame.size())
+		return false;
+	
+	int64 Duration = GetDuration();
 	int64 CycleTime = Time;
 	if(m_CycleType == CYCLETYPE_LOOP)
 		CycleTime = Time % GetDuration();
 	
-	int i = TimeToKeyFrame(CycleTime);
+	int i1 = TimeToKeyFrame(CycleTime);
+	int i0 = i1-1;
 	
-	if(i == static_cast<int>(m_KeyFrame.size()))
+	if(m_CycleType == CYCLETYPE_LOOP)
 	{
-		if(i == 0)
-			return false;
-		else
-			Frame = m_KeyFrame[m_KeyFrame.size()-1];
-	}
-	else if(i == 0)
-	{
-		Frame = m_KeyFrame[0];
+		i0 = (i0 + m_KeyFrame.size())%m_KeyFrame.size();
+		i1 = (i1 + m_KeyFrame.size())%m_KeyFrame.size();
 	}
 	else
 	{
-		double Alpha = (double)(CycleTime - m_KeyFrame[i-1].GetTime()) / (double)(m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
+		i0 = clamp(i0, 0, (int)m_KeyFrame.size()-1);
+		i1 = clamp(i1, 0, (int)m_KeyFrame.size()-1);
+	}
+	
+	if(i0 == i1)
+		Frame = m_KeyFrame[i0];
+	else
+	{
+		int64 Time0 = m_KeyFrame[i0].GetTime();
+		int64 Time1 = m_KeyFrame[i1].GetTime();
+		if(Time0 > CycleTime)
+			Time0 -= Duration;
+		if(Time1 < CycleTime)
+			Time1 += Duration;
 		
-		Frame.SetTranslation(mix(m_KeyFrame[i-1].GetTranslation(), m_KeyFrame[i].GetTranslation(), Alpha));
-		Frame.SetScale(mix(m_KeyFrame[i-1].GetScale(), m_KeyFrame[i].GetScale(), Alpha));
-		Frame.SetAngle(mix(m_KeyFrame[i-1].GetAngle(), m_KeyFrame[i].GetAngle(), Alpha)); //Need better interpolation
-		Frame.SetAlignment(m_KeyFrame[i-1].GetAlignment());
+		double Alpha = FloatInterpolation(m_KeyFrame[i0].GetGraphType(), CycleTime, Time0, Time1);
+		
+		Frame.SetTranslation(mix(m_KeyFrame[i0].GetTranslation(), m_KeyFrame[i1].GetTranslation(), Alpha));
+		Frame.SetScale(mix(m_KeyFrame[i0].GetScale(), m_KeyFrame[i1].GetScale(), Alpha));
+		Frame.SetAngle(mix(m_KeyFrame[i0].GetAngle(), m_KeyFrame[i1].GetAngle(), Alpha)); //Need better interpolation
+		Frame.SetAlignment(m_KeyFrame[i0].GetAlignment());
 	}
 	
 	return true;
@@ -152,29 +195,43 @@ int CAsset_SkeletonAnimation::CLayerAnimation::TimeToKeyFrame(int64 Time) const
 
 bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(int64 Time, CLayerAnimation::CFrame& Frame) const
 {
+	if(!m_KeyFrame.size())
+		return false;
+	
+	int64 Duration = GetDuration();
 	int64 CycleTime = Time;
 	if(m_CycleType == CYCLETYPE_LOOP)
 		CycleTime = Time % GetDuration();
 	
-	int i = TimeToKeyFrame(CycleTime);
+	int i1 = TimeToKeyFrame(CycleTime);
+	int i0 = i1-1;
 	
-	if(i == static_cast<int>(m_KeyFrame.size()))
+	if(m_CycleType == CYCLETYPE_LOOP)
 	{
-		if(i == 0)
-			return false;
-		else
-			Frame = m_KeyFrame[m_KeyFrame.size()-1];
-	}
-	else if(i == 0)
-	{
-		Frame = m_KeyFrame[0];
+		i0 = (i0 + m_KeyFrame.size())%m_KeyFrame.size();
+		i1 = (i1 + m_KeyFrame.size())%m_KeyFrame.size();
 	}
 	else
 	{
-		double Alpha = (double)(CycleTime - m_KeyFrame[i-1].GetTime()) / (double)(m_KeyFrame[i].GetTime() - m_KeyFrame[i-1].GetTime());
+		i0 = clamp(i0, 0, (int)m_KeyFrame.size()-1);
+		i1 = clamp(i1, 0, (int)m_KeyFrame.size()-1);
+	}
+	
+	if(i0 == i1)
+		Frame = m_KeyFrame[i0];
+	else
+	{
+		int64 Time0 = m_KeyFrame[i0].GetTime();
+		int64 Time1 = m_KeyFrame[i1].GetTime();
+		if(Time0 > CycleTime)
+			Time0 -= Duration;
+		if(Time1 < CycleTime)
+			Time1 += Duration;
 		
-		Frame.SetColor(mix(m_KeyFrame[i-1].GetColor(), m_KeyFrame[i].GetColor(), Alpha));
-		Frame.SetState(m_KeyFrame[i-1].GetState());
+		double Alpha = FloatInterpolation(m_KeyFrame[i0].GetGraphType(), CycleTime, Time0, Time1);
+		
+		Frame.SetColor(mix(m_KeyFrame[i0].GetColor(), m_KeyFrame[i1].GetColor(), Alpha));
+		Frame.SetState(m_KeyFrame[i0].GetState());
 	}
 	
 	return true;

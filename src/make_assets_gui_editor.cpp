@@ -136,6 +136,8 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE(PackageId, "iconFolderEdited", ImageEditorPath, 30*2, 1*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconFolderReadOnly", ImageEditorPath, 31*2, 1*2, 2, 2);
 		
+		CREATE_SPRITE(PackageId, "iconTimeCycle", ImageEditorPath, 6*2, 2*2, 2, 2);
+		CREATE_SPRITE(PackageId, "iconTimeClamp", ImageEditorPath, 7*2, 2*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconBoneLength", ImageEditorPath, 8*2, 2*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconBoneAdd", ImageEditorPath, 9*2, 2*2, 2, 2);
 		CREATE_SPRITE(PackageId, "iconBoneDelete", ImageEditorPath, 10*2, 2*2, 2, 2);

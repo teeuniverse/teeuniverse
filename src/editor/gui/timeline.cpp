@@ -625,7 +625,7 @@ protected:
 	CSubPath m_DragItemPath;
 	int m_Mode;
 	int m_DragType;
-	int m_ClickDiff;
+	int m_DragPos;
 	int64 m_DragTime;
 	int m_Token;
 	
@@ -652,10 +652,10 @@ protected:
 			m_AnimationSubPath = CSubPath::Null();
 	}
 
-	CSubPath PickBoneKeyFrame(ivec2 Pos, int* pClickDiff = nullptr)
+	CSubPath PickBoneKeyFrame(ivec2 Pos, int64* pFrameTime = nullptr)
 	{
-		if(pClickDiff)
-			*pClickDiff = 0;
+		if(pFrameTime)
+			*pFrameTime = 0;
 		
 		const CAsset_SkeletonAnimation* pAnimation = AssetsManager()->GetAsset<CAsset_SkeletonAnimation>(m_AssetPath);
 		if(!pAnimation || m_AnimationSubPath.IsNull() || !pAnimation->IsValidBoneAnimation(m_AnimationSubPath))
@@ -665,24 +665,42 @@ protected:
 		
 		for(unsigned int i=0; i<Animations.size(); i++)
 		{
-			int FrameX = m_DrawRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime());
+			int Start = 0;
+			int End = 0;
+			int64 Duration = pAnimation->GetBoneAnimation(m_AnimationSubPath).GetDuration();
 			
-			int Diff = Pos.x - FrameX;
-			if(Pos.y > m_DrawRect.y && Pos.y < m_DrawRect.y + m_DrawRect.h && std::abs(Diff) < 8)
+			if(pAnimation->GetBoneAnimationCycleType(m_AnimationSubPath) == CAsset_SkeletonAnimation::CYCLETYPE_LOOP && Animations.size() > 1)
 			{
-				if(pClickDiff)
-					*pClickDiff = Diff;
-				return CAsset_SkeletonAnimation::SubPath_BoneAnimationKeyFrame(m_AnimationSubPath.GetId(), i);
+				int64 Time0 = m_pTimeLine->ScreenPosToTime(0);
+				int64 Time1 = m_pTimeLine->ScreenPosToTime(m_DrawRect.w);
+				Start = (Time0/Duration) - 1;
+				End = (Time1/Duration) + 1;
+				
+				if(End-Start > 32) //To avoid infinite loop during rendering
+					End = Start + 32;
+			}
+			
+			for(int j=Start; j<=End; j++)
+			{
+				int FrameX = m_DrawRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime() + j*Duration);
+				
+				int Diff = Pos.x - FrameX;
+				if(Pos.y > m_DrawRect.y && Pos.y < m_DrawRect.y + m_DrawRect.h && std::abs(Diff) < 8)
+				{
+					if(pFrameTime)
+						*pFrameTime = Animations[i].GetTime();
+					return CAsset_SkeletonAnimation::SubPath_BoneAnimationKeyFrame(m_AnimationSubPath.GetId(), i);
+				}
 			}
 		}
 		
 		return CSubPath::Null();
 	}
 
-	CSubPath PickLayerKeyFrame(ivec2 Pos, int* pClickDiff = nullptr)
+	CSubPath PickLayerKeyFrame(ivec2 Pos, int64* pFrameTime = nullptr)
 	{
-		if(pClickDiff)
-			*pClickDiff = 0;
+		if(pFrameTime)
+			*pFrameTime = 0;
 		
 		const CAsset_SkeletonAnimation* pAnimation = AssetsManager()->GetAsset<CAsset_SkeletonAnimation>(m_AssetPath);
 		if(!pAnimation || m_AnimationSubPath.IsNull() || !pAnimation->IsValidLayerAnimation(m_AnimationSubPath))
@@ -692,14 +710,32 @@ protected:
 		
 		for(unsigned int i=0; i<Animations.size(); i++)
 		{
-			int FrameX = m_DrawRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime());
+			int Start = 0;
+			int End = 0;
+			int64 Duration = pAnimation->GetLayerAnimation(m_AnimationSubPath).GetDuration();
 			
-			int Diff = Pos.x - FrameX;
-			if(Pos.y > m_DrawRect.y && Pos.y < m_DrawRect.y + m_DrawRect.h && std::abs(Diff) < 8)
+			if(pAnimation->GetLayerAnimationCycleType(m_AnimationSubPath) == CAsset_SkeletonAnimation::CYCLETYPE_LOOP && Animations.size() > 1)
 			{
-				if(pClickDiff)
-					*pClickDiff = Diff;
-				return CAsset_SkeletonAnimation::SubPath_LayerAnimationKeyFrame(m_AnimationSubPath.GetId(), i);
+				int64 Time0 = m_pTimeLine->ScreenPosToTime(0);
+				int64 Time1 = m_pTimeLine->ScreenPosToTime(m_DrawRect.w);
+				Start = (Time0/Duration) - 1;
+				End = (Time1/Duration) + 1;
+				
+				if(End-Start > 32) //To avoid infinite loop during rendering
+					End = Start + 32;
+			}
+			
+			for(int j=Start; j<=End; j++)
+			{
+				int FrameX = m_DrawRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime() + j*Duration);
+				
+				int Diff = Pos.x - FrameX;
+				if(Pos.y > m_DrawRect.y && Pos.y < m_DrawRect.y + m_DrawRect.h && std::abs(Diff) < 8)
+				{
+					if(pFrameTime)
+						*pFrameTime = Animations[i].GetTime();
+					return CAsset_SkeletonAnimation::SubPath_LayerAnimationKeyFrame(m_AnimationSubPath.GetId(), i);
+				}
 			}
 		}
 		
@@ -758,8 +794,8 @@ public:
 				}
 				else if(m_Mode == ANIMMODE_BONE)
 				{
-					int ClickDiff = 0;
-					CSubPath PickedFramePath = PickBoneKeyFrame(MousePos, &ClickDiff);
+					int64 FrameTime = 0;
+					CSubPath PickedFramePath = PickBoneKeyFrame(MousePos, &FrameTime);
 					if(PickedFramePath.IsNull())
 					{
 						CreateBoneFrame(Time);
@@ -771,13 +807,14 @@ public:
 						m_DragType = DRAGTYPE_BONE;
 						m_Token = AssetsManager()->GenerateToken();
 						
-						m_ClickDiff = ClickDiff;
+						m_DragPos = MousePos.x;
+						m_DragTime = FrameTime;
 					}
 				}
 				else if(m_Mode == ANIMMODE_LAYER)
 				{
-					int ClickDiff = 0;
-					CSubPath PickedFramePath = PickLayerKeyFrame(MousePos, &ClickDiff);
+					int64 FrameTime = 0;
+					CSubPath PickedFramePath = PickLayerKeyFrame(MousePos, &FrameTime);
 					if(PickedFramePath.IsNull())
 					{
 						CreateLayerFrame(Time);
@@ -789,24 +826,24 @@ public:
 						m_DragType = DRAGTYPE_LAYER;
 						m_Token = AssetsManager()->GenerateToken();
 						
-						m_ClickDiff = ClickDiff;
+						m_DragPos = MousePos.x;
+						m_DragTime = FrameTime;
 					}
 				}
 			}
 			else if(Button == KEY_MOUSE_3)
 			{
 				m_DragType = DRAGTYPE_TIMESCROLL;
-				m_ClickDiff = MousePos.x;
+				m_DragPos = MousePos.x;
 				m_DragTime = m_pTimeLine->GetTimeShift();
 			}
 			else if(Button == KEY_MOUSE_2)
 			{
-				int ClickDiff;
 				CSubPath PickedFramePath;
 				if(m_Mode == ANIMMODE_BONE)
-					PickedFramePath = PickBoneKeyFrame(MousePos, &ClickDiff);
+					PickedFramePath = PickBoneKeyFrame(MousePos);
 				else if(m_Mode == ANIMMODE_LAYER)
-					PickedFramePath = PickLayerKeyFrame(MousePos, &ClickDiff);
+					PickedFramePath = PickLayerKeyFrame(MousePos);
 				
 				if(PickedFramePath.IsNotNull())
 				{
@@ -905,7 +942,7 @@ public:
 	{		
 		if(m_DragType == DRAGTYPE_TIMESCROLL)
 		{
-			int64 OldTime = max(m_pTimeLine->ScreenPosToTime(m_ClickDiff - m_DrawRect.x), (int64) 0);
+			int64 OldTime = max(m_pTimeLine->ScreenPosToTime(m_DragPos - m_DrawRect.x), (int64) 0);
 			int64 NewTime = max(m_pTimeLine->ScreenPosToTime(Context()->GetMousePos().x - m_DrawRect.x), (int64) 0);
 			int64 TimeDiff = NewTime - OldTime;
 			m_pTimeLine->SetTimeShift(m_DragTime - TimeDiff);
@@ -919,17 +956,19 @@ public:
 		}
 		else if(m_DragType == DRAGTYPE_BONE)
 		{
-			ivec2 MousePos = Context()->GetMousePos();
-			int64 Time = max(m_pTimeLine->ScreenPosToTime(MousePos.x - m_DrawRect.x - m_ClickDiff), (int64) 0);
+			int64 OldTime = max(m_pTimeLine->ScreenPosToTime(m_DragPos - m_DrawRect.x), (int64) 0);
+			int64 NewTime = max(m_pTimeLine->ScreenPosToTime(Context()->GetMousePos().x - m_DrawRect.x), (int64) 0);
+			int64 TimeDiff = NewTime - OldTime;
 			
-			m_DragItemPath = m_pTimeLine->MoveBoneFrame(m_DragItemPath, Time, m_Token);
+			m_DragItemPath = m_pTimeLine->MoveBoneFrame(m_DragItemPath, m_DragTime + TimeDiff, m_Token);
 		}
 		else if(m_DragType == DRAGTYPE_LAYER)
 		{
-			ivec2 MousePos = Context()->GetMousePos();
-			int64 Time = max(m_pTimeLine->ScreenPosToTime(MousePos.x - m_DrawRect.x - m_ClickDiff), (int64) 0);
+			int64 OldTime = max(m_pTimeLine->ScreenPosToTime(m_DragPos - m_DrawRect.x), (int64) 0);
+			int64 NewTime = max(m_pTimeLine->ScreenPosToTime(Context()->GetMousePos().x - m_DrawRect.x), (int64) 0);
+			int64 TimeDiff = NewTime - OldTime;
 			
-			m_DragItemPath = m_pTimeLine->MoveLayerFrame(m_DragItemPath, Time, m_Token);
+			m_DragItemPath = m_pTimeLine->MoveLayerFrame(m_DragItemPath, m_DragTime + TimeDiff, m_Token);
 		}
 	}
 	
@@ -1129,46 +1168,66 @@ public:
 					{
 						CSubPath FramePath = CAsset_SkeletonAnimation::SubPath_BoneAnimationKeyFrame(m_AnimationSubPath.GetId(), i);
 						
-						int FrameX = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime());
+						int Start = 0;
+						int End = 0;
+						int64 Duration = pAnimation->GetBoneAnimation(m_AnimationSubPath).GetDuration();
 						
-						//Draw interpolation curve
-						if(i+1 < Animations.size())
+						if(pAnimation->GetBoneAnimationCycleType(m_AnimationSubPath) == CAsset_SkeletonAnimation::CYCLETYPE_LOOP && Animations.size() > 1)
 						{
-							int FrameXNext = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i+1].GetTime());
-							if(FrameXNext - FrameX > 100)
+							int64 Time0 = m_pTimeLine->ScreenPosToTime(0);
+							int64 Time1 = m_pTimeLine->ScreenPosToTime(TimelineRect.w);
+							Start = (Time0/Duration) - 1;
+							End = (Time1/Duration) + 1;
+							
+							if(End-Start > 32) //To avoid infinite loop during rendering
+								End = Start + 32;
+						}
+						
+						for(int j=Start; j<=End; j++)
+						{
+							int FrameX = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime() + j*Duration);
+							
+							//Draw interpolation curve
+							if(i+1 < Animations.size()*(End+1))
 							{
-								RenderInterpolationCurve(
-									Animations[i].GetGraphType(),
-									FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
+								int NextFrame = (i+1)%Animations.size();
+								int NextTime = Animations[NextFrame].GetTime() + (j + (NextFrame == 0 ? 1 : 0))*Duration;
+								int FrameXNext = TimelineRect.x + m_pTimeLine->TimeToScreenPos(NextTime);
+								if(FrameXNext - FrameX > 100)
+								{
+									RenderInterpolationCurve(
+										Animations[i].GetGraphType(),
+										FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
+									);
+								}
+							}
+							
+							//Draw frame
+							bool ShowHighlight = false;
+							for(unsigned j=0; j<m_pTimeLine->GetEditedFrames().size(); j++)
+							{
+								if(m_pTimeLine->GetEditedFrames()[j] == FramePath)
+								{
+									ShowHighlight = true;
+									break;
+								}
+							}
+							
+							AssetsRenderer()->DrawSprite(
+								m_pAssetsEditor->m_Path_Sprite_GizmoFrame,
+								vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
+								1.0f, 0.0f, 0x0, 1.0f
+							);
+							
+							if(ShowHighlight || (PickedFramePath.IsNotNull() && PickedFramePath.GetId2() == i))
+							{
+								CanAddNewFrame = false;
+								AssetsRenderer()->DrawSprite(
+									m_pAssetsEditor->m_Path_Sprite_GizmoFrameCursor,
+									vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
+									1.0f, 0.0f, 0x0, vec4(1.0f, 1.0f, 0.0f, 1.0f)
 								);
 							}
-						}
-						
-						//Draw frame
-						bool ShowHighlight = false;
-						for(unsigned j=0; j<m_pTimeLine->GetEditedFrames().size(); j++)
-						{
-							if(m_pTimeLine->GetEditedFrames()[j] == FramePath)
-							{
-								ShowHighlight = true;
-								break;
-							}
-						}
-						
-						AssetsRenderer()->DrawSprite(
-							m_pAssetsEditor->m_Path_Sprite_GizmoFrame,
-							vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-							1.0f, 0.0f, 0x0, 1.0f
-						);
-						
-						if(ShowHighlight || (PickedFramePath.IsNotNull() && PickedFramePath.GetId2() == i))
-						{
-							CanAddNewFrame = false;
-							AssetsRenderer()->DrawSprite(
-								m_pAssetsEditor->m_Path_Sprite_GizmoFrameCursor,
-								vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-								1.0f, 0.0f, 0x0, vec4(1.0f, 1.0f, 0.0f, 1.0f)
-							);
 						}
 					}
 				}
@@ -1183,48 +1242,68 @@ public:
 					
 					for(unsigned int i=0; i<Animations.size(); i++)
 					{
-						int FrameX = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime());
+						int Start = 0;
+						int End = 0;
+						int64 Duration = pAnimation->GetLayerAnimation(m_AnimationSubPath).GetDuration();
 						
-						//Draw interpolation curve
-						if(i+1 < Animations.size())
+						if(pAnimation->GetLayerAnimationCycleType(m_AnimationSubPath) == CAsset_SkeletonAnimation::CYCLETYPE_LOOP && Animations.size() > 1)
 						{
-							int FrameXNext = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i+1].GetTime());
-							if(FrameXNext - FrameX > 100)
-							{
-								RenderInterpolationCurve(
-									Animations[i].GetGraphType(),
-									FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
-								);
-							}
+							int64 Time0 = m_pTimeLine->ScreenPosToTime(0);
+							int64 Time1 = m_pTimeLine->ScreenPosToTime(TimelineRect.w);
+							Start = (Time0/Duration) - 1;
+							End = (Time1/Duration) + 1;
+							
+							if(End-Start > 32) //To avoid infinite loop during rendering
+								End = Start + 32;
 						}
 						
-						//Draw frame
-						vec4 Color = Animations[i].GetColor();
-						
-						AssetsRenderer()->DrawSprite(
-							m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerBg,
-							vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-							1.0f, 0.0f, 0x0, 1.0f
-						);
-						AssetsRenderer()->DrawSprite(
-							m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerColor,
-							vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-							1.0f, 0.0f, 0x0, vec4(Color.r, Color.g, Color.b, 1.0f)
-						);
-						AssetsRenderer()->DrawSprite(
-							m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerAlpha,
-							vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-							1.0f, 0.0f, 0x0, Color
-						);
-						
-						if(PickedFramePath.IsNotNull() && PickedFramePath.GetId2() == i)
+						for(int j=Start; j<=End; j++)
 						{
-							CanAddNewFrame = false;
+							int FrameX = TimelineRect.x + m_pTimeLine->TimeToScreenPos(Animations[i].GetTime() + j*Duration);
+							
+							//Draw interpolation curve
+							if(i+1 < Animations.size()*(End+1))
+							{
+								int NextFrame = (i+1)%Animations.size();
+								int NextTime = Animations[NextFrame].GetTime() + (j + (NextFrame == 0 ? 1 : 0))*Duration;
+								int FrameXNext = TimelineRect.x + m_pTimeLine->TimeToScreenPos(NextTime);
+								if(FrameXNext - FrameX > 100)
+								{
+									RenderInterpolationCurve(
+										Animations[i].GetGraphType(),
+										FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
+									);
+								}
+							}
+							
+							//Draw frame
+							vec4 Color = Animations[i].GetColor();
+							
 							AssetsRenderer()->DrawSprite(
-								m_pAssetsEditor->m_Path_Sprite_GizmoFrameCursor,
+								m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerBg,
 								vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
-								1.0f, 0.0f, 0x0, vec4(1.0f, 1.0f, 0.0f, 1.0f)
+								1.0f, 0.0f, 0x0, 1.0f
 							);
+							AssetsRenderer()->DrawSprite(
+								m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerColor,
+								vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
+								1.0f, 0.0f, 0x0, vec4(Color.r, Color.g, Color.b, 1.0f)
+							);
+							AssetsRenderer()->DrawSprite(
+								m_pAssetsEditor->m_Path_Sprite_GizmoFrameLayerAlpha,
+								vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
+								1.0f, 0.0f, 0x0, Color
+							);
+							
+							if(PickedFramePath.IsNotNull() && PickedFramePath.GetId2() == i)
+							{
+								CanAddNewFrame = false;
+								AssetsRenderer()->DrawSprite(
+									m_pAssetsEditor->m_Path_Sprite_GizmoFrameCursor,
+									vec2(FrameX, TimelineRect.y + TimelineRect.h/2),
+									1.0f, 0.0f, 0x0, vec4(1.0f, 1.0f, 0.0f, 1.0f)
+								);
+							}
 						}
 					}
 				}
@@ -1249,6 +1328,103 @@ public:
 	}
 };
 
+class CAnimationCycleButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CAssetPath m_AssetPath;
+	CSubPath m_SubPath;
+	int m_Mode;
+	
+protected:
+	int GetValue()
+	{
+		const CAsset_SkeletonAnimation* pAnimation = AssetsManager()->GetAsset<CAsset_SkeletonAnimation>(m_AssetPath);
+		if(!pAnimation)
+			return -1;
+		
+		if(m_Mode == ANIMMODE_BONE)
+		{
+			CSubPath SubPath = pAnimation->FindBoneAnim(m_SubPath);
+			if(SubPath.IsNotNull() && pAnimation->IsValidBoneAnimation(SubPath))
+				return AssetsManager()->GetAssetValue<int>(m_AssetPath, m_SubPath, CAsset_SkeletonAnimation::BONEANIMATION_CYCLETYPE, -1);
+		}
+		else if(m_Mode == ANIMMODE_LAYER)
+		{
+			CSubPath SubPath = pAnimation->FindLayerAnim(m_SubPath);
+			if(SubPath.IsNotNull() && pAnimation->IsValidLayerAnimation(SubPath))
+				return AssetsManager()->GetAssetValue<int>(m_AssetPath, m_SubPath, CAsset_SkeletonAnimation::LAYERANIMATION_CYCLETYPE, -1);
+		}
+		
+		return -1;
+	}
+	
+	void SetValue(int Value)
+	{
+		const CAsset_SkeletonAnimation* pAnimation = AssetsManager()->GetAsset<CAsset_SkeletonAnimation>(m_AssetPath);
+		if(!pAnimation)
+			return;
+		
+		if(m_Mode == ANIMMODE_BONE)
+		{
+			CSubPath SubPath = pAnimation->FindBoneAnim(m_SubPath);
+			if(SubPath.IsNotNull() && pAnimation->IsValidBoneAnimation(SubPath))
+			{
+				AssetsManager()->SetAssetValue<int>(m_AssetPath, m_SubPath, CAsset_SkeletonAnimation::BONEANIMATION_CYCLETYPE, Value);
+				return;
+			}
+		}
+		else if(m_Mode == ANIMMODE_LAYER)
+		{
+			CSubPath SubPath = pAnimation->FindLayerAnim(m_SubPath);
+			if(SubPath.IsNotNull() && pAnimation->IsValidLayerAnimation(SubPath))
+			{
+				AssetsManager()->SetAssetValue<int>(m_AssetPath, m_SubPath, CAsset_SkeletonAnimation::LAYERANIMATION_CYCLETYPE, Value);
+				return;
+			}
+		}
+	}
+
+	virtual void MouseClickAction()
+	{
+		int Type = GetValue();
+		SetValue((Type+1)%CAsset_SkeletonAnimation::NUM_CYCLETYPES);
+	}
+	
+public:
+	CAnimationCycleButton(CGuiEditor* pAssetsEditor, const CAssetPath& AssetPath, const CSubPath& SubPath, int Mode) :
+		gui::CButton(pAssetsEditor, CAssetPath::Null()),
+		m_pAssetsEditor(pAssetsEditor),
+		m_AssetPath(AssetPath),
+		m_SubPath(SubPath),
+		m_Mode(Mode)
+	{
+	}
+	
+	virtual void Update(bool ParentEnabled)
+	{
+		if(ParentEnabled && IsEnabled())
+		{
+			int Type = GetValue();
+			
+			if(Type == CAsset_SkeletonAnimation::CYCLETYPE_LOOP)
+			{
+				Enable();
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconTimeCycle);
+			}
+			else if(Type == CAsset_SkeletonAnimation::CYCLETYPE_CLAMP)
+			{
+				Enable();
+				SetIcon(m_pAssetsEditor->m_Path_Sprite_IconTimeClamp);
+			}
+			else
+				Disable();
+		}
+		
+		gui::CButton::Update(ParentEnabled);
+	}
+};
+
 class CAnimationItem : public gui::CHListLayout
 {
 protected:
@@ -1261,8 +1437,13 @@ public:
 		m_pAssetsEditor(pAssetsEditor),
 		m_pTimeLine(pTimeLine)
 	{
-		gui::CLabel* pLabel = new gui::CLabel(m_pAssetsEditor, pText, IconPath);
-		Add(pLabel, false, 150);
+		{
+			gui::CHListLayout* pHList = new gui::CHListLayout(m_pAssetsEditor);
+			pHList->Add(new gui::CLabel(m_pAssetsEditor, pText, IconPath), true);
+			if(Mode != ANIMMODE_TIME)
+				pHList->Add(new CAnimationCycleButton(m_pAssetsEditor, AssetPath, SubPath, Mode), false);
+			Add(pHList, false, 180);
+		}
 		Add(new CFrameList(m_pAssetsEditor, m_pTimeLine, Mode, AssetPath, SubPath), true);
 	}
 };
