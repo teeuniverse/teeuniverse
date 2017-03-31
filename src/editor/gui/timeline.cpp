@@ -554,7 +554,68 @@ enum
 };
 
 class CFrameList : public gui::CWidget
-{
+{	
+	class CMenuButton : public gui::CButton
+	{
+	protected:
+		CGuiEditor* m_pAssetsEditor;
+		CContextMenu* m_pContextMenu;
+		CAssetPath m_AssetPath;
+		CSubPath m_FramePath;
+
+	public:
+		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CSubPath& FramePath, const CLocalizableString& Name, const CAssetPath& IconPath) :
+			gui::CButton(pAssetsEditor, Name, IconPath),
+			m_pAssetsEditor(pAssetsEditor),
+			m_pContextMenu(pContextMenu),
+			m_AssetPath(AssetPath),
+			m_FramePath(FramePath)
+		{
+			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+		}
+	};
+	
+	class CDeleteButton : public CMenuButton
+	{
+	protected:
+		virtual void MouseClickAction()
+		{
+			AssetsManager()->DeleteSubItem(m_AssetPath, m_FramePath);
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CSubPath& FramePath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, FramePath, _LSTRING("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
+		{ }
+	};
+	
+	class CCurveButton : public CMenuButton
+	{
+	protected:
+		int m_Value;
+		
+	protected:
+		virtual void MouseClickAction()
+		{
+			int Member = -1;
+			if(m_FramePath.GetType() == CAsset_SkeletonAnimation::TYPE_BONEANIMATION_KEYFRAME)
+				Member = CAsset_SkeletonAnimation::BONEANIMATION_KEYFRAME_GRAPHTYPE;
+			else if(m_FramePath.GetType() == CAsset_SkeletonAnimation::TYPE_LAYERANIMATION_KEYFRAME)
+				Member = CAsset_SkeletonAnimation::LAYERANIMATION_KEYFRAME_GRAPHTYPE;
+			
+			AssetsManager()->SetAssetValue<int>(m_AssetPath, m_FramePath, Member, m_Value);
+			
+			m_pContextMenu->Close();
+		}
+
+	public:
+		CCurveButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CSubPath& FramePath, int Value, const CLocalizableString& Name, const CAssetPath& IconPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, FramePath, Name, IconPath),
+			m_Value(Value)
+		{ }
+	};
+	
 protected:
 	CGuiEditor* m_pAssetsEditor;
 	CTimeLine* m_pTimeLine;
@@ -734,6 +795,68 @@ public:
 			else if(Button == KEY_MOUSE_3)
 			{
 				m_DragType = DRAGTYPE_TIMESCROLL;
+			}
+			else if(Button == KEY_MOUSE_2)
+			{
+				int ClickDiff;
+				CSubPath PickedFramePath;
+				if(m_Mode == ANIMMODE_BONE)
+					PickedFramePath = PickBoneKeyFrame(MousePos, &ClickDiff);
+				else if(m_Mode == ANIMMODE_LAYER)
+					PickedFramePath = PickLayerKeyFrame(MousePos, &ClickDiff);
+				
+				if(PickedFramePath.IsNotNull())
+				{
+					CContextMenu* pMenu = new CContextMenu(m_pAssetsEditor);
+					
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_STEPSTART,
+						_LSTRING("Start Step"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveStepStart
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_STEPMIDDLE,
+						_LSTRING("Middle Stem"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveStepMiddle
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_STEPEND,
+						_LSTRING("End Step"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveStepEnd
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_LINEAR,
+						_LSTRING("Linear"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveLinear
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_ACCELERATION,
+						_LSTRING("Acceleration"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveIncr
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_DECELERATION,
+						_LSTRING("Deceleration"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveDecr
+					));
+					pMenu->List()->Add(new CCurveButton(
+						m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath,
+						CAsset_SkeletonAnimation::GRAPHTYPE_SMOOTH,
+						_LSTRING("Smooth"),
+						m_pAssetsEditor->m_Path_Sprite_IconCurveSmooth
+					));
+					pMenu->List()->AddSeparator();
+					pMenu->List()->Add(new CDeleteButton(m_pAssetsEditor, pMenu, m_AssetPath, PickedFramePath));
+					
+					m_pAssetsEditor->DisplayPopup(pMenu);
+					return;
+				}
 			}
 			else if(Button == KEY_MOUSE_WHEEL_UP)
 			{
@@ -994,7 +1117,7 @@ public:
 							if(FrameXNext - FrameX > 100)
 							{
 								RenderInterpolationCurve(
-									Animations[i+1].GetGraphType(),
+									Animations[i].GetGraphType(),
 									FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
 								);
 							}
@@ -1048,7 +1171,7 @@ public:
 							if(FrameXNext - FrameX > 100)
 							{
 								RenderInterpolationCurve(
-									Animations[i+1].GetGraphType(),
+									Animations[i].GetGraphType(),
 									FrameX+0.5f+16, FrameXNext+0.5f-16, TimelineRect.y + TimelineRect.h, TimelineRect.y
 								);
 							}
