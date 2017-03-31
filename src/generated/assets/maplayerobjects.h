@@ -100,6 +100,8 @@ public:
 		OBJECT_FILLTYPE,
 		OBJECT_LINETYPE,
 		OBJECT_ORTHOTESSELATION,
+		OBJECT_ANIMATIONPATH,
+		OBJECT_ANIMATIONOFFSET,
 		OBJECT,
 		VISIBILITY,
 		LEVELOFDETAIL,
@@ -364,6 +366,8 @@ public:
 			tua_int32 m_FillType;
 			tua_int32 m_LineType;
 			tua_int32 m_OrthoTesselation;
+			CAssetPath::CTuaType m_AnimationPath;
+			tua_int64 m_AnimationOffset;
 			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_MapLayerObjects::CObject& SysType);
 			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects::CObject& SysType, CTuaType_0_3_0& TuaType);
 		};
@@ -379,6 +383,8 @@ public:
 		int m_FillType;
 		int m_LineType;
 		int m_OrthoTesselation;
+		CAssetPath m_AnimationPath;
+		int64 m_AnimationOffset;
 	
 	public:
 		void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;
@@ -507,6 +513,10 @@ public:
 		
 		inline int GetOrthoTesselation() const { return m_OrthoTesselation; }
 		
+		inline CAssetPath GetAnimationPath() const { return m_AnimationPath; }
+		
+		inline int64 GetAnimationOffset() const { return m_AnimationOffset; }
+		
 		inline void SetPosition(vec2 Value) { m_Position = Value; }
 		
 		inline void SetPositionX(float Value) { m_Position.x = Value; }
@@ -613,6 +623,10 @@ public:
 		
 		inline void SetOrthoTesselation(int Value) { m_OrthoTesselation = Value; }
 		
+		inline void SetAnimationPath(const CAssetPath& Value) { m_AnimationPath = Value; }
+		
+		inline void SetAnimationOffset(int64 Value) { m_AnimationOffset = Value; }
+		
 		inline int AddVertex()
 		{
 			int Id = m_Vertex.size();
@@ -639,6 +653,7 @@ public:
 			{
 				m_Vertex[i].AssetPathOperation(Operation);
 			}
+			Operation.Apply(m_AnimationPath);
 		}
 		
 	};
@@ -954,6 +969,20 @@ public:
 		else return 0;
 	}
 	
+	inline CAssetPath GetObjectAnimationPath(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetAnimationPath();
+		else return CAssetPath::Null();
+	}
+	
+	inline int64 GetObjectAnimationOffset(const CSubPath& SubPath) const
+	{
+		if(SubPath.GetId() < m_Object.size())
+			return m_Object[SubPath.GetId()].GetAnimationOffset();
+		else return 0;
+	}
+	
 	inline bool GetVisibility() const { return m_Visibility; }
 	
 	inline int GetLevelOfDetail() const { return m_LevelOfDetail; }
@@ -1126,6 +1155,18 @@ public:
 			m_Object[SubPath.GetId()].SetOrthoTesselation(Value);
 	}
 	
+	inline void SetObjectAnimationPath(const CSubPath& SubPath, const CAssetPath& Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetAnimationPath(Value);
+	}
+	
+	inline void SetObjectAnimationOffset(const CSubPath& SubPath, int64 Value)
+	{
+		if(SubPath.GetId() < m_Object.size())
+			m_Object[SubPath.GetId()].SetAnimationOffset(Value);
+	}
+	
 	inline void SetVisibility(bool Value) { m_Visibility = Value; }
 	
 	inline void SetLevelOfDetail(int Value) { m_LevelOfDetail = Value; }
@@ -1177,6 +1218,8 @@ public:
 
 template<> int CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, int DefaultValue) const;
 template<> bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, int Value);
+template<> int64 CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const;
+template<> bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, int64 Value);
 template<> bool CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, bool DefaultValue) const;
 template<> bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, bool Value);
 template<> float CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, float DefaultValue) const;

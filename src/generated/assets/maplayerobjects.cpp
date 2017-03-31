@@ -52,6 +52,7 @@ CAsset_MapLayerObjects::CObject::CObject()
 	m_FillType = FILLTYPE_NONE;
 	m_LineType = LINETYPE_SHOW;
 	m_OrthoTesselation = 1;
+	m_AnimationOffset = 0;
 }
 
 CAsset_MapLayerObjects::CAsset_MapLayerObjects()
@@ -665,6 +666,8 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_3_0::Read(CAssetsSaveLoadContex
 	SysType.m_FillType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FillType);
 	SysType.m_LineType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_LineType);
 	SysType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_OrthoTesselation);
+	pLoadingContext->ReadAssetPath(TuaType.m_AnimationPath, SysType.m_AnimationPath);
+	SysType.m_AnimationOffset = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_AnimationOffset);
 }
 
 
@@ -723,6 +726,8 @@ void CAsset_MapLayerObjects::CObject::CTuaType_0_3_0::Write(CAssetsSaveLoadConte
 	TuaType.m_FillType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FillType);
 	TuaType.m_LineType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_LineType);
 	TuaType.m_OrthoTesselation = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_OrthoTesselation);
+	pLoadingContext->WriteAssetPath(SysType.m_AnimationPath, TuaType.m_AnimationPath);
+	TuaType.m_AnimationOffset = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_AnimationOffset);
 }
 
 void CAsset_MapLayerObjects::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapLayerObjects& SysType, CTuaType_0_3_0& TuaType)
@@ -800,6 +805,29 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, in
 			return true;
 	}
 	return CAsset::SetValue<int>(ValueType, SubPath, Value);
+}
+
+template<>
+int64 CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case OBJECT_ANIMATIONOFFSET:
+			return GetObjectAnimationOffset(SubPath);
+	}
+	return CAsset::GetValue<int64>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, int64 Value)
+{
+	switch(ValueType)
+	{
+		case OBJECT_ANIMATIONOFFSET:
+			SetObjectAnimationOffset(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<int64>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -978,6 +1006,8 @@ CAssetPath CAsset_MapLayerObjects::GetValue(int ValueType, const CSubPath& SubPa
 			return GetParentPath();
 		case OBJECT_STYLEPATH:
 			return GetObjectStylePath(SubPath);
+		case OBJECT_ANIMATIONPATH:
+			return GetObjectAnimationPath(SubPath);
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -992,6 +1022,9 @@ bool CAsset_MapLayerObjects::SetValue(int ValueType, const CSubPath& SubPath, CA
 			return true;
 		case OBJECT_STYLEPATH:
 			SetObjectStylePath(SubPath, Value);
+			return true;
+		case OBJECT_ANIMATIONPATH:
+			SetObjectAnimationPath(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);

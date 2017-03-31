@@ -1567,6 +1567,20 @@ CAssetPath CTimeLine::GetAnimationPath()
 		if(pLayer && QuadPath.GetType() == CAsset_MapLayerQuads::TYPE_QUAD && pLayer->IsValidQuad(QuadPath))
 			return pLayer->GetQuadAnimationPath(QuadPath);
 	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
+	{
+		const CAsset_MapLayerObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapLayerObjects>(AssetsEditor()->GetEditedAssetPath());
+		CSubPath ObjectPath = AssetsEditor()->GetFirstEditedSubPath();
+		if(pLayer && ObjectPath.GetType() == CAsset_MapLayerObjects::TYPE_OBJECT && pLayer->IsValidObject(ObjectPath))
+			return pLayer->GetObjectAnimationPath(ObjectPath);
+	}
+	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
+	{
+		const CAsset_MapZoneObjects* pLayer = AssetsManager()->GetAsset<CAsset_MapZoneObjects>(AssetsEditor()->GetEditedAssetPath());
+		CSubPath ObjectPath = AssetsEditor()->GetFirstEditedSubPath();
+		if(pLayer && ObjectPath.GetType() == CAsset_MapZoneObjects::TYPE_OBJECT && pLayer->IsValidObject(ObjectPath))
+			return pLayer->GetObjectAnimationPath(ObjectPath);
+	}
 	
 	return CAssetPath::Null();
 }

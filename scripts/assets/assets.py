@@ -2336,6 +2336,8 @@ mapLayerObjects_object.addMember("0.2.0", "PathType", TypeInt32(), "PATHTYPE_OPE
 mapLayerObjects_object.addMember("0.2.0", "FillType", TypeInt32(), "FILLTYPE_NONE")
 mapLayerObjects_object.addMember("0.2.0", "LineType", TypeInt32(), "LINETYPE_SHOW")
 mapLayerObjects_object.addMember("0.2.0", "OrthoTesselation", TypeInt32(), "1")
+mapLayerObjects_object.addMember("0.3.0", "AnimationPath", TypeAssetPath())
+mapLayerObjects_object.addMember("0.3.0", "AnimationOffset", TypeInt64(), "0")
 mapLayerObjects_object.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"
@@ -2459,6 +2461,8 @@ mapZoneObjects_object.addMember("0.2.2", "PathType", TypeInt32(), "PATHTYPE_OPEN
 mapZoneObjects_object.addMember("0.2.2", "FillType", TypeInt32(), "FILLTYPE_NONE")
 mapZoneObjects_object.addMember("0.2.2", "ZoneIndex", TypeUInt8(), "1")
 mapZoneObjects_object.addMember("0.2.3", "ZoneFlags", TypeUInt32(), "0x0")
+mapZoneObjects_object.addMember("0.3.0", "AnimationPath", TypeAssetPath())
+mapZoneObjects_object.addMember("0.3.0", "AnimationOffset", TypeInt64(), "0")
 mapZoneObjects_object.addPublicFunc([
 	"void GetTransform(CAssetsManager* pAssetsManager, float Time, matrix2x2* pMatrix, vec2* pPosition) const;",
 	"void GetDrawState(CAssetsManager* pAssetsManager, float Time, vec4* pColor, int* pState) const;"

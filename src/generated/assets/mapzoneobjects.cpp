@@ -51,6 +51,7 @@ CAsset_MapZoneObjects::CObject::CObject()
 	m_FillType = FILLTYPE_NONE;
 	m_ZoneIndex = 1;
 	m_ZoneFlags = 0x0;
+	m_AnimationOffset = 0;
 }
 
 CAsset_MapZoneObjects::CAsset_MapZoneObjects()
@@ -485,6 +486,8 @@ void CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Read(CAssetsSaveLoadContext
 	SysType.m_FillType = pLoadingContext->ArchiveFile()->ReadInt32(TuaType.m_FillType);
 	SysType.m_ZoneIndex = pLoadingContext->ArchiveFile()->ReadUInt8(TuaType.m_ZoneIndex);
 	SysType.m_ZoneFlags = pLoadingContext->ArchiveFile()->ReadUInt32(TuaType.m_ZoneFlags);
+	pLoadingContext->ReadAssetPath(TuaType.m_AnimationPath, SysType.m_AnimationPath);
+	SysType.m_AnimationOffset = pLoadingContext->ArchiveFile()->ReadInt64(TuaType.m_AnimationOffset);
 }
 
 
@@ -541,6 +544,8 @@ void CAsset_MapZoneObjects::CObject::CTuaType_0_3_0::Write(CAssetsSaveLoadContex
 	TuaType.m_FillType = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_FillType);
 	TuaType.m_ZoneIndex = pLoadingContext->ArchiveFile()->WriteUInt8(SysType.m_ZoneIndex);
 	TuaType.m_ZoneFlags = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_ZoneFlags);
+	pLoadingContext->WriteAssetPath(SysType.m_AnimationPath, TuaType.m_AnimationPath);
+	TuaType.m_AnimationOffset = pLoadingContext->ArchiveFile()->WriteInt64(SysType.m_AnimationOffset);
 }
 
 void CAsset_MapZoneObjects::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingContext, const CAsset_MapZoneObjects& SysType, CTuaType_0_3_0& TuaType)
@@ -631,6 +636,29 @@ bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, uin
 			return true;
 	}
 	return CAsset::SetValue<uint32>(ValueType, SubPath, Value);
+}
+
+template<>
+int64 CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPath, int64 DefaultValue) const
+{
+	switch(ValueType)
+	{
+		case OBJECT_ANIMATIONOFFSET:
+			return GetObjectAnimationOffset(SubPath);
+	}
+	return CAsset::GetValue<int64>(ValueType, SubPath, DefaultValue);
+}
+
+template<>
+bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, int64 Value)
+{
+	switch(ValueType)
+	{
+		case OBJECT_ANIMATIONOFFSET:
+			SetObjectAnimationOffset(SubPath, Value);
+			return true;
+	}
+	return CAsset::SetValue<int64>(ValueType, SubPath, Value);
 }
 
 template<>
@@ -786,6 +814,8 @@ CAssetPath CAsset_MapZoneObjects::GetValue(int ValueType, const CSubPath& SubPat
 			return GetParentPath();
 		case ZONETYPEPATH:
 			return GetZoneTypePath();
+		case OBJECT_ANIMATIONPATH:
+			return GetObjectAnimationPath(SubPath);
 	}
 	return CAsset::GetValue<CAssetPath>(ValueType, SubPath, DefaultValue);
 }
@@ -800,6 +830,9 @@ bool CAsset_MapZoneObjects::SetValue(int ValueType, const CSubPath& SubPath, CAs
 			return true;
 		case ZONETYPEPATH:
 			SetZoneTypePath(Value);
+			return true;
+		case OBJECT_ANIMATIONPATH:
+			SetObjectAnimationPath(SubPath, Value);
 			return true;
 	}
 	return CAsset::SetValue<CAssetPath>(ValueType, SubPath, Value);

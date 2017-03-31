@@ -27,6 +27,22 @@ void CAsset_MapZoneObjects::CObject::GetTransform(CAssetsManager* pAssetsManager
 	float Angle = m_Angle;
 	vec2 Scale = m_Size;
 	
+	if(m_AnimationPath.IsNotNull())
+	{
+		const CAsset_SkeletonAnimation* pAnimation = pAssetsManager->GetAsset<CAsset_SkeletonAnimation>(m_AnimationPath);
+		if(pAnimation)
+		{
+			CAsset_SkeletonAnimation::CBoneAnimation::CFrame Frame;
+			CSubPath AnimSubPath = pAnimation->FindBoneAnim(CSubPath::Null());
+			if(pAnimation->GetBoneAnimFrame(AnimSubPath, Time, Frame))
+			{
+				*pPosition += Frame.GetTranslation();
+				Angle += Frame.GetAngle();
+				Scale *= Frame.GetScale();
+			}
+		}
+	}
+	
 	*pMatrix = matrix2x2::rotation(Angle)*matrix2x2::scaling(Scale);
 }
 
