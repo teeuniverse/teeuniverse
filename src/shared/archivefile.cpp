@@ -45,7 +45,6 @@ CArchiveFile::~CArchiveFile()
 bool CArchiveFile::Open(CStorage* pStorage, const char* pFilename, int StorageType)
 {
 	//Open file
-	debug::WarningStream("ArchiveFile") << "could not open '" << StorageType << "'" << std::endl;
 	IOHANDLE File = pStorage->OpenFile(pFilename, IOFLAG_READ, StorageType);
 	if(!File)
 	{
