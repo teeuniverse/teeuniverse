@@ -34,6 +34,7 @@ CMapRenderer::CMapRenderer(CClientKernel* pKernel) :
 void CMapRenderer::SetCanvas(const gui::CRect& Canvas, vec2 ScreenPos)
 {
 	m_ScreenPos = ScreenPos;
+	m_Canvas = Canvas;
 }
 
 void CMapRenderer::SetCamera(vec2 CameraPos, float CameraZoom)
