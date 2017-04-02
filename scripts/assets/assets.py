@@ -2254,7 +2254,7 @@ skeletonAnim.addPublicFunc([
 assetsList.append(skeletonAnim)
 
 # SKELETON SKIN ########################################################
-skeletonSkin_sprite = Class("Bone")
+skeletonSkin_sprite = Class("Sprite")
 skeletonSkin_sprite.addMember("0.2.0", "SpritePath", TypeAssetPath())
 skeletonSkin_sprite.addMember("0.2.0", "BonePath", TypeSubPath())
 skeletonSkin_sprite.addMember("0.2.0", "LayerPath", TypeSubPath())
@@ -2264,6 +2264,7 @@ skeletonSkin_sprite.addMember("0.2.0", "Scale", TypeVec2(), "1.0f")
 skeletonSkin_sprite.addMember("0.2.0", "Angle", TypeFloat(), "0.0f")
 skeletonSkin_sprite.addMember("0.2.0", "Color", TypeColor(), "1.0f")
 skeletonSkin_sprite.addMember("0.2.0", "Alignment", TypeInt32(), "ALIGNMENT_BONE")
+
 skeletonSkin = ClassAsset("SkeletonSkin", len(assetsList))
 skeletonSkin.setInheritance(mainAsset)
 skeletonSkin.addClass(skeletonSkin_sprite)

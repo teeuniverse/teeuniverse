@@ -113,6 +113,58 @@ void CAssetsRenderer::DrawSprite(CAssetPath SpritePath, vec2 Pos, vec2 Size, flo
 	Graphics()->QuadsEnd();
 }
 
+void CAssetsRenderer::DrawFreeSprite(CAssetPath SpritePath, vec2 Pos, vec2 U, vec2 V, int Flags, vec4 Color)
+{
+	//Get sprite
+	CSpriteInfo SpriteInfo;
+	if(!GetSpriteInfo(SpritePath, SpriteInfo))
+		return;
+	
+	TextureSet(SpriteInfo.m_ImagePath);
+	
+	Graphics()->BlendNormal();
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(Color, true);
+	
+	//Compute texture subquad
+	float Temp = 0;
+	if(Flags&CAsset_Sprite::FLAG_FLIP_Y)
+	{
+		Temp = SpriteInfo.m_VMin;
+		SpriteInfo.m_VMin = SpriteInfo.m_VMax;
+		SpriteInfo.m_VMax = Temp;
+	}
+
+	if(Flags&CAsset_Sprite::FLAG_FLIP_X)
+	{
+		Temp = SpriteInfo.m_UMin;
+		SpriteInfo.m_UMin = SpriteInfo.m_UMax;
+		SpriteInfo.m_UMax = Temp;
+	}
+
+	Graphics()->QuadsSetSubset(SpriteInfo.m_UMin, SpriteInfo.m_VMin, SpriteInfo.m_UMax, SpriteInfo.m_VMax);
+
+	Graphics()->QuadsSetSubsetFree(
+		SpriteInfo.m_UMin, SpriteInfo.m_VMin,
+		SpriteInfo.m_UMax, SpriteInfo.m_VMin,
+		SpriteInfo.m_UMin, SpriteInfo.m_VMax,
+		SpriteInfo.m_UMax, SpriteInfo.m_VMax
+	);
+	
+	//Compute sprite size
+	vec2 QuadSize = vec2(SpriteInfo.m_Width, SpriteInfo.m_Height);
+	
+	CGraphics::CFreeformItem Item(
+		Pos.x - QuadSize.x*U.x - QuadSize.x*V.x, Pos.y - QuadSize.y*U.y - QuadSize.y*V.y,
+		Pos.x + QuadSize.x*U.x - QuadSize.x*V.x, Pos.y + QuadSize.y*U.y - QuadSize.y*V.y,
+		Pos.x - QuadSize.x*U.x + QuadSize.x*V.x, Pos.y - QuadSize.y*U.y + QuadSize.y*V.y,
+		Pos.x + QuadSize.x*U.x + QuadSize.x*V.x, Pos.y + QuadSize.y*U.y + QuadSize.y*V.y
+	);
+	Graphics()->QuadsDrawFreeform(&Item, 1);
+	
+	Graphics()->QuadsEnd();
+}
+
 void CAssetsRenderer::Draw_RoundRect_Background(float x, float y, float w, float h, float r, int Corners)
 {
 	CGraphics::CFreeformItem ArrayF[32];

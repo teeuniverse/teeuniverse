@@ -51,10 +51,12 @@ protected:
 	CAssetPath m_SkeletonPath;
 	std::vector<CBoneState> m_Bones;
 	std::vector<CLayerState> m_Layers;
+	std::vector<CAssetPath> m_Skins;
 	
 	matrix2x2 m_WorldTransform;
 	matrix2x2 m_InvWorldTransform;
 	vec2 m_WorldPosition;
+	vec2 m_ScreenPosition;
 
 protected:
 	void FinalizeBone(int BoneId);
@@ -62,39 +64,46 @@ protected:
 public:	
 	CSkeletonRenderer(CClientKernel* pKernel);
 	
-	inline void SetWorldTransform(const matrix2x2& Transform, const vec2& Position)
+	inline void SetWorldTransform(const matrix2x2& Transform, const vec2& WorldPosition, const vec2 ScreenPosition)
 	{
 		m_WorldTransform = Transform;
 		m_InvWorldTransform = matrix2x2::inverse(Transform);
-		m_WorldPosition = Position;
+		m_WorldPosition = WorldPosition;
+		m_ScreenPosition = ScreenPosition;
 	}
 	
 	void SetSkeleton(const CAssetPath& SkeletonPath);
 	void ApplyAnimation(CAssetPath AnimationPath, int64 Time);
+	void AddSkin(const CAssetPath& SkinPath)
+	{
+		m_Skins.emplace_back(SkinPath);
+	}
 	void Finalize();
+	
+	void RenderSkins(vec2 Position, float Size);
 	
 	void RenderBones(vec2 Position, float Size);
 	
 	CSubPath BonePicking(vec2 Position, float Size, vec2 Point);
 	
-	inline vec2 SkeletonPosToWorldPos(vec2 SkeletonPos)
+	inline vec2 SkeletonPosToScreenPos(vec2 SkeletonPos)
 	{
-		return m_WorldTransform * (SkeletonPos + m_WorldPosition);
+		return m_ScreenPosition + m_WorldTransform * (SkeletonPos + m_WorldPosition);
 	}
 	
-	inline vec2 WorldPosToSkeletonPos(vec2 WorldPos)
+	inline vec2 ScreenPosToSkeletonPos(vec2 WorldPos)
 	{
-		return (m_InvWorldTransform * WorldPos) - m_WorldPosition;
+		return (m_InvWorldTransform * (WorldPos - m_ScreenPosition)) - m_WorldPosition;
 	}
 
-	inline vec2 WorldPosToBonePos(CSubPath BonePath, vec2 WorldPos)
+	inline vec2 ScreenPosToBonePos(CSubPath BonePath, vec2 WorldPos)
 	{
-		return SkeletonPosToBonePos(BonePath, WorldPosToSkeletonPos(WorldPos));
+		return SkeletonPosToBonePos(BonePath, ScreenPosToSkeletonPos(WorldPos));
 	}
 
-	inline vec2 BonePosToWorldPos(CSubPath BonePath, vec2 BonePos)
+	inline vec2 BonePosToScreenPos(CSubPath BonePath, vec2 BonePos)
 	{
-		return SkeletonPosToWorldPos(BonePosToSkeletonPos(BonePath, BonePos));
+		return SkeletonPosToScreenPos(BonePosToSkeletonPos(BonePath, BonePos));
 	}
 	
 	vec2 SkeletonPosToBonePos(CSubPath BonePath, vec2 WorldPos);

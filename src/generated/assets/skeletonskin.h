@@ -98,7 +98,7 @@ public:
 	CIteratorSprite ReverseBeginSprite() const { return CIteratorSprite(m_Sprite.size()-1, true); }
 	CIteratorSprite ReverseEndSprite() const { return CIteratorSprite(-1, true); }
 	
-	class CBone
+	class CSprite
 	{
 	public:
 		class CTuaType_0_2_0
@@ -113,8 +113,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_0& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_2_0& TuaType);
 		};
 		
 		class CTuaType_0_2_1
@@ -129,8 +129,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_1& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_1& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_2_1& TuaType);
 		};
 		
 		class CTuaType_0_2_2
@@ -145,8 +145,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_2& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_2& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_2_2& TuaType);
 		};
 		
 		class CTuaType_0_2_3
@@ -161,8 +161,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_3& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_3& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_2_3& TuaType);
 		};
 		
 		class CTuaType_0_2_4
@@ -177,8 +177,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_2_4& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_2_4& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_2_4& TuaType);
 		};
 		
 		class CTuaType_0_3_0
@@ -193,8 +193,8 @@ public:
 			tua_float m_Angle;
 			tua_uint32 m_Color;
 			tua_int32 m_Alignment;
-			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonSkin::CBone& SysType);
-			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CBone& SysType, CTuaType_0_3_0& TuaType);
+			static void Read(class CAssetsSaveLoadContext* pLoadingContext, const CTuaType_0_3_0& TuaType, CAsset_SkeletonSkin::CSprite& SysType);
+			static void Write(class CAssetsSaveLoadContext* pLoadingContext, const CAsset_SkeletonSkin::CSprite& SysType, CTuaType_0_3_0& TuaType);
 		};
 		
 	
@@ -210,7 +210,7 @@ public:
 		int m_Alignment;
 	
 	public:
-		CBone();
+		CSprite();
 		inline CAssetPath GetSpritePath() const { return m_SpritePath; }
 		
 		inline CSubPath GetBonePath() const { return m_BonePath; }
@@ -326,7 +326,7 @@ public:
 
 private:
 	CAssetPath m_SkeletonPath;
-	std::vector<CAsset_SkeletonSkin::CBone> m_Sprite;
+	std::vector<CAsset_SkeletonSkin::CSprite> m_Sprite;
 
 public:
 	virtual ~CAsset_SkeletonSkin() {}
@@ -355,12 +355,12 @@ public:
 	
 	inline int GetSpriteArraySize() const { return m_Sprite.size(); }
 	
-	inline const CAsset_SkeletonSkin::CBone* GetSpritePtr() const { return &(m_Sprite.front()); }
+	inline const CAsset_SkeletonSkin::CSprite* GetSpritePtr() const { return &(m_Sprite.front()); }
 	
-	inline const std::vector<CAsset_SkeletonSkin::CBone>& GetSpriteArray() const { return m_Sprite; }
-	inline std::vector<CAsset_SkeletonSkin::CBone>& GetSpriteArray() { return m_Sprite; }
+	inline const std::vector<CAsset_SkeletonSkin::CSprite>& GetSpriteArray() const { return m_Sprite; }
+	inline std::vector<CAsset_SkeletonSkin::CSprite>& GetSpriteArray() { return m_Sprite; }
 	
-	inline const CAsset_SkeletonSkin::CBone& GetSprite(const CSubPath& SubPath) const
+	inline const CAsset_SkeletonSkin::CSprite& GetSprite(const CSubPath& SubPath) const
 	{
 		assert(SubPath.GetId() < m_Sprite.size());
 		{
@@ -463,7 +463,7 @@ public:
 	
 	inline void SetSpriteArraySize(int Value) { m_Sprite.resize(Value); }
 	
-	inline void SetSprite(const CSubPath& SubPath, const CAsset_SkeletonSkin::CBone& Value)
+	inline void SetSprite(const CSubPath& SubPath, const CAsset_SkeletonSkin::CSprite& Value)
 	{
 		if(SubPath.GetId() < m_Sprite.size())
 		{
@@ -556,7 +556,7 @@ public:
 		return Id;
 	}
 	
-	inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_SkeletonSkin::CBone()); }
+	inline void AddAtSprite(int Index) { m_Sprite.insert(m_Sprite.begin() + Index, CAsset_SkeletonSkin::CSprite()); }
 	
 	inline void DeleteSprite(const CSubPath& SubPath) { m_Sprite.erase(m_Sprite.begin() + SubPath.GetId()); }
 	

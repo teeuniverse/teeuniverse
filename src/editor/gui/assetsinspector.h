@@ -83,7 +83,9 @@ private:
 	void AddField_MapGroups(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_Animations(gui::CVListLayout* pList, int Member, const CLocalizableString& Text);
 	void AddField_AssetProperties(gui::CVScrollLayout* pList);
-
+	void AddField_Bone(gui::CVListLayout* pList, int MemberSkeleton, int MemberBone, const CLocalizableString& Text);
+	void AddField_Layer(gui::CVListLayout* pList, int MemberSkeleton, int MemberLayer, const CLocalizableString& Text);
+	
 	//Search Tag: TAG_NEW_ASSET
 	gui::CVScrollLayout* CreateTab_Generic_Asset();
 	gui::CVScrollLayout* CreateTab_GuiRectStyle_Asset();

@@ -49,6 +49,7 @@ public:
 	bool GetSpriteInfo(CAssetPath SpritePath, CSpriteInfo& Info);
 	
 	void DrawSprite(CAssetPath AssetPath, vec2 Pos, vec2 Size, float Angle, int FlipFlag, vec4 Color);
+	void DrawFreeSprite(CAssetPath SpritePath, vec2 Pos, vec2 U, vec2 V, int Flags, vec4 Color);
 	void DrawGuiRect(const gui::CRect* pRect, CAssetPath StylePath);
 	void DrawGuiLine(ivec2 Point0, ivec2 Point1, CAssetPath StylePath);
 };

@@ -17,6 +17,7 @@
  */
 
 #include <client/components/graphics.h>
+#include <client/components/assetsrenderer.h>
 
 #include "skeletonrenderer.h"
 
@@ -48,6 +49,7 @@ void CSkeletonRenderer::SetSkeleton(const CAssetPath& SkeletonPath)
 	
 	m_Bones.clear();
 	m_Layers.clear();
+	m_Skins.clear();
 	
 	const CAsset_Skeleton* pSkeleton = AssetsManager()->GetAsset<CAsset_Skeleton>(SkeletonPath);
 	if(!pSkeleton)
@@ -162,6 +164,43 @@ void CSkeletonRenderer::Finalize()
 		FinalizeBone(b);
 }
 
+void CSkeletonRenderer::RenderSkins(vec2 Position, float Size)
+{
+	for(unsigned int l=0; l<m_Layers.size(); l++)
+	{
+		for(unsigned int s=0; s<m_Skins.size(); s++)
+		{
+			const CAsset_SkeletonSkin* pSkin = AssetsManager()->GetAsset<CAsset_SkeletonSkin>(m_Skins[s]);
+			if(!pSkin)
+				continue;
+			
+			CAsset_SkeletonSkin::CIteratorSprite SpriteIter = pSkin->BeginSprite();
+			while(SpriteIter != pSkin->EndSprite())
+			{
+				if(pSkin->GetSpriteLayerPath(*SpriteIter) == CAsset_Skeleton::SubPath_Layer(l))
+				{
+					vec2 Pos = pSkin->GetSpriteTranslation(*SpriteIter);
+					vec2 X = rotate(vec2(pSkin->GetSpriteScale(*SpriteIter).x/2.0f, 0.0f), pSkin->GetSpriteAngle(*SpriteIter));
+					vec2 Y = rotate(vec2(0.0f, pSkin->GetSpriteScale(*SpriteIter).y/2.0f), pSkin->GetSpriteAngle(*SpriteIter));
+					
+					vec2 SPos = BonePosToScreenPos(pSkin->GetSpriteBonePath(*SpriteIter), Pos);
+					vec2 SX = BonePosToScreenPos(pSkin->GetSpriteBonePath(*SpriteIter), Pos + X) - SPos;
+					vec2 SY = BonePosToScreenPos(pSkin->GetSpriteBonePath(*SpriteIter), Pos + Y) - SPos;
+					
+					AssetsRenderer()->DrawFreeSprite(
+						pSkin->GetSpriteSpritePath(*SpriteIter),
+						SPos, SX, SY,
+						0x0,
+						pSkin->GetSpriteColor(*SpriteIter)*m_Layers[l].m_Color
+					);
+				}
+				
+				++SpriteIter;
+			}
+		}
+	}
+}
+
 void CSkeletonRenderer::RenderBones(vec2 Position, float Size)
 {
 	Graphics()->TextureClear();
@@ -182,10 +221,10 @@ void CSkeletonRenderer::RenderBones(vec2 Position, float Size)
 		vec2 BottomPoint = StartPoint + vec2(Dir.x + Dir.y, - Dir.x + Dir.y)*StartPointLength/sqrt(2.0f);
 		
 		//Apply transform
-		StartPoint = m_WorldTransform * (StartPoint + m_WorldPosition);
-		BottomPoint = m_WorldTransform * (BottomPoint + m_WorldPosition);
-		TopPoint = m_WorldTransform * (TopPoint + m_WorldPosition);
-		EndPoint = m_WorldTransform * (EndPoint + m_WorldPosition);
+		StartPoint = SkeletonPosToScreenPos(StartPoint);
+		BottomPoint = SkeletonPosToScreenPos(BottomPoint);
+		TopPoint = SkeletonPosToScreenPos(TopPoint);
+		EndPoint = SkeletonPosToScreenPos(EndPoint);
 		
 		CGraphics::CFreeformItem Freeform(
 			StartPoint.x, StartPoint.y,
@@ -215,10 +254,10 @@ CSubPath CSkeletonRenderer::BonePicking(vec2 Position, float Size, vec2 Point)
 		vec2 BottomPoint = StartPoint + vec2(Dir.x + Dir.y, - Dir.x + Dir.y)*StartPointLength/sqrt(2.0f);
 		
 		//Apply transform
-		StartPoint = m_WorldTransform * (StartPoint + m_WorldPosition);
-		BottomPoint = m_WorldTransform * (BottomPoint + m_WorldPosition);
-		TopPoint = m_WorldTransform * (TopPoint + m_WorldPosition);
-		EndPoint = m_WorldTransform * (EndPoint + m_WorldPosition);
+		StartPoint = SkeletonPosToScreenPos(StartPoint);
+		BottomPoint = SkeletonPosToScreenPos(BottomPoint);
+		TopPoint = SkeletonPosToScreenPos(TopPoint);
+		EndPoint = SkeletonPosToScreenPos(EndPoint);
 		
 		Vertices[0] = StartPoint - Point;
 		Vertices[1] = BottomPoint - Point;

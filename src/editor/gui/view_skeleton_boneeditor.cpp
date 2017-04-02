@@ -50,9 +50,9 @@ void CCursorTool_SkeletonBoneEditor::OnViewButtonClick(int Button)
 	
 	if(AssetsEditor()->GetFirstEditedSubPath().GetType() == CAsset_Skeleton::TYPE_BONE && pSkeleton->IsValidBone(AssetsEditor()->GetFirstEditedSubPath()))
 	{
-		vec2 TranslationGizmo = ViewSkeleton()->SkeletonRenderer()->BonePosToWorldPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(0.0f, 0.0f));
+		vec2 TranslationGizmo = ViewSkeleton()->SkeletonRenderer()->BonePosToScreenPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(0.0f, 0.0f));
 		float Length = pSkeleton->GetBoneLength(AssetsEditor()->GetFirstEditedSubPath());
-		vec2 LengthGizmo = ViewSkeleton()->SkeletonRenderer()->BonePosToWorldPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(Length, 0.0f));
+		vec2 LengthGizmo = ViewSkeleton()->SkeletonRenderer()->BonePosToScreenPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(Length, 0.0f));
 		
 		//Check translation gizmo
 		if(distance(TranslationGizmo, MousePos) < 16.0f)
@@ -92,7 +92,7 @@ void CCursorTool_SkeletonBoneEditor::OnViewButtonClick(int Button)
 				CreatedBone = CAsset_Skeleton::SubPath_Bone(AssetsManager()->AddSubItem(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null(), CAsset_Skeleton::TYPE_BONE, m_Token));
 				
 					//Set default values
-				vec2 Position = ViewSkeleton()->SkeletonRenderer()->WorldPosToSkeletonPos(MousePos);
+				vec2 Position = ViewSkeleton()->SkeletonRenderer()->ScreenPosToSkeletonPos(MousePos);
 				AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), CreatedBone, CAsset_Skeleton::BONE_TRANSLATION, Position, m_Token);
 				AssetsManager()->SetAssetValue<vec4>(AssetsEditor()->GetEditedAssetPath(), CreatedBone, CAsset_Skeleton::BONE_COLOR, Color, m_Token);
 			}
@@ -156,7 +156,7 @@ void CCursorTool_SkeletonBoneEditor::OnViewMouseMove()
 	ViewSkeleton()->RefreshSkeletonRenderer();
 	
 	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	vec2 MouseBonePos = ViewSkeleton()->SkeletonRenderer()->WorldPosToBonePos(AssetsEditor()->GetFirstEditedSubPath(), MousePos);
+	vec2 MouseBonePos = ViewSkeleton()->SkeletonRenderer()->ScreenPosToBonePos(AssetsEditor()->GetFirstEditedSubPath(), MousePos);
 	
 	if(m_DragType == DRAGTYPE_ANGLE_AND_LENGTH)
 	{
@@ -191,9 +191,9 @@ void CCursorTool_SkeletonBoneEditor::RenderView()
 	if(AssetsEditor()->GetFirstEditedSubPath().GetType() != CAsset_Skeleton::TYPE_BONE || !pSkeleton->IsValidBone(AssetsEditor()->GetFirstEditedSubPath()))
 		return;
 	
-	vec2 PivotPosition = ViewSkeleton()->SkeletonRenderer()->BonePosToWorldPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(0.0f, 0.0f));
+	vec2 PivotPosition = ViewSkeleton()->SkeletonRenderer()->BonePosToScreenPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(0.0f, 0.0f));
 	float Length = pSkeleton->GetBoneLength(AssetsEditor()->GetFirstEditedSubPath());
-	vec2 LengthPosition = ViewSkeleton()->SkeletonRenderer()->BonePosToWorldPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(Length, 0.0f));
+	vec2 LengthPosition = ViewSkeleton()->SkeletonRenderer()->BonePosToScreenPos(AssetsEditor()->GetFirstEditedSubPath(), vec2(Length, 0.0f));
 	float LengthAngle = angle(LengthPosition - PivotPosition);
 	
 	AssetsRenderer()->DrawSprite(

@@ -140,7 +140,10 @@ void CViewSkeleton::RefreshSkeletonRenderer()
 	{
 		const CAsset_SkeletonSkin* pSkeletonSkin = AssetsManager()->GetAsset<CAsset_SkeletonSkin>(AssetsEditor()->GetEditedAssetPath());
 		if(pSkeletonSkin)
+		{
 			SkeletonRenderer()->SetSkeleton(pSkeletonSkin->GetSkeletonPath());
+			SkeletonRenderer()->AddSkin(AssetsEditor()->GetEditedAssetPath());
+		}
 	}
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_SkeletonAnimation::TypeId)
 	{
@@ -155,7 +158,7 @@ void CViewSkeleton::RefreshSkeletonRenderer()
 		return;
 	
 	SkeletonRenderer()->Finalize();
-	SkeletonRenderer()->SetWorldTransform(matrix2x2::scaling(GetCameraZoom()), vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2) + m_CameraPosition);
+	SkeletonRenderer()->SetWorldTransform(matrix2x2::scaling(GetCameraZoom()), m_CameraPosition, vec2(m_ViewRect.x + m_ViewRect.w/2, m_ViewRect.y + m_ViewRect.h/2));
 }
 
 void CViewSkeleton::RenderView()
@@ -163,6 +166,7 @@ void CViewSkeleton::RenderView()
 	RefreshSkeletonRenderer();
 	
 	SkeletonRenderer()->RenderBones(0.0f, 1.0f);
+	SkeletonRenderer()->RenderSkins(0.0f, 1.0f);
 }
 
 void CViewSkeleton::OnButtonClick(int Button)
