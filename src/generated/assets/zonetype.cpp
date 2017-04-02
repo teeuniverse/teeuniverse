@@ -108,6 +108,7 @@ void CAsset_ZoneType::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_2_0* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_0[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_0)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -173,6 +174,7 @@ void CAsset_ZoneType::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_2_1* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_1[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_1)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -272,6 +274,7 @@ void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_2_2* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_2[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_2)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -283,6 +286,7 @@ void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
 		CAsset_ZoneType::CDataInt::CTuaType_0_2_2* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_2_2[SysType.m_DataInt.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_2_2)*SysType.m_DataInt.size());
 		for(unsigned int i=0; i<SysType.m_DataInt.size(); i++)
 		{
 			CAsset_ZoneType::CDataInt::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
@@ -293,6 +297,7 @@ void CAsset_ZoneType::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Group.m_Size = SysType.m_Group.size();
 		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		mem_zero((void*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
 		for(unsigned int i=0; i<SysType.m_Group.size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());
@@ -395,6 +400,7 @@ void CAsset_ZoneType::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_2_3* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_3[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_3)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -406,6 +412,7 @@ void CAsset_ZoneType::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
 		CAsset_ZoneType::CDataInt::CTuaType_0_2_3* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_2_3[SysType.m_DataInt.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_2_3)*SysType.m_DataInt.size());
 		for(unsigned int i=0; i<SysType.m_DataInt.size(); i++)
 		{
 			CAsset_ZoneType::CDataInt::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
@@ -416,6 +423,7 @@ void CAsset_ZoneType::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Group.m_Size = SysType.m_Group.size();
 		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		mem_zero((void*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
 		for(unsigned int i=0; i<SysType.m_Group.size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());
@@ -518,6 +526,7 @@ void CAsset_ZoneType::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_2_4* pData = new CAsset_ZoneType::CIndex::CTuaType_0_2_4[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_2_4)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -529,6 +538,7 @@ void CAsset_ZoneType::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
 		CAsset_ZoneType::CDataInt::CTuaType_0_2_4* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_2_4[SysType.m_DataInt.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_2_4)*SysType.m_DataInt.size());
 		for(unsigned int i=0; i<SysType.m_DataInt.size(); i++)
 		{
 			CAsset_ZoneType::CDataInt::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
@@ -539,6 +549,7 @@ void CAsset_ZoneType::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Group.m_Size = SysType.m_Group.size();
 		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		mem_zero((void*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
 		for(unsigned int i=0; i<SysType.m_Group.size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());
@@ -641,6 +652,7 @@ void CAsset_ZoneType::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Index.m_Size = SysType.m_Index.size();
 		CAsset_ZoneType::CIndex::CTuaType_0_3_0* pData = new CAsset_ZoneType::CIndex::CTuaType_0_3_0[SysType.m_Index.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CIndex::CTuaType_0_3_0)*SysType.m_Index.size());
 		for(unsigned int i=0; i<SysType.m_Index.size(); i++)
 		{
 			CAsset_ZoneType::CIndex::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Index[i], pData[i]);
@@ -652,6 +664,7 @@ void CAsset_ZoneType::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_DataInt.m_Size = SysType.m_DataInt.size();
 		CAsset_ZoneType::CDataInt::CTuaType_0_3_0* pData = new CAsset_ZoneType::CDataInt::CTuaType_0_3_0[SysType.m_DataInt.size()];
+		mem_zero((void*) pData, sizeof(CAsset_ZoneType::CDataInt::CTuaType_0_3_0)*SysType.m_DataInt.size());
 		for(unsigned int i=0; i<SysType.m_DataInt.size(); i++)
 		{
 			CAsset_ZoneType::CDataInt::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_DataInt[i], pData[i]);
@@ -662,6 +675,7 @@ void CAsset_ZoneType::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingCont
 	{
 		TuaType.m_Group.m_Size = SysType.m_Group.size();
 		tua_stringid* pData = new tua_stringid[SysType.m_Group.size()];
+		mem_zero((void*) pData, sizeof(tua_stringid)*SysType.m_Group.size());
 		for(unsigned int i=0; i<SysType.m_Group.size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->AddString(SysType.m_Group[i].buffer());

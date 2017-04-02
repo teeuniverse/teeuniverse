@@ -85,6 +85,7 @@ void CAsset_MapEntities::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_2_0* pData = new CAsset_MapEntities::CEntity::CTuaType_0_2_0[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_2_0)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);
@@ -137,6 +138,7 @@ void CAsset_MapEntities::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_2_1* pData = new CAsset_MapEntities::CEntity::CTuaType_0_2_1[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_2_1)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);
@@ -189,6 +191,7 @@ void CAsset_MapEntities::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_2_2* pData = new CAsset_MapEntities::CEntity::CTuaType_0_2_2[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_2_2)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);
@@ -241,6 +244,7 @@ void CAsset_MapEntities::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_2_3* pData = new CAsset_MapEntities::CEntity::CTuaType_0_2_3[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_2_3)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);
@@ -293,6 +297,7 @@ void CAsset_MapEntities::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_2_4* pData = new CAsset_MapEntities::CEntity::CTuaType_0_2_4[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_2_4)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);
@@ -345,6 +350,7 @@ void CAsset_MapEntities::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadingC
 	{
 		TuaType.m_Entity.m_Size = SysType.m_Entity.size();
 		CAsset_MapEntities::CEntity::CTuaType_0_3_0* pData = new CAsset_MapEntities::CEntity::CTuaType_0_3_0[SysType.m_Entity.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapEntities::CEntity::CTuaType_0_3_0)*SysType.m_Entity.size());
 		for(unsigned int i=0; i<SysType.m_Entity.size(); i++)
 		{
 			CAsset_MapEntities::CEntity::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Entity[i], pData[i]);

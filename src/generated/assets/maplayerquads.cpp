@@ -150,6 +150,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
@@ -250,6 +251,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
@@ -352,6 +354,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
@@ -455,6 +458,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_3* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_3[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_2_3)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
@@ -559,6 +563,7 @@ void CAsset_MapLayerQuads::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_2_4* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_2_4[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_2_4)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);
@@ -665,6 +670,7 @@ void CAsset_MapLayerQuads::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoadin
 	{
 		TuaType.m_Quad.m_Size = SysType.m_Quad.size();
 		CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0* pData = new CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0[SysType.m_Quad.size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0)*SysType.m_Quad.size());
 		for(unsigned int i=0; i<SysType.m_Quad.size(); i++)
 		{
 			CAsset_MapLayerQuads::CQuad::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Quad[i], pData[i]);

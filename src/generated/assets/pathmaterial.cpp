@@ -163,6 +163,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_2_0* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_0[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_0)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -179,6 +180,7 @@ void CAsset_PathMaterial::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_2_0* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_0[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_0)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -189,6 +191,7 @@ void CAsset_PathMaterial::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_2_0* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_0[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_0)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
@@ -307,6 +310,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_2_1* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_1[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_1)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -323,6 +327,7 @@ void CAsset_PathMaterial::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_2_1* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_1[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_1)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -333,6 +338,7 @@ void CAsset_PathMaterial::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_2_1* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_1[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_1)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
@@ -451,6 +457,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_2_2* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_2[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_2)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -467,6 +474,7 @@ void CAsset_PathMaterial::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_2_2* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_2[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_2)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -477,6 +485,7 @@ void CAsset_PathMaterial::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_2_2* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_2[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_2)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
@@ -595,6 +604,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_2_3* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_3[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_3)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -611,6 +621,7 @@ void CAsset_PathMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_2_3* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_3[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_3)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -621,6 +632,7 @@ void CAsset_PathMaterial::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_2_3* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_3[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_3)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
@@ -739,6 +751,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_2_4[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_2_4)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -755,6 +768,7 @@ void CAsset_PathMaterial::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_2_4[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_2_4)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -765,6 +779,7 @@ void CAsset_PathMaterial::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_2_4* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_2_4[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_2_4)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);
@@ -883,6 +898,7 @@ void CAsset_PathMaterial::CLayer::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* 
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_PathMaterial::CSprite::CTuaType_0_3_0* pData = new CAsset_PathMaterial::CSprite::CTuaType_0_3_0[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CSprite::CTuaType_0_3_0)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_PathMaterial::CSprite::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -899,6 +915,7 @@ void CAsset_PathMaterial::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Label.m_Size = SysType.m_Label.size();
 		CAsset_PathMaterial::CLabel::CTuaType_0_3_0* pData = new CAsset_PathMaterial::CLabel::CTuaType_0_3_0[SysType.m_Label.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLabel::CTuaType_0_3_0)*SysType.m_Label.size());
 		for(unsigned int i=0; i<SysType.m_Label.size(); i++)
 		{
 			CAsset_PathMaterial::CLabel::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Label[i], pData[i]);
@@ -909,6 +926,7 @@ void CAsset_PathMaterial::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Layer.m_Size = SysType.m_Layer.size();
 		CAsset_PathMaterial::CLayer::CTuaType_0_3_0* pData = new CAsset_PathMaterial::CLayer::CTuaType_0_3_0[SysType.m_Layer.size()];
+		mem_zero((void*) pData, sizeof(CAsset_PathMaterial::CLayer::CTuaType_0_3_0)*SysType.m_Layer.size());
 		for(unsigned int i=0; i<SysType.m_Layer.size(); i++)
 		{
 			CAsset_PathMaterial::CLayer::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Layer[i], pData[i]);

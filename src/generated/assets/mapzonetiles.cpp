@@ -93,6 +93,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_2_0* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_0[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_0)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -150,6 +151,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_2_1* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_1[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_1)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -222,6 +224,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_2_2* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_2[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_2)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -235,6 +238,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_DataInt.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_height());
 		TuaType.m_DataInt.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_depth());
 		tua_int32* pData = new tua_int32[SysType.m_DataInt.get_linear_size()];
+		mem_zero((void*) pData, sizeof(tua_int32)*SysType.m_DataInt.get_linear_size());
 		for(int i=0; i<SysType.m_DataInt.get_linear_size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DataInt.linear_get_clamp(i));
@@ -308,6 +312,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_2_3* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_3[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_3)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -321,6 +326,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_DataInt.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_height());
 		TuaType.m_DataInt.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_depth());
 		tua_int32* pData = new tua_int32[SysType.m_DataInt.get_linear_size()];
+		mem_zero((void*) pData, sizeof(tua_int32)*SysType.m_DataInt.get_linear_size());
 		for(int i=0; i<SysType.m_DataInt.get_linear_size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DataInt.linear_get_clamp(i));
@@ -396,6 +402,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_2_4* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_2_4[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_2_4)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -409,6 +416,7 @@ void CAsset_MapZoneTiles::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_DataInt.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_height());
 		TuaType.m_DataInt.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_depth());
 		tua_int32* pData = new tua_int32[SysType.m_DataInt.get_linear_size()];
+		mem_zero((void*) pData, sizeof(tua_int32)*SysType.m_DataInt.get_linear_size());
 		for(int i=0; i<SysType.m_DataInt.get_linear_size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DataInt.linear_get_clamp(i));
@@ -486,6 +494,7 @@ void CAsset_MapZoneTiles::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_Tile.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_height());
 		TuaType.m_Tile.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_Tile.get_depth());
 		CAsset_MapZoneTiles::CTile::CTuaType_0_3_0* pData = new CAsset_MapZoneTiles::CTile::CTuaType_0_3_0[SysType.m_Tile.get_linear_size()];
+		mem_zero((void*) pData, sizeof(CAsset_MapZoneTiles::CTile::CTuaType_0_3_0)*SysType.m_Tile.get_linear_size());
 		for(int i=0; i<SysType.m_Tile.get_linear_size(); i++)
 		{
 			CAsset_MapZoneTiles::CTile::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Tile.linear_get_clamp(i), pData[i]);
@@ -499,6 +508,7 @@ void CAsset_MapZoneTiles::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoading
 		TuaType.m_DataInt.m_Height = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_height());
 		TuaType.m_DataInt.m_Depth = pLoadingContext->ArchiveFile()->WriteUInt32(SysType.m_DataInt.get_depth());
 		tua_int32* pData = new tua_int32[SysType.m_DataInt.get_linear_size()];
+		mem_zero((void*) pData, sizeof(tua_int32)*SysType.m_DataInt.get_linear_size());
 		for(int i=0; i<SysType.m_DataInt.get_linear_size(); i++)
 		{
 			pData[i] = pLoadingContext->ArchiveFile()->WriteInt32(SysType.m_DataInt.linear_get_clamp(i));

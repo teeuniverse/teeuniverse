@@ -101,6 +101,7 @@ void CAsset_SkeletonSkin::CTuaType_0_2_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_2_0* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_2_0[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_2_0)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_2_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -167,6 +168,7 @@ void CAsset_SkeletonSkin::CTuaType_0_2_1::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_2_1* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_2_1[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_2_1)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_2_1::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -233,6 +235,7 @@ void CAsset_SkeletonSkin::CTuaType_0_2_2::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_2_2* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_2_2[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_2_2)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_2_2::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -299,6 +302,7 @@ void CAsset_SkeletonSkin::CTuaType_0_2_3::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_2_3* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_2_3[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_2_3)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_2_3::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -365,6 +369,7 @@ void CAsset_SkeletonSkin::CTuaType_0_2_4::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_2_4* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_2_4[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_2_4)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_2_4::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);
@@ -431,6 +436,7 @@ void CAsset_SkeletonSkin::CTuaType_0_3_0::Write(CAssetsSaveLoadContext* pLoading
 	{
 		TuaType.m_Sprite.m_Size = SysType.m_Sprite.size();
 		CAsset_SkeletonSkin::CSprite::CTuaType_0_3_0* pData = new CAsset_SkeletonSkin::CSprite::CTuaType_0_3_0[SysType.m_Sprite.size()];
+		mem_zero((void*) pData, sizeof(CAsset_SkeletonSkin::CSprite::CTuaType_0_3_0)*SysType.m_Sprite.size());
 		for(unsigned int i=0; i<SysType.m_Sprite.size(); i++)
 		{
 			CAsset_SkeletonSkin::CSprite::CTuaType_0_3_0::Write(pLoadingContext, SysType.m_Sprite[i], pData[i]);

@@ -509,6 +509,7 @@ class TypeArray(Type):
 		res.append("{")
 		res.append("	" + varTua + ".m_Size = "+varSys+".size();")
 		res.append("	" + self.t.tuaType(version) + "* pData = new " + self.t.tuaType(version) + "["+varSys+".size()];")
+		res.append("	mem_zero((void*) pData, sizeof(" + self.t.tuaType(version) + ")*"+varSys+".size());")
 		res.append("	for(unsigned int i=0; i<"+varSys+".size(); i++)")
 		res.append("	{")
 		for l in self.t.generateWrite(varSys+"[i]", "pData[i]", version):
@@ -676,6 +677,7 @@ class TypeArray2d(Type):
 			res.append("	" + varTua + ".m_Data = pLoadingContext->ArchiveFile()->AddData((tua_uint8*) "+varSys+".base_ptr(), "+varSys+".get_linear_size());")
 		else:
 			res.append("	" + self.t.tuaType(version) + "* pData = new " + self.t.tuaType(version) + "["+varSys+".get_linear_size()];")
+			res.append("	mem_zero((void*) pData, sizeof(" + self.t.tuaType(version) + ")*"+varSys+".get_linear_size());")
 			res.append("	for(int i=0; i<"+varSys+".get_linear_size(); i++)")
 			res.append("	{")
 			for l in self.t.generateWrite(varSys+".linear_get_clamp(i)", "pData[i]", version):
