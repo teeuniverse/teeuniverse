@@ -1856,7 +1856,7 @@ void CAssetsManager::Save_Map_Group(
 						}
 					}
 					
-					for(unsigned int i=0; NewSize-OldSize; i++)
+					for(unsigned int i=0; i<NewSize-OldSize; i++)
 					{
 						AnimationEnv.emplace_back(AnimationId);
 						AnimationOffset.emplace_back(pLayer->GetObjectAnimationOffset(*Iter));
