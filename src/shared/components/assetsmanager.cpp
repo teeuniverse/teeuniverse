@@ -1013,7 +1013,9 @@ bool CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int T
 		{\
 			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
 			pAsset->DeleteSubItem(SubPath);\
+			return true;\
 		}\
+		return false;\
 	}
 	
 	switch(AssetPath.GetType())
@@ -1041,7 +1043,9 @@ bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath& SubPath, int
 		{\
 			m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
 			pAsset->RelMoveSubItem(SubPath, RelMove);\
+			return true;\
 		}\
+		return false;\
 	}
 	
 	switch(AssetPath.GetType())

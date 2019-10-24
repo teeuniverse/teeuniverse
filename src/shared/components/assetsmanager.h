@@ -400,16 +400,12 @@ public:
 		#define MACRO_ASSETTYPE(Name) case CAsset_##Name::TypeId:\
 		{\
 			CAsset_##Name* pAsset = GetAsset_Hard<CAsset_##Name>(AssetPath);\
-			if(pAsset)\
-			{\
-				if(pAsset->SetValue<T>(FieldType, SubPath, Value))\
+			if(pAsset && (pAsset->SetValue<T>(FieldType, SubPath, Value)))\
 				{\
 					m_pPackages[AssetPath.GetPackageId()]->SetEdited(true);\
 					return true;\
 				}\
-			}\
-			else\
-				return false;\
+			return false;\
 		}
 		
 		switch(AssetPath.GetType())
