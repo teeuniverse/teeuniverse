@@ -203,7 +203,8 @@ int main(int argc, char* argv[])
 		CREATE_SPRITE(PackageId, "iconPrevFrame", ImageEditorPath, 49, 14, 3, 3);
 		CREATE_SPRITE(PackageId, "iconPlay", ImageEditorPath, 52, 14, 3, 3);
 		CREATE_SPRITE(PackageId, "iconPause", ImageEditorPath, 55, 14, 3, 3);
-		CREATE_SPRITE(PackageId, "iconNextFram", ImageEditorPath, 58, 14, 3, 3);
+		CREATE_SPRITE(PackageId, "iconNextFrame", ImageEditorPath, 58, 14, 3, 3);
+		CREATE_SPRITE(PackageId, "iconLastFrame", ImageEditorPath, 61, 14, 3, 3);
 		CREATE_SPRITE(PackageId, "iconTime", ImageEditorPath, 40, 17, 3, 3);
 		CREATE_SPRITE(PackageId, "iconRotate", ImageEditorPath, 43, 17, 3, 3);
 		CREATE_SPRITE(PackageId, "iconBoneCreator", ImageEditorPath, 46, 17, 3, 3);

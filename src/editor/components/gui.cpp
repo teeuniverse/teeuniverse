@@ -2369,8 +2369,8 @@ void CGuiEditor::LoadAssets()
 		m_Path_Sprite_IconPrevFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPrevFrame");
 		m_Path_Sprite_IconPlay = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPlay");
 		m_Path_Sprite_IconPause = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconPause");
-		m_Path_Sprite_IconNextFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNextFram");
-		m_Path_Sprite_IconLastFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLastFrame");		
+		m_Path_Sprite_IconNextFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNextFrame");
+		m_Path_Sprite_IconLastFrame = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconLastFrame");
 		m_Path_Sprite_IconAsset = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconAsset");
 		m_Path_Sprite_IconNewAsset = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconNewAsset");
 		m_Path_Sprite_IconImage = AssetsManager()->FindAsset<CAsset_Sprite>(PackageId, "iconImage");
