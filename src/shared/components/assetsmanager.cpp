@@ -1025,7 +1025,7 @@ bool CAssetsManager::DeleteSubItem(CAssetPath AssetPath, CSubPath SubPath, int T
 	
 	#undef MACRO_ASSETTYPE
 	
-	return true;
+	return false;
 }
 
 bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath& SubPath, int RelMove, int Token)
@@ -1055,7 +1055,7 @@ bool CAssetsManager::RelMoveSubItem(CAssetPath AssetPath, CSubPath& SubPath, int
 	
 	#undef MACRO_ASSETTYPE
 	
-	return true;
+	return false;
 }
 	
 CAssetPath CAssetsManager::DuplicateAsset(const CAssetPath& Path, int PackageId, int Token)
