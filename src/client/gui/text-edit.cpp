@@ -180,6 +180,7 @@ bool CAbstractTextEdit::LineInput(CInput::CEvent Event, dynamic_string& String, 
 						for(int c=EndCharPos; String.buffer()[c]; c++)
 							String.buffer()[c-CharSize] = String.buffer()[c];
 						String.buffer()[Length-CharSize] = 0;
+						CursorPos = StartCharPos;
 					}
 				}
 				
