@@ -53,6 +53,7 @@ public:
 	
 	vec2 MapPosToScreenPos(vec2 MapPos) const;
 	vec2 MapPosToTilePos(vec2 MapPos) const;
+	vec2 RoundMapPosToTile(vec2 MapPos) const;
 	vec2 ScreenPosToMapPos(vec2 MapPos) const;
 	vec2 ScreenPosToTilePos(vec2 MapPos) const;
 	vec2 TilePosToMapPos(vec2 MapPos) const;

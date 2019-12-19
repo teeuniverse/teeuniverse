@@ -439,8 +439,7 @@ void CCursorTool_MapVertexEditor::OnViewMouseMove()
 		
 		if(ViewMap()->GetGridAlign())
 		{
-			CursorMapPos = ViewMap()->MapRenderer()->MapPosToTilePos(CursorMapPos);
-			CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y)));
+			CursorMapPos = ViewMap()->MapRenderer()->RoundMapPosToTile(CursorMapPos);
 		}
 		
 		vec2 Position;

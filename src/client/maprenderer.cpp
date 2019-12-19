@@ -82,6 +82,13 @@ vec2 CMapRenderer::MapPosToTilePos(vec2 MapPos) const
 	return MapPos/32.0f;
 }
 
+vec2 CMapRenderer::RoundMapPosToTile(vec2 MapPos) const
+{
+	MapPos = MapPosToTilePos(MapPos);
+	MapPos = TilePosToMapPos(vec2(floor(MapPos.x), floor(MapPos.y)));
+	return MapPos;
+}
+
 vec2 CMapRenderer::TilePosToMapPos(vec2 TilePos) const
 {
 	return TilePos*32.0f;
