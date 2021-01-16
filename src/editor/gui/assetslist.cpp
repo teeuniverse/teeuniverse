@@ -136,8 +136,8 @@ protected:
 		if(AssetsManager()->GetNumAssets<CAsset_Map>(m_PackageId))
 			m_pAssetsEditor->SetEditedAsset(CAssetPath(CAsset_Map::TypeId, m_PackageId, 0), CSubPath::Null());
 		
-		m_pAssetsEditor->RefreshPackageTree();
-		m_pAssetsEditor->RefreshAssetsTree();
+		m_pAssetsEditor->QueuePackageTreeRefresh();
+		m_pAssetsEditor->QueueAssetsTreeRefresh();
 	}
 
 public:

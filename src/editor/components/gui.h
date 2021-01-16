@@ -61,6 +61,9 @@ private:
 	bool m_TimePaused;
 	int64 m_Time;
 	float m_TimeSpeed;
+
+	bool m_NeedRefreshPackageTree;
+	bool m_NeedRefreshAssetsTree;
 	
 public:
 	class CAssetsTree* m_pAssetsTree;
@@ -339,6 +342,9 @@ public:
 	inline bool GetTimePaused() const { return m_TimePaused; }
 	inline void SetTimePaused(bool TimePaused) { m_TimePaused = TimePaused; }
 		
+	void QueuePackageTreeRefresh();
+	void QueueAssetsTreeRefresh();
+
 	void RefreshPackageTree();
 	void RefreshAssetsTree();
 	

@@ -2158,6 +2158,8 @@ CGuiEditor::CGuiEditor(CEditorKernel* pEditorKernel) :
 	m_TimePaused(true),
 	m_Time(0),
 	m_TimeSpeed(1),
+	m_NeedRefreshPackageTree(false),
+	m_NeedRefreshAssetsTree(false),
 	m_pAssetsTree(NULL),
 	m_pPackagesTree(NULL),
 	m_pHintLabel(NULL),
@@ -2297,6 +2299,17 @@ bool CGuiEditor::PostUpdate()
 	
 	ResetBindCalls();
 	
+	if (m_NeedRefreshPackageTree)
+	{
+		RefreshPackageTree();
+		m_NeedRefreshPackageTree = false;
+	}
+	if (m_NeedRefreshAssetsTree)
+	{
+		RefreshAssetsTree();
+		m_NeedRefreshAssetsTree = false;
+	}
+
 	return true;
 }
 
@@ -2702,6 +2715,16 @@ void CGuiEditor::RemoveEditedSubPath(const CSubPath& SubPath)
 		else
 			Iter++;
 	}
+}
+
+void CGuiEditor::QueuePackageTreeRefresh()
+{
+	m_NeedRefreshPackageTree = true;
+}
+
+void CGuiEditor::QueueAssetsTreeRefresh()
+{
+	m_NeedRefreshAssetsTree = true;
 }
 
 void CGuiEditor::RefreshPackageTree()
