@@ -921,6 +921,7 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		gui::CComboBox* pComboBox = new COpenSavePackageDialog_FormatComboBox(Context(), &m_pAssetsEditor->m_Cfg_DefaultCompatibilityMode);
 		pComboBox->Add(_LSTRING("TeeWorlds"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("DDNet"), m_pAssetsEditor->m_Path_Sprite_IconMap);
+		pComboBox->Add(_LSTRING("InfClass"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("OpenFNG / FNG2"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("Ninslash"), m_pAssetsEditor->m_Path_Sprite_IconMap);
 		pComboBox->Add(_LSTRING("DummyCapture"), m_pAssetsEditor->m_Path_Sprite_IconMap);
