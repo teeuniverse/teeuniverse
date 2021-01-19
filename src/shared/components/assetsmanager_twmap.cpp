@@ -186,6 +186,8 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 		Load_UnivSport();
 	if(Format == MAPFORMAT_FOOT)
 		Load_UnivSport();
+	if(Format == MAPFORMAT_INFCLASS)
+		Load_InfClass();
 	
 	char aBuf[128];
 

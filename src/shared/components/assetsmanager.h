@@ -79,6 +79,14 @@ public:
 	CAssetPath m_Path_ZoneType_DDTele;
 	CAssetPath m_Path_ZoneType_DDSwitch;
 	CAssetPath m_Path_ZoneType_DDTune;
+
+	int m_PackageId_UnivInfClass;
+	CAssetPath m_Path_ZoneType_icDamage;
+	CAssetPath m_Path_ZoneType_icBonus;
+	CAssetPath m_Path_ZoneType_icTele;
+	CAssetPath m_Path_EntityType_icHuman;
+	CAssetPath m_Path_EntityType_icInfected;
+	CAssetPath m_Path_EntityType_icHeroFlag;
 	
 	int m_PackageId_UnivOpenFNG;
 	CAssetPath m_Path_ZoneType_OpenFNG;
@@ -157,6 +165,9 @@ public:
 	CAssetPath m_Path_Image_WinterMountains1;
 	CAssetPath m_Path_Image_WinterMountains2;
 	CAssetPath m_Path_Image_WinterMountains3;
+
+	int m_PackageId_EnvInfClass;
+	CAssetPath m_Path_Image_InfClass;
 	
 	int m_PackageId_EnvLab;
 	CAssetPath m_Path_Image_LabMisc;
@@ -240,6 +251,7 @@ public:
 	
 	void Load_UnivTeeWorlds();
 	void Load_UnivDDNet();
+	void Load_InfClass();
 	void Load_UnivOpenFNG();
 	void Load_UnivNinslash();
 	void Load_UnivSport();
@@ -255,6 +267,7 @@ public:
 	void Load_EnvStars();
 	void Load_EnvSun();
 	void Load_EnvWinter();
+	void Load_EnvInfclass();
 	void Load_EnvLab();
 	void Load_EnvFactory();
 	

@@ -63,6 +63,7 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	CSharedKernel::CComponent(pKernel),
 	m_PackageId_UnivTeeWorlds(-1),
 	m_PackageId_UnivDDNet(-1),
+	m_PackageId_UnivInfClass(-1),
 	m_PackageId_UnivOpenFNG(-1),
 	m_PackageId_UnivNinslash(-1),
 	m_PackageId_UnivSport(-1),
@@ -77,6 +78,7 @@ CAssetsManager::CAssetsManager(CSharedKernel* pKernel) :
 	m_PackageId_EnvStars(-1),
 	m_PackageId_EnvSun(-1),
 	m_PackageId_EnvWinter(-1),
+	m_PackageId_EnvInfClass(-1),
 	m_PackageId_EnvLab(-1),
 	m_PackageId_EnvFactory(-1)
 {
@@ -810,6 +812,18 @@ void CAssetsManager::Load_EnvWinter()
 	}
 }
 
+void CAssetsManager::Load_EnvInfclass()
+{
+	if(m_PackageId_EnvInfClass < 0)
+	{
+		m_PackageId_EnvInfClass = Load_AssetsFile("env_infclass");
+		if(m_PackageId_EnvInfClass >= 0)
+		{
+			m_Path_Image_InfClass = FindAsset<CAsset_Image>(m_PackageId_EnvInfClass, "infclass");
+		}
+	}
+}
+
 void CAssetsManager::Load_EnvLab()
 {
 	if(m_PackageId_EnvLab < 0)
@@ -873,6 +887,24 @@ void CAssetsManager::Load_UnivDDNet()
 			m_Path_ZoneType_DDTele = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddTele");
 			m_Path_ZoneType_DDSwitch = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddSwitch");
 			m_Path_ZoneType_DDTune = FindAsset<CAsset_ZoneType>(m_PackageId_UnivDDNet, "ddTune");
+		}
+	}
+}
+
+void CAssetsManager::Load_InfClass()
+{
+	if(m_PackageId_UnivInfClass < 0)
+	{
+		m_PackageId_UnivInfClass = Load_AssetsFile("infclass");
+		if(m_PackageId_UnivInfClass >= 0)
+		{
+			m_Path_ZoneType_icDamage = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "icDamage");
+			m_Path_ZoneType_icBonus = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "icBonus");
+			m_Path_ZoneType_icTele = FindAsset<CAsset_ZoneType>(m_PackageId_UnivInfClass, "icTele");
+
+			m_Path_EntityType_icHuman = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "icHuman");
+			m_Path_EntityType_icInfected = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "icInfected");
+			m_Path_EntityType_icHeroFlag = FindAsset<CAsset_EntityType>(m_PackageId_UnivInfClass, "icHeroFlag");
 		}
 	}
 }
