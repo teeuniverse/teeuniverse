@@ -385,6 +385,24 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 			}
 			else
 			{
+				if(Format == MAPFORMAT_INFCLASS)
+				{
+					char *pName = (char *)ArchiveFile.GetData(pItem->m_ImageName);
+
+					bool ImageLoaded = false;
+					if(str_comp(pName, "infclass") == 0)
+					{
+						Load_EnvInfclass();
+						pImagePath[i] = m_Path_Image_InfClass;
+						ImageLoaded = true;
+					}
+
+					ArchiveFile.UnloadData(pItem->m_ImageName);
+
+					if(ImageLoaded)
+						continue;
+				}
+
 				CAsset_Image* pImage = NewAsset_Hard<CAsset_Image>(pImagePath+i, PackageId);
 				
 				//Image name
