@@ -200,6 +200,10 @@ bool CAsset_SkeletonAnimation::CLayerAnimation::GetFrame(int64 Time, CLayerAnima
 	
 	int64 Duration = GetDuration();
 	int64 CycleTime = Time;
+
+	if(!Duration)
+		return false;
+
 	if(m_CycleType == CYCLETYPE_LOOP)
 		CycleTime = Time % GetDuration();
 	
