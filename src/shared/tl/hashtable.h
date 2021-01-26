@@ -144,7 +144,7 @@ public:
 
 	T* get(unsigned int Id, unsigned int SubId)
 	{
-		if(Id >= 0 && Id < TABLESIZE && SubId >= 0 && SubId < m_Table[Id].size())
+		if(Id < TABLESIZE && SubId < m_Table[Id].size())
 			return &m_Table[Id][SubId].m_Data;
 		else
 			return 0;
@@ -152,7 +152,7 @@ public:
 
 	const char* get_key(unsigned int Id, unsigned int SubId) const
 	{
-		if(Id >= 0 && Id < TABLESIZE && SubId >= 0 && SubId < m_Table[Id].size())
+		if(Id < TABLESIZE && SubId < m_Table[Id].size())
 			return m_Table[Id][SubId].m_Key.buffer();
 		else
 			return 0;
