@@ -597,10 +597,10 @@ void CCursorTool_MapVertexEditor::RenderView_Objects_Impl()
 		}
 	}
 }
-	
+
 void CCursorTool_MapVertexEditor::RenderView()
 {
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+	CViewMap::ScopedGroupSetter GroupSetter(ViewMap());
 	
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
 	{
@@ -664,8 +664,6 @@ void CCursorTool_MapVertexEditor::RenderView()
 		RenderView_Objects_Impl<CAsset_MapLayerObjects>();
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
 		RenderView_Objects_Impl<CAsset_MapZoneObjects>();
-	
-	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
 void CCursorTool_MapVertexEditor::Update(bool ParentEnabled)
