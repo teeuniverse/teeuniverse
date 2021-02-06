@@ -332,6 +332,17 @@ public:
 	}
 };
 
+CViewMap::ScopedGroupSetter::ScopedGroupSetter(CViewMap *pViewMap) :
+	m_ViewMap(pViewMap)
+{
+	m_ViewMap->MapRenderer()->SetGroup(m_ViewMap->GetMapGroupPath());
+}
+
+CViewMap::ScopedGroupSetter::~ScopedGroupSetter()
+{
+	m_ViewMap->MapRenderer()->UnsetGroup();
+}
+
 /* VIEW MAP ***********************************************************/
 
 CViewMap::CViewMap(CGuiEditor* pAssetsEditor) :

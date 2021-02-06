@@ -25,6 +25,16 @@
 class CViewMap : public CViewManager::CView
 {
 public:
+	class ScopedGroupSetter
+	{
+	public:
+		explicit ScopedGroupSetter(CViewMap *pViewMap);
+		~ScopedGroupSetter();
+
+	private:
+		CViewMap *m_ViewMap;
+	};
+	
 	class CCursorTool : public CViewManager::CView::CCursorTool
 	{
 	protected:
