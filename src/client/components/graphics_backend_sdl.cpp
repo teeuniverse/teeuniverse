@@ -547,14 +547,30 @@ bool CCommandProcessorFragment_OpenGL::RunCommand(const CCommandBuffer::SCommand
 {
 	switch(pBaseCommand->m_Cmd)
 	{
-	case CMD_INIT: Cmd_Init(static_cast<const SCommand_Init *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_TEXTURE_CREATE: Cmd_Texture_Create(static_cast<const CCommandBuffer::SCommand_Texture_Create *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_TEXTURE_DESTROY: Cmd_Texture_Destroy(static_cast<const CCommandBuffer::SCommand_Texture_Destroy *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_TEXTURE_UPDATE: Cmd_Texture_Update(static_cast<const CCommandBuffer::SCommand_Texture_Update *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_CLEAR: Cmd_Clear(static_cast<const CCommandBuffer::SCommand_Clear *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_SETSIZE: Cmd_SetSize(static_cast<const CCommandBuffer::SCommand_SetSize *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_RENDER: Cmd_Render(static_cast<const CCommandBuffer::SCommand_Render *>(pBaseCommand)); break;
-	case CCommandBuffer::CMD_SCREENSHOT: Cmd_Screenshot(static_cast<const CCommandBuffer::SCommand_Screenshot *>(pBaseCommand)); break;
+	case CMD_INIT:
+		Cmd_Init(static_cast<const SCommand_Init *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_TEXTURE_CREATE:
+		Cmd_Texture_Create(static_cast<const CCommandBuffer::SCommand_Texture_Create *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_TEXTURE_DESTROY:
+		Cmd_Texture_Destroy(static_cast<const CCommandBuffer::SCommand_Texture_Destroy *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_TEXTURE_UPDATE:
+		Cmd_Texture_Update(static_cast<const CCommandBuffer::SCommand_Texture_Update *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_CLEAR:
+		Cmd_Clear(static_cast<const CCommandBuffer::SCommand_Clear *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_SETSIZE:
+		Cmd_SetSize(static_cast<const CCommandBuffer::SCommand_SetSize *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_RENDER:
+		Cmd_Render(static_cast<const CCommandBuffer::SCommand_Render *>(pBaseCommand));
+		break;
+	case CCommandBuffer::CMD_SCREENSHOT:
+		Cmd_Screenshot(static_cast<const CCommandBuffer::SCommand_Screenshot *>(pBaseCommand));
+		break;
 	default: return false;
 	}
 
