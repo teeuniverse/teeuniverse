@@ -2099,6 +2099,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						else if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
 							TuneEnabled = true;
 					}
+					else if(Format == MAPFORMAT_INFCLASS && m_PackageId_UnivDDNet >= 0)
+					{
+						if(pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+							TeleEnabled = true;
+					}
 				}
 				
 			}
