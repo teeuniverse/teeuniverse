@@ -2340,7 +2340,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
-					else if(Format == MAPFORMAT_DDNET && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
+					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 					{
 						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
@@ -2355,7 +2355,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
-					else if(Format == MAPFORMAT_DDNET && pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
+					else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 					{
 						for(int j=0; j<pZone->GetTileHeight(); j++)
 						{
@@ -2370,7 +2370,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
-					else if(Format == MAPFORMAT_DDNET && pTeleTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
+					else if(pTeleTiles && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 					{
 						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
@@ -2390,7 +2390,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
-					else if(Format == MAPFORMAT_DDNET && pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
+					else if(pSwitchTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDSwitch)
 					{
 						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
@@ -2412,7 +2412,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 							}
 						}
 					}
-					else if(Format == MAPFORMAT_DDNET && pTuneTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
+					else if(pTuneTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTune)
 					{
 						const array2d<int>& DataInt = pZone->GetDataIntArray();
 						for(int j=0; j<pZone->GetTileHeight(); j++)
