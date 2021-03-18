@@ -235,25 +235,20 @@ public:
 class CItem : public gui::CHListLayout
 {
 protected:
-	class CMenuButton : public gui::CButton
+	class CAssetMenuButton : public CMenuButton
 	{
 	protected:
-		CGuiEditor* m_pAssetsEditor;
-		CContextMenu* m_pContextMenu;
 		CAssetPath m_AssetPath;
 
 	public:
-		CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& Name, const CAssetPath& IconPath) :
-			gui::CButton(pAssetsEditor, Name, IconPath),
-			m_pAssetsEditor(pAssetsEditor),
-			m_pContextMenu(pContextMenu),
+		CAssetMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& Name, const CAssetPath& IconPath) :
+			CMenuButton(pAssetsEditor, pContextMenu, Name, IconPath),
 			m_AssetPath(AssetPath)
 		{
-			SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
 		}
 	};
 	
-	class CDuplicateButton : public CMenuButton
+	class CDuplicateButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -403,11 +398,11 @@ protected:
 
 	public:
 		CDuplicateButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Duplicate"), pAssetsEditor->m_Path_Sprite_IconDuplicate)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Duplicate"), pAssetsEditor->m_Path_Sprite_IconDuplicate)
 		{ }
 	};
 	
-	class CDeleteButton : public CMenuButton
+	class CDeleteButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -532,11 +527,11 @@ protected:
 
 	public:
 		CDeleteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Delete"), pAssetsEditor->m_Path_Sprite_IconDelete)
 		{ }
 	};
 	
-	class CAddSpriteButton : public CMenuButton
+	class CAddSpriteButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -566,11 +561,11 @@ protected:
 
 	public:
 		CAddSpriteButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Sprite"), pAssetsEditor->m_Path_Sprite_IconSprite)
 		{ }
 	};
 	
-	class CAddZoneTileLayerButton : public CMenuButton
+	class CAddZoneTileLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -638,11 +633,11 @@ protected:
 
 	public:
 		CAddZoneTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Zone Tile Layer"), pAssetsEditor->m_Path_Sprite_IconZoneTiles)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Zone Tile Layer"), pAssetsEditor->m_Path_Sprite_IconZoneTiles)
 		{ }
 	};
 	
-	class CAddZoneObjectLayerButton : public CMenuButton
+	class CAddZoneObjectLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -674,11 +669,11 @@ protected:
 
 	public:
 		CAddZoneObjectLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Zone Object Layer"), pAssetsEditor->m_Path_Sprite_IconZoneObject)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Zone Object Layer"), pAssetsEditor->m_Path_Sprite_IconZoneObject)
 		{ }
 	};
 	
-	class CAddEntityLayerButton : public CMenuButton
+	class CAddEntityLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -710,11 +705,11 @@ protected:
 
 	public:
 		CAddEntityLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Entities"), pAssetsEditor->m_Path_Sprite_IconEntities)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Entities"), pAssetsEditor->m_Path_Sprite_IconEntities)
 		{ }
 	};
 	
-	class CAddBgGroupButton : public CMenuButton
+	class CAddBgGroupButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -746,12 +741,12 @@ protected:
 
 	public:
 		CAddBgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Background Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Background Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
 	
-	class CAddFgGroupButton : public CMenuButton
+	class CAddFgGroupButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -783,11 +778,11 @@ protected:
 
 	public:
 		CAddFgGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Foreground Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Foreground Group"), pAssetsEditor->m_Path_Sprite_IconFolder)
 		{ }
 	};
 	
-	class CMoveGroupButton : public CMenuButton
+	class CMoveGroupButton : public CAssetMenuButton
 	{
 	protected:
 		int m_Shift;
@@ -878,12 +873,12 @@ protected:
 
 	public:
 		CMoveGroupButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
 			m_Shift(Shift)
 		{ }
 	};
 	
-	class CMoveZoneButton : public CMenuButton
+	class CMoveZoneButton : public CAssetMenuButton
 	{
 	protected:
 		int m_Shift;
@@ -941,12 +936,12 @@ protected:
 
 	public:
 		CMoveZoneButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
 			m_Shift(Shift)
 		{ }
 	};
 	
-	class CMoveEntitiesButton : public CMenuButton
+	class CMoveEntitiesButton : public CAssetMenuButton
 	{
 	protected:
 		int m_Shift;
@@ -986,13 +981,13 @@ protected:
 
 	public:
 		CMoveEntitiesButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
 			m_Shift(Shift)
 		{ }
 	};
 	
 	template<typename T>
-	class CMoveLayerButton : public CMenuButton
+	class CMoveLayerButton : public CAssetMenuButton
 	{
 	protected:
 		int m_Shift;
@@ -1136,12 +1131,12 @@ protected:
 
 	public:
 		CMoveLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath, const CLocalizableString& LString, CAssetPath Icon, int Shift) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, LString, Icon),
 			m_Shift(Shift)
 		{ }
 	};
 	
-	class CAddTileLayerButton : public CMenuButton
+	class CAddTileLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -1211,11 +1206,11 @@ protected:
 
 	public:
 		CAddTileLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Tile Layer"), pAssetsEditor->m_Path_Sprite_IconTiles)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Tile Layer"), pAssetsEditor->m_Path_Sprite_IconTiles)
 		{ }
 	};
 	
-	class CAddQuadLayerButton : public CMenuButton
+	class CAddQuadLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -1247,11 +1242,11 @@ protected:
 
 	public:
 		CAddQuadLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Quad Layer"), pAssetsEditor->m_Path_Sprite_IconQuad)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Quad Layer"), pAssetsEditor->m_Path_Sprite_IconQuad)
 		{ }
 	};
 	
-	class CAddObjectLayerButton : public CMenuButton
+	class CAddObjectLayerButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -1283,11 +1278,11 @@ protected:
 
 	public:
 		CAddObjectLayerButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Object Layer"), pAssetsEditor->m_Path_Sprite_IconPolygon)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Object Layer"), pAssetsEditor->m_Path_Sprite_IconPolygon)
 		{ }
 	};
 	
-	class CAddSkeletonSkinButton : public CMenuButton
+	class CAddSkeletonSkinButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -1312,11 +1307,11 @@ protected:
 
 	public:
 		CAddSkeletonSkinButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Skin"), pAssetsEditor->m_Path_Sprite_IconSkeletonSkin)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Skin"), pAssetsEditor->m_Path_Sprite_IconSkeletonSkin)
 		{ }
 	};
 	
-	class CAddSkeletonAnimationButton : public CMenuButton
+	class CAddSkeletonAnimationButton : public CAssetMenuButton
 	{
 	protected:
 		virtual void MouseClickAction()
@@ -1341,7 +1336,7 @@ protected:
 
 	public:
 		CAddSkeletonAnimationButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CAssetPath& AssetPath) :
-			CMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Animation"), pAssetsEditor->m_Path_Sprite_IconSkeletonAnimation)
+			CAssetMenuButton(pAssetsEditor, pContextMenu, AssetPath, _LSTRING("Add Animation"), pAssetsEditor->m_Path_Sprite_IconSkeletonAnimation)
 		{ }
 	};
 	

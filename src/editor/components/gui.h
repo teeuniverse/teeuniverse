@@ -368,7 +368,21 @@ public:
 	inline gui::CVListLayout* List() { return m_pList; }
 };
 
+class CMenuButton : public gui::CButton
+{
+protected:
+	CGuiEditor* m_pAssetsEditor;
+	CContextMenu* m_pContextMenu;
 
+public:
+	CMenuButton(CGuiEditor* pAssetsEditor, CContextMenu* pContextMenu, const CLocalizableString& Name, const CAssetPath& IconPath) :
+		gui::CButton(pAssetsEditor, Name, IconPath),
+		m_pAssetsEditor(pAssetsEditor),
+		m_pContextMenu(pContextMenu)
+	{
+		SetButtonStyle(m_pAssetsEditor->m_Path_Button_Menu);
+	}
+};
 
 class COpenSavePackageDialog : public gui::CPopup
 {
