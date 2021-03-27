@@ -156,8 +156,6 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Objects_Impl(int Button)
 	if(!pMapLayer)
 		return;
 	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
-	
 	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
 	
 	if(pMapLayer->IsValidObject(m_CurrentVertex))
@@ -255,8 +253,6 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Objects_Impl(int Button)
 			m_DragType = 1;
 		}
 	}
-	
-	ViewMap()->MapRenderer()->UnsetGroup();
 }
 
 void CCursorTool_MapVertexEditor::OnViewButtonClick_Quads_Impl(int Button)
@@ -264,8 +260,6 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Quads_Impl(int Button)
 	const CAsset_MapLayerQuads* pMapLayer = AssetsManager()->GetAsset<CAsset_MapLayerQuads>(AssetsEditor()->GetEditedAssetPath());
 	if(!pMapLayer)
 		return;
-	
-	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
 	//Find gizmo
 	float GizmoSize = 16.0f;
@@ -343,8 +337,6 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick_Quads_Impl(int Button)
 	{
 		AssetsEditor()->SetEditedAsset(AssetsEditor()->GetEditedAssetPath(), CSubPath::Null());
 	}
-	
-	ViewMap()->MapRenderer()->UnsetGroup();
 }
 
 void CCursorTool_MapVertexEditor::OnViewButtonClick(int Button)
@@ -355,12 +347,16 @@ void CCursorTool_MapVertexEditor::OnViewButtonClick(int Button)
 	if(Button != KEY_MOUSE_1)
 		return;
 	
+	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
+
 	if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerQuads::TypeId)
 		OnViewButtonClick_Quads_Impl(Button);
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapLayerObjects::TypeId)
 		OnViewButtonClick_Objects_Impl<CAsset_MapLayerObjects>(Button);
 	else if(AssetsEditor()->GetEditedAssetPath().GetType() == CAsset_MapZoneObjects::TypeId)
 		OnViewButtonClick_Objects_Impl<CAsset_MapZoneObjects>(Button);
+
+	ViewMap()->MapRenderer()->UnsetGroup();
 }
 	
 void CCursorTool_MapVertexEditor::OnViewButtonRelease(int Button)
