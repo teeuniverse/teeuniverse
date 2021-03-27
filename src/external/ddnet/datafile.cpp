@@ -471,7 +471,7 @@ bool CDataFileWriter::Open(class CStorage *pStorage, int StorageType, const char
 	return OpenFile(pStorage, StorageType, pFilename);
 }
 
-int CDataFileWriter::AddItem(int Type, int ID, int Size, void *pData)
+int CDataFileWriter::AddItem(int Type, int ID, int Size, const void *pData)
 {
 	assert(Type >= 0 && Type < 0xFFFF);
 	assert(m_NumItems < 1024);
@@ -505,7 +505,7 @@ int CDataFileWriter::AddItem(int Type, int ID, int Size, void *pData)
 	return m_NumItems-1;
 }
 
-int CDataFileWriter::AddData(int Size, void *pData)
+int CDataFileWriter::AddData(int Size, const void *pData)
 {
 	assert(m_NumDatas < 1024);
 
@@ -530,7 +530,7 @@ int CDataFileWriter::AddData(int Size, void *pData)
 	return m_NumDatas-1;
 }
 
-int CDataFileWriter::AddDataSwapped(int Size, void *pData)
+int CDataFileWriter::AddDataSwapped(int Size, const void *pData)
 {
 	assert(Size%sizeof(int) == 0);
 
