@@ -486,6 +486,7 @@ public:
 	int GetHistorySize();
 
 protected:
+	void SaveMapImages(ddnet::CDataFileWriter *pArchiveFile, int Format, const std::vector<CAssetPath> &Animations);
 	void SaveMapAnimations(ddnet::CDataFileWriter *pArchiveFile, const std::vector<CAssetPath> &Animations);
 };
 
