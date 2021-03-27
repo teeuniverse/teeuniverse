@@ -484,6 +484,9 @@ public:
 	void Undo();
 	int GenerateToken();
 	int GetHistorySize();
+
+protected:
+	void SaveMapAnimations(ddnet::CDataFileWriter *pArchiveFile, const std::vector<CAssetPath> &Animations);
 };
 
 #endif
