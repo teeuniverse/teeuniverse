@@ -2806,9 +2806,8 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 						}
 					}
 					
-					vec2 ObjPosition;
-					matrix2x2 Transform;
-					Object.GetTransform(this, 0.0f, &Transform, &ObjPosition);
+					vec2 ObjPosition = Object.GetPosition();
+					const matrix2x2 Transform = matrix2x2::rotation(Object.GetAngle())*matrix2x2::scaling(Object.GetSize());
 					ObjPosition -= LayerShift;
 					
 					std::vector<CLineVertex> LineVertices;
