@@ -1130,10 +1130,6 @@ void GenerateMaterialCurve_Object(class CAssetsManager* pAssetsManager, float Ti
 	const std::vector<CAsset_MapLayerObjects::CVertex>& ObjectVertices = Object.GetVertexArray();
 	bool Closed = (Object.GetPathType() == CAsset_MapLayerObjects::PATHTYPE_CLOSED);
 	
-	vec2 ObjPosition;
-	matrix2x2 Transform;
-	Object.GetTransform(pAssetsManager, Time, &Transform, &ObjPosition);
-	
 	std::vector<CBezierVertex> BezierVertices;
 	
 	for(unsigned int i=0; i<ObjectVertices.size(); i++)
