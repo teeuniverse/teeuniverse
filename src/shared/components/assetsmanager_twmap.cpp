@@ -1932,10 +1932,8 @@ void CAssetsManager::Save_Map_Group(
 					ExportedQuads.emplace_back();
 					ddnet::CQuad& Quad = ExportedQuads.back();
 					
-					vec2 Barycenter = 0.0f;
 					for(int j=0; j<4; j++)
 					{
-						Barycenter += vec2(Quads[i].m_Position[j]);
 						Quad.m_aPoints[j+1-2*(j%2)].x = f2fx(Quads[i].m_Position[j].x);
 						Quad.m_aPoints[j+1-2*(j%2)].y = f2fx(Quads[i].m_Position[j].y);
 						Quad.m_aTexcoords[j+1-2*(j%2)].x = f2fx(Quads[i].m_Texture[j].x);
@@ -1946,8 +1944,8 @@ void CAssetsManager::Save_Map_Group(
 						Quad.m_aColors[j+1-2*(j%2)].a = Quads[i].m_Color[j].a*255.0f;
 					}
 					
-					Quad.m_aPoints[4].x = f2fx(Barycenter.x/4.0f);
-					Quad.m_aPoints[4].y = f2fx(Barycenter.y/4.0f);
+					Quad.m_aPoints[4].x = f2fx(Quads[i].m_Pivot.x);
+					Quad.m_aPoints[4].y = f2fx(Quads[i].m_Pivot.y);
 					
 					Quad.m_PosEnv = AnimationEnv[i]*2;
 					Quad.m_PosEnvOffset = AnimationOffset[i];

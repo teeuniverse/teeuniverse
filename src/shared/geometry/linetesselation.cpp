@@ -1105,6 +1105,9 @@ void GenerateMaterialQuads(
 				
 				Quad.m_ImagePath = pMaterial->GetTexturePath();
 				Quad.m_TextureIndex = -1;
+
+				Quad.m_Pivot.x = f2fx(Barycenter.x);
+				Quad.m_Pivot.y = f2fx(Barycenter.y);
 				
 				i += 2;
 			}

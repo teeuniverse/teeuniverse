@@ -36,6 +36,7 @@ public:
 	vec2 m_Texture[4];
 	CAssetPath m_ImagePath;
 	int m_TextureIndex;
+	vec2 m_Pivot;
 };
 
 void RotateQuadTexture(CTexturedQuad& Quad);
