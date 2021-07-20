@@ -394,8 +394,7 @@ void CCursorTool_MapVertexEditor::OnViewMouseMove_Objects_Impl()
 	vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos - m_ClickDiff);
 	if(ViewMap()->GetGridAlign())
 	{
-		CursorMapPos = ViewMap()->MapRenderer()->MapPosToTilePos(CursorMapPos);
-		CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y)));
+		CursorMapPos = ViewMap()->MapRenderer()->RoundMapPosToTile(CursorMapPos);
 	}
 	vec2 NewPos = InvTransform*(CursorMapPos - Position);
 	
