@@ -21,7 +21,7 @@
 
 #include <shared/math/vector.h>
 
-inline void UpdateBoundingBox(vec2 p, vec2* bbmin, vec2* bbmax)
+inline void UpdateBoundingBox(const vec2& p, vec2* bbmin, vec2* bbmax)
 {
 	if(bbmin->x > p.x)
 		bbmin->x = p.x;
