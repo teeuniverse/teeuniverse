@@ -390,14 +390,14 @@ void CCursorTool_MapVertexEditor::OnViewMouseMove_Objects_Impl()
 	
 	ViewMap()->MapRenderer()->SetGroup(ViewMap()->GetMapGroupPath());
 	
-	vec2 MousePos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
-	vec2 MapMousePos = ViewMap()->MapRenderer()->ScreenPosToMapPos(MousePos - m_ClickDiff);
+	vec2 CursorPos = vec2(Context()->GetMousePos().x, Context()->GetMousePos().y);
+	vec2 CursorMapPos = ViewMap()->MapRenderer()->ScreenPosToMapPos(CursorPos - m_ClickDiff);
 	if(ViewMap()->GetGridAlign())
 	{
-		MapMousePos = ViewMap()->MapRenderer()->MapPosToTilePos(MapMousePos);
-		MapMousePos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(MapMousePos.x), floor(MapMousePos.y)));
+		CursorMapPos = ViewMap()->MapRenderer()->MapPosToTilePos(CursorMapPos);
+		CursorMapPos = ViewMap()->MapRenderer()->TilePosToMapPos(vec2(floor(CursorMapPos.x), floor(CursorMapPos.y)));
 	}
-	vec2 NewPos = InvTransform*(MapMousePos - Position);
+	vec2 NewPos = InvTransform*(CursorMapPos - Position);
 	
 	if(m_DragType == 1)
 		AssetsManager()->SetAssetValue<vec2>(AssetsEditor()->GetEditedAssetPath(), m_CurrentVertex, ASSET::OBJECT_VERTEX_POSITION, NewPos, m_Token);
