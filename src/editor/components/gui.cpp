@@ -39,6 +39,7 @@
 #include <editor/gui/preferences.h>
 
 #include <algorithm>
+#include <functional>
 
 /* COMMANDS ***********************************************************/
 
@@ -743,6 +744,30 @@ public:
 	{
 		SetText(_LSTRING("Show hidden files"));
 	}
+};
+
+class CFunctionalAbstractTextEdit : public gui::CAbstractTextEdit
+{
+public:
+	CFunctionalAbstractTextEdit(class CGui *pConfig)
+		: gui::CAbstractTextEdit(pConfig)
+	{
+	}
+
+	void SetTextChangedCallback(std::function<void(const char *)> callback)
+	{
+		m_TextChangedCallback = callback;
+	}
+
+protected:
+	std::function<void(const char *)> m_TextChangedCallback = nullptr;
+
+	void SaveFromTextBuffer()
+	{
+		m_TextChangedCallback(GetText());
+	}
+
+	void CopyToTextBuffer() { }
 };
 
 COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mode, int Format) :
