@@ -847,7 +847,12 @@ COpenSavePackageDialog::COpenSavePackageDialog(CGuiEditor* pAssetsEditor, int Mo
 		gui::CLabel* pLabel = new gui::CLabel(Context(), _LSTRING("Directory:"));
 		pLabel->NoTextClipping();
 		pHList->Add(pLabel, false, 200);
-		pHList->Add(new gui::CExternalTextEdit_DynamicString(Context(), &m_Directory), true);
+		m_pDirectoryEditor = new CFunctionalAbstractTextEdit(Context());
+		m_pDirectoryEditor->SetText(m_Directory.buffer());
+		m_pDirectoryEditor->SetTextChangedCallback([this](const char *pText) {
+			SetDirectory(pText);
+		});
+		pHList->Add(m_pDirectoryEditor, true);
 		
 		gui::CAbstractToggle* pShowHiddenFilesToggle = new COpenSavePackageDialog_ShowHiddenFiles(Context(), this, &m_ShowHiddenFiles);
 		pLayout->Add(pShowHiddenFilesToggle, false);
@@ -1005,6 +1010,14 @@ void COpenSavePackageDialog::Update(bool ParentEnabled)
 	
 	gui::CPopup::Update(ParentEnabled);
 }
+
+void COpenSavePackageDialog::SetDirectory(const char *pDirectory)
+{
+	m_Directory = pDirectory;
+	m_RefreshList = true;
+
+	m_pDirectoryEditor->SetText(pDirectory);
+}
 	
 void COpenSavePackageDialog::ListFiles()
 {
@@ -1142,14 +1155,13 @@ void COpenSavePackageDialog::SelectName(const char* pFilename)
 
 void COpenSavePackageDialog::SelectDirectory(const char* pDirectory)
 {
-	m_Directory = pDirectory;
-	m_RefreshList = true;
+	SetDirectory(pDirectory);
 }
 
 void COpenSavePackageDialog::SelectDirectory(const char* pDirectory, int StorageType)
 {
 	Storage()->GetCompletePath(StorageType, pDirectory, m_Directory);
-	m_RefreshList = true;
+	SetDirectory(m_Directory.buffer());
 }
 	
 void COpenSavePackageDialog::Save()

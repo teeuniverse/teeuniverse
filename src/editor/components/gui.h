@@ -407,6 +407,7 @@ public:
 	dynamic_string m_Filename;
 	dynamic_string m_Directory;
 	gui::CVScrollLayout* m_pFilelist;
+	class CFunctionalAbstractTextEdit *m_pDirectoryEditor = nullptr;
 	int m_Format;
 	int m_Mode;
 	bool m_RefreshList;
@@ -425,6 +426,9 @@ public:
 	
 	virtual void Update(bool ParentEnabled);
 	virtual int GetInputToBlock() { return CGui::BLOCKEDINPUT_ALL; }
+
+protected:
+	void SetDirectory(const char *pDirectory);
 };
 
 class CMessageDialog : public gui::CPopup
