@@ -260,6 +260,9 @@ private:
 	
 	inline void copy(const char* pBuffer)
 	{
+		if(pBuffer == m_pBuffer)
+			return;
+
 		int Size = str_length(pBuffer)+1;
 		if(Size > m_MaxSize)
 			resize_buffer(Size);
