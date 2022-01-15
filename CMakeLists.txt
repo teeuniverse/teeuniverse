@@ -305,6 +305,7 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
 	file(GLOB teeuniverse_editor_src
 		"${PROJECT_SOURCE_DIR}/src/editor/gui/*.cpp"
 		"${PROJECT_SOURCE_DIR}/src/editor/components/*.cpp"
+		"${PROJECT_SOURCE_DIR}/src/editor/components/*.h"
 		"${PROJECT_SOURCE_DIR}/src/editor/*.cpp"
 	)
 
