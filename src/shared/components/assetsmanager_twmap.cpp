@@ -2030,7 +2030,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	else
 		Load_UnivTeeWorlds();
 	
-	if(Format == MAPFORMAT_DDNET)
+	if(Format == MAPFORMAT_DDNET || Format == MAPFORMAT_INFCLASS)
 		Load_UnivDDNet();
 	else if(Format == MAPFORMAT_OPENFNG)
 		Load_UnivOpenFNG();
