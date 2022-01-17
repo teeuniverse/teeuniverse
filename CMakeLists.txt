@@ -16,8 +16,8 @@
 # along with TeeUniverse.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required (VERSION 2.8.10)
-cmake_policy(SET CMP0012 NEW)
+# Freetype::Freetype is available since CMake 3.10
+cmake_minimum_required(VERSION 3.10)
 
 project(TeeUniverse)
 
@@ -38,9 +38,9 @@ find_package(SDL2)
 find_package(OpenGL)
 find_package(Freetype)
 if(USE_HARFBUZZ)
-  find_package(HarfBuzz)
+  find_package(harfbuzz REQUIRED)
 endif()
-find_package(ICU COMPONENTS i18n)
+find_package(ICU REQUIRED COMPONENTS uc i18n)
 
 ########################################################################
 # BUILD_TYPE, PLATFORM
@@ -99,15 +99,7 @@ else()
   endforeach(CONFIG_TYPE)
 endif()
 
-if(CMAKE_VERSION VERSION_LESS 3)
-  foreach(CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
-    string(TOLOWER ${CONFIG_TYPE} CONFIG_TYPE_DIR)
-    set(CONFIG_DIR ${CONFIG_DIR}$<$<CONFIG:${CONFIG_TYPE}>:${CONFIG_TYPE_DIR}>)
-  endforeach(CONFIG_TYPE)
-  set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/${CONFIG_DIR}/${PLATFORM}/data)
-else()
-  set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PLATFORM}/data)
-endif()
+set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PLATFORM}/data)
 
 set(TU_EXECNAME_GAME teeuniverse)
 set(TU_EXECNAME_EDITOR teeuniverse_editor)
@@ -118,22 +110,8 @@ include_directories("${PROJECT_SOURCE_DIR}/src/external")
 include_directories("${PROJECT_SOURCE_DIR}/src/external/zlib")
 include_directories("${PROJECT_SOURCE_DIR}/src/external/minizip")
 
-if(SDL2_FOUND)
-  include_directories(${SDL2_INCLUDE_DIR})
-endif()
-if(OPENGL_FOUND)
-  include_directories(${OPENGL_INCLUDE_DIRS})
-endif()
-if(FREETYPE_FOUND)
-  include_directories(${FREETYPE_INCLUDE_DIRS})
-endif()
-if(HARFBUZZ_FOUND)
-  add_definitions(-DHARFBUZZ_ENABLED)
-  include_directories(${HARFBUZZ_INCLUDE_DIRS})
-endif()
 if(ICU_FOUND)
   add_definitions(-DU_USING_ICU_NAMESPACE)
-  include_directories(${ICU_INCLUDE_DIRS})
 endif()
 
 message(STATUS "******** TeeUniverse ********")
@@ -166,13 +144,9 @@ show_dependency_status("ICU" "${ICU_FOUND}" "required by server, client, editor,
 show_dependency_status("SDL" "${SDL2_FOUND}" "required by: client, editor")
 show_dependency_status("OpenGL" "${OPENGL_FOUND}" "required by: client, editor")
 show_dependency_status("FreeType" "${FREETYPE_FOUND}" "required by: client, editor")
-show_dependency_status("Harfbuzz" "${HARFBUZZ_FOUND}" "used by: client, editor")
+show_dependency_status("Harfbuzz" "${harfbuzz_FOUND}" "used by: client, editor")
 
-if(NOT(ICU_FOUND))
-  message(FATAL_ERROR "You must install ICU to compile TeeUniverse")
-endif()
-
-if(USE_HARFBUZZ AND NOT(HARFBUZZ_FOUND))
+if(USE_HARFBUZZ AND NOT(harfbuzz_FOUND))
   message(STATUS " ! Warning: Without Harfbuzz, the text rendering")
   message(STATUS "            quality is reduced. In particular,")
   message(STATUS "            arabic and farsi can't be displayed")
@@ -239,8 +213,9 @@ endif()
 
 # Build
 add_library(teeuniverse_shared ${teeuniverse_shared_src})
-target_link_libraries (teeuniverse_shared
-  ${ICU_LIBRARIES}
+target_link_libraries (teeuniverse_shared PUBLIC
+  ICU::i18n
+  ICU::uc
 )
 add_custom_command(TARGET teeuniverse_shared POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${DATA_OUTPUT_DIRECTORY})
 install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/languages" DESTINATION "share/teeuniverse")
@@ -251,7 +226,6 @@ install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/packages" DESTINATION "share/teeuniv
 ########################################################################
 
 if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
-
   # Sources
   file(GLOB teeuniverse_client_src
     "${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
@@ -260,21 +234,24 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
     "${PROJECT_SOURCE_DIR}/src/client/*.cpp"
   )
 
-  # Libraries
-  set(teeuniverse_client_libraries
-    teeuniverse_shared
-    ${SDL2_LIBRARY}
-    ${OPENGL_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-  )
-  
-  if(HARFBUZZ_FOUND)
-    set(teeuniverse_client_libraries ${teeuniverse_client_libraries} ${HARFBUZZ_LIBRARIES})
-  endif()
-
   # Build
   add_library(teeuniverse_client ${teeuniverse_client_src})
-  target_link_libraries (teeuniverse_client ${teeuniverse_client_libraries})
+  target_link_libraries (teeuniverse_client PUBLIC
+      teeuniverse_shared
+      SDL2::SDL2
+      OpenGL::GL
+      OpenGL::GLU
+      Freetype::Freetype
+  )
+
+  if(harfbuzz_FOUND)
+    target_link_libraries (teeuniverse_client PUBLIC
+      harfbuzz::harfbuzz
+      harfbuzz::icu
+    )
+    target_compile_definitions(teeuniverse_client PRIVATE HARFBUZZ_ENABLED)
+  endif()
+
   install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/countryflags" DESTINATION "share/teeuniverse")
   install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/fonts" DESTINATION "share/teeuniverse")
   if(${PLATFORM} STREQUAL "linux")
