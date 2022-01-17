@@ -130,7 +130,11 @@ show_dependency_status("ICU" "${ICU_FOUND}" "required by server, client, editor,
 show_dependency_status("SDL" "${SDL2_FOUND}" "required by: client, editor")
 show_dependency_status("OpenGL" "${OPENGL_FOUND}" "required by: client, editor")
 show_dependency_status("FreeType" "${FREETYPE_FOUND}" "required by: client, editor")
-show_dependency_status("Harfbuzz" "${harfbuzz_FOUND}" "used by: client, editor")
+if(USE_HARFBUZZ)
+  show_dependency_status("Harfbuzz" "${harfbuzz_FOUND}" "used by: client, editor")
+else()
+  show_dependency_status("Harfbuzz" "(disabled)" "used by: client, editor")
+endif()
 
 if(USE_HARFBUZZ AND NOT(harfbuzz_FOUND))
   message(STATUS " ! Warning: Without Harfbuzz, the text rendering")
