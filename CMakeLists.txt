@@ -30,6 +30,10 @@ if(WITHOUT_HARFBUZZ)
   set(USE_HARFBUZZ OFF)
 endif()
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 ########################################################################
 # DEPENDENCIES
 ########################################################################
@@ -67,18 +71,6 @@ if(NOT(PLATFORM))
       set(PLATFORM linux)
     endif()
   endif()
-endif()
-
-#Check C++11
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG(-std=c++11 COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG(-std=c++0x COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  set(CXX11_FOUND TRUE)
-elseif(COMPILER_SUPPORTS_CXX0X)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-  set(CXX11_FOUND TRUE)
 endif()
 
 ########################################################################
@@ -122,12 +114,6 @@ message(STATUS "Build configuration: ${CMAKE_CONFIGURATION_TYPES}")
 endif()
 message(STATUS "Platform: ${PLATFORM}")
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
-
-if(CXX11_FOUND)
-  message(STATUS " * C++11 support found.")
-else()
-  message(STATUS " * C++11 support not found. Please use a different C++ compiler.")
-endif()
 
 message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
