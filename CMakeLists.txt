@@ -23,6 +23,13 @@ project(TeeUniverse)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 
+option(USE_HARFBUZZ "Enable HarfBuzz for better text shaping" ON)
+
+# Backward compatibility:
+if(WITHOUT_HARFBUZZ)
+  set(USE_HARFBUZZ OFF)
+endif()
+
 ########################################################################
 # DEPENDENCIES
 ########################################################################
@@ -30,7 +37,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 find_package(SDL2)
 find_package(OpenGL)
 find_package(Freetype)
-if(NOT(WITHOUT_HARFBUZZ))
+if(USE_HARFBUZZ)
   find_package(HarfBuzz)
 endif()
 find_package(ICU COMPONENTS i18n)
@@ -165,7 +172,7 @@ if(NOT(ICU_FOUND))
   message(FATAL_ERROR "You must install ICU to compile TeeUniverse")
 endif()
 
-if(NOT(HARFBUZZ_FOUND) AND NOT(WITHOUT_HARFBUZZ))
+if(USE_HARFBUZZ AND NOT(HARFBUZZ_FOUND))
   message(STATUS " ! Warning: Without Harfbuzz, the text rendering")
   message(STATUS "            quality is reduced. In particular,")
   message(STATUS "            arabic and farsi can't be displayed")
