@@ -161,7 +161,7 @@ CTilingMaterialPicker::CTilingMaterialPicker(CGuiEditor* pAssetsEditor, CAssetPa
 	//List of brushes
 	{
 		gui::CBoxLayout* pList = new gui::CBoxLayout(Context());
-		Add(pList, -1);
+		Add(pList, true);
 		pList->SetBoxStyle(pAssetsEditor->m_Path_Box_Panel);
 		
 		if(!pMaterial->IsValidIndex(CAsset_TilingMaterial::SubPath_Index(0)))
