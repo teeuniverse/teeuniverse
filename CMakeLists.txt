@@ -23,9 +23,15 @@ project(TeeUniverse
     VERSION 0.3.0
 )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
-
+option(USE_CONAN "Use Conan for dependencies" OFF)
 option(USE_HARFBUZZ "Enable HarfBuzz for better text shaping" ON)
+
+if(USE_CONAN)
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
+  list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/modules")
 
 # Backward compatibility:
 if(WITHOUT_HARFBUZZ)
@@ -90,6 +96,28 @@ set(TU_EXECNAME_SERVER teeuniverse_srv)
 ########################################################################
 # DEPENDENCIES
 ########################################################################
+
+if(USE_CONAN)
+  set(CMAKE_CXX_STANDARD 14)
+
+  include(modules/conan.cmake)
+
+  conan_cmake_configure(
+    REQUIRES
+      sdl/2.0.16
+      freetype/2.11.1
+      icu/69.1
+      zlib/1.2.11
+    GENERATORS cmake_find_package
+  )
+
+  conan_cmake_autodetect(settings)
+
+  conan_cmake_install(PATH_OR_REFERENCE .
+                      BUILD missing
+                      REMOTE conancenter
+                      SETTINGS ${settings})
+endif()
 
 find_package(SDL2)
 find_package(OpenGL)
