@@ -321,6 +321,18 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
   # Build Editor
   add_executable(${TU_EXECNAME_EDITOR} "${PROJECT_SOURCE_DIR}/src/editor.cpp" ${teeuniverse_editor_src})
   target_link_libraries (${TU_EXECNAME_EDITOR} ${teeuniverse_editor_libraries})
+
+  if("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
+    set(EDITOR_WIN_ICON_PATH "${PROJECT_SOURCE_DIR}/datasrc/share/pixmaps/teeuniverse.ico")
+    configure_file("src/editor.rc.in" "editor.rc" @ONLY)
+    target_sources(${TU_EXECNAME_EDITOR} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/editor.rc")
+
+    set_target_properties(${TU_EXECNAME_EDITOR}
+        PROPERTIES
+            WIN32_EXECUTABLE TRUE
+    )
+  endif()
+
   message(STATUS " * editor ready for compilation")
   
 else()
