@@ -21,6 +21,7 @@
 #include <shared/components/assetsmanager.h>
 #include <shared/components/storage.h>
 #include <shared/components/cli.h>
+#include <shared/version.h>
 #include <client/gui/panellayout.h>
 #include <client/gui/popup.h>
 #include <client/gui/filler.h>
@@ -2026,7 +2027,7 @@ public:
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());
 				pLayout->Add(pList, true);
 				pList->Add(new gui::CLabel(Context(), _LSTRING("Version:")), true);
-				pList->Add(new gui::CLabel(Context(), "0.3.0"), true); //TAG_ASSETSVERSION
+				pList->Add(new gui::CLabel(Context(), TeeUniverse_VERSION), true); //TAG_ASSETSVERSION
 			}
 			{
 				gui::CHListLayout* pList = new gui::CHListLayout(Context());

@@ -19,7 +19,9 @@
 # Freetype::Freetype is available since CMake 3.10
 cmake_minimum_required(VERSION 3.10)
 
-project(TeeUniverse)
+project(TeeUniverse
+    VERSION 0.3.0
+)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/modules)
 
@@ -180,6 +182,8 @@ endif()
 # SHARED
 ########################################################################
 
+configure_file("src/version.h.in" "src/shared/version.h")
+
 # Sources
 file(GLOB teeuniverse_shared_src
   "${PROJECT_SOURCE_DIR}/src/external/minizip/ioapi.c"
@@ -206,6 +210,8 @@ endif()
 
 # Build
 add_library(teeuniverse_shared ${teeuniverse_shared_src})
+target_include_directories(teeuniverse_shared PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src)
+
 target_link_libraries (teeuniverse_shared PUBLIC
   ZLIB::ZLIB
   ICU::i18n
