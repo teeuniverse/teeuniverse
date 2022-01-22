@@ -311,6 +311,9 @@ bool fs_remove(const char *filename);
 */
 bool fs_rename(const char *oldname, const char *newname);
 
+void fs_from_native_separators(const char *pNativePath, dynamic_string &result);
+void fs_from_native_separators(dynamic_string &path);
+
 class linereader
 {
 private:

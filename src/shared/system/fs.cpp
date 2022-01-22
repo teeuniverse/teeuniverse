@@ -424,3 +424,20 @@ bool fs_rename(const char *oldname, const char *newname)
 
 /* FOREIGN CODE END: TeeWorlds ****************************************/
 
+void fs_from_native_separators(const char *pNativePath, dynamic_string &result)
+{
+	result = pNativePath;
+	fs_from_native_separators(result);
+}
+
+void fs_from_native_separators(dynamic_string &path)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	char *pCurrentChar = path.buffer();
+	for(; *pCurrentChar; ++pCurrentChar)
+	{
+		if(*pCurrentChar == '\\')
+			*pCurrentChar = '/';
+	}
+#endif
+}
