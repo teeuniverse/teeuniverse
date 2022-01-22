@@ -212,8 +212,6 @@ target_link_libraries (teeuniverse_shared PUBLIC
   ICU::uc
 )
 add_custom_command(TARGET teeuniverse_shared POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/data ${DATA_OUTPUT_DIRECTORY})
-install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/languages" DESTINATION "share/teeuniverse")
-install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/packages" DESTINATION "share/teeuniverse")
 
 ########################################################################
 # CLIENT
@@ -246,12 +244,6 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
     target_compile_definitions(teeuniverse_client PRIVATE HARFBUZZ_ENABLED)
   endif()
 
-  install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/countryflags" DESTINATION "share/teeuniverse")
-  install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/fonts" DESTINATION "share/teeuniverse")
-  if(${PLATFORM} STREQUAL "linux")
-    install(FILES "datasrc/share/pixmaps/teeuniverse.png" DESTINATION "share/pixmaps")
-  endif()
-  
   ########################################################################
   # GAME
   ########################################################################
@@ -295,11 +287,6 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
   # Build Editor
   add_executable(${TU_EXECNAME_EDITOR} "${PROJECT_SOURCE_DIR}/src/editor.cpp" ${teeuniverse_editor_src})
   target_link_libraries (${TU_EXECNAME_EDITOR} ${teeuniverse_editor_libraries})
-  install(TARGETS ${TU_EXECNAME_EDITOR} DESTINATION bin)
-  if(${PLATFORM} STREQUAL "linux")
-    install(FILES "datasrc/share/mime/packages/teeuniverse_editor.xml" DESTINATION "share/mime/packages")
-    install(FILES "datasrc/share/applications/teeuniverse_editor.desktop" DESTINATION "share/applications" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-  endif()
   message(STATUS " * editor ready for compilation")
   
 else()
@@ -426,3 +413,24 @@ make_test(archivefile)
 make_test(assetsmanager)
 
 message(STATUS "******************************")
+
+########################################################################
+# INSTALL
+########################################################################
+
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/languages" DESTINATION "share/teeuniverse")
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/packages" DESTINATION "share/teeuniverse")
+
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/countryflags" DESTINATION "share/teeuniverse")
+install(DIRECTORY "${DATA_OUTPUT_DIRECTORY}/fonts" DESTINATION "share/teeuniverse")
+if(${PLATFORM} STREQUAL "linux")
+  install(FILES "datasrc/share/pixmaps/teeuniverse.png" DESTINATION "share/pixmaps")
+endif()
+
+if(TARGET ${TU_EXECNAME_EDITOR})
+    install(TARGETS ${TU_EXECNAME_EDITOR} DESTINATION bin)
+    if(${PLATFORM} STREQUAL "linux")
+      install(FILES "datasrc/share/mime/packages/teeuniverse_editor.xml" DESTINATION "share/mime/packages")
+      install(FILES "datasrc/share/applications/teeuniverse_editor.desktop" DESTINATION "share/applications" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif()
+endif()
