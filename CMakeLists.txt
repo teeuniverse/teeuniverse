@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(TeeUniverse
-    VERSION 0.3.0
+    VERSION 0.3.1
 )
 
 option(USE_CONAN "Use Conan for dependencies" OFF)

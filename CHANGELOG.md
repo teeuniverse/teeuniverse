@@ -1,6 +1,26 @@
 # Change Log
 
-## [0.3.0]
+## [0.3.1] - 2022-01-22
+### Added
+- Ctrl+Backspace for smart characters deletion
+- InfClass maps importer (we have no .tup for many maps)
+- An icon for Windows executable
+
+### Changed
+- DDNet package now enabled for infclass format (use only for 'Turn entities off' signs)
+- ddTele layer now exported to infclass maps
+
+### Fixed
+- Zoom with active Vertex Editor
+- Tile texture grid spacing on map import
+- A crash on invalid animation
+- A crash on a switch between maps
+- Grid alignment for quad vertex editor
+- 'Paste' action for text editors (integer / float / color code line editors)
+- Animated quad position on export
+- The work with paths on windows
+
+## [0.3.0] - (not released)
 ### Added
 - Quads and objects can be animated
 - Add zone palette for filling tool
