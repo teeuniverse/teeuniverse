@@ -284,6 +284,8 @@ bool fs_home_path(dynamic_string& result)
 #else
 	result.append(getenv("HOME"));	
 #endif
+
+	fs_from_native_separators(result);
 	
 	return true;
 }
@@ -318,6 +320,8 @@ bool fs_storage_path(const char *appname, dynamic_string& result)
 		pChar++;
 	}
 #endif
+
+	fs_from_native_separators(result.buffer(), result);
 	
 	return true;
 }
