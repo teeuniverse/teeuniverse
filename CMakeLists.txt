@@ -35,18 +35,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ########################################################################
-# DEPENDENCIES
-########################################################################
-
-find_package(SDL2)
-find_package(OpenGL)
-find_package(Freetype)
-if(USE_HARFBUZZ)
-  find_package(harfbuzz REQUIRED)
-endif()
-find_package(ICU REQUIRED COMPONENTS uc i18n)
-
-########################################################################
 # BUILD_TYPE, PLATFORM
 ########################################################################
 
@@ -96,6 +84,18 @@ set(DATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/$<LOWER_CASE:$<CONFIG>>/${PL
 set(TU_EXECNAME_GAME teeuniverse)
 set(TU_EXECNAME_EDITOR teeuniverse_editor)
 set(TU_EXECNAME_SERVER teeuniverse_srv)
+
+########################################################################
+# DEPENDENCIES
+########################################################################
+
+find_package(SDL2)
+find_package(OpenGL)
+find_package(Freetype)
+if(USE_HARFBUZZ)
+  find_package(harfbuzz REQUIRED)
+endif()
+find_package(ICU REQUIRED COMPONENTS uc i18n)
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src/external")
