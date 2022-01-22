@@ -475,3 +475,6 @@ else()
     endif()
   endif()
 endif()
+
+set(CPACK_GENERATOR ZIP)
+include(CPack)
