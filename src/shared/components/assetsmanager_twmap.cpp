@@ -1321,7 +1321,7 @@ int CAssetsManager::Load_Map(const char* pFileName, int StorageType, int Format)
 								{
 									CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
 									
-									if(Format == MAPFORMAT_DDNET)
+									if((Format == MAPFORMAT_DDNET) || (Format == MAPFORMAT_INFCLASS))
 									{
 										Load_UnivDDNet();
 										Zones.CreateZone(&Zones.m_pDDTeleZone, Zones.m_DDTelePath, "ddnetTeleport", m_Path_ZoneType_DDTele, Width, Height);

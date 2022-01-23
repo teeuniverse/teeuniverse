@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.3.2]
+### Fixed
+- DDNet Tele layer import for infclass maps
+
 ## [0.3.1] - 2022-01-22
 ### Added
 - Ctrl+Backspace for smart characters deletion
