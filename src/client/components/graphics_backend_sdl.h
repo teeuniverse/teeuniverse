@@ -83,17 +83,58 @@
 	};
 #endif
 
-class CGraphicsBackend_SDL
+enum EGraphicsBackendErrorCodes
+{
+	GRAPHICS_BACKEND_ERROR_CODE_UNKNOWN = -1,
+	GRAPHICS_BACKEND_ERROR_CODE_NONE = 0,
+	GRAPHICS_BACKEND_ERROR_CODE_OPENGL_CONTEXT_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_OPENGL_VERSION_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_SDL_INIT_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_SDL_SCREEN_REQUEST_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_SDL_SCREEN_INFO_REQUEST_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_SDL_SCREEN_RESOLUTION_REQUEST_FAILED,
+	GRAPHICS_BACKEND_ERROR_CODE_SDL_WINDOW_CREATE_FAILED,
+};
+
+// interface for the graphics backend
+// all these functions are called on the main thread
+class IGraphicsBackend
 {
 public:
 	enum
 	{
-		INITFLAG_FULLSCREEN = 1,
-		INITFLAG_VSYNC = 2,
-		INITFLAG_RESIZABLE = 4,
-		INITFLAG_BORDERLESS = 8,
+		INITFLAG_FULLSCREEN = 1 << 0,
+		INITFLAG_VSYNC = 1 << 1,
+		INITFLAG_RESIZABLE = 1 << 2,
+		INITFLAG_BORDERLESS = 1 << 3,
 	};
+	
+	virtual ~IGraphicsBackend() {}
 
+	virtual int Init(const char *pName, int *pScreen, int *pWidth, int *pHeight, int FsaaSamples, int Flags, int *pDesktopWidth, int *pDesktopHeight) = 0;
+	virtual int Shutdown() = 0;
+
+	virtual int MemoryUsage() const = 0;
+
+	virtual int GetNumScreens() const = 0;
+	
+	virtual void Minimize() = 0;
+	virtual void Maximize() = 0;
+	virtual bool Fullscreen(bool State) = 0;
+	virtual void SetWindowBordered(bool State) = 0;
+	virtual bool SetWindowScreen(int Index) = 0;
+	virtual int GetWindowScreen() = 0;
+	virtual int WindowActive() = 0;
+	virtual int WindowOpen() = 0;
+	
+	virtual void RunBuffer(CCommandBuffer *pBuffer) = 0;
+	virtual bool IsIdle() const = 0;
+	virtual void WaitForIdle() = 0;
+};
+
+class CGraphicsBackend_SDL : public IGraphicsBackend
+{
+public:
 	class ICommandProcessor
 	{
 	public:
@@ -126,25 +167,25 @@ public:
 	CGraphicsBackend_SDL();
 	virtual ~CGraphicsBackend_SDL() {}
 	
-	int Init(const char *pName, int *Screen, int *Width, int *Height, int FsaaSamples, int Flags, int *pDesktopWidth, int *pDesktopHeight);
-	int Shutdown();
+	int Init(const char *pName, int *pScreen, int *pWidth, int *pHeight, int FsaaSamples, int Flags, int *pDesktopWidth, int *pDesktopHeight) override;
+	int Shutdown() override;
 
-	int MemoryUsage() const;
+	int MemoryUsage() const override;
 
-	int GetNumScreens() const { return m_NumScreens; }
+	int GetNumScreens() const override { return m_NumScreens; }
 
-	void Minimize();
-	void Maximize();
-	bool Fullscreen(bool State);
-	void SetWindowBordered(bool State);
-	bool SetWindowScreen(int Index);
-	int GetWindowScreen();
-	int WindowActive();
-	int WindowOpen();
+	void Minimize() override;
+	void Maximize() override;
+	bool Fullscreen(bool State) override;
+	void SetWindowBordered(bool State) override;
+	bool SetWindowScreen(int Index) override;
+	int GetWindowScreen() override;
+	int WindowActive() override;
+	int WindowOpen() override;
 	
-	void RunBuffer(CCommandBuffer *pBuffer);
-	bool IsIdle() const;
-	void WaitForIdle();
+	void RunBuffer(CCommandBuffer *pBuffer) override;
+	bool IsIdle() const override;
+	void WaitForIdle() override;
 };
 
 // takes care of implementation independent operations

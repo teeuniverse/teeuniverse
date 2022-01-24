@@ -730,10 +730,14 @@ void CGraphics::QuadsText(float x, float y, float Size, const char *pText)
 int CGraphics::IssueInit()
 {	
 	int Flags = 0x0;
-	if(m_Cfg_Borderless) Flags |= CGraphicsBackend_SDL::INITFLAG_BORDERLESS;
-	if(m_Cfg_Fullscreen) Flags |= CGraphicsBackend_SDL::INITFLAG_FULLSCREEN;
-	if(m_Cfg_Vsync) Flags |= CGraphicsBackend_SDL::INITFLAG_VSYNC;
-	if(m_Cfg_Resizable) Flags |= CGraphicsBackend_SDL::INITFLAG_RESIZABLE;
+	if(m_Cfg_Borderless)
+		Flags |= CGraphicsBackend_SDL::INITFLAG_BORDERLESS;
+	if(m_Cfg_Fullscreen)
+		Flags |= CGraphicsBackend_SDL::INITFLAG_FULLSCREEN;
+	if(m_Cfg_Vsync)
+		Flags |= CGraphicsBackend_SDL::INITFLAG_VSYNC;
+	if(m_Cfg_Resizable)
+		Flags |= CGraphicsBackend_SDL::INITFLAG_RESIZABLE;
 
 	return m_pBackend->Init(
 		"TeeUniverse",

@@ -697,7 +697,7 @@ void CCommandProcessor_SDL_OpenGL::RunBuffer(CCommandBuffer *pBuffer)
 
 // ------------ CGraphicsBackend_SDL
 
-int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int *pHeight, int FsaaSamples, int Flags, int *pDesktopWidth, int *pDesktopHeight)
+int CGraphicsBackend_SDL::Init(const char *pName, int *pScreen, int *pWidth, int *pHeight, int FsaaSamples, int Flags, int *pDesktopWidth, int *pDesktopHeight)
 {
 	if(!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -713,13 +713,12 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	m_NumScreens = SDL_GetNumVideoDisplays();
 	if(m_NumScreens > 0)
 	{
-		clamp(*Screen, 0, m_NumScreens-1);
-		if(SDL_GetDisplayBounds(*Screen, &ScreenPos) != 0)
+		*pScreen = clamp(*pScreen, 0, m_NumScreens-1);
+		if(SDL_GetDisplayBounds(*pScreen, &ScreenPos) != 0)
 		{
 			debug::ErrorStream("Graphics") << "unable to retrieve screen information: " << SDL_GetError() << std::endl;
 			return -1;
 		}
-
 	}
 	else
 	{
@@ -729,7 +728,7 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 
 	// store desktop resolution for settings reset button
 	SDL_DisplayMode DisplayMode;
-	if(SDL_GetDesktopDisplayMode(*Screen, &DisplayMode))
+	if(SDL_GetDesktopDisplayMode(*pScreen, &DisplayMode))
 	{
 		debug::ErrorStream("Graphics") << "unable to get desktop resolution: " << SDL_GetError() << std::endl;
 		return -1;
@@ -746,11 +745,11 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 
 	// set flags
 	int SdlFlags = SDL_WINDOW_OPENGL;
-	if(Flags&INITFLAG_RESIZABLE)
+	if(Flags & INITFLAG_RESIZABLE)
 		SdlFlags |= SDL_WINDOW_RESIZABLE;
-	if(Flags&INITFLAG_BORDERLESS)
+	if(Flags & INITFLAG_BORDERLESS)
 		SdlFlags |= SDL_WINDOW_BORDERLESS;
-	if(Flags&INITFLAG_FULLSCREEN)
+	if(Flags & INITFLAG_FULLSCREEN)
 #if defined(CONF_PLATFORM_MACOSX)	// Todo SDL: remove this when fixed (game freezes when losing focus in fullscreen)
 		SdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;	// always use "fake" fullscreen
 	*pWidth = DisplayMode.w;
@@ -772,24 +771,20 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 	}
 
-	// calculate centered position in windowed mode
-	int OffsetX = 0;
-	int OffsetY = 0;
-	if(!(Flags&INITFLAG_FULLSCREEN) && DisplayMode.w > *pWidth && DisplayMode.h > *pHeight)
-	{
-		OffsetX = (DisplayMode.w - *pWidth) / 2;
-		OffsetY = (DisplayMode.h - *pHeight) / 2;
-	}
-
 	// create window
-	m_pWindow = SDL_CreateWindow(pName, ScreenPos.x+OffsetX, ScreenPos.y+OffsetY, *pWidth, *pHeight, SdlFlags);
+	m_pWindow = SDL_CreateWindow(
+		pName,
+		SDL_WINDOWPOS_CENTERED_DISPLAY(*pScreen),
+		SDL_WINDOWPOS_CENTERED_DISPLAY(*pScreen),
+		*pWidth,
+		*pHeight,
+		SdlFlags);
+	
 	if(m_pWindow == NULL)
 	{
 		debug::ErrorStream("Graphics") << "unable to create window: " << SDL_GetError() << std::endl;
 		return -1;
 	}
-
-	SDL_GetWindowSize(m_pWindow, pWidth, pHeight);
 
 	// create gl context
 	m_GLContext = SDL_GL_CreateContext(m_pWindow);
@@ -806,8 +801,9 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 		return -1;
 	}
 
-	SDL_GL_SetSwapInterval(Flags&INITFLAG_VSYNC ? 1 : 0);
+	SDL_GetWindowSize(m_pWindow, pWidth, pHeight);
 
+	SDL_GL_SetSwapInterval(Flags & INITFLAG_VSYNC ? 1 : 0);
 	SDL_GL_MakeCurrent(NULL, NULL);
 
 	// start the command processor
