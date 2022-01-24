@@ -733,6 +733,8 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *pScreen, int *pWidth, int
 		debug::ErrorStream("Graphics") << "unable to get desktop resolution: " << SDL_GetError() << std::endl;
 		return -1;
 	}
+	bool IsDesktopChanged = *pDesktopWidth == 0 || *pDesktopHeight == 0 || *pDesktopWidth != DisplayMode.w || *pDesktopHeight != DisplayMode.h;
+
 	*pDesktopWidth = DisplayMode.w;
 	*pDesktopHeight = DisplayMode.h;
 
@@ -757,6 +759,13 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *pScreen, int *pWidth, int
 #else
 		SdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 #endif
+	
+	if(IsDesktopChanged)
+	{
+		SdlFlags |= SDL_WINDOW_MAXIMIZED;
+
+		SdlFlags &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
 	
 	// set gl attributes
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
