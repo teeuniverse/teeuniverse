@@ -257,6 +257,7 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
     "${PROJECT_SOURCE_DIR}/src/external/pnglite/*.c"
     "${PROJECT_SOURCE_DIR}/src/client/gui/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/client/components/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/client/components/*.h"
     "${PROJECT_SOURCE_DIR}/src/client/*.cpp"
   )
 
@@ -308,6 +309,7 @@ if(SDL2_FOUND AND OPENGL_FOUND AND FREETYPE_FOUND)
   # Sources
   file(GLOB teeuniverse_editor_src
     "${PROJECT_SOURCE_DIR}/src/editor/gui/*.cpp"
+    "${PROJECT_SOURCE_DIR}/src/editor/gui/*.h"
     "${PROJECT_SOURCE_DIR}/src/editor/components/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/editor/components/*.h"
     "${PROJECT_SOURCE_DIR}/src/editor/*.cpp"
