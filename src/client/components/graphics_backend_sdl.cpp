@@ -756,7 +756,7 @@ int CGraphicsBackend_SDL::Init(const char *pName, int *Screen, int *pWidth, int 
 	*pWidth = DisplayMode.w;
 	*pHeight = DisplayMode.h;
 #else
-		SdlFlags |= SDL_WINDOW_FULLSCREEN;
+		SdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 #endif
 	
 	// set gl attributes
