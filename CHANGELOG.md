@@ -1,6 +1,9 @@
 # Change Log
 
 ## [0.3.2]
+### Added
+- 'config_directory.bat' for windows
+
 ### Fixed
 - DDNet Tele layer import for infclass maps
 
