@@ -2069,7 +2069,107 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 	int GameWidth = 0;
 	int GameHeight = 0;
 	
-	{		
+	const auto ExportZoneToTiles = [&GameX, &GameY, &GameWidth, &GameHeight](const CAsset_MapZoneTiles *pZone, ddnet::CTile *pTiles)
+	{
+		for(int j=0; j<pZone->GetTileHeight(); j++)
+		{
+			for(int i=0; i<pZone->GetTileWidth(); i++)
+			{
+				CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
+				int Index = pZone->GetTileIndex(TilePath);
+				if(Index > 0)
+				{
+					int I =  i + pZone->GetPositionX() - GameX;
+					int J =  j + pZone->GetPositionY() - GameY;
+
+					if((i == 0) && (i != I))
+					{
+						// This is the left edge which does not match that of the gamelayer
+						for(int fillI = 0; fillI < I; ++fillI)
+						{
+							if((j == pZone->GetTileHeight() - 1) && (J < GameHeight - 1))
+							{
+								// also this is the bottom edge
+								for(int fillJ = J; fillJ < GameHeight; ++fillJ)
+								{
+									// Fill the bottom left corner
+									pTiles[fillJ * GameWidth + fillI].m_Index = Index;
+								}
+							}
+
+							// Fill the left side
+							pTiles[J * GameWidth + fillI].m_Index = Index;
+
+							if((j == 0) && (j != J))
+							{
+								// also this is the top edge
+								for(int fillJ = 0; fillJ < J; ++fillJ)
+								{
+									// Fill the top left corner
+									pTiles[fillJ * GameWidth + fillI].m_Index = Index;
+								}
+							}
+						}
+					}
+
+					if((j == 0) && (j != J))
+					{
+						// This is the top edge
+						for(int fillJ = 0; fillJ < J; ++fillJ)
+						{
+							// Fill the top
+							pTiles[fillJ * GameWidth + I].m_Index = Index;
+						}
+					}
+
+					if((i == pZone->GetTileWidth() - 1) && (I < GameWidth - 1))
+					{
+						// This is the right edge
+						for(int fillI = I; fillI < GameWidth; ++fillI)
+						{
+							// Fill the left side
+							pTiles[J * GameWidth + fillI].m_Index = Index;
+
+							if((j == 0) && (j != J))
+							{
+								// also this is the top edge
+								for(int fillJ = 0; fillJ < J; ++fillJ)
+								{
+									// Fill the top right corner
+									pTiles[fillJ * GameWidth + fillI].m_Index = Index;
+								}
+							}
+
+							if((j == pZone->GetTileHeight() - 1) && (J < GameHeight - 1))
+							{
+								// also this is the bottom edge
+								for(int fillJ = J; fillJ < GameHeight; ++fillJ)
+								{
+									// Fill the bottom left corner
+									pTiles[fillJ * GameWidth + fillI].m_Index = Index;
+								}
+							}
+						}
+					}
+
+					if((j == pZone->GetTileHeight() - 1) && (J < GameHeight - 1))
+					{
+						// This is the bottom edge
+						for(int fillJ = J; fillJ < GameHeight; ++fillJ)
+						{
+							// Fill the bottom
+							pTiles[fillJ * GameWidth + I].m_Index = Index;
+						}
+					}
+
+					// Set the index at the mapped position
+					pTiles[J * GameWidth + I].m_Index = Index;
+				}
+			}
+		}
+	};
+
+	{
 		//Get game layer size
 		bool FrontEnabled = false;
 		bool TeleEnabled = false;
@@ -2345,33 +2445,11 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					}
 					else if(m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDGame)
 					{
-						for(int j=0; j<pZone->GetTileHeight(); j++)
-						{
-							for(int i=0; i<pZone->GetTileWidth(); i++)
-							{
-								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								int I =  i + pZone->GetPositionX() - GameX;
-								int J =  j + pZone->GetPositionY() - GameY;
-								
-								if(pZone->GetTileIndex(TilePath) > 0)
-									pGameTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
-							}
-						}
+						ExportZoneToTiles(pZone, pGameTiles);
 					}
 					else if(pFrontTiles && m_PackageId_UnivDDNet >= 0 && pZone->GetZoneTypePath() == m_Path_ZoneType_DDFront)
 					{
-						for(int j=0; j<pZone->GetTileHeight(); j++)
-						{
-							for(int i=0; i<pZone->GetTileWidth(); i++)
-							{
-								CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-								int I =  i + pZone->GetPositionX() - GameX;
-								int J =  j + pZone->GetPositionY() - GameY;
-								
-								if(pZone->GetTileIndex(TilePath) > 0)
-									pFrontTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
-							}
-						}
+						ExportZoneToTiles(pZone, pGameTiles);
 					}
 					else if(pTeleTiles && pZone->GetZoneTypePath() == m_Path_ZoneType_DDTele)
 					{
@@ -2735,17 +2813,7 @@ bool CAssetsManager::Save_Map(const char* pFileName, int StorageType, int Packag
 					}
 				}
 				
-				for(int j=0; j<pZone->GetTileHeight(); j++)
-				{
-					for(int i=0; i<pZone->GetTileWidth(); i++)
-					{
-						CSubPath TilePath = CAsset_MapZoneTiles::SubPath_Tile(i, j);
-						int I =  i + pZone->GetPositionX() - GameX;
-						int J =  j + pZone->GetPositionY() - GameY;
-						
-						pTiles[J*GameWidth+I].m_Index = pZone->GetTileIndex(TilePath);
-					}
-				}
+				ExportZoneToTiles(pZone, pTiles);
 		
 				ddnet::CMapItemLayerTilemap LItem;
 				
